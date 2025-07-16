@@ -7,6 +7,7 @@ import {
   User,
   Menu,
   X,
+  ChevronRight,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -60,39 +61,101 @@ export default function MainNavigation() {
       {/* Third Level Full Width Dropdown - Moved outside nav container */}
       {activeThirdLevel && (
         <div
-          className="absolute left-0 top-full w-full bg-nav-dropdown border-b border-nav-border shadow-lg z-50 bg-white"
+          className="absolute left-0 top-full w-full bg-nav-dropdown  shadow-lg z-50 bg-gray-100"
           onMouseEnter={() => setActiveThirdLevel(activeThirdLevel)}
           onMouseLeave={() => setActiveThirdLevel(null)}
         >
-          <div className="container mx-auto px-4 py-8">
-            {navigationItems.map(
-              (item) =>
-                item.subItems?.find(
-                  (subItem) => subItem.label === activeThirdLevel
-                )?.thirdLevelItems && (
-                  <div key={item.label} className="grid grid-cols-3 gap-8">
-                    {item.subItems
-                      .find((subItem) => subItem.label === activeThirdLevel)
-                      ?.thirdLevelItems?.map((thirdItem, index) => (
-                        <Link
-                          key={index}
-                          to={thirdItem.href}
-                          onClick={closeAllDropdowns}
-                          className="block p-4 rounded-lg hover:bg-accent transition-colors duration-150"
-                        >
-                          <div className="font-medium text-nav-text mb-2">
-                            {thirdItem.label}
-                          </div>
-                          {thirdItem.description && (
-                            <div className="text-sm text-muted-foreground">
-                              {thirdItem.description}
+          <div className=" grid mx-auto  grid-cols-2 gap-5">
+            <div className="bg-white px-4 py-4 ">
+              <div className="container px-4  py-3 border-b border-gray-400">
+                {navigationItems.map((item) => {
+                  const thirdLevelItems =
+                    item.subItems?.find(
+                      (subItem) => subItem.label === activeThirdLevel
+                    )?.thirdLevelItems || [];
+                  if (!thirdLevelItems.length) return null;
+                  const firstColumn = thirdLevelItems.filter(
+                    (_, idx) => idx % 2 === 0
+                  );
+                  const secondColumn = thirdLevelItems.filter(
+                    (_, idx) => idx % 2 === 1
+                  );
+                  return (
+                    <div key={item.label} className="grid grid-cols-2 gap-8">
+                      <div className="border-r border-gray-400">
+                        {firstColumn.map((thirdItem, idx) => (
+                          <Link
+                            key={idx}
+                            to={thirdItem.href}
+                            onClick={closeAllDropdowns}
+                            className="block p-4 rounded-lg hover:bg-accent transition-colors duration-150"
+                          >
+                            <div className="font-medium text-nav-text mb-2">
+                              {thirdItem.label}
                             </div>
-                          )}
-                        </Link>
-                      ))}
-                  </div>
-                )
-            )}
+                            {thirdItem.description && (
+                              <div className="text-sm text-muted-foreground">
+                                {thirdItem.description}
+                              </div>
+                            )}
+                          </Link>
+                        ))}
+                      </div>
+                      <div>
+                        {secondColumn.map((thirdItem, idx) => (
+                          <Link
+                            key={idx}
+                            to={thirdItem.href}
+                            onClick={closeAllDropdowns}
+                            className="block p-4 rounded-lg hover:bg-accent transition-colors duration-150"
+                          >
+                            <div className="font-medium text-nav-text mb-2">
+                              {thirdItem.label}
+                            </div>
+                            {thirdItem.description && (
+                              <div className="text-sm text-muted-foreground">
+                                {thirdItem.description}
+                              </div>
+                            )}
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+
+            <div className="absolute bottom-0">
+            <div className="px-3 py-5 flex gap-2">
+                <span className="text-gray-400 font-[600]">Quick Links:</span>
+                <div className="flex gap-4">
+                  <Link to="/" className="hover:text-nbc-dark-950 hover:underline">Find Branch & ATMs</Link>
+                  <Link to="/" className="hover:text-nbc-dark-950 hover:underline">Whistleblowing</Link>
+                  <Link to="/" className="hover:text-nbc-dark-950 hover:underline">Contact Us</Link>
+                </div>
+              </div>
+            </div>
+            </div>
+            <div>
+<div className="p-5 flex flex-col gap-3 w-1/2">
+<h1 className="text-[24px] font-[700]">Simplify Your Work Life</h1>
+<p className="line-clamp-2">Our product is the ultimate tool for simplifying your work life and increase in movement</p>
+<img src="/images/recent-product.jpg" alt="" className=" rounded-lg"/>
+
+
+  <Button
+          variant="default"
+          className="w-full sm:w-auto"
+          onClick={()=>{}}
+        >
+          { "Learn more"}
+          <ChevronRight className="ml-1 h-4 w-4" />
+        </Button>
+
+
+</div>
+
+            </div>
           </div>
         </div>
       )}
@@ -141,7 +204,7 @@ export default function MainNavigation() {
                         {/* Second Level Links - Inside Navbar */}
                         {hasThirdLevel && (
                           <div className="absolute left-0 top-full opacity-0 invisible group-hover/item:opacity-100 group-hover/item:visible transition-all duration-300 z-40 flex items-center justify-start h-12">
-                            <div className="flex items-center space-x-8">
+                            <div className="flex items-center space-x-8 ">
                               {item.subItems?.map((subItem, index) => (
                                 <div
                                   key={index}
@@ -168,7 +231,7 @@ export default function MainNavigation() {
                                       </Link>
                                     ) : (
                                       <button
-                                        className={`text-nav-text hover:text-nav-text-hover transition-colors duration-150 font-medium whitespace-nowrap flex items-center h-12 space-x-1 relative hover:after:w-full after:absolute after:bottom-0 after:left-0 after:h-0.5 after:bg-nbc-dark-700 after:transition-all after:duration-200 ${
+                                        className={`text-nav-text hover:text-nav-text-hover transition-colors duration-150 font-medium whitespace-nowrap flex items-center h-12 space-x-1 relative hover:after:w-full after:absolute after:bottom-0 after:left-0 after:h-0.5 after:bg-nbc-dark-700 after:transition-all after:duration-200  ${
                                           subItem.href &&
                                           isActiveLink(subItem.href)
                                             ? "after:w-full"
@@ -179,27 +242,25 @@ export default function MainNavigation() {
                                         <ChevronDown className="h-4 w-4" />
                                       </button>
                                     )
+                                  ) : subItem.href ? (
+                                    <Link
+                                      to={subItem.href ?? "#"}
+                                      onClick={closeAllDropdowns}
+                                      className={`text-nav-text hover:text-nav-text-hover transition-colors duration-150 font-medium whitespace-nowrap flex items-center h-12 relative hover:after:w-full after:absolute after:bottom-0 after:left-0 after:h-0.5 after:bg-nbc-dark-700 after:transition-all after:duration-200 ${
+                                        subItem.href &&
+                                        isActiveLink(subItem.href)
+                                          ? "after:w-full"
+                                          : "after:w-0"
+                                      }`}
+                                    >
+                                      {subItem.label}
+                                    </Link>
                                   ) : (
-                                    subItem.href ? (
-                                      <Link
-                                        to={subItem.href ?? "#"}
-                                        onClick={closeAllDropdowns}
-                                        className={`text-nav-text hover:text-nav-text-hover transition-colors duration-150 font-medium whitespace-nowrap flex items-center h-12 relative hover:after:w-full after:absolute after:bottom-0 after:left-0 after:h-0.5 after:bg-nbc-dark-700 after:transition-all after:duration-200 ${
-                                          subItem.href &&
-                                          isActiveLink(subItem.href)
-                                            ? "after:w-full"
-                                            : "after:w-0"
-                                        }`}
-                                      >
-                                        {subItem.label}
-                                      </Link>
-                                    ) : (
-                                      <span
-                                        className={`text-nav-text hover:text-nav-text-hover transition-colors duration-150 font-medium whitespace-nowrap flex items-center h-12 relative hover:after:w-full after:absolute after:bottom-0 after:left-0 after:h-0.5 after:bg-nbc-dark-700 after:transition-all after:duration-200`}
-                                      >
-                                        {subItem.label}
-                                      </span>
-                                    )
+                                    <span
+                                      className={`text-nav-text hover:text-nav-text-hover transition-colors duration-150 font-medium whitespace-nowrap flex items-center h-12 relative hover:after:w-full after:absolute after:bottom-0 after:left-0 after:h-0.5 after:bg-nbc-dark-700 after:transition-all after:duration-200`}
+                                    >
+                                      {subItem.label}
+                                    </span>
                                   )}
                                 </div>
                               ))}
@@ -211,13 +272,13 @@ export default function MainNavigation() {
                         {!hasThirdLevel && item.subItems && (
                           <div className="absolute left-0 top-full mt-1 w-80 bg-nav-dropdown border border-nav-border rounded-lg shadow-lg opacity-0 invisible group-hover/item:opacity-100 group-hover/item:visible transition-all duration-200 z-50">
                             <div className="p-4">
-                              <div className="grid gap-2">
+                              <div className="grid gap-2 ">
                                 {item.subItems?.map((subItem, index) => (
                                   <Link
                                     key={index}
                                     to={subItem.href ?? "/"}
                                     onClick={closeAllDropdowns}
-                                    className="block p-3 rounded-md hover:bg-accent transition-colors duration-150"
+                                    className="block p-3 rounded-md hover:bg-accent transition-colors duration-150 "
                                   >
                                     <div className="font-medium text-nav-text">
                                       {subItem.label}
@@ -276,7 +337,10 @@ export default function MainNavigation() {
                       </DropdownMenuTrigger>
                       <DropdownMenuContent>
                         {actionButton.items.map((item) => (
-                          <DropdownMenuItem key={item.label} onClick={closeAllDropdowns}>
+                          <DropdownMenuItem
+                            key={item.label}
+                            onClick={closeAllDropdowns}
+                          >
                             {item.label}
                           </DropdownMenuItem>
                         ))}
