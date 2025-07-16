@@ -1,10 +1,11 @@
+import PrivelegesPageSection from "@/Page-Sections/PersonalBanking/priveleges-page-sections/PrivelegesPageSection"
 
 function Privilages() {
   return (
-    <div>
+    <>
         <title>NBC | Privaleges Banking</title>
-      Privalege Banking
-    </div>
+     <PrivelegesPageSection />
+    </>
   )
 }
 

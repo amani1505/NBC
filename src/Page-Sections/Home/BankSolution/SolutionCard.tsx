@@ -21,12 +21,12 @@ function SolutionCard({
   description: string;
 }) {
   return (
-    <Card className="!p-0">
+    <Card className="!p-0 transition-transform duration-300 hover:scale-105">
       <CardHeader className="!px-0">
         <img
           src={image}
           alt={title}
-          className="object-cover w-full h-full rounded-t-xl"
+          className="object-cover w-full h-full rounded-t-xl "
         />
         {/* <div className="absolute inset-0 bg-gradient-to-t to-transparent from-black/60" /> */}
       </CardHeader>

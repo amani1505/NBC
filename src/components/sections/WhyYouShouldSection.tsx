@@ -17,7 +17,7 @@ function WhyYouShouldSection({
   description,
   items,
 }: WhyYouShouldSectionProps) {
-  const bg = "images/kiganjani-bg.svg";
+  const bg = "/images/kiganjani-bg.svg";
   return (
     <>
       <motion.div className="   ">

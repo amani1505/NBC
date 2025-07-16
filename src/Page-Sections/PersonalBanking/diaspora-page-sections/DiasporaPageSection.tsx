@@ -9,10 +9,10 @@ import WhyYouShouldSection from "@/components/sections/WhyYouShouldSection";
 import CallToActionBanner from "@/components/sections/CallToActionBanner";
 import RecentProductSection, { type Product } from "@/components/sections/RecentProductSection";
 
-function IndividualPageSection() {
+function DiasporaPageSection() {
   const slides = [
     {
-      title: "Personal Banking For Individuals",
+      title: "Personal Banking For Diaspora",
       description:
         "Empower your project with our comprehensive wireframe kits designed to meet the needs of any platform",
       buttonText: "",
@@ -187,4 +187,4 @@ const recentProducts:Product[] = [
   );
 }
 
-export default IndividualPageSection;
+export default DiasporaPageSection;

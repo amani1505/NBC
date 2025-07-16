@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 function BankAppCard() {
-  const bg = "images/kiganjani-bg.svg";
+  const bg = "/images/kiganjani-bg.svg";
   return (
     <div
       className="h-[53vh] bg-[#1c3073f8] relative"
@@ -23,7 +23,7 @@ function BankAppCard() {
               <div className="flex items-center border-2 border-white text-white rounded-lg px-4 py-1 gap-4">
                 <div className="">
                   <img
-                    src="images/googleplay-white.svg"
+                    src="/images/googleplay-white.svg"
                     alt=""
                     className="w-8"
                   />
@@ -36,7 +36,7 @@ function BankAppCard() {
               <div className="flex items-center border-2 border-white text-white rounded-lg px-4 py-1 gap-4">
                 <div className="uppercase">
                   <img
-                    src="images/Applestore-white.svg"
+                    src="/images/Applestore-white.svg"
                     alt=""
                     className="w-8"
                   />
@@ -60,7 +60,7 @@ function BankAppCard() {
         
         className=" w-full">
          <div className="absolute bottom-0 right-0">
-            <img src="images/kiganjani.svg" alt="" className="w-full"/>
+            <img src="/images/kiganjani.svg" alt="" className="w-full"/>
          </div>
         </motion.div>
       </div>

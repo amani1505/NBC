@@ -3,28 +3,28 @@ import SolutionsSection from "@/components/sections/SolutionsSection";
 const cards = [
   {
     title: "Open Account",
-    img: "images/Account.svg",
+    img: "/images/Account.svg",
   },
   {
     title: "Apply for Loan",
-    img: "images/Loan.svg",
+    img: "/images/Loan.svg",
   },
   {
     title: "Calculators",
-    img: "images/calculator.svg",
+    img: "/images/calculator.svg",
   },
   {
     title: "Locate Us",
-    img: "images/locate.svg",
+    img: "/images/locate.svg",
   },
   {
     title: "Talk To Us",
-    img: "images/talk.svg",
+    img: "/images/talk.svg",
   },
 
   {
     title: "Way To Bank",
-    img: "images/way.svg",
+    img: "/images/way.svg",
   },
   // Add more cards as needed
 ];

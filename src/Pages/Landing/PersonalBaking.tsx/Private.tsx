@@ -1,10 +1,12 @@
+import PrivatePageSection from "@/Page-Sections/PersonalBanking/private-page-sections/PrivatePageSection";
+
 function Private() {
   return (
-    <div>
-        <title>NBC | Private Banking</title>
-      Private Banking
-    </div>
-  )
+    <>
+      <title>NBC | Private Banking</title>
+      <PrivatePageSection />
+    </>
+  );
 }
 
-export default Private
+export default Private;

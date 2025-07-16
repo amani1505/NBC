@@ -6,7 +6,7 @@ const slides = [
       description:
         "Empower your project with our comprehensive wireframe kits designed to meet the needs of any platform",
       buttonText: "Open Account",
-      imageUrl: "images/marathon-hero.png",
+      imageUrl: "/images/marathon-hero.png",
       dateText:"27.07.2025"
     },
     {
@@ -14,7 +14,7 @@ const slides = [
       description:
         "Our trusted platform offers secure and reliable financial management tools.",
       buttonText: "Learn More",
-      imageUrl: "images/hero2.jpg",
+      imageUrl: "/images/hero2.jpg",
     },
     {
       title: "Grow with Confidence",

@@ -27,7 +27,7 @@ function SolutionsSection({ title,description, cards }: SolutionsSectionProps) {
               >
                 <div className="flex justify-center">
                   <img
-                    src={`/${card.img}`}
+                    src={card.img.startsWith('/') ? card.img : `/${card.img}`}
                     alt={card.title}
                     width={60}
                     className="transition-all duration-300 group-hover:filter group-hover:brightness-0 group-hover:invert"

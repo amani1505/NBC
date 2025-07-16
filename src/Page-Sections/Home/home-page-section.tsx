@@ -14,14 +14,14 @@ function HomePageSection() {
       description:
         "Empower your project with our comprehensive wireframe kits designed to meet the needs of any platform",
       buttonText: "Open Account",
-      imageUrl: "images/home-hero.jpg",
+      imageUrl: "/images/home-hero.jpg",
     },
     {
       title: "Secure Your Wealth",
       description:
         "Our trusted platform offers secure and reliable financial management tools.",
       buttonText: "Learn More",
-      imageUrl: "images/hero2.jpg",
+      imageUrl: "/images/hero2.jpg",
     },
     {
       title: "Grow with Confidence",
@@ -29,7 +29,7 @@ function HomePageSection() {
         "Invest smarter with our expert guidance and personalized strategies.",
       buttonText: "Explore Now",
       imageUrl:
-        "images/hero1.jpg",
+        "/images/hero1.jpg",
     },
   ];
 

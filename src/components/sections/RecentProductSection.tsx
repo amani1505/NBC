@@ -151,7 +151,7 @@ function  RecentProductSection  ({
             size="icon"
             onClick={handlePrev}
             disabled={isTransitioning}
-            className="rounded-full border-2 hover:border-brand-blue hover:text-brand-blue disabled:opacity-50 transition-all duration-200 shadow-sm"
+            className="rounded-full border hover:border-brand-blue hover:text-brand-blue disabled:opacity-50 transition-all duration-200 shadow-sm"
           >
             <ChevronLeft className="h-4 w-4" />
           </Button>
@@ -160,7 +160,7 @@ function  RecentProductSection  ({
             size="icon"
             onClick={handleNext}
             disabled={isTransitioning}
-            className="rounded-full border-2 hover:border-brand-blue hover:text-brand-blue disabled:opacity-50 transition-all duration-200 shadow-sm"
+            className="rounded-full border hover:border-brand-blue hover:text-brand-blue disabled:opacity-50 transition-all duration-200 shadow-sm"
           >
             <ChevronRight className="h-4 w-4" />
           </Button>
@@ -178,7 +178,7 @@ function  RecentProductSection  ({
 
  const ProductCard = ({ product, className = "" }: ProductCardProps) => {
   return (
-    <div className={`bg-product-card-bg border border-product-card-border rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300 ${className}`}>
+    <div className={`bg-product-card-bg border border-gray-300 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300 ${className}`}>
       {/* Image Container */}
       <div className="relative w-full h-64 overflow-hidden">
         <img

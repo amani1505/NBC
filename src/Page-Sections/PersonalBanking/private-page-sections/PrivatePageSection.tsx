@@ -12,7 +12,7 @@ import RecentProductSection, { type Product } from "@/components/sections/Recent
 function IndividualPageSection() {
   const slides = [
     {
-      title: "Personal Banking For Individuals",
+      title: "Personal Banking For Private",
       description:
         "Empower your project with our comprehensive wireframe kits designed to meet the needs of any platform",
       buttonText: "",

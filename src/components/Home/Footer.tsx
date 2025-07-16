@@ -89,7 +89,7 @@ function Footer() {
       <div className="container w-full mx-auto py-5">
         <div className="flex justify-between items-center">
           <div className="bg-white rounded-b-[13.58px] rounded-tr-[12.61px] px-2 ">
-            <img src="images/logo.svg" alt="" width={80} />
+            <img src="/images/logo.svg" alt="" width={80} />
           </div>
           <div className="flex gap-5 justify-end">
             <Input
@@ -131,7 +131,7 @@ function Footer() {
                     <div className="flex items-center bg-black text-white rounded-lg px-4 py-1 gap-4">
                       <div className="">
                         <img
-                          src="images/GooglePlaylogo.png"
+                          src="/images/GooglePlaylogo.png"
                           alt=""
                           className="w-8"
                         />
@@ -144,7 +144,7 @@ function Footer() {
                     <div className="flex items-center bg-black text-white rounded-lg px-4 py-1 gap-4">
                       <div className="uppercase">
                         <img
-                          src="images/Applelogo.png"
+                          src="/images/Applelogo.png"
                           alt=""
                           className="w-8"
                         />

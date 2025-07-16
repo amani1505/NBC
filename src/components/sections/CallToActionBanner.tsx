@@ -9,7 +9,7 @@ type CallToActionBannerProps = {
 };
 
 function CallToActionBanner({
-  bgImage = "images/call.png",
+  bgImage = "/images/call.png",
   title,
   description,
   buttonText,
