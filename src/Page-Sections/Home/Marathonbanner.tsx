@@ -6,7 +6,8 @@ const slides = [
       description:
         "Empower your project with our comprehensive wireframe kits designed to meet the needs of any platform",
       buttonText: "Open Account",
-      imageUrl: "images/hero1.jpg",
+      imageUrl: "images/marathon-hero.png",
+      dateText:"27.07.2025"
     },
     {
       title: "Secure Your Wealth",
@@ -29,7 +30,7 @@ const slides = [
 function Marathonbanner() {
   return (
    <>
-    <HeroSection slides={slides}  hasForex={false} height="50vh"/>
+    <HeroSection slides={slides}  hasForex={false} height="70vh"/>
    </>
   )
 }

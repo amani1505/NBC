@@ -11,11 +11,12 @@ import type { EmblaCarouselType } from "embla-carousel";
 import useCarousel, { CarouselContext } from "@/Context/CorouselContext";
 import { motion } from "framer-motion";
 
-type Slide = {
+ type Slide = {
   title: string;
   description: string;
-  buttonText: string;
+  buttonText?: string;
   imageUrl: string;
+  dateText?:string
 };
 
 interface HeroSectionProps {
@@ -49,7 +50,11 @@ function CarouselDots() {
   );
 }
 
-function HeroSection({ slides, hasForex = true, height = "87vh" }: HeroSectionProps) {
+function HeroSection({
+  slides,
+  hasForex = true,
+  height = "87vh",
+}: HeroSectionProps) {
   const [api, setApi] = useState<EmblaCarouselType | null>(null);
   const [selected, setSelected] = useState(0);
 
@@ -129,7 +134,20 @@ function HeroSection({ slides, hasForex = true, height = "87vh" }: HeroSectionPr
                 }}
               >
                 <div className="container mx-auto h-full flex items-center">
+                  
                   <div className="max-w-lg text-white">
+            {
+              slide.dateText &&(
+                <motion.h1
+                className="text-4xl md:text-2xl font-bold mb-4 text-[#DD0A14]"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.2 }}
+              >
+                {slide.dateText}
+              </motion.h1>
+              )
+            }
                     <motion.h1
                       className="text-4xl md:text-5xl font-bold mb-4"
                       initial={{ opacity: 0, y: 20 }}
@@ -151,12 +169,14 @@ function HeroSection({ slides, hasForex = true, height = "87vh" }: HeroSectionPr
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 1 }}
                     >
-                      <Button
-                        className="border border-white text-white font-semibold bg-transparent hover:bg-nbc-dark-700 hover:border-nbc-dark-700 w-1/2"
-                        size="lg"
-                      >
-                        {slide.buttonText}
-                      </Button>
+                      {slide.buttonText && (
+                        <Button
+                          className="border border-white text-white font-semibold bg-transparent hover:bg-nbc-dark-700 hover:border-nbc-dark-700 w-1/2"
+                          size="lg"
+                        >
+                          {slide.buttonText}
+                        </Button>
+                      )}
                     </motion.div>
                   </div>
                 </div>

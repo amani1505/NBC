@@ -1,16 +1,19 @@
-import SolutionCard from "./SolutionCard";
+
+import SolutionCard from '@/Page-Sections/Home/BankSolution/SolutionCard';
 import { motion } from 'framer-motion';
 
-function BusinessSolution() {
+function AccountContent() {
   const solutions = [
     {
       id: "1",
       title: "NBC Bank Honors Yanga SC as 2024/25 NBC Premier League Champions",
       description:
         "Yesterday, we proudly handed over the 2024/25 NBC Premier League trophy to Young Africans SC after their",
-      image: "images/news1.jpg",
+      image: "images/offering.jpg",
       category: "CUSTOMER STORIES",
       date: "Continue Reading →",
+      href:"/",
+      compareLink:'/'
     },
     {
       id: "2",
@@ -20,6 +23,8 @@ function BusinessSolution() {
       category: "INVESTMENT",
       date: "Continue Reading →",
       featured: false,
+      href:'/',
+      compareLink:"/"
     },
     {
       id: "3",
@@ -29,6 +34,8 @@ function BusinessSolution() {
       category: "",
       date: "Continue Reading →",
       featured: false,
+      href:"/",
+      compareLink:"/"
     },
     {
       id: "4",
@@ -38,6 +45,8 @@ function BusinessSolution() {
       category: "BEYOND BANKING",
       date: "Continue Reading →",
       featured: false,
+      href:"/",
+      compareLink:"/"
     },
   ];
 
@@ -60,6 +69,9 @@ function BusinessSolution() {
           image={solution.image}
           title={solution.title}
           description={solution.description}
+          learnMoreLink={solution.href}
+          compareLink={solution.compareLink}
+        
         />
       ))
       
@@ -69,4 +81,4 @@ function BusinessSolution() {
   )
 }
 
-export default BusinessSolution
+export default AccountContent

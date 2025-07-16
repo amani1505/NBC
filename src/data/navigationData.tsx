@@ -29,9 +29,10 @@ export interface ThirdLevelItem {
       hasDropdown: true,
       subItems: [
         { 
-          label: 'Accounts', 
+          label: 'Individual', 
           description: 'Personal banking solutions',
           hasThirdLevel: true,
+          href: '/personal-banking',
           thirdLevelItems: [
             { label: 'Current Account', href: '/personal/accounts/current', description: 'Everyday banking account' },
             { label: 'Savings Account', href: '/personal/accounts/savings', description: 'Grow your savings' },
@@ -42,9 +43,10 @@ export interface ThirdLevelItem {
           ]
         },
         { 
-          label: 'Cards', 
+          label: 'Private', 
           description: 'Credit and debit solutions',
           hasThirdLevel: true,
+          href: '/personal-banking/private',
           thirdLevelItems: [
             { label: 'Debit Cards', href: '/personal/cards/debit', description: 'Access your money anywhere' },
             { label: 'Credit Cards', href: '/personal/cards/credit', description: 'Flexible payment solutions' },
@@ -55,9 +57,10 @@ export interface ThirdLevelItem {
           ]
         },
         { 
-          label: 'Loans', 
+          label: 'Priveleged', 
           description: 'Personal financing options',
           hasThirdLevel: true,
+          href: '/personal-banking/priveleged',
           thirdLevelItems: [
             { label: 'Personal Loan', href: '/personal/loans/personal', description: 'Quick personal financing' },
             { label: 'Home Loan', href: '/personal/loans/home', description: 'Make your dream home reality' },
@@ -68,8 +71,8 @@ export interface ThirdLevelItem {
           ]
         },
         { 
-          label: 'Investments', 
-          href: '/personal/investments', 
+          label: 'Diaspora', 
+          href: '/personal-banking/diaspora', 
           description: 'Grow your wealth' 
         }
       ]
@@ -82,6 +85,7 @@ export interface ThirdLevelItem {
           label: 'Business Banking', 
           description: 'Complete business solutions',
           hasThirdLevel: true,
+          href: '/business/banking',
           thirdLevelItems: [
             { label: 'Current Account', href: '/business/banking/current', description: 'Business current account' },
             { label: 'Savings Account', href: '/business/banking/savings', description: 'Business savings solutions' },
@@ -95,6 +99,7 @@ export interface ThirdLevelItem {
           label: 'Business Loans', 
           description: 'Financing for growth',
           hasThirdLevel: true,
+          href: '/business/loans',
           thirdLevelItems: [
             { label: 'Working Capital', href: '/business/loans/working-capital', description: 'Fund daily operations' },
             { label: 'Term Loans', href: '/business/loans/term', description: 'Long-term financing' },
@@ -124,6 +129,7 @@ export interface ThirdLevelItem {
           label: 'Investment Banking', 
           description: 'Capital market solutions',
           hasThirdLevel: true,
+          href: '/corporate/investment',
           thirdLevelItems: [
             { label: 'Equity Capital Markets', href: '/corporate/investment/equity', description: 'Equity fundraising solutions' },
             { label: 'Debt Capital Markets', href: '/corporate/investment/debt', description: 'Debt financing options' },
@@ -135,7 +141,7 @@ export interface ThirdLevelItem {
         },
         { 
           label: 'Asset Management', 
-        
+          href: '/corporate/asset-management', 
           description: 'Professional asset management' 
         },
         { 

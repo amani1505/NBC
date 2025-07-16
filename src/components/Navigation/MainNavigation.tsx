@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import {
   ChevronDown,
   Search,
@@ -25,10 +26,19 @@ export default function MainNavigation() {
     setActiveThirdLevel,
     isMobileMenuOpen,
     toggleMobileMenu,
+    closeMobileMenu,
     hasThirdLevelItems,
     isActiveLink,
     isActiveParent,
+    setActiveParent,
   } = useNavigation();
+
+  // Function to close all dropdowns
+  const closeAllDropdowns = () => {
+    setActiveThirdLevel(null);
+    setActiveParent(null);
+    closeMobileMenu();
+  };
 
   const renderIcon = (iconName: string, className = "h-4 w-4") => {
     const icons: Record<
@@ -64,9 +74,10 @@ export default function MainNavigation() {
                     {item.subItems
                       .find((subItem) => subItem.label === activeThirdLevel)
                       ?.thirdLevelItems?.map((thirdItem, index) => (
-                        <a
+                        <Link
                           key={index}
-                          href={thirdItem.href}
+                          to={thirdItem.href}
+                          onClick={closeAllDropdowns}
                           className="block p-4 rounded-lg hover:bg-accent transition-colors duration-150"
                         >
                           <div className="font-medium text-nav-text mb-2">
@@ -77,7 +88,7 @@ export default function MainNavigation() {
                               {thirdItem.description}
                             </div>
                           )}
-                        </a>
+                        </Link>
                       ))}
                   </div>
                 )
@@ -141,29 +152,54 @@ export default function MainNavigation() {
                                   }
                                 >
                                   {subItem.hasThirdLevel ? (
-                                    <button
-                                      className={`text-nav-text hover:text-nav-text-hover transition-colors duration-150 font-medium whitespace-nowrap flex items-center h-12 space-x-1 relative hover:after:w-full after:absolute after:bottom-0 after:left-0 after:h-0.5 after:bg-nbc-dark-700 after:transition-all after:duration-200 ${
-                                        subItem.href &&
-                                        isActiveLink(subItem.href)
-                                          ? "after:w-full"
-                                          : "after:w-0"
-                                      }`}
-                                    >
-                                      <span>{subItem.label}</span>
-                                      <ChevronDown className="h-4 w-4" />
-                                    </button>
+                                    subItem.href ? (
+                                      <Link
+                                        to={subItem.href ?? "#"}
+                                        onClick={closeAllDropdowns}
+                                        className={`text-nav-text hover:text-nav-text-hover transition-colors duration-150 font-medium whitespace-nowrap flex items-center h-12 space-x-1 relative hover:after:w-full after:absolute after:bottom-0 after:left-0 after:h-0.5 after:bg-nbc-dark-700 after:transition-all after:duration-200 ${
+                                          subItem.href &&
+                                          isActiveLink(subItem.href)
+                                            ? "after:w-full"
+                                            : "after:w-0"
+                                        }`}
+                                      >
+                                        <span>{subItem.label}</span>
+                                        <ChevronDown className="h-4 w-4" />
+                                      </Link>
+                                    ) : (
+                                      <button
+                                        className={`text-nav-text hover:text-nav-text-hover transition-colors duration-150 font-medium whitespace-nowrap flex items-center h-12 space-x-1 relative hover:after:w-full after:absolute after:bottom-0 after:left-0 after:h-0.5 after:bg-nbc-dark-700 after:transition-all after:duration-200 ${
+                                          subItem.href &&
+                                          isActiveLink(subItem.href)
+                                            ? "after:w-full"
+                                            : "after:w-0"
+                                        }`}
+                                      >
+                                        <span>{subItem.label}</span>
+                                        <ChevronDown className="h-4 w-4" />
+                                      </button>
+                                    )
                                   ) : (
-                                    <a
-                                      href={subItem.href}
-                                      className={`text-nav-text hover:text-nav-text-hover transition-colors duration-150 font-medium whitespace-nowrap flex items-center h-12 relative hover:after:w-full after:absolute after:bottom-0 after:left-0 after:h-0.5 after:bg-nbc-dark-700 after:transition-all after:duration-200 ${
-                                        subItem.href &&
-                                        isActiveLink(subItem.href)
-                                          ? "after:w-full"
-                                          : "after:w-0"
-                                      }`}
-                                    >
-                                      {subItem.label}
-                                    </a>
+                                    subItem.href ? (
+                                      <Link
+                                        to={subItem.href ?? "#"}
+                                        onClick={closeAllDropdowns}
+                                        className={`text-nav-text hover:text-nav-text-hover transition-colors duration-150 font-medium whitespace-nowrap flex items-center h-12 relative hover:after:w-full after:absolute after:bottom-0 after:left-0 after:h-0.5 after:bg-nbc-dark-700 after:transition-all after:duration-200 ${
+                                          subItem.href &&
+                                          isActiveLink(subItem.href)
+                                            ? "after:w-full"
+                                            : "after:w-0"
+                                        }`}
+                                      >
+                                        {subItem.label}
+                                      </Link>
+                                    ) : (
+                                      <span
+                                        className={`text-nav-text hover:text-nav-text-hover transition-colors duration-150 font-medium whitespace-nowrap flex items-center h-12 relative hover:after:w-full after:absolute after:bottom-0 after:left-0 after:h-0.5 after:bg-nbc-dark-700 after:transition-all after:duration-200`}
+                                      >
+                                        {subItem.label}
+                                      </span>
+                                    )
                                   )}
                                 </div>
                               ))}
@@ -177,9 +213,10 @@ export default function MainNavigation() {
                             <div className="p-4">
                               <div className="grid gap-2">
                                 {item.subItems?.map((subItem, index) => (
-                                  <a
+                                  <Link
                                     key={index}
-                                    href={subItem.href}
+                                    to={subItem.href ?? "/"}
+                                    onClick={closeAllDropdowns}
                                     className="block p-3 rounded-md hover:bg-accent transition-colors duration-150"
                                   >
                                     <div className="font-medium text-nav-text">
@@ -190,7 +227,7 @@ export default function MainNavigation() {
                                         {subItem.description}
                                       </div>
                                     )}
-                                  </a>
+                                  </Link>
                                 ))}
                               </div>
                             </div>
@@ -198,8 +235,9 @@ export default function MainNavigation() {
                         )}
                       </div>
                     ) : (
-                      <a
-                        href={item.href}
+                      <Link
+                        to={item.href ?? "/"}
+                        onClick={closeAllDropdowns}
                         className={`text-nav-text hover:text-nav-text-hover transition-colors duration-200 font-medium py-2 relative hover:after:w-full after:absolute after:bottom-0 after:left-0 after:h-0.5 after:bg-nbc-dark-700 after:transition-all after:duration-200 ${
                           item.href && isActiveLink(item.href)
                             ? "after:w-full"
@@ -207,7 +245,7 @@ export default function MainNavigation() {
                         }`}
                       >
                         {item.label}
-                      </a>
+                      </Link>
                     )}
                   </div>
                 );
@@ -224,7 +262,6 @@ export default function MainNavigation() {
                         <Button
                           variant={actionButton.variant}
                           size="sm"
-                         
                           className={
                             actionButton.variant === "default"
                               ? "bg-nbc-dark-700 hover:bg-nbc-dark-500"
@@ -239,7 +276,7 @@ export default function MainNavigation() {
                       </DropdownMenuTrigger>
                       <DropdownMenuContent>
                         {actionButton.items.map((item) => (
-                          <DropdownMenuItem key={item.label}>
+                          <DropdownMenuItem key={item.label} onClick={closeAllDropdowns}>
                             {item.label}
                           </DropdownMenuItem>
                         ))}
@@ -304,23 +341,25 @@ export default function MainNavigation() {
                       </div>
                       <div className="pl-4 space-y-2 mt-2">
                         {item.subItems?.map((subItem) => (
-                          <a
+                          <Link
                             key={subItem.label}
-                            href={subItem.href}
+                            to={subItem.href ?? "#"}
+                            onClick={closeAllDropdowns}
                             className="block py-2 text-nav-text hover:text-nav-text-hover transition-colors"
                           >
                             {subItem.label}
-                          </a>
+                          </Link>
                         ))}
                       </div>
                     </div>
                   ) : (
-                    <a
-                      href={item.href}
+                    <Link
+                      to={item.href ?? "#"}
+                      onClick={closeAllDropdowns}
                       className="block font-medium text-nav-text hover:text-nav-text-hover transition-colors py-2"
                     >
                       {item.label}
-                    </a>
+                    </Link>
                   )}
                 </div>
               ))}
@@ -330,6 +369,7 @@ export default function MainNavigation() {
                 {actionButtons.map((actionButton, index) => (
                   <button
                     key={index}
+                    onClick={closeAllDropdowns}
                     className="flex items-center space-x-1 text-[15px] font-semibold px-2 py-1 border-0 transition-all duration-200 rounded-md text-white hover:text-gray-200 hover:underline hover:underline-offset-8 hover:decoration-2"
                   >
                     {actionButton.icon &&

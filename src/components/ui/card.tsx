@@ -12,8 +12,8 @@ interface CardProps {
 
 function Card({ className, children, hover=true, onClick, border = true }: CardProps) {
   const baseClasses = 'bg-card text-card-foreground flex flex-col gap-6 rounded-xl py-6 shadow-sm';
-  const borderClasses = border ? 'border border-nbc-dark-950' : '';
-  const hoverClasses = hover ? 'hover:border-nbc-dark-700' : '';
+  const borderClasses = border ? 'border border-gray-300' : '';
+  const hoverClasses = hover ? 'hover:border-gray-400' : '';
   const clickableClasses = onClick ? 'cursor-pointer' : '';
 
   return (

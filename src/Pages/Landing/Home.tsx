@@ -1,4 +1,4 @@
-import HomePageSection from "@/PageSections/Home/home-page-section";
+import HomePageSection from "@/Page-Sections/Home/home-page-section";
 
 function Home() {
   return (

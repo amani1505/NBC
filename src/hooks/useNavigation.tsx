@@ -1,17 +1,13 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import { navigationData, actionButtonsData } from '@/data/navigationData';
 import type { MenuItem, ActionButton } from '@/data/navigationData';
-
 
 export const useNavigation = () => {
   const [activeThirdLevel, setActiveThirdLevel] = useState<string | null>(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [currentPath, setCurrentPath] = useState('');
-
-  // Update current path when component mounts or path changes
-  useEffect(() => {
-    setCurrentPath(window.location.pathname);
-  }, []);
+  const [activeParent, setActiveParent] = useState<string | null>(null);
+  const location = useLocation();
 
   const getNavigationItems = (): MenuItem[] => {
     return navigationData;
@@ -26,7 +22,7 @@ export const useNavigation = () => {
   };
 
   const isActiveLink = (href: string): boolean => {
-    return currentPath === href;
+    return location.pathname === href;
   };
 
   const isActiveParent = (item: MenuItem): boolean => {
@@ -62,6 +58,8 @@ export const useNavigation = () => {
     hasThirdLevelItems,
     isActiveLink,
     isActiveParent,
-    currentPath
+    activeParent,
+    setActiveParent,
+    currentPath: location.pathname,
   };
 };

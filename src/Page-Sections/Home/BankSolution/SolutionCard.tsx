@@ -1,4 +1,3 @@
-import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -6,18 +5,23 @@ import {
   CardHeader,
 } from "@/components/ui/card";
 import { ChevronRight } from "lucide-react";
+import { Link } from "react-router-dom";
 
 function SolutionCard({
   image,
   title,
   description,
+  learnMoreLink,
+  compareLink,
 }: {
   image: string;
   title: string;
+  learnMoreLink: string;
+  compareLink?: string;
   description: string;
 }) {
   return (
-    <Card className="!p-0"   >
+    <Card className="!p-0">
       <CardHeader className="!px-0">
         <img
           src={image}
@@ -32,11 +36,26 @@ function SolutionCard({
         </h3>
         <p className=" text-[12px]  line-clamp-2">{description}</p>
       </CardContent>
-      <CardFooter className="mb-5">
-        <Button className=" text-white hover:text-white bg-nbc-dark-600 font-[600] hover:bg-nbc-dark-500">
+      <CardFooter className="mb-5 flex justify-between gap-5">
+        {compareLink && (
+          <Link
+            to={compareLink ?? "/"}
+            className=" text-nbc-dark-600 hover:text-white border border-nbc-dark-600   font-[500] hover:bg-nbc-dark-600 flex rounded px-4 py-3 w-full items-center justify-center"
+          >
+            Compare Account
+            {/* <ArrowRight className="ml-1 w-4 h-4" /> */}
+          </Link>
+        )}
+        <Link
+          to={learnMoreLink ?? "/"}
+          className={
+            `text-white hover:text-white bg-nbc-dark-600 font-[500] hover:bg-nbc-dark-500 flex rounded px-4 py-3 items-center justify-center ` +
+            (compareLink ? "w-full" : "w-auto")
+          }
+        >
           Learn More <ChevronRight />
           {/* <ArrowRight className="ml-1 w-4 h-4" /> */}
-        </Button>
+        </Link>
       </CardFooter>
     </Card>
   );

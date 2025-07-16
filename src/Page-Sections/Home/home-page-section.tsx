@@ -14,7 +14,7 @@ function HomePageSection() {
       description:
         "Empower your project with our comprehensive wireframe kits designed to meet the needs of any platform",
       buttonText: "Open Account",
-      imageUrl: "images/hero1.jpg",
+      imageUrl: "images/home-hero.jpg",
     },
     {
       title: "Secure Your Wealth",
@@ -29,7 +29,7 @@ function HomePageSection() {
         "Invest smarter with our expert guidance and personalized strategies.",
       buttonText: "Explore Now",
       imageUrl:
-        "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1920&q=80",
+        "images/hero1.jpg",
     },
   ];
 
