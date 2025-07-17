@@ -1,7 +1,7 @@
 import Button  from "../ui/button";
 import { Input } from "../ui/input";
 import { Twitter, Facebook, Linkedin } from "lucide-react";
-import React from "react";
+
 
 const footerLinkPaths: Record<string, string> = {
   // Banking Solution
@@ -131,27 +131,27 @@ function Footer() {
                     <div className="flex items-center bg-black text-white rounded-lg px-4 py-1 gap-4">
                       <div className="">
                         <img
-                          src="/images/GooglePlaylogo.png"
+                          src="/images/GooglePlaylogo.svg"
                           alt=""
                           className="w-8"
                         />
                       </div>
-                      <div className="font-[600]">
-                        <p className="uppercase">get it on</p>
-                        <p className="capitalize">google play</p>
+                      <div className="">
+                        <p className="uppercase text-sm">get it on</p>
+                        <p className="capitalize font-[600]">google play</p>
                       </div>
                     </div>
                     <div className="flex items-center bg-black text-white rounded-lg px-4 py-1 gap-4">
                       <div className="uppercase">
                         <img
-                          src="/images/Applelogo.png"
+                          src="/images/Applestore-white.svg"
                           alt=""
                           className="w-8"
                         />
                       </div>
-                      <div className="font-[600]">
-                        <p className="">Download on the</p>
-                        <p className="capitalize">App store</p>
+                      <div className="">
+                        <p className="font-[500] text-sm">Download on the</p>
+                        <p className="capitalize font-[600]">App store</p>
                       </div>
                     </div>
                   </div>

@@ -176,10 +176,8 @@ function SingleAccountPageSection() {
   ];
   
   const handleButtonClick = () => {
-  
-    openModal(<ContactForm />);
-  
-  };
+      openModal(<ContactForm />);
+    };
 
 
   return (

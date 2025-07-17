@@ -3,9 +3,7 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import Footer from './components/Home/Footer'
 import MainNavigation from './components/Navigation/MainNavigation'
 import './App.css'
-import Private from './Pages/Landing/PersonalBaking/Private'
-import Privilages from './Pages/Landing/PersonalBaking/Privilages'
-import SingleAccount from './Pages/Landing/PersonalBaking/SingleAccount'
+
 
 
 
@@ -18,6 +16,15 @@ const Error = lazy(() => import('./Pages/Status/Error'));
 const UnderMaintenance = lazy(() => import('./Pages/Status/UnderMaintenance'));
 const Diaspora = lazy(() => import('./Pages/Landing/PersonalBaking/Diaspora'));
 const Individual = lazy(() => import('./Pages/Landing/PersonalBaking/Individual'));
+const Private = lazy(()=> import('./Pages/Landing/PersonalBaking/Private'))
+const Privilages = lazy(()=>import('./Pages/Landing/PersonalBaking/Privilages'))
+const SingleAccount = lazy(()=>import('./Pages/Landing/PersonalBaking/SingleAccount'))
+const SingleInsurance =lazy(()=>import('./Pages/Landing/PersonalBaking/SingleInsurance'));
+const SingleLoan = lazy(()=>import('./Pages/Landing/PersonalBaking/SingleLoan'))
+const  WaytoBank = lazy(()=>import('./Pages/Landing/PersonalBaking/WaytoBank')) 
+
+
+
 
 function App() {
   return (
@@ -31,7 +38,10 @@ function App() {
             <Route path="diaspora" element={<Diaspora />} />
             <Route path="priveleged" element={<Privilages />} />
             <Route path="private" element={<Private />} />
-            <Route path=":accountName" element={<SingleAccount />}    />
+            <Route path="accounts/:accountName" element={<SingleAccount />}/>
+            <Route path="loans/:loanName" element={<SingleLoan />}/>
+            <Route path="insurances/:insuranceName" element={<SingleInsurance />}/>
+            <Route path="way-to-bank/:wayToBankName" element={<WaytoBank />}/>
           </Route>
           <Route path="error" element={<Error />} />
           <Route path="under-maintenance" element={<UnderMaintenance />} />

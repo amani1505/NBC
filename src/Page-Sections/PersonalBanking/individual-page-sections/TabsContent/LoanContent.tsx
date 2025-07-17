@@ -1,8 +1,9 @@
+import { slugify } from '@/lib/utils';
 import SolutionCard from '@/Page-Sections/Home/BankSolution/SolutionCard';
 import { motion } from 'framer-motion';
 
 function LoanContent() {
-  const solutions = [
+  const loans = [
     {
       id: "1",
       title: "NBC Bank Honors Yanga SC as 2024/25 NBC Premier League Champions",
@@ -58,13 +59,13 @@ function LoanContent() {
     exit={{ opacity: 0, y: -20 }}
     transition={{ duration: 0.3 }}
     className="grid grid-cols-3 gap-5">{
-      solutions.map((solution) => (
+      loans.map((loan) => (
         <SolutionCard
-          key={solution.id}
-          image={solution.image}
-          title={solution.title}
-          description={solution.description}
-          learnMoreLink={solution.href}
+          key={loan.id}
+          image={loan.image}
+          title={loan.title}
+          description={loan.description}
+          learnMoreLink={`/personal-banking/loans/${slugify(loan.title)}`}
         
         />
       ))

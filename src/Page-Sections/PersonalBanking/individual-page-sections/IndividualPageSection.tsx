@@ -8,8 +8,14 @@ import WayToBankContent from "./TabsContent/WayToBankContent";
 import WhyYouShouldSection from "@/components/sections/WhyYouShouldSection";
 import CallToActionBanner from "@/components/sections/CallToActionBanner";
 import RecentProductSection, { type Product } from "@/components/sections/RecentProductSection";
+import ContactForm from "@/components/sections/ContactForm";
+import { useModal } from "@/hooks/useModal";
 
 function IndividualPageSection() {
+
+  const { openModal } = useModal();
+
+
   const slides = [
     {
       title: "Personal Banking For Individuals",
@@ -153,6 +159,10 @@ const recentProducts:Product[] = [
   }
 ];
 
+const handleButtonClick = () => {
+  openModal(<ContactForm />);
+};
+
 
 
   return (
@@ -179,7 +189,7 @@ const recentProducts:Product[] = [
         title="Let us hear what you need,Request a call and well call you back!"
         description=""
         buttonText="Request Call Back"
-        onButtonClick={() => {}}
+        onButtonClick={handleButtonClick}
       />
 
       <RecentProductSection products={recentProducts}  title="Related Products"/>

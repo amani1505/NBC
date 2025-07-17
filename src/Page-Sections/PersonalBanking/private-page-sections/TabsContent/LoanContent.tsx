@@ -1,7 +1,7 @@
-import SolutionCard from '@/Page-Sections/Home/BankSolution/SolutionCard';
-import { motion } from 'framer-motion';
+import SolutionCard from "@/Page-Sections/Home/BankSolution/SolutionCard";
+import { motion } from "framer-motion";
 
-function LoanContent() {
+function WayToBankContent() {
   const solutions = [
     {
       id: "1",
@@ -11,7 +11,7 @@ function LoanContent() {
       image: "/images/news1.jpg",
       category: "CUSTOMER STORIES",
       date: "Continue Reading →",
-      href:"/"
+      href: "/",
     },
     {
       id: "2",
@@ -21,7 +21,7 @@ function LoanContent() {
       category: "INVESTMENT",
       date: "Continue Reading →",
       featured: false,
-      href:'/'
+      href: "/",
     },
     {
       id: "3",
@@ -31,7 +31,7 @@ function LoanContent() {
       category: "",
       date: "Continue Reading →",
       featured: false,
-      href:"/"
+      href: "/",
     },
     {
       id: "4",
@@ -41,38 +41,30 @@ function LoanContent() {
       category: "BEYOND BANKING",
       date: "Continue Reading →",
       featured: false,
-      href:"/"
+      href: "/",
     },
   ];
 
-
-
-
-
-
   return (
-    <motion.div 
-    key="business"
-    initial={{ opacity: 0, y: 20 }}
-    animate={{ opacity: 1, y: 0 }}
-    exit={{ opacity: 0, y: -20 }}
-    transition={{ duration: 0.3 }}
-    className="grid grid-cols-3 gap-5">{
-      solutions.map((solution) => (
+    <motion.div
+      key="business"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -20 }}
+      transition={{ duration: 0.3 }}
+      className="grid grid-cols-3 gap-5"
+    >
+      {solutions.map((solution) => (
         <SolutionCard
           key={solution.id}
           image={solution.image}
           title={solution.title}
           description={solution.description}
           learnMoreLink={solution.href}
-        
         />
-      ))
-      
-      }
-  
+      ))}
     </motion.div>
-  )
+  );
 }
 
-export default LoanContent
+export default WayToBankContent;

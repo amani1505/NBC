@@ -69,7 +69,7 @@ function AccountContent() {
           image={solution.image}
           title={solution.title}
           description={solution.description}
-          learnMoreLink={`/personal-banking/${slugify(solution.title)}`}
+          learnMoreLink={`/personal-banking/accounts/${slugify(solution.title)}`}
           compareLink={solution.compareLink}
         
         />

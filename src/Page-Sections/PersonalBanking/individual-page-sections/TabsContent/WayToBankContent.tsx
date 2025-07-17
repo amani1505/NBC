@@ -1,5 +1,6 @@
-import SolutionCard from '@/Page-Sections/Home/BankSolution/SolutionCard';
-import { motion } from 'framer-motion';
+import { slugify } from "@/lib/utils";
+import SolutionCard from "@/Page-Sections/Home/BankSolution/SolutionCard";
+import { motion } from "framer-motion";
 
 function WayToBankContent() {
   const solutions = [
@@ -11,7 +12,7 @@ function WayToBankContent() {
       image: "/images/news1.jpg",
       category: "CUSTOMER STORIES",
       date: "Continue Reading →",
-      href:"/"
+      href: "/",
     },
     {
       id: "2",
@@ -21,7 +22,7 @@ function WayToBankContent() {
       category: "INVESTMENT",
       date: "Continue Reading →",
       featured: false,
-      href:'/'
+      href: "/",
     },
     {
       id: "3",
@@ -31,7 +32,7 @@ function WayToBankContent() {
       category: "",
       date: "Continue Reading →",
       featured: false,
-      href:"/"
+      href: "/",
     },
     {
       id: "4",
@@ -41,38 +42,32 @@ function WayToBankContent() {
       category: "BEYOND BANKING",
       date: "Continue Reading →",
       featured: false,
-      href:"/"
+      href: "/",
     },
   ];
 
-
-
-
-
-
   return (
-    <motion.div 
-    key="business"
-    initial={{ opacity: 0, y: 20 }}
-    animate={{ opacity: 1, y: 0 }}
-    exit={{ opacity: 0, y: -20 }}
-    transition={{ duration: 0.3 }}
-    className="grid grid-cols-3 gap-5">{
-      solutions.map((solution) => (
+    <motion.div
+      key="business"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -20 }}
+      transition={{ duration: 0.3 }}
+      className="grid grid-cols-3 gap-5"
+    >
+      {solutions.map((wayToBank) => (
         <SolutionCard
-          key={solution.id}
-          image={solution.image}
-          title={solution.title}
-          description={solution.description}
-          learnMoreLink={solution.href}
-        
+          key={wayToBank.id}
+          image={wayToBank.image}
+          title={wayToBank.title}
+          description={wayToBank.description}
+          learnMoreLink={`/personal-banking/way-to-bank/${slugify(
+            wayToBank.title
+          )}`}
         />
-      ))
-      
-      }
-  
+      ))}
     </motion.div>
-  )
+  );
 }
 
-export default WayToBankContent
+export default WayToBankContent;

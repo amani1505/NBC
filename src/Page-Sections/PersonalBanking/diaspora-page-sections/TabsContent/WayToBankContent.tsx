@@ -1,3 +1,4 @@
+import { slugify } from '@/lib/utils';
 import SolutionCard from '@/Page-Sections/Home/BankSolution/SolutionCard';
 import { motion } from 'framer-motion';
 
@@ -58,13 +59,13 @@ function WayToBankContent() {
     exit={{ opacity: 0, y: -20 }}
     transition={{ duration: 0.3 }}
     className="grid grid-cols-3 gap-5">{
-      solutions.map((solution) => (
+      solutions.map((wayToBank) => (
         <SolutionCard
-          key={solution.id}
-          image={solution.image}
-          title={solution.title}
-          description={solution.description}
-          learnMoreLink={solution.href}
+          key={wayToBank.id}
+          image={wayToBank.image}
+          title={wayToBank.title}
+          description={wayToBank.description}
+          learnMoreLink={`/personal-banking/way-to-bank/${slugify(wayToBank.title)}`}
         
         />
       ))

@@ -1,8 +1,9 @@
+import { slugify } from '@/lib/utils';
 import SolutionCard from '@/Page-Sections/Home/BankSolution/SolutionCard';
 import { motion } from 'framer-motion';
 
 function InsuranceContent() {
-  const solutions = [
+  const insurances = [
     {
       id: "1",
       title: "NBC Bank Honors Yanga SC as 2024/25 NBC Premier League Champions",
@@ -52,19 +53,19 @@ function InsuranceContent() {
 
   return (
     <motion.div 
-    key="business"
+    key="insurances"
     initial={{ opacity: 0, y: 20 }}
     animate={{ opacity: 1, y: 0 }}
     exit={{ opacity: 0, y: -20 }}
     transition={{ duration: 0.3 }}
     className="grid grid-cols-3 gap-5">{
-      solutions.map((solution) => (
+      insurances.map((insurance) => (
         <SolutionCard
-          key={solution.id}
-          image={solution.image}
-          title={solution.title}
-          description={solution.description}
-          learnMoreLink={solution.href}
+          key={insurance.id}
+          image={insurance.image}
+          title={insurance.title}
+          description={insurance.description}
+          learnMoreLink={`/personal-banking/insurances/${slugify(insurance.title)}`}
         
         />
       ))
