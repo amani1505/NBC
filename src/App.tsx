@@ -3,16 +3,21 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import Footer from './components/Home/Footer'
 import MainNavigation from './components/Navigation/MainNavigation'
 import './App.css'
-import Private from './Pages/Landing/PersonalBaking.tsx/Private'
-import Privilages from './Pages/Landing/PersonalBaking.tsx/Privilages'
+import Private from './Pages/Landing/PersonalBaking/Private'
+import Privilages from './Pages/Landing/PersonalBaking/Privilages'
+import SingleAccount from './Pages/Landing/PersonalBaking/SingleAccount'
+
+
+
+// Lazy Loading PAges
 
 const Home = lazy(() => import('./Pages/Landing/Home'));
-const PersonalBanking = lazy(() => import('./Pages/Landing/PersonalBaking.tsx/PersonalBanking'));
+const PersonalBanking = lazy(() => import('./Pages/Landing/PersonalBaking/PersonalBanking'));
 const NotFound = lazy(() => import('./Pages/Status/NotFound'));
 const Error = lazy(() => import('./Pages/Status/Error'));
 const UnderMaintenance = lazy(() => import('./Pages/Status/UnderMaintenance'));
-const Diaspora = lazy(() => import('./Pages/Landing/PersonalBaking.tsx/Diaspora'));
-const Individual = lazy(() => import('./Pages/Landing/PersonalBaking.tsx/Individual'));
+const Diaspora = lazy(() => import('./Pages/Landing/PersonalBaking/Diaspora'));
+const Individual = lazy(() => import('./Pages/Landing/PersonalBaking/Individual'));
 
 function App() {
   return (
@@ -26,6 +31,7 @@ function App() {
             <Route path="diaspora" element={<Diaspora />} />
             <Route path="priveleged" element={<Privilages />} />
             <Route path="private" element={<Private />} />
+            <Route path=":accountName" element={<SingleAccount />}    />
           </Route>
           <Route path="error" element={<Error />} />
           <Route path="under-maintenance" element={<UnderMaintenance />} />

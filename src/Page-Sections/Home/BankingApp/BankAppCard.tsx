@@ -60,7 +60,7 @@ function BankAppCard() {
         
         className=" w-full">
          <div className="absolute bottom-0 right-0">
-            <img src="/images/kiganjani.svg" alt="" className="w-full"/>
+            <img src="/images/kiganjani.png" alt="" className="w-full"/>
          </div>
         </motion.div>
       </div>

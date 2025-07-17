@@ -11,13 +11,104 @@ import "./styles/calltoaction.css";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 function CallToAction() {
-  // const [activeTab, setActiveTab] = useState("talktous");
-
-  // const tabs = [
-  //   { id: "talktous", label: "Talk to Us", icon: MessageCircle, component: TalktoUs },
-  //   { id: "feedback", label: "Feedback & Complaints", icon: MessageSquare, component: FeedbackandComplains },
-  //   { id: "faq", label: "FAQ", icon: HelpCircle, component: Faq }
-  // ];
+  const contactData = [
+    {
+      title: "NBC Contact Centre",
+      phones: [
+        "+255 (0) 768 984 000",
+        "+255 (0) 222 193 000",
+        "+255 (0) 225 511 000",
+        "0800711177 (Free)"
+      ],
+      address: {
+        company: "NBC Ltd. Head Office",
+        street: "Sokoine Drive & Azikiwe Street",
+        poBox: "P.O. Box 1863, Dar es Salaam,",
+        city: "Tanzania"
+      },
+      email: "contact.centre@nbc.co.tz"
+    },
+    {
+      title: "NBC Contact Centre",
+      phones: [
+        "+255 (0) 768 984 000",
+        "+255 (0) 222 193 000",
+        "+255 (0) 225 511 000",
+        "0800711177 (Free)"
+      ],
+      address: {
+        company: "NBC Ltd. Head Office",
+        street: "Sokoine Drive & Azikiwe Street",
+        poBox: "P.O. Box 1863, Dar es Salaam,",
+        city: "Tanzania"
+      },
+      email: "contact.centre@nbc.co.tz"
+    },
+    {
+      title: "NBC Contact Centre",
+      phones: [
+        "+255 (0) 768 984 000",
+        "+255 (0) 222 193 000",
+        "+255 (0) 225 511 000",
+        "0800711177 (Free)"
+      ],
+      address: {
+        company: "NBC Ltd. Head Office",
+        street: "Sokoine Drive & Azikiwe Street",
+        poBox: "P.O. Box 1863, Dar es Salaam,",
+        city: "Tanzania"
+      },
+      email: "contact.centre@nbc.co.tz"
+    },
+    {
+      title: "NBC Contact Centre",
+      phones: [
+        "+255 (0) 768 984 000",
+        "+255 (0) 222 193 000",
+        "+255 (0) 225 511 000",
+        "0800711177 (Free)"
+      ],
+      address: {
+        company: "NBC Ltd. Head Office",
+        street: "Sokoine Drive & Azikiwe Street",
+        poBox: "P.O. Box 1863, Dar es Salaam,",
+        city: "Tanzania"
+      },
+      email: "contact.centre@nbc.co.tz"
+    },
+    {
+      title: "NBC Contact Centre",
+      phones: [
+        "+255 (0) 768 984 000",
+        "+255 (0) 222 193 000",
+        "+255 (0) 225 511 000",
+        "0800711177 (Free)"
+      ],
+      address: {
+        company: "NBC Ltd. Head Office",
+        street: "Sokoine Drive & Azikiwe Street",
+        poBox: "P.O. Box 1863, Dar es Salaam,",
+        city: "Tanzania"
+      },
+      email: "contact.centre@nbc.co.tz"
+    },
+    {
+      title: "NBC Contact Centre",
+      phones: [
+        "+255 (0) 768 984 000",
+        "+255 (0) 222 193 000",
+        "+255 (0) 225 511 000",
+        "0800711177 (Free)"
+      ],
+      address: {
+        company: "NBC Ltd. Head Office",
+        street: "Sokoine Drive & Azikiwe Street",
+        poBox: "P.O. Box 1863, Dar es Salaam,",
+        city: "Tanzania"
+      },
+      email: "contact.centre@nbc.co.tz"
+    }
+  ];
 
   return (
     <>
@@ -61,7 +152,7 @@ function CallToAction() {
           {/* Tab Content */}
           <div className="relative">
             <TabsContent value="talktous">
-              <TalktoUs />
+              <TalktoUs contacts={contactData} />
             </TabsContent>
 
             <TabsContent value="feedback">

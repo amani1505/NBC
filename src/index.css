@@ -27,13 +27,10 @@
 
   --color-nbc-dark-500: oklch(0.1265 0.2025 273.72);  
   --color-nbc-dark-600: oklch(0.2076 0.2917 273.47);  
-  --color-nbc-dark-700: oklch(0.2078 0.1832 276.65);
-
-  --color-nbc-dark-800: oklch(0.3063 0.1535 163.32);  
-  --color-nbc-dark-900: oklch(0.2552 0.1243 165.01);
-  
-  
-  --color-nbc-dark-950: oklch(0.2867 0.2469 275.02); 
+  --color-nbc-dark-700: #172960;
+  --color-nbc-dark-800: #1a2e6e;  
+  --color-nbc-dark-900: #1e347b;
+    --color-nbc-dark-950: #213a89; 
   
   
   /* SLATE COLOR */
@@ -201,4 +198,12 @@ body {
   outline: none !important;
   box-shadow: none !important;
   border-color: inherit !important;
+}
+
+
+.section-title{
+  @apply text-nbc-dark-950 text-[48px] font-[700]
+}
+.section-subtitle{
+  @apply text-[18px] text-[#4B5563] mb-5;
 }

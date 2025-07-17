@@ -20,6 +20,9 @@ function SolutionCard({
   compareLink?: string;
   description: string;
 }) {
+
+
+
   return (
     <Card className="!p-0 transition-transform duration-300 hover:scale-105">
       <CardHeader className="!px-0">
@@ -47,7 +50,7 @@ function SolutionCard({
           </Link>
         )}
         <Link
-          to={learnMoreLink ?? "/"}
+          to={learnMoreLink}
           className={
             `text-white hover:text-white bg-nbc-dark-600 font-[500] hover:bg-nbc-dark-500 flex rounded px-4 py-3 items-center justify-center ` +
             (compareLink ? "w-full" : "w-auto")

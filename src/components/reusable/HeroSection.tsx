@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import Autoplay from "embla-carousel-autoplay";
-import { Button } from "@/components/ui/button";
+import Button  from "@/components/ui/button";
 import {
   Carousel,
   CarouselContent,
@@ -185,7 +185,7 @@ function HeroSection({
           ))}
         </CarouselContent>
         <CarouselContext.Provider value={contextValue}>
-          <CarouselDots />
+          {slides.length > 1 && <CarouselDots />}
         </CarouselContext.Provider>
       </Carousel>
       {hasForex && (

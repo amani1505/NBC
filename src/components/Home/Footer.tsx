@@ -1,4 +1,4 @@
-import { Button } from "../ui/button";
+import Button  from "../ui/button";
 import { Input } from "../ui/input";
 import { Twitter, Facebook, Linkedin } from "lucide-react";
 import React from "react";

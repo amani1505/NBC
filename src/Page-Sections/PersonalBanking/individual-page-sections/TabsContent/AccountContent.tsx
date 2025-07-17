@@ -1,4 +1,5 @@
 
+import { slugify } from '@/lib/utils';
 import SolutionCard from '@/Page-Sections/Home/BankSolution/SolutionCard';
 import { motion } from 'framer-motion';
 
@@ -69,7 +70,7 @@ function AccountContent() {
           image={solution.image}
           title={solution.title}
           description={solution.description}
-          learnMoreLink={solution.href}
+          learnMoreLink={`/personal-banking/${slugify(solution.title)}`}
           compareLink={solution.compareLink}
         
         />
