@@ -1,8 +1,9 @@
+import { slugify } from "@/lib/utils";
 import SolutionCard from "@/Page-Sections/Home/BankSolution/SolutionCard";
 import { motion } from "framer-motion";
 
-function WayToBankContent() {
-  const solutions = [
+function LoanContent() {
+  const loans = [
     {
       id: "1",
       title: "NBC Bank Honors Yanga SC as 2024/25 NBC Premier League Champions",
@@ -46,25 +47,28 @@ function WayToBankContent() {
   ];
 
   return (
-    <motion.div
-      key="business"
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -20 }}
-      transition={{ duration: 0.3 }}
-      className="grid grid-cols-3 gap-5"
-    >
-      {solutions.map((solution) => (
+    <motion.div 
+    key="business"
+    initial={{ opacity: 0, y: 20 }}
+    animate={{ opacity: 1, y: 0 }}
+    exit={{ opacity: 0, y: -20 }}
+    transition={{ duration: 0.3 }}
+    className="grid grid-cols-3 gap-5">{
+      loans.map((loan) => (
         <SolutionCard
-          key={solution.id}
-          image={solution.image}
-          title={solution.title}
-          description={solution.description}
-          learnMoreLink={solution.href}
+          key={loan.id}
+          image={loan.image}
+          title={loan.title}
+          description={loan.description}
+          learnMoreLink={`/loans/${slugify(loan.title)}`}
+        
         />
-      ))}
+      ))
+      
+      }
+  
     </motion.div>
   );
 }
 
-export default WayToBankContent;
+export default LoanContent;

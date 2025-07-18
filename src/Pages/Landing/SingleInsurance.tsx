@@ -1,6 +1,7 @@
+import ModalProvider from "@/Context/ModalContext";
 import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 import { deslugify } from "@/lib/utils";
-import SingleInsurancePageSection from "@/Page-Sections/PersonalBanking/SingleInsurancePageSection/SingleInsurancePageSection";
+import SingleInsurancePageSection from "@/Page-Sections/Insurance/SingleInsurancePageSection/SingleInsurancePageSection";
 import { useParams } from "react-router-dom";
 
 function SingleInsurance() {
@@ -11,7 +12,11 @@ function SingleInsurance() {
 
   useDocumentTitle(`NBC | ${readableTitle}`);
 
-  return <SingleInsurancePageSection />;
+  return (
+    <ModalProvider>
+      <SingleInsurancePageSection />
+    </ModalProvider>
+  );
 }
 
 export default SingleInsurance;

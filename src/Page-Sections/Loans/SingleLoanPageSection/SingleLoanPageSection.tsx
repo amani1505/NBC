@@ -5,7 +5,7 @@ import { deslugify } from "@/lib/utils";
 import { useParams } from "react-router-dom";
 import LoanAccordion from "./sections/loanAccordion";
 import CallToActionBanner from "@/components/sections/CallToActionBanner";
-import FAQ from "../SingleAccountPageSection/sections/Faq";
+import FAQ from "../../Accounts/SingleAccountPageSection/sections/Faq";
 import RecentProductSection, { type Product } from "@/components/sections/RecentProductSection";
 import { LoanStatistics } from "./sections/LoanStatistics";
 import LoanCalculator from "./sections/LoanCalculator";

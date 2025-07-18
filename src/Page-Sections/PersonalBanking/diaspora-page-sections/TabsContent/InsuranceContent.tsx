@@ -65,7 +65,7 @@ function InsuranceContent() {
           image={insurance.image}
           title={insurance.title}
           description={insurance.description}
-          learnMoreLink={`/personal-banking/insurances/${slugify(insurance.title)}`}
+          learnMoreLink={`/insurances/${slugify(insurance.title)}`}
         
         />
       ))

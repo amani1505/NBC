@@ -4,11 +4,11 @@ import { deslugify } from "@/lib/utils";
 import type { Product } from "@/components/sections/RecentProductSection";
 import ContactForm from "@/components/sections/ContactForm";
 import HeroSection from "@/components/reusable/HeroSection";
-import FAQ from "../SingleAccountPageSection/sections/Faq";
+import FAQ from "../../Accounts/SingleAccountPageSection/sections/Faq";
 import CallToActionBanner from "@/components/sections/CallToActionBanner";
 import RecentProductSection from "@/components/sections/RecentProductSection";
 import InsuranceAccordion from "./section/insuranceAccordion";
-import WhyChoose from "../SingleAccountPageSection/sections/WhyChoose";
+import WhyChoose from "../../Accounts/SingleAccountPageSection/sections/WhyChoose";
 
 function SingleInsurancePageSection() {
   const { insuranceName } = useParams();

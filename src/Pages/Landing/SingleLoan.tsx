@@ -1,6 +1,7 @@
+import ModalProvider from "@/Context/ModalContext";
 import { useDocumentTitle } from "@/hooks/useDocumentTitle";
 import { deslugify } from "@/lib/utils";
-import SingleLoanPageSection from "@/Page-Sections/PersonalBanking/SingleLoanPageSection/SingleLoanPageSection";
+import SingleLoanPageSection from "@/Page-Sections/Loans/SingleLoanPageSection/SingleLoanPageSection";
 import { useParams } from "react-router-dom";
 
 function SingleLoan() {
@@ -9,7 +10,11 @@ function SingleLoan() {
 
   useDocumentTitle(`NBC | ${readableTitle}`);
 
-  return <SingleLoanPageSection />;
+  return (
+    <ModalProvider>
+      <SingleLoanPageSection />
+    </ModalProvider>
+  );
 }
 
 export default SingleLoan;

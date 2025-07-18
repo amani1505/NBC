@@ -65,7 +65,7 @@ function WayToBankContent() {
           image={wayToBank.image}
           title={wayToBank.title}
           description={wayToBank.description}
-          learnMoreLink={`/personal-banking/way-to-bank/${slugify(wayToBank.title)}`}
+          learnMoreLink={`/way-to-bank/${slugify(wayToBank.title)}`}
         
         />
       ))

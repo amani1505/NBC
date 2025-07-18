@@ -61,7 +61,7 @@ function LoanContent() {
           image={loan.image}
           title={loan.title}
           description={loan.description}
-          learnMoreLink={`/personal-banking/loans/${slugify(loan.title)}`}
+          learnMoreLink={`/loans/${slugify(loan.title)}`}
         />
       ))}
     </motion.div>

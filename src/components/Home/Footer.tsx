@@ -94,7 +94,7 @@ function Footer() {
           <div className="flex gap-5 justify-end">
             <Input
               placeholder="Enter your email to subscribe to our newsletter "
-              className="!bg-nbc-dark-200 w-100 border-[var(--border-primary)] text-white"
+              className="!bg-nbc-dark-700 w-100 border border-[#D3D8E7] text-white placeholder:text-[#9CA3AF]"
             />
             <div>
               <Button className="bg-white hover:bg-white text-nbc-dark-950 font-[600]">

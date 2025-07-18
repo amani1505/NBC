@@ -57,7 +57,7 @@ export default function MainNavigation() {
   };
 
   return (
-    <header className="w-full bg-background border-nav-border border-b-[4px] border-[#DD0A14] py-2 relative">
+    <header className="w-full  border-nav-border border-b-[4px] border-[#DD0A14] py-2 fixed bg-white z-[10000]">
       {/* Third Level Full Width Dropdown - Moved outside nav container */}
       {activeThirdLevel && (
         <div
@@ -171,7 +171,7 @@ export default function MainNavigation() {
                   src="/images/logo.svg"
                   alt="NBC Logo"
                   width={90}
-                  height={100}
+                  height={100}className="z-[10000000]"
                 />
               </div>
             </div>
@@ -315,10 +315,11 @@ export default function MainNavigation() {
 
             {/* Right Side Actions */}
             <div className="hidden lg:flex items-center space-x-4">
-              {actionButtons.map((actionButton) => (
-                <div key={actionButton.label}>
+              {/* Render action buttons except Login */}
+              {actionButtons.filter(btn => btn.label !== 'Login').map((actionButton) => (
+                <div key={actionButton.label} >
                   {actionButton.items ? (
-                    <DropdownMenu>
+                    <DropdownMenu >
                       <DropdownMenuTrigger asChild>
                         <Button
                           variant={actionButton.variant}
@@ -335,7 +336,7 @@ export default function MainNavigation() {
                           <ChevronDown className="h-4 w-4 ml-1" />
                         </Button>
                       </DropdownMenuTrigger>
-                      <DropdownMenuContent>
+                      <DropdownMenuContent className="z-[10000000]">
                         {actionButton.items.map((item) => (
                           <DropdownMenuItem
                             key={item.label}
@@ -360,11 +361,57 @@ export default function MainNavigation() {
                 </div>
               ))}
 
-              {/* Search */}
+              {/* Search Bar before Login button */}
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input placeholder="Search" className="w-48 pl-10 h-9" />
               </div>
+
+              {/* Render Login button last */}
+              {actionButtons.filter(btn => btn.label === 'Login').map((actionButton) => (
+                <div key={actionButton.label} >
+                  {actionButton.items ? (
+                    <DropdownMenu >
+                      <DropdownMenuTrigger asChild>
+                        <Button
+                          variant={actionButton.variant}
+                          size="sm"
+                          className={
+                            actionButton.variant === "default"
+                              ? "bg-nbc-dark-700 hover:bg-nbc-dark-500"
+                              : "text-nav-text hover:text-nav-text-hover"
+                          }
+                        >
+                          {actionButton.icon &&
+                            renderIcon(actionButton.icon, "h-4 w-4 mr-2")}
+                          {actionButton.label}
+                          <ChevronDown className="h-4 w-4 ml-1" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent className="z-[10000000]">
+                        {actionButton.items.map((item) => (
+                          <DropdownMenuItem
+                            key={item.label}
+                            onClick={closeAllDropdowns}
+                          >
+                            {item.label}
+                          </DropdownMenuItem>
+                        ))}
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  ) : (
+                    <Button
+                      variant={actionButton.variant}
+                      size="sm"
+                      className="text-nav-text hover:text-nav-text-hover"
+                    >
+                      {actionButton.icon &&
+                        renderIcon(actionButton.icon, "h-4 w-4 mr-2")}
+                      {actionButton.label}
+                    </Button>
+                  )}
+                </div>
+              ))}
             </div>
 
             {/* Mobile menu button */}

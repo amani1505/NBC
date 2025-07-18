@@ -189,12 +189,14 @@ export default function LoanCalculator({ onApply }: LoanCalculatorProps) {
               </p>
             </div>
 
-            <Button
+      <div className="px-20">
+      <Button
               onClick={handleApply}
               className="w-full mt-6 border border-white hover:bg-white hover:text-nbc-dark-800 bg-transparent transition-all ease-in-out duration-300 cursor-pointer"
             >
               Apply For Home Loan
             </Button>
+      </div>
           </div>
         </Card>
       </div>

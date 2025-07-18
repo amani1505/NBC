@@ -56,6 +56,8 @@ const HowToGetItList = ({ items, title }: { items: string[]; title: string }) =>
 );
 
 export default function FeaturesComparison({ featureSection, howToGetItSection }: FeaturesComparisonProps) {
+
+  
   return (
     <section className="py-16 px-4 bg-background">
       <div className="max-w-6xl mx-auto">

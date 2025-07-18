@@ -1,7 +1,4 @@
 import { useState } from 'react';
-import { Card } from '@/components/ui/card';
-import  Button  from '@/components/ui/button';
-import { Play, Hexagon, Circle, Square, Triangle, Star, Zap } from 'lucide-react';
 
 interface VideoOverviewProps {
   title?: string;
@@ -18,25 +15,25 @@ export const VideoOverview = ({
 }: VideoOverviewProps) => {
   const [isPlaying, setIsPlaying] = useState(false);
 
-  const handlePlayClick = () => {
-    setIsPlaying(true);
-    if (onPlayVideo) {
-      onPlayVideo();
-    }
-  };
+  // const handlePlayClick = () => {
+  //   setIsPlaying(true);
+  //   if (onPlayVideo) {
+  //     onPlayVideo();
+  //   }
+  // };
 
-  const GeometricIcons = () => (
-    <>
-      <Hexagon className="absolute top-8 left-8 w-8 h-8 text-white/20" />
-      <Circle className="absolute top-16 right-12 w-6 h-6 text-white/20" />
-      <Square className="absolute bottom-20 left-12 w-7 h-7 text-white/20" />
-      <Triangle className="absolute top-24 left-1/3 w-6 h-6 text-white/20" />
-      <Star className="absolute bottom-16 right-16 w-8 h-8 text-white/20" />
-      <Zap className="absolute top-12 right-1/4 w-6 h-6 text-white/20" />
-      <Hexagon className="absolute bottom-24 left-1/4 w-5 h-5 text-white/20" />
-      <Circle className="absolute top-32 right-1/3 w-4 h-4 text-white/20" />
-    </>
-  );
+  // const GeometricIcons = () => (
+  //   <>
+  //     <Hexagon className="absolute top-8 left-8 w-8 h-8 text-white/20" />
+  //     <Circle className="absolute top-16 right-12 w-6 h-6 text-white/20" />
+  //     <Square className="absolute bottom-20 left-12 w-7 h-7 text-white/20" />
+  //     <Triangle className="absolute top-24 left-1/3 w-6 h-6 text-white/20" />
+  //     <Star className="absolute bottom-16 right-16 w-8 h-8 text-white/20" />
+  //     <Zap className="absolute top-12 right-1/4 w-6 h-6 text-white/20" />
+  //     <Hexagon className="absolute bottom-24 left-1/4 w-5 h-5 text-white/20" />
+  //     <Circle className="absolute top-32 right-1/3 w-4 h-4 text-white/20" />
+  //   </>
+  // );
 
   return (
     <div className="w-full  mx-auto mb-20">
@@ -49,6 +46,7 @@ export const VideoOverview = ({
         </p>
       </div>
 
+      
       {/* <Card className="relative bg-teal-400 overflow-hidden shadow-card-custom mb-6">
         <div className="relative aspect-video">
           <GeometricIcons />
@@ -83,18 +81,37 @@ export const VideoOverview = ({
             </div>
           </div>
         </div>
-      </Card> */}
+      </Card>  */}
 
       {videoUrl && isPlaying && (
         <div className="mb-6">
-          <video 
-            controls 
-            autoPlay 
-            className="w-full rounded-lg shadow-card-custom"
-            src={videoUrl}
-          >
-            Your browser does not support the video tag.
-          </video>
+          {videoUrl.includes("youtube.com") || videoUrl.includes("youtu.be") ? (
+            <iframe
+              width="100%"
+              height="600"
+              className="w-full rounded-lg shadow-card-custom"
+              src={
+                videoUrl.includes("embed")
+                  ? videoUrl
+                  : videoUrl.includes("youtu.be")
+                  ? `https://www.youtube.com/embed/${videoUrl.split("/").pop()}`
+                  : `https://www.youtube.com/embed/${new URL(videoUrl).searchParams.get("v")}`
+              }
+              title="YouTube video player"
+              frameBorder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+              allowFullScreen
+            ></iframe>
+          ) : (
+            <video 
+              controls 
+              autoPlay 
+              className="w-full rounded-lg shadow-card-custom"
+              src={videoUrl}
+            >
+              Your browser does not support the video tag.
+            </video>
+          )}
         </div>
       )}
     </div>

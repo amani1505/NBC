@@ -1,7 +1,8 @@
 import { useParams } from "react-router-dom";
 import { deslugify } from "@/lib/utils";
 import { useDocumentTitle } from "@/hooks/useDocumentTitle";
-import SingleAccountPageSection from "@/Page-Sections/PersonalBanking/SingleAccountPageSection/SingleAccountPageSection";
+import SingleAccountPageSection from "@/Page-Sections/Accounts/SingleAccountPageSection/SingleAccountPageSection";
+import ModalProvider from "@/Context/ModalContext";
 
 function SingleAccount() {
   const { accountName } = useParams();
@@ -11,7 +12,13 @@ function SingleAccount() {
 
   useDocumentTitle(`NBC | ${readableTitle}`);
 
-  return <SingleAccountPageSection />;
+  return( 
+    <ModalProvider>
+
+      <SingleAccountPageSection />
+    </ModalProvider>
+  );
+  
 }
 
 export default SingleAccount;

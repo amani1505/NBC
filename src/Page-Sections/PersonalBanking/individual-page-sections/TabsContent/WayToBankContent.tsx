@@ -3,7 +3,7 @@ import SolutionCard from "@/Page-Sections/Home/BankSolution/SolutionCard";
 import { motion } from "framer-motion";
 
 function WayToBankContent() {
-  const solutions = [
+  const waysToBank = [
     {
       id: "1",
       title: "NBC Bank Honors Yanga SC as 2024/25 NBC Premier League Champions",
@@ -55,13 +55,13 @@ function WayToBankContent() {
       transition={{ duration: 0.3 }}
       className="grid grid-cols-3 gap-5"
     >
-      {solutions.map((wayToBank) => (
+      {waysToBank.map((wayToBank) => (
         <SolutionCard
           key={wayToBank.id}
           image={wayToBank.image}
           title={wayToBank.title}
           description={wayToBank.description}
-          learnMoreLink={`/personal-banking/way-to-bank/${slugify(
+          learnMoreLink={`/way-to-bank/${slugify(
             wayToBank.title
           )}`}
         />
