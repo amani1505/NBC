@@ -12,7 +12,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-
 import { motion } from "framer-motion";
 
 function NewsSection() {
@@ -46,7 +45,7 @@ function NewsSection() {
     },
     {
       id: "4",
-      title: "NBC Bank Presents BMW X1 Car Prize to Winner of ",
+      title: "NBC Bank Presents BMW X1 Car Prize to Winner of",
       description: "Learn valuable techniques and strategies to manage",
       image: "/images/news4.jpg",
       category: "BEYOND BANKING",
@@ -56,26 +55,26 @@ function NewsSection() {
   ];
 
   return (
-    <section className="py-16">
-      <div className="container px-4 mx-auto">
+    <section className="py-8 sm:py-12 lg:py-16">
+      <div className="container px-4 sm:px-6 lg:px-8 mx-auto">
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="mb-5 flex items-center justify-between"
+          className="mb-6 sm:mb-8 lg:mb-10 flex flex-col sm:flex-row items-center justify-between gap-4"
         >
           <div>
-            <h2 className="mb-4 text-4xl font-bold text-nbc-dark-950 md:text-md">
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-nbc-dark-950 mb-2 sm:mb-4">
               Get the latest news & Insights
             </h2>
-            <p className="text-[#262556]">
+            <p className="text-sm sm:text-base text-[#262556] max-w-prose">
               Explore how you can benefit from these
             </p>
           </div>
-          <div>
+          <div className="w-full sm:w-auto">
             <Select>
-              <SelectTrigger className="w-[180px]">
+              <SelectTrigger className="w-full sm:w-[180px]">
                 <SelectValue placeholder="News Status" />
               </SelectTrigger>
               <SelectContent>
@@ -88,8 +87,7 @@ function NewsSection() {
         </motion.div>
 
         {/* News Grid */}
-
-        <div className="grid grid-cols-1 gap-y-8 items-start lg:grid-cols-2 lg:gap-x-5">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 lg:gap-10 items-start">
           {/* Featured Article */}
           <motion.div
             initial={{ opacity: 0, x: -30 }}
@@ -102,33 +100,34 @@ function NewsSection() {
                 <img
                   src={newsItems[0].image}
                   alt="Featured news"
-                  className="object-cover w-full h-full rounded-t-xl"
+                  className="object-cover w-full h-48 sm:h-64 lg:h-80 rounded-t-xl"
                 />
-                {/* <div className="absolute inset-0 bg-gradient-to-t to-transparent from-black/60" /> */}
               </CardHeader>
-              <CardContent className="rounded-b-xl">
+              <CardContent className="rounded-b-xl px-4 sm:px-6 py-4">
                 <div className="mb-3 inline-flex">
-                  <div className="border flex gap-1 border-gray-400 rounded-full p-1 pr-4 text-[10px] items-center text-gray-400">
+                  <div className="border flex gap-1 border-gray-400 rounded-full p-1 pr-4 text-[10px] sm:text-xs items-center text-gray-400">
                     <div className="border border-gray-400 rounded-full py-1 px-2">
                       News
                     </div>
                     <div className="border border-gray-400 rounded-full py-1 px-2">
                       Press Release
                     </div>
-                    <div className=" rounded-full py-1 px-2">5 min Read</div>
+                    <div className="rounded-full py-1 px-2">5 min Read</div>
                   </div>
                 </div>
-                <h3 className="text-xl font-bold leading-relaxed text-nbc-dark-700">
+                <h3 className="text-lg sm:text-xl lg:text-2xl font-bold leading-relaxed text-nbc-dark-700">
                   {newsItems[0].title}
                 </h3>
-                <p className=" text-[12px] font-bold ">
+                <p className="text-xs sm:text-sm lg:text-base text-gray-900 line-clamp-3">
                   {newsItems[0].description}
                 </p>
               </CardContent>
-              <CardFooter className="mb-5">
-                <Button className=" text-white hover:text-white bg-nbc-dark-600 font-[600]">
+              <CardFooter className="px-4 sm:px-6 pb-4">
+                <Button
+                  className="text-white hover:text-white bg-nbc-dark-600 font-semibold hover:bg-nbc-dark-500 w-full sm:w-auto"
+                  size="lg"
+                >
                   {newsItems[0].date}
-                  {/* <ArrowRight className="ml-1 w-4 h-4" /> */}
                 </Button>
               </CardFooter>
             </Card>
@@ -145,27 +144,28 @@ function NewsSection() {
                 transition={{ delay: index * 0.2 }}
               >
                 <Card className="overflow-hidden !p-0">
-                  <div className="flex gap-5">
-                    <div className="">
-                      <img src={item.image} alt="" className="" />
+                  <div className="flex flex-col sm:flex-row gap-4 sm:gap-5">
+                    <div className="w-full sm:w-1/3">
+                      <img
+                        src={item.image}
+                        alt={item.title}
+                        className="object-cover w-full h-32 sm:h-24 lg:h-28 rounded-l-xl sm:rounded-r-none"
+                      />
                     </div>
-                    <CardContent className="!py-5 px-2 w-full">
+                    <CardContent className="!py-4 px-4 sm:px-5 w-full">
                       <div className="mb-3 inline-flex w-full">
-                        <div className="border flex gap-1 border-gray-400 rounded-full p-1 pr-4 text-[10px] items-center text-gray-400">
+                        <div className="border flex gap-1 border-gray-400 rounded-full p-1 pr-4 text-[10px] sm:text-xs items-center text-gray-400">
                           <div className="border border-gray-400 rounded-full py-1 px-2">
                             News
                           </div>
-
-                          <div className=" rounded-full py-1 px-2">
-                            5 min Read
-                          </div>
+                          <div className="rounded-full py-1 px-2">5 min Read</div>
                         </div>
                       </div>
                       <div className="w-full">
-                        <h3 className="text-xl font-bold leading-relaxed text-nbc-dark-700 ">
+                        <h3 className="text-base sm:text-lg lg:text-xl font-bold leading-relaxed text-nbc-dark-700">
                           {item.title}
                         </h3>
-                        <p className=" text-[12px]  text-gray-900 line-clamp-2">
+                        <p className="text-xs sm:text-sm text-gray-900 line-clamp-2">
                           {item.description}
                         </p>
                       </div>
@@ -182,12 +182,11 @@ function NewsSection() {
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="mt-5 text-center grid grid-cols-2"
+          className="mt-6 sm:mt-8 lg:mt-10 text-center"
         >
-          <div></div>
           <Button
             size="lg"
-            className="text-white hover:text-white bg-nbc-dark-600 font-[600] hover:bg-nbc-dark-500 "
+            className="text-white hover:text-white bg-nbc-dark-600 font-semibold hover:bg-nbc-dark-500 w-full sm:w-auto"
           >
             View All News
           </Button>
