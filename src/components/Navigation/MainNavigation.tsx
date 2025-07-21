@@ -57,7 +57,7 @@ export default function MainNavigation() {
   };
 
   return (
-    <header className="w-full  border-nav-border border-b-[4px] border-[#DD0A14] py-2 fixed bg-white z-[10000]">
+    <header className="w-full  border-nav-border border-b-[4px] border-[#DD0A14] py-2 sticky  z-[10000] bg-white">
       {/* Third Level Full Width Dropdown - Moved outside nav container */}
       {activeThirdLevel && (
         <div

@@ -210,7 +210,7 @@ function HeroSection({
                         {rate.code}:
                       </span>
                       <span className="ml-2">
-                        Buying {rate.buy} - Selling {rate.sell}
+                        Buying  <span className="text-green-500 font-bold"> {rate.buy}</span>   - Selling<span className="text-red-500 font-bold"> {rate.sell}</span>
                       </span>
                     </div>
                   ))}

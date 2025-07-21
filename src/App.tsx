@@ -27,6 +27,20 @@ const SingleLoan = lazy(() => import("./Pages/Landing/SingleLoan"));
 const WaytoBank = lazy(() => import("./Pages/Landing/WaytoBank"));
 const CompareAccount = lazy(() => import("./Pages/Landing/CompareAccount"));
 
+// ABOUT PAGES
+const About = lazy(() => import("./Pages/Landing/About/About"));
+const Overview = lazy(() => import("./Pages/Landing/About/Overview"));
+const Careers = lazy(() => import("./Pages/Landing/About/Careers"));
+const Governance = lazy(() => import("./Pages/Landing/About/Governance"));
+const InvestorRelations = lazy(
+  () => import("./Pages/Landing/About/InvestorRelations")
+);
+const News = lazy(() => import("./Pages/Landing/About/News"));
+const Sustainability = lazy(
+  () => import("./Pages/Landing/About/Sustainability")
+);
+const Tenders = lazy(() => import("./Pages/Landing/About/Tenders"));
+
 function App() {
   return (
     <BrowserRouter>
@@ -54,7 +68,21 @@ function App() {
           />
           <Route path="way-to-bank/:wayToBankName" element={<WaytoBank />} />
 
-          <Route path="compare-account/:compareAccountName" element={<CompareAccount />} />
+          <Route
+            path="compare-account/:compareAccountName"
+            element={<CompareAccount />}
+          />
+
+          <Route path="about" element={<About />}>
+            <Route index element={<Overview />} />
+
+            <Route path="careers" element={<Careers />} />
+            <Route path="governance" element={<Governance />} />
+            <Route path="investor-relations" element={<InvestorRelations />} />
+            <Route path="news" element={<News />} />
+            <Route path="sustainability" element={<Sustainability />} />
+            <Route path="tenders" element={<Tenders />} />
+          </Route>
 
           <Route path="error" element={<Error />} />
           <Route path="under-maintenance" element={<UnderMaintenance />} />

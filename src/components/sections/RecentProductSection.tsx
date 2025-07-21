@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import Button from "@/components/ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import ImageCard from "./ImageCard";
 
 
 
@@ -13,10 +14,6 @@ export interface Product {
   onLearnMore?: () => void;
 }
 
-interface ProductCardProps {
-  product: Product;
-  className?: string;
-}
 
 
 interface RelatedProductsProps {
@@ -131,7 +128,7 @@ function  RecentProductSection  ({
           } grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6`}
         >
           {getVisibleProducts().map((product, index) => (
-            <ProductCard
+            <ImageCard
               key={`${product.id}-${index}`}
               product={product}
               className="animate-fade-in"
@@ -176,40 +173,7 @@ function  RecentProductSection  ({
 
 
 
- const ProductCard = ({ product, className = "" }: ProductCardProps) => {
-  return (
-    <div className={`bg-product-card-bg border border-gray-300 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300 ${className}`}>
-      {/* Image Container */}
-      <div className="relative w-full h-64 overflow-hidden">
-        <img
-          src={product.image}
-          alt={product.title}
-          className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
-        />
-      </div>
-      
-      {/* Content */}
-      <div className="p-6 space-y-4">
-        <h3 className="text-lg font-semibold text-foreground leading-tight">
-          {product.title}
-        </h3>
-        
-        <p className="text-muted-foreground text-sm leading-relaxed line-clamp-2">
-          {product.description}
-        </p>
-        
-        <Button
-          variant="default"
-          className="w-full sm:w-auto"
-          onClick={product.onLearnMore}
-        >
-          {product.buttonText || "Learn more"}
-          <ChevronRight className="ml-1 h-4 w-4" />
-        </Button>
-      </div>
-    </div>
-  );
-};
+
 
 
 

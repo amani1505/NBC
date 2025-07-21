@@ -36,7 +36,7 @@ function WaytoBankPageSection() {
        <HeroSection slides={slides} hasForex={false} />
        <div className="container mx-auto py-16 ">
        <VideoOverview onPlayVideo={handleVideoPlay} videoUrl="https://www.youtube.com/watch?v=q2rUTg-0Fk4"/>
-      <WayToBankAccordion />
+        <WayToBankAccordion />
        </div>
      
     </>
