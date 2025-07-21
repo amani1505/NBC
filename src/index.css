@@ -203,8 +203,8 @@ body {
 
 
 .section-title{
-  @apply text-nbc-dark-950 text-[48px] font-[700]
+  @apply text-2xl sm:text-3xl lg:text-4xl font-bold text-center mb-2 sm:mb-4 leading-tight sm:leading-snug lg:leading-normal text-nbc-dark-950
 }
 .section-subtitle{
-  @apply text-[18px] text-[#4B5563] mb-5;
+  @apply text-sm sm:text-base lg:text-lg text-center  mx-auto  leading-relaxed sm:leading-relaxed lg:leading-loose text-[#4B5563]  mb-5;
 }
