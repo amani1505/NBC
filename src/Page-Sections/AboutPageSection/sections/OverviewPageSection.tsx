@@ -36,17 +36,15 @@ function OverviewPageSection() {
 
   return (
     <>
-      <div className="container mx-auto px-44">
+      <div className="container mx-auto md:px-44">
         <HeadingPart
           title="Our History"
           subtitle={`A visual guide could be a wireframe, creative composition, or information architecture. A device that enables collaboration will lessen the chance of work having to be completely redone. A manager could create a visual guide for the team to complete the build-out.\n
-
 A visual guide could be a wireframe, creative composition, or information architecture. A device that enables collaboration will lessen the chance of work having to be completely redone. A manager could create a visual guide for the team to complete the build-out.A visual guide could be a wireframe, creative composition, or information architecture. A device that enables collaboration will lessen the chance of work having to be completely redone. A manager could create a visual guide for the team to complete the build-out.\n
-
 A visual guide could be a wireframe, creative composition, or information architecture. A device that enables collaboration will lessen the chance of work having to be completely redone. A manager could create a visual guide for the team to complete the build-out.A visual guide could be a wireframe, creative composition, or information architecture. A device that enables collaboration will lessen the chance of work having to be completely redone. A manager could create a visual guide for the team to complete the build-out.`}
         />
       </div>
-      <div className="px-44">
+      <div className="md:px-44">
         <MissionVision />
       </div>
 
@@ -63,7 +61,7 @@ A visual guide could be a wireframe, creative composition, or information archit
 
       <div className="my-20 bg-nbc-dark-700">
         <div className="container mx-auto py-10 ">
-          <div className="grid grid-cols-3 gap-10">
+          <div className="grid md:grid-cols-3 gap-10">
             {recentProducts?.map((product, index) => (
               <div key={index}>
                 <ImageCard product={product} />

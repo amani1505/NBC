@@ -1,9 +1,8 @@
-import Button  from "../ui/button";
+import Button from "../ui/button";
 import { Input } from "../ui/input";
 import { Twitter, Facebook, Linkedin } from "lucide-react";
 
-
-const footerLinkPaths: Record<string, string> = {
+const footerLinkPaths = {
   // Banking Solution
   "Personal Banking": "/personal-banking",
   "Business Banking": "/business-banking",
@@ -85,36 +84,38 @@ function Footer() {
   ];
 
   return (
-    <div className="bg-nbc-dark-500 border-t-2 border-[#DD0A14] ">
-      <div className="container w-full mx-auto py-5">
-        <div className="flex justify-between items-center">
-          <div className="bg-white rounded-b-[13.58px] rounded-tr-[12.61px] px-2 ">
-            <img src="/images/logo.svg" alt="" width={80} />
+    <div className="bg-nbc-dark-500 border-t-2 border-[#DD0A14]">
+      <div className="container w-full mx-auto px-4 py-5">
+        {/* Header Section - Logo and Newsletter */}
+        <div className="flex flex-col lg:flex-row lg:justify-between lg:items-center gap-4 mb-6">
+          <div className="bg-white rounded-b-[13.58px] rounded-tr-[12.61px] px-2 w-fit">
+            <img src="/images/logo.svg" alt="NBC Logo" width={80} />
           </div>
-          <div className="flex gap-5 justify-end">
+          <div className="flex flex-col sm:flex-row gap-3 lg:justify-end w-full lg:w-auto">
             <Input
-              placeholder="Enter your email to subscribe to our newsletter "
-              className="!bg-nbc-dark-700 w-100 border border-[#D3D8E7] text-white placeholder:text-[#9CA3AF]"
+              placeholder="Enter your email to subscribe to our newsletter"
+              className="!bg-nbc-dark-700 w-full sm:w-80 border border-[#D3D8E7] text-white placeholder:text-[#9CA3AF]"
             />
-            <div>
-              <Button className="bg-white hover:bg-white text-nbc-dark-950 font-[600]">
-                Subscribe
-              </Button>
-            </div>
+            <Button className="bg-white hover:bg-white text-nbc-dark-950 font-[600] w-full sm:w-auto">
+              Subscribe
+            </Button>
           </div>
         </div>
-        <div className="h-[1px] bg-gray-500 my-4"></div>
-        <div className="flex justify-between">
+
+        <div className="h-[1px] bg-gray-500 mb-6"></div>
+
+        {/* Links Section */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 lg:gap-8 mb-8">
           {footerSections.map((section, index) => (
-            <div key={index}>
-              <h5 className="uppercase text-[#81BEDB] font-[700] mb-5">
+            <div key={index} className="space-y-4">
+              <h5 className="uppercase text-[#81BEDB] font-[700] text-sm">
                 {section.title}
               </h5>
-              <ul className="text-white space-y-5">
+              <ul className="text-white space-y-3">
                 {section.items.map((item, itemIndex) => (
                   <li key={itemIndex} className="text-xs">
                     <a
-                      href={footerLinkPaths[item] || "#"}
+                      href={footerLinkPaths[item as keyof typeof footerLinkPaths] || "#"}
                       className="hover:underline hover:text-[#81BEDB] transition-colors"
                     >
                       {item}
@@ -122,36 +123,34 @@ function Footer() {
                   </li>
                 ))}
               </ul>
+              
+              {/* App Store Downloads - only for Micro Sites section */}
               {section.hasIcon && (
-                <div>
-                  <h5 className="uppercase text-[#81BEDB] font-[700] mt-5 mb-3">
-                    {section.title}
+                <div className="mt-6">
+                  <h5 className="uppercase text-[#81BEDB] font-[700] text-sm mb-3">
+                    Download Our App
                   </h5>
-                  <div className="flex gap-3">
-                    <div className="flex items-center bg-black text-white rounded-lg px-4 py-1 gap-4">
-                      <div className="">
-                        <img
-                          src="/images/GooglePlaylogo.svg"
-                          alt=""
-                          className="w-8"
-                        />
-                      </div>
-                      <div className="">
-                        <p className="uppercase text-sm">get it on</p>
-                        <p className="capitalize font-[600]">google play</p>
+                  <div className="flex flex-col sm:flex-row gap-3">
+                    <div className="flex items-center bg-black text-white rounded-lg px-3 py-2 gap-3">
+                      <img
+                        src="/images/GooglePlaylogo.svg"
+                        alt="Google Play"
+                        className="w-6 h-6"
+                      />
+                      <div>
+                        <p className="uppercase text-xs">get it on</p>
+                        <p className="capitalize font-[600] text-sm">google play</p>
                       </div>
                     </div>
-                    <div className="flex items-center bg-black text-white rounded-lg px-4 py-1 gap-4">
-                      <div className="uppercase">
-                        <img
-                          src="/images/Applestore-white.svg"
-                          alt=""
-                          className="w-8"
-                        />
-                      </div>
-                      <div className="">
-                        <p className="font-[500] text-sm">Download on the</p>
-                        <p className="capitalize font-[600]">App store</p>
+                    <div className="flex items-center bg-black text-white rounded-lg px-3 py-2 gap-3">
+                      <img
+                        src="/images/Applestore-white.svg"
+                        alt="App Store"
+                        className="w-6 h-6"
+                      />
+                      <div>
+                        <p className="font-[500] text-xs">Download on the</p>
+                        <p className="capitalize font-[600] text-sm">App store</p>
                       </div>
                     </div>
                   </div>
@@ -160,32 +159,42 @@ function Footer() {
             </div>
           ))}
         </div>
-      
-        <div className="border-t-2 border-gray-500 py-5 mt-5 text-gray-200 text-sm">
-          <div className="flex justify-between items-center">
-            <p>&copy; NBC - {new Date().getFullYear()}</p>
-            <p>
-              National Bank of Commerce Limited (registerd number 32700) is
-              regulated by the Bank of Tanzania
-            </p>
-            <p>Data Privacy Statement</p>
-            <p>Terms & Condition</p>
-            <p>Website Terms of use</p>
 
-         
-          <a href="https://x.com" target="_blank" rel="noopener noreferrer">
-            <Twitter className="text-white h-6 w-6 hover:text-[#81BEDB]" />
-          </a>
-          <a href="https://facebook.com" target="_blank" rel="noopener noreferrer">
-            <Facebook className="text-white h-6 w-6 hover:text-[#81BEDB]" />
-          </a>
-          <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer">
-            <Linkedin className="text-white h-6 w-6 hover:text-[#81BEDB]" />
-          </a>
-        
+        {/* Bottom Section */}
+        <div className="border-t-2 border-gray-500 pt-5">
+          <div className="flex flex-col lg:flex-row lg:justify-between lg:items-center gap-4 text-gray-200 text-xs">
+            {/* Copyright and Legal Links */}
+            <div className="flex flex-col lg:flex-row lg:items-center gap-2 lg:gap-4 flex-1">
+              <p className="whitespace-nowrap">&copy; NBC - {new Date().getFullYear()}</p>
+              <p className="text-xs leading-relaxed lg:max-w-md">
+                National Bank of Commerce Limited (registerd number 32700) is
+                regulated by the Bank of Tanzania
+              </p>
+              <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 text-xs">
+                <a href="/privacy" className="hover:text-[#81BEDB] transition-colors">
+                  Data Privacy Statement
+                </a>
+                <a href="/terms" className="hover:text-[#81BEDB] transition-colors">
+                  Terms & Condition
+                </a>
+                <a href="/website-terms" className="hover:text-[#81BEDB] transition-colors">
+                  Website Terms of use
+                </a>
+              </div>
+            </div>
 
-
-
+            {/* Social Media Icons */}
+            <div className="flex gap-4 justify-center lg:justify-end">
+              <a href="https://x.com" target="_blank" rel="noopener noreferrer">
+                <Twitter className="text-white h-5 w-5 hover:text-[#81BEDB] transition-colors" />
+              </a>
+              <a href="https://facebook.com" target="_blank" rel="noopener noreferrer">
+                <Facebook className="text-white h-5 w-5 hover:text-[#81BEDB] transition-colors" />
+              </a>
+              <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer">
+                <Linkedin className="text-white h-5 w-5 hover:text-[#81BEDB] transition-colors" />
+              </a>
+            </div>
           </div>
         </div>
       </div>
