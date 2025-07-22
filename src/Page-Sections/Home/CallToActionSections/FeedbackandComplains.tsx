@@ -1,27 +1,84 @@
-import { MessageSquare } from "lucide-react"
+import FeedbackForm from "@/components/sections/FeedbackForm";
+import Button from "@/components/ui/button";
+import { useState } from "react";
 
 function FeedbackandComplains() {
+  const [feedbackType, setFeedbackType] = useState<"feedback" | "complaint">(
+    "feedback"
+  );
+
+  const handleFeedbackTypeChange = (type: "feedback" | "complaint") => {
+    setFeedbackType(type);
+  };
+
   return (
-    <div className="space-y-6 animate-fade-in">
-    <div className="bg-gradient-to-r from-orange-50 to-red-50 p-8 rounded-2xl border border-orange-100">
+    <div className="space-y-6 animate-fade-in container">
       <div className="flex items-center gap-3 mb-4">
-        <MessageSquare className="text-orange-600 w-6 h-6" />
-        <h3 className="text-xl font-semibold text-gray-800">Share Your Experience</h3>
+        <Button
+          className={`${
+            feedbackType === "feedback"
+              ? "bg-nbc-dark-950 hover:bg-nbc-dark-800"
+              : "border border-gray-500 bg-transparent text-gray-500 hover:bg-nbc-dark-950 hover:text-white"
+          }`}
+          onClick={() => handleFeedbackTypeChange("feedback")}
+        >
+          FeedBack
+        </Button>
+        <Button
+          className={`${
+            feedbackType === "complaint"
+              ? "bg-nbc-dark-950 hover:bg-nbc-dark-800"
+              : "border border-gray-500 bg-transparent text-gray-500 hover:bg-nbc-dark-950 hover:text-white"
+          }`}
+          onClick={() => handleFeedbackTypeChange("complaint")}
+        >
+          Raise A Complain
+        </Button>
       </div>
-      <p className="text-gray-600 mb-6">Your feedback helps us improve our services and address any concerns.</p>
-      <div className="space-y-4">
-        <div className="bg-white p-4 rounded-xl shadow-sm hover:shadow-md transition-shadow">
-          <h4 className="font-medium text-gray-800 mb-2">Quick Feedback Form</h4>
-          <p className="text-sm text-gray-600">Rate your experience and leave suggestions</p>
+      {feedbackType === "feedback" && (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+          <div
+            className="rounded-lg "
+            style={{
+              backgroundImage: "url('/images/feedback.jpg')",
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+            }}
+          >
+            {/* <img src="/images/feedback.jpg" alt="" className="rounded-lg h-full w-full" /> */}
+          </div>
+          <div>
+            <h1 className="text-lg sm:text-3xl lg:text-xl font-bold text-nbc-dark-950">
+              Help Us Improve!
+            </h1>
+            <p className="text-sm sm:text-base lg:text-md mx-auto  leading-relaxed sm:leading-relaxed lg:leading-loose text-[#4B5563] mb-4">
+              Leave us a message and let us know what we can do to make your
+              experience better.
+            </p>
+            <FeedbackForm />
+          </div>
         </div>
-        <div className="bg-white p-4 rounded-xl shadow-sm hover:shadow-md transition-shadow">
-          <h4 className="font-medium text-gray-800 mb-2">Detailed Complaint</h4>
-          <p className="text-sm text-gray-600">Report specific issues for resolution</p>
+      )}
+      {feedbackType === "complaint" && (
+        <div className="w-full flex flex-col items-center justify-center p-2 gap-y-5  animate-fade-in">
+          <div>
+            <img src="/images/complaince.svg" alt="" />
+          </div>
+          <div>
+            <p className="text-nbc-dark-950 capitalize mb-2 font-[600]">
+              {" "}
+              please login to continue!
+            </p>
+            <div>
+              <Button className="bg-nbc-dark-950 hover:bg-nbc-dark-800 w-full">
+                Login
+              </Button>
+            </div>
+          </div>
         </div>
-      </div>
+      )}
     </div>
-  </div>
-  )
+  );
 }
 
-export default FeedbackandComplains
+export default FeedbackandComplains;

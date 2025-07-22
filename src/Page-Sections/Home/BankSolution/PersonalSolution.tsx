@@ -53,9 +53,7 @@ function PersonalSolution() {
     animate={{ opacity: 1, y: 0 }}
     exit={{ opacity: 0, y: -20 }}
     transition={{ duration: 0.3 }}
-    
-    
-    className="grid grid-cols-3 gap-5">{
+       className="grid grid-cols-1 md:grid-cols-3 gap-5">{
       solutions.map((solution) => (
         <SolutionCard
           key={solution.id}

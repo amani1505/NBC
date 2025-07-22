@@ -17,6 +17,7 @@ type OfferingSectionProps = {
   tabs: TabItem[];
   defaultTab?: string; // Optional default tab, falls back to first tab
   maxWidth?: string; // Optional max width for tabs container
+  hasContainer?:boolean;
 };
 
 function OfferingSection({ 
@@ -24,7 +25,8 @@ function OfferingSection({
   description, 
   tabs, 
   defaultTab,
-  maxWidth = "max-w-4xl"
+  maxWidth = "max-w-4xl",
+  hasContainer=true
 }: OfferingSectionProps) {
   // Use provided defaultTab or fallback to first tab's value
   const defaultValue = defaultTab || tabs[0]?.value;
@@ -97,7 +99,7 @@ function OfferingSection({
   }, []);
 
   return (
-    <div className="mx-auto px-4 sm:px-6 py-12 sm:py-16 container">
+    <div className={`mx-auto ${hasContainer ? "px-4 sm:px-6 py-12 sm:py-16 container":""}`}>
       {/* Header Section */}
       <div className="text-center mb-8 sm:mb-12">
         <h1 className="text-nbc-dark-950 text-2xl sm:text-3xl md:text-4xl lg:text-[48px] font-bold leading-tight mb-4">
@@ -198,7 +200,7 @@ function OfferingSection({
         {/* Tab Content */}
         <div className="relative">
           {tabs.map((tab) => (
-            <TabsContent key={tab.value} value={tab.value} className="mt-6 sm:mt-8">
+            <TabsContent key={tab.value} value={tab.value} className="mt-6 sm:mt-8 w-full">
               {tab.content}
             </TabsContent>
           ))}

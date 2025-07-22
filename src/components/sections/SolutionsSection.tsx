@@ -9,10 +9,10 @@ type SolutionsSectionProps = {
 function SolutionsSection({ title,description, cards }: SolutionsSectionProps) {
     return (
       <motion.div className="container mx-auto py-24 text-center">
-        <h1 className="text-nbc-dark-950 text-[48px] font-[700]">
+        <h1 className="section-title">
          {title}
         </h1>
-        <p className="text-[18px] text-[#4B5563] mb-5">
+        <p className="section-subtitle">
           {description}
         </p>
         <div>

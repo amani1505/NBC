@@ -1,32 +1,79 @@
-import { ArrowRight, HelpCircle } from "lucide-react"
+import NewsSidebar from "@/Page-Sections/AboutPageSection/Parts/News/NewsSidebar";
+import type { SideTabConfig } from "@/types/tabs";
+import { useState } from "react";
+import GeneralQuestions from "../FAQ/GeneralQuestions";
+import ProductQuestions from "../FAQ/ProductQuestions";
+import PaymentQuestion from "../FAQ/PaymentQuestion";
+import SupportQuestions from "../FAQ/SupportQuestions";
+import Troubleshooting from "../FAQ/Troubleshooting";
+import PrivacyQuestions from "../FAQ/PrivacyQuestions";
+import DiscountsQuestion from "../FAQ/DiscountsQuestion";
+import PromotionQuestions from "../FAQ/PromotionQuestions";
+
+const tabs: SideTabConfig[] = [
+  { name: "Genaral", component: GeneralQuestions },
+  { name: "Product", component: ProductQuestions },
+  {
+    name: "Payment",
+    component: PaymentQuestion,
+    filter: (a) => a.category === "Events",
+  },
+  {
+    name: "Support",
+    component: SupportQuestions,
+    filter: (a) => a.category === "Market Insights",
+  },
+  {
+    name: "Trobleshooting",
+    component: Troubleshooting,
+    filter: (a) => a.category === "Partnerships",
+  },
+  {
+    name: "Privacy",
+    component: PrivacyQuestions,
+    filter: (a) => a.category === "Media Centre",
+  },
+  {
+    name: "Discounts",
+    component: DiscountsQuestion,
+    filter: (a) => a.category === "Media Centre",
+  },
+  {
+    name: "Promotions",
+    component: PromotionQuestions,
+    filter: (a) => a.category === "Media Centre",
+  },
+];
 
 function Faq() {
+  const [selectedTab, setSelectedTab] = useState<string>("Genaral");
+  const [articles, setArticles] = useState<[]>([]);
+
+  const renderTabContent = () => {
+    const tab = tabs.find((t) => t.name === selectedTab);
+    if (!tab) return null;
+
+    const TabComponent = tab.component;
+    const filteredArticles = tab.filter
+      ? articles.filter(tab.filter)
+      : articles;
+
+    return <TabComponent articles={filteredArticles} />;
+  };
+
   return (
     <div className="space-y-6 animate-fade-in">
-    <div className="bg-gradient-to-r from-green-50 to-teal-50 p-8 rounded-2xl border border-green-100">
-      <div className="flex items-center gap-3 mb-4">
-        <HelpCircle className="text-green-600 w-6 h-6" />
-        <h3 className="text-xl font-semibold text-gray-800">Find Quick Answers</h3>
-      </div>
-      <p className="text-gray-600 mb-6">Browse through our most commonly asked questions and solutions.</p>
-      <div className="space-y-3">
-        {[
-          "How do I reset my password?",
-          "What payment methods do you accept?",
-          "How can I track my order?",
-          "What is your return policy?"
-        ].map((question, index) => (
-          <div key={index} className="bg-white p-4 rounded-xl shadow-sm hover:shadow-md transition-all hover:bg-gray-50 cursor-pointer group">
-            <div className="flex items-center justify-between">
-              <h4 className="font-medium text-gray-800">{question}</h4>
-              <ArrowRight className="w-4 h-4 text-gray-400 group-hover:text-gray-600 group-hover:translate-x-1 transition-all" />
-            </div>
-          </div>
-        ))}
+      <NewsSidebar
+        selectedTab={selectedTab}
+        onTabSelect={setSelectedTab}
+        tabs={tabs.map((t) => t.name)}
+      />
+
+      <div className="w-full p-4">
+        <section>{renderTabContent()}</section>
       </div>
     </div>
-  </div>
-  )
+  );
 }
 
-export default Faq
+export default Faq;

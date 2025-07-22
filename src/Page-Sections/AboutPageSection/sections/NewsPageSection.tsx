@@ -5,14 +5,24 @@ import EventsTabContent from "../Parts/News/Content/EventsTabContent";
 import MarketInsightsTabContent from "../Parts/News/Content/MarketInsightsTabContent";
 import PartnershipsTabContent from "../Parts/News/Content/PartnershipsTabContent";
 import MediaCentreTabContent from "../Parts/News/Content/MediaCentreTabContent";
-import type { Article } from "@/types/article";
 import PressTabContent from "../Parts/News/Content/PressTabContent";
+import type { Article } from "@/types/article";
+import type { SideTabConfig } from "@/types/tabs";
 
+
+const tabs: SideTabConfig[] = [
+  { name: "Press Release", component: PressTabContent },
+  { name: "News", component: NewsTabContent },
+  { name: "Events", component: EventsTabContent, filter: (a) => a.category === "Events" },
+  { name: "Market Insights", component: MarketInsightsTabContent, filter: (a) => a.category === "Market Insights" },
+  { name: "Partnerships", component: PartnershipsTabContent, filter: (a) => a.category === "Partnerships" },
+  { name: "Media Centre", component: MediaCentreTabContent, filter: (a) => a.category === "Media Centre" },
+];
 
 function NewsPageSection() {
   const [loading, setLoading] = useState(true);
   const [articles, setArticles] = useState<Article[]>([]);
-  const [selectedTab, setSelectedTab] = useState<string>("Press Release");
+  const [selectedTab, setSelectedTab] = useState<string>(tabs[0].name);
 
   useEffect(() => {
     // Simulate API call
@@ -20,10 +30,8 @@ function NewsPageSection() {
       setArticles([
         {
           id: "1",
-          title:
-            "NBC Bank Honors Yanga SC as 2024/25 NBC Premier League Champions",
-          description:
-            "Yesterday, we proudly handed over the 2024/25 NBC Premier League trophy to Young Africans SC after their",
+          title: "NBC Bank Honors Yanga SC as 2024/25 NBC Premier League Champions",
+          description: "Yesterday, we proudly handed over the 2024/25 NBC Premier League trophy to Young Africans SC after their",
           image: "/images/news1.jpg",
           category: "News",
           date: "Continue Reading →",
@@ -55,38 +63,30 @@ function NewsPageSection() {
           date: "Continue Reading →",
           featured: false,
         },
-        // Add more articles as needed
       ]);
       setLoading(false);
     }, 2000);
   }, []);
 
+  const renderTabContent = () => {
+    const tab = tabs.find((t) => t.name === selectedTab);
+    if (!tab) return null;
+    
+    const TabComponent = tab.component;
+    const filteredArticles = tab.filter ? articles.filter(tab.filter) : articles;
+    
+    return <TabComponent articles={filteredArticles} loading={loading} />;
+  };
+
   return (
     <div className="flex flex-col md:flex-row min-h-screen">
-      <NewsSidebar selectedTab={selectedTab} onTabSelect={setSelectedTab} />
-      <div className="w-full  p-4">
-        <section className="">
-          {/* Tab content switcher */}
-          {selectedTab === "Press Release" && (
-            <PressTabContent articles={articles} loading={loading} />
-          )}
-          {selectedTab === "News" && (
-            <NewsTabContent articles={articles} loading={loading} />
-          )}
-          {selectedTab === "Events" && (
-            <EventsTabContent articles={articles.filter(a => a.category === "Events")} loading={loading} />
-          )}
-          {selectedTab === "Market Insights" && (
-            <MarketInsightsTabContent articles={articles.filter(a => a.category === "Market Insights")} loading={loading} />
-          )}
-          {selectedTab === "Partnerships" && (
-            <PartnershipsTabContent articles={articles.filter(a => a.category === "Partnerships")} loading={loading} />
-          )}
-          {selectedTab === "Media Centre" && (
-            <MediaCentreTabContent articles={articles.filter(a => a.category === "Media Centre")} loading={loading} />
-          )}
-        </section>
-        {/* The grid below can be removed or adapted as needed, since tab content is now separated */}
+      <NewsSidebar 
+        selectedTab={selectedTab} 
+        onTabSelect={setSelectedTab} 
+        tabs={tabs.map(t => t.name)}
+      />
+      <div className="w-full p-4">
+        <section>{renderTabContent()}</section>
       </div>
     </div>
   );

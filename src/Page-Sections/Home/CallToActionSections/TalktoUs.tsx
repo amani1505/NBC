@@ -18,8 +18,8 @@ interface ContactCentreProps {
 
 export default function TalktoUs({ contacts }: ContactCentreProps) {
   return (
-    <section className="py-12 px-4 bg-background">
-      <div className="max-w-7xl mx-auto">
+    <section className="px-4 bg-background">
+      <div className=" mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {contacts.map((contact, index) => (
             <Card key={index} className="border border-border bg-background shadow-sm">
