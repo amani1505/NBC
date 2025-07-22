@@ -5,6 +5,7 @@ import FilterSection from "../FilterSection";
 import PressReleaseCard from "../PressReleaseCard";
 import DynamicPagination from "@/components/reusable/DynamicPagination/DynamicPagination";
 import ImageGallery from "../../media/ImageGallery";
+import VideoGallery from "../../media/VideoGallery";
 
 interface Article {
   id: string;
@@ -76,6 +77,8 @@ const MediaCentreTabContent = ({ articles, loading }: MediaCentreTabContentProps
         </div>
 
 <ImageGallery />
+
+<VideoGallery />
 
 
       </div>
