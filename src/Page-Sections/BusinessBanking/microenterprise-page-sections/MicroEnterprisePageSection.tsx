@@ -7,15 +7,17 @@ import InsuranceContent from "./TabsContent/InsuranceContent";
 import WayToBankContent from "./TabsContent/WayToBankContent";
 import WhyYouShouldSection from "@/components/sections/WhyYouShouldSection";
 import CallToActionBanner from "@/components/sections/CallToActionBanner";
-import { useModal } from "@/hooks/useModal";
 import ContactForm from "@/components/sections/ContactForm";
+import { useModal } from "@/hooks/useModal";
 
-function IndividualPageSection() {
+function MicroEnterprisePageSection() {
+
   const { openModal } = useModal();
+
 
   const slides = [
     {
-      title: "Personal Banking For Private",
+      title: "Business Banking For Micro Enterprises",
       description:
         "Empower your project with our comprehensive wireframe kits designed to meet the needs of any platform",
       buttonText: "",
@@ -118,11 +120,48 @@ function IndividualPageSection() {
 
 // RESENT PRODUCTS
 
-
+// const recentProducts:Product[] = [
+//   {
+//     id: "1",
+//     title: "Effective product marketing techniques for small businesses",
+//     description: "Explore cost-effective marketing strategies to promote your product busi...",
+//     image: "/images/recent-product.jpg",
+//     buttonText: "Learn more"
+//   },
+//   {
+//     id: "2",
+//     title: "Digital transformation strategies for modern enterprises",
+//     description: "Discover how to leverage technology to streamline your business operations...",
+//     image: "/images/recent-product.jpg",
+//     buttonText: "Explore now"
+//   },
+//   {
+//     id: "3",
+//     title: "Customer retention best practices",
+//     description: "Learn proven techniques to keep your customers engaged and loyal...",
+//     image: "/images/recent-product.jpg",
+//     buttonText: "Get started"
+//   },
+//   {
+//     id: "4",
+//     title: "Social media marketing mastery",
+//     description: "Master the art of social media marketing to grow your online presence...",
+//     image: "/images/recent-product.jpg",
+//     buttonText: "Learn more"
+//   },
+//   {
+//     id: "5",
+//     title: "Email marketing automation",
+//     description: "Automate your email campaigns for better engagement and conversions...",
+//     image: "/images/recent-product.jpg",
+//     buttonText: "Discover"
+//   }
+// ];
 
 const handleButtonClick = () => {
   openModal(<ContactForm />);
 };
+
 
 
   return (
@@ -134,7 +173,7 @@ const handleButtonClick = () => {
         cards={cards}
       />
       <OfferingSection
-        title="Our Personal Banking Offerings"
+        title="Our Micro Enterprise Banking Offerings"
         description="Let us know how we can help you today!Let us know how we can help you today!"
         tabs={offeringTabs}
         defaultTab="account"
@@ -152,8 +191,9 @@ const handleButtonClick = () => {
         onButtonClick={handleButtonClick}
       />
 
-        </>
+      {/* <RecentProductSection products={recentProducts}  title="Related Products"/> */}
+    </>
   );
 }
 
-export default IndividualPageSection;
+export default MicroEnterprisePageSection;

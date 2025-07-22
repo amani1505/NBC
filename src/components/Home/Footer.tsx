@@ -87,7 +87,7 @@ function Footer() {
     <div className="bg-nbc-dark-500 border-t-2 border-[#DD0A14]">
       <div className="container w-full mx-auto px-4 py-5">
         {/* Header Section - Logo and Newsletter */}
-        <div className="flex flex-col lg:flex-row lg:justify-between lg:items-center gap-4 mb-6">
+        <div className="flex flex-col lg:flex-row lg:justify-between lg:items-center gap-4 mb-6 border-b border-gray-500 py-5">
           <div className="bg-white rounded-b-[13.58px] rounded-tr-[12.61px] px-2 w-fit">
             <img src="/images/logo.svg" alt="NBC Logo" width={80} />
           </div>
@@ -102,10 +102,10 @@ function Footer() {
           </div>
         </div>
 
-        <div className="h-[1px] bg-gray-500 mb-6"></div>
+      
 
         {/* Links Section */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 lg:gap-8 mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5  mb-8 ">
           {footerSections.map((section, index) => (
             <div key={index} className="space-y-4">
               <h5 className="uppercase text-[#81BEDB] font-[700] text-sm">
@@ -126,35 +126,37 @@ function Footer() {
               
               {/* App Store Downloads - only for Micro Sites section */}
               {section.hasIcon && (
-                <div className="mt-6">
-                  <h5 className="uppercase text-[#81BEDB] font-[700] text-sm mb-3">
-                    Download Our App
-                  </h5>
-                  <div className="flex flex-col sm:flex-row gap-3">
-                    <div className="flex items-center bg-black text-white rounded-lg px-3 py-2 gap-3">
-                      <img
-                        src="/images/GooglePlaylogo.svg"
-                        alt="Google Play"
-                        className="w-6 h-6"
-                      />
-                      <div>
-                        <p className="uppercase text-xs">get it on</p>
-                        <p className="capitalize font-[600] text-sm">google play</p>
-                      </div>
-                    </div>
-                    <div className="flex items-center bg-black text-white rounded-lg px-3 py-2 gap-3">
-                      <img
-                        src="/images/Applestore-white.svg"
-                        alt="App Store"
-                        className="w-6 h-6"
-                      />
-                      <div>
-                        <p className="font-[500] text-xs">Download on the</p>
-                        <p className="capitalize font-[600] text-sm">App store</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
+          <div className="mt-6">
+  <h5 className="uppercase text-[#81BEDB] font-[700] text-sm mb-3">
+    Download Our App
+  </h5>
+  <div className="flex flex-col sm:flex-row gap-2">
+    <div className="flex items-center bg-black text-white rounded-lg px-3 py-2 gap-3">
+      <img
+        src="/images/GooglePlaylogo.svg"
+        alt="Google Play"
+        className="w-6 h-6"
+      />
+      <div className="flex flex-col whitespace-nowrap">
+        <p className="uppercase text-xs pr-1">get it on</p>
+  <div>
+          <p className="capitalize font-[600] text-sm">google play</p>
+  </div>
+      </div>
+    </div>
+    <div className="flex items-center bg-black text-white rounded-lg px-3 py-2 gap-3">
+      <img
+        src="/images/Applestore-white.svg"
+        alt="App Store"
+        className="w-6 h-6"
+      />
+      <div className="flex  whitespace-nowrap flex-col">
+        <p className="font-[500] text-xs pr-1">Download on the</p>
+        <p className="capitalize font-[600] text-sm">App store</p>
+      </div>
+    </div>
+  </div>
+</div>
               )}
             </div>
           ))}

@@ -129,9 +129,9 @@ export default function MainNavigation() {
             <div className="px-3 py-5 flex gap-2">
                 <span className="text-gray-400 font-[600]">Quick Links:</span>
                 <div className="flex gap-4">
-                  <Link to="/" className="hover:text-nbc-dark-950 hover:underline">Find Branch & ATMs</Link>
-                  <Link to="/" className="hover:text-nbc-dark-950 hover:underline">Whistleblowing</Link>
-                  <Link to="/" className="hover:text-nbc-dark-950 hover:underline">Contact Us</Link>
+                  <Link to="/find-branches-atm" className="hover:text-nbc-dark-950 hover:underline">Find Branch & ATMs</Link>
+                  <Link to="/whistleblowing" className="hover:text-nbc-dark-950 hover:underline">Whistleblowing</Link>
+                  <Link to="/contact-us" className="hover:text-nbc-dark-950 hover:underline">Contact Us</Link>
                 </div>
               </div>
             </div>
@@ -145,7 +145,7 @@ export default function MainNavigation() {
 
   <Button
           variant="default"
-          className="w-full sm:w-auto"
+          className="w-full sm:w-auto bg-nbc-dark-950 hover:bg-nbc-dark-700"
           onClick={()=>{}}
         >
           { "Learn more"}

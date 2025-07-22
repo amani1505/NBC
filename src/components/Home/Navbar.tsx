@@ -333,7 +333,7 @@ function Navbar({
                     className="flex items-center space-x-2 text-gray-600 transition-colors cursor-pointer hover:text-crdb-green-600"
                     onClick={handleFindUsClick}
                   >
-                    <Button className="bg-[#213A89] hover:bg-nbc-dark-700">
+                    <Button className="bg-nbc-dark-950 hover:bg-nbc-dark-700">
                       Login
                       <ChevronDown size={16} />
                     </Button>

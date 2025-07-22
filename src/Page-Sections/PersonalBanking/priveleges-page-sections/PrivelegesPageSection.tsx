@@ -7,7 +7,6 @@ import InsuranceContent from "./TabsContent/InsuranceContent";
 import WayToBankContent from "./TabsContent/WayToBankContent";
 import WhyYouShouldSection from "@/components/sections/WhyYouShouldSection";
 import CallToActionBanner from "@/components/sections/CallToActionBanner";
-import RecentProductSection, { type Product } from "@/components/sections/RecentProductSection";
 import { useModal } from "@/hooks/useModal";
 import ContactForm from "@/components/sections/ContactForm";
 
@@ -119,43 +118,6 @@ function PrivelegesPageSection() {
 
 // RESENT PRODUCTS
 
-const recentProducts:Product[] = [
-  {
-    id: "1",
-    title: "Effective product marketing techniques for small businesses",
-    description: "Explore cost-effective marketing strategies to promote your product busi...",
-    image: "/images/recent-product.jpg",
-    buttonText: "Learn more"
-  },
-  {
-    id: "2",
-    title: "Digital transformation strategies for modern enterprises",
-    description: "Discover how to leverage technology to streamline your business operations...",
-    image: "/images/recent-product.jpg",
-    buttonText: "Explore now"
-  },
-  {
-    id: "3",
-    title: "Customer retention best practices",
-    description: "Learn proven techniques to keep your customers engaged and loyal...",
-    image: "/images/recent-product.jpg",
-    buttonText: "Get started"
-  },
-  {
-    id: "4",
-    title: "Social media marketing mastery",
-    description: "Master the art of social media marketing to grow your online presence...",
-    image: "/images/recent-product.jpg",
-    buttonText: "Learn more"
-  },
-  {
-    id: "5",
-    title: "Email marketing automation",
-    description: "Automate your email campaigns for better engagement and conversions...",
-    image: "/images/recent-product.jpg",
-    buttonText: "Discover"
-  }
-];
 const handleButtonClick = () => {
   openModal(<ContactForm />);
 };
@@ -189,7 +151,7 @@ const handleButtonClick = () => {
         onButtonClick={handleButtonClick}
       />
 
-      <RecentProductSection products={recentProducts}  title="Related Products"/>
+   
     </>
   );
 }

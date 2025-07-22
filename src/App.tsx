@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Footer from "./components/Home/Footer";
 import MainNavigation from "./components/Navigation/MainNavigation";
 import "./App.css";
+import BusinessBanking from "./Pages/Landing/BusinessBanking/BusinessBanking";
 
 // Lazy Loading PAges
 
@@ -41,6 +42,15 @@ const Sustainability = lazy(
 );
 const Tenders = lazy(() => import("./Pages/Landing/About/Tenders"));
 
+// Bussiness Banking Pages
+const SMEs = lazy(() => import("./Pages/Landing/BusinessBanking/SMEs"));
+const MicroEnterprise = lazy(
+  () => import("./Pages/Landing/BusinessBanking/MicroEnterprise")
+);
+const Commercial = lazy(
+  () => import("./Pages/Landing/BusinessBanking/Commercial")
+);
+
 function App() {
   return (
     <BrowserRouter>
@@ -72,10 +82,8 @@ function App() {
             path="compare-account/:compareAccountName"
             element={<CompareAccount />}
           />
-
           <Route path="about" element={<About />}>
             <Route index element={<Overview />} />
-
             <Route path="careers" element={<Careers />} />
             <Route path="governance" element={<Governance />} />
             <Route path="investor-relations" element={<InvestorRelations />} />
@@ -84,6 +92,14 @@ function App() {
             <Route path="tenders" element={<Tenders />} />
           </Route>
 
+          {/* Bussiness Banking Pages */}
+
+          <Route path="business-banking" element={<BusinessBanking />}>
+            <Route index element={<MicroEnterprise />} />
+            <Route path="smes" element={<SMEs />} />
+
+            <Route path="commercial" element={<Commercial />} />
+          </Route>
           <Route path="error" element={<Error />} />
           <Route path="under-maintenance" element={<UnderMaintenance />} />
           <Route path="*" element={<NotFound />} />

@@ -113,7 +113,7 @@ function ContactForm ()  {
   
         {/* Submit Button */}
 
-        <Button className="w-full" onClick={handleSubmit}>
+        <Button className="w-full bg-nbc-dark-950 hover:bg-nbc-dark-700" onClick={handleSubmit} >
         Submit Request
         </Button>
         {/* <button

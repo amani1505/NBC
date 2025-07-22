@@ -82,10 +82,10 @@ export interface ThirdLevelItem {
       hasDropdown: true,
       subItems: [
         { 
-          label: 'Business Banking', 
+          label: 'Micro Enterprises', 
           description: 'Complete business solutions',
           hasThirdLevel: true,
-          href: '/business/banking',
+          href: '/business-banking',
           thirdLevelItems: [
             { label: 'Current Account', href: '/business/banking/current', description: 'Business current account' },
             { label: 'Savings Account', href: '/business/banking/savings', description: 'Business savings solutions' },
@@ -96,10 +96,10 @@ export interface ThirdLevelItem {
           ]
         },
         { 
-          label: 'Business Loans', 
+          label: 'SMEs', 
           description: 'Financing for growth',
           hasThirdLevel: true,
-          href: '/business/loans',
+          href: '/business-banking/smes',
           thirdLevelItems: [
             { label: 'Working Capital', href: '/business/loans/working-capital', description: 'Fund daily operations' },
             { label: 'Term Loans', href: '/business/loans/term', description: 'Long-term financing' },
@@ -109,16 +109,22 @@ export interface ThirdLevelItem {
             { label: 'MSME Loans', href: '/business/loans/msme', description: 'Support for small enterprises' }
           ]
         },
-        { 
-          label: 'Digital Banking', 
-          href: '/business/digital', 
-          description: 'Online business solutions' 
+            { 
+          label: 'Commercial', 
+          description: 'Financing for growth',
+          hasThirdLevel: true,
+          href: '/business-banking/commercial',
+          thirdLevelItems: [
+            { label: 'Working Capital', href: '/business/loans/working-capital', description: 'Fund daily operations' },
+            { label: 'Term Loans', href: '/business/loans/term', description: 'Long-term financing' },
+            { label: 'Equipment Finance', href: '/business/loans/equipment', description: 'Finance business equipment' },
+            { label: 'Trade Finance', href: '/business/loans/trade', description: 'International trade support' },
+            { label: 'Supply Chain Finance', href: '/business/loans/supply-chain', description: 'Optimize cash flow' },
+            { label: 'MSME Loans', href: '/business/loans/msme', description: 'Support for small enterprises' }
+          ]
         },
-        { 
-          label: 'Treasury Services', 
-          href: '/business/treasury', 
-          description: 'Treasury management' 
-        }
+            
+        
       ]
     },
     {

@@ -7,15 +7,17 @@ import InsuranceContent from "./TabsContent/InsuranceContent";
 import WayToBankContent from "./TabsContent/WayToBankContent";
 import WhyYouShouldSection from "@/components/sections/WhyYouShouldSection";
 import CallToActionBanner from "@/components/sections/CallToActionBanner";
-import { useModal } from "@/hooks/useModal";
 import ContactForm from "@/components/sections/ContactForm";
+import { useModal } from "@/hooks/useModal";
 
-function IndividualPageSection() {
+function CommercialPageSection() {
+
   const { openModal } = useModal();
+
 
   const slides = [
     {
-      title: "Personal Banking For Private",
+      title: "Business Banking For Commercial",
       description:
         "Empower your project with our comprehensive wireframe kits designed to meet the needs of any platform",
       buttonText: "",
@@ -116,13 +118,11 @@ function IndividualPageSection() {
     },
   ];
 
-// RESENT PRODUCTS
-
-
 
 const handleButtonClick = () => {
   openModal(<ContactForm />);
 };
+
 
 
   return (
@@ -134,7 +134,7 @@ const handleButtonClick = () => {
         cards={cards}
       />
       <OfferingSection
-        title="Our Personal Banking Offerings"
+        title="Our Micro Enterprise Banking Offerings"
         description="Let us know how we can help you today!Let us know how we can help you today!"
         tabs={offeringTabs}
         defaultTab="account"
@@ -152,8 +152,9 @@ const handleButtonClick = () => {
         onButtonClick={handleButtonClick}
       />
 
-        </>
+ 
+    </>
   );
 }
 
-export default IndividualPageSection;
+export default CommercialPageSection;

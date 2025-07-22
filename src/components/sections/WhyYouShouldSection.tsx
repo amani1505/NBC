@@ -66,7 +66,7 @@ function WhyYouShouldSection({
         
         {/* Items Grid */}
         <div className="max-w-7xl mx-auto w-full">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 lg:gap-12 xl:gap-14 px-4 sm:px-6 lg:px-8">
+          <div className={`grid grid-cols-1 sm:grid-cols-2  gap-6 sm:gap-8 lg:gap-12 xl:gap-14 px-4 sm:px-6 lg:px-8 ${items.length > 3 ? 'lg:grid-cols-4' : 'lg:grid-cols-3'}`}>
             {items.map((item, index) => (
               <div 
                 className="flex flex-col items-center text-center space-y-4 sm:space-y-5" 
