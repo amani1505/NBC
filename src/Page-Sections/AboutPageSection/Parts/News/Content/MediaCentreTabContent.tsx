@@ -4,6 +4,7 @@ import MediaHero from "../MediaHero";
 import FilterSection from "../FilterSection";
 import PressReleaseCard from "../PressReleaseCard";
 import DynamicPagination from "@/components/reusable/DynamicPagination/DynamicPagination";
+import ImageGallery from "../../media/ImageGallery";
 
 interface Article {
   id: string;
@@ -73,6 +74,10 @@ const MediaCentreTabContent = ({ articles, loading }: MediaCentreTabContentProps
             className="justify-end"
           />
         </div>
+
+<ImageGallery />
+
+
       </div>
     </div>
   )
