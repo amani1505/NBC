@@ -57,11 +57,11 @@ export default function MainNavigation() {
   };
 
   return (
-    <header className="w-full  border-nav-border border-b-[4px] border-[#DD0A14] py-2 sticky  z-[10000] bg-white">
+    <header className="w-full border-nav-border border-b-[4px] border-[#DD0A14] py-2 sticky top-0 z-[10000] bg-white">
       {/* Third Level Full Width Dropdown - Moved outside nav container */}
       {activeThirdLevel && (
         <div
-          className="absolute left-0 top-full w-full bg-nav-dropdown  shadow-lg z-50 bg-gray-100"
+          className="absolute left-0 top-full w-full bg-nav-dropdown shadow-lg z-50 bg-gray-100"
           onMouseEnter={() => setActiveThirdLevel(activeThirdLevel)}
           onMouseLeave={() => setActiveThirdLevel(null)}
         >
