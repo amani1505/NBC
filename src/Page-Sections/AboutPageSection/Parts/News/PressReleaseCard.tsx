@@ -43,7 +43,7 @@ const PressReleaseCard = ({
       >
         <div>
           <span className="text-xs mr-3">{'13 January 2025'}</span>
-          <Badge variant="outline" className="rounded-full border-gray-300 pl-1">
+          <Badge variant="outline" className="rounded-full border-gray-300 ">
       
             {badgeText || "Badge"}
         

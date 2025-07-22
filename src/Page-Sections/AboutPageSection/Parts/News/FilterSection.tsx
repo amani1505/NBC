@@ -1,6 +1,13 @@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { motion } from 'framer-motion';
-const FilterSection = () => {
+
+interface FilterSectionProps{
+  title?:string;
+}
+
+
+
+const FilterSection = ({title = "Filter By"}:FilterSectionProps) => {
     return (
       <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -10,7 +17,7 @@ const FilterSection = () => {
     >
       <div>
         <h2 className="text-lg sm:text-3xl lg:text-xl font-bold text-nbc-dark-950 mb-2 sm:mb-4">
-      Filter By
+   {title}
         </h2>
         {/* <p className="text-sm sm:text-base text-[#262556] max-w-prose">
           Explore how you can benefit from these

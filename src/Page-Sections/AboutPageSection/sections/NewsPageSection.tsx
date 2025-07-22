@@ -82,8 +82,8 @@ function NewsPageSection() {
           {selectedTab === "Partnerships" && (
             <PartnershipsTabContent articles={articles.filter(a => a.category === "Partnerships")} loading={loading} />
           )}
-          {selectedTab === "MediaCentre" && (
-            <MediaCentreTabContent articles={articles.filter(a => a.category === "MediaCentre")} loading={loading} />
+          {selectedTab === "Media Centre" && (
+            <MediaCentreTabContent articles={articles.filter(a => a.category === "Media Centre")} loading={loading} />
           )}
         </section>
         {/* The grid below can be removed or adapted as needed, since tab content is now separated */}

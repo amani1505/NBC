@@ -9,7 +9,7 @@ const tabs = [
   "Events",
   "Market Insights",
   "Partnerships",
-  "MediaCentre",
+  "Media Centre",
 ];
 
 function NewsSidebar({ selectedTab, onTabSelect }: NewsSidebarProps) {
