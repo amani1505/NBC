@@ -51,6 +51,11 @@ const Commercial = lazy(
   () => import("./Pages/Landing/BusinessBanking/Commercial")
 );
 
+
+const WhistleBlowing = lazy(
+  () => import("./Pages/Landing/WhistleBlowing")
+);
+
 function App() {
   return (
     <BrowserRouter>
@@ -100,6 +105,10 @@ function App() {
 
             <Route path="commercial" element={<Commercial />} />
           </Route>
+
+          <Route path="whistle-blowing" element={<WhistleBlowing />} />
+
+          {/* Status Pages */}
           <Route path="error" element={<Error />} />
           <Route path="under-maintenance" element={<UnderMaintenance />} />
           <Route path="*" element={<NotFound />} />

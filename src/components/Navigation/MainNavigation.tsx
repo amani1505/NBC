@@ -130,7 +130,7 @@ export default function MainNavigation() {
                 <span className="text-gray-400 font-[600]">Quick Links:</span>
                 <div className="flex gap-4">
                   <Link to="/find-branches-atm" className="hover:text-nbc-dark-950 hover:underline">Find Branch & ATMs</Link>
-                  <Link to="/whistleblowing" className="hover:text-nbc-dark-950 hover:underline">Whistleblowing</Link>
+                  <Link to="/whistle-blowing" className="hover:text-nbc-dark-950 hover:underline">Whistleblowing</Link>
                   <Link to="/contact-us" className="hover:text-nbc-dark-950 hover:underline">Contact Us</Link>
                 </div>
               </div>
