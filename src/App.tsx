@@ -51,10 +51,11 @@ const Commercial = lazy(
   () => import("./Pages/Landing/BusinessBanking/Commercial")
 );
 
+const WhistleBlowing = lazy(() => import("./Pages/Landing/WhistleBlowing"));
+const WebTerms = lazy(() => import("./Pages/Landing/WebTerms"));
+const TermsCondition = lazy(() => import("./Pages/Landing/TermsCondition"));
+const DataPrivacy= lazy(() => import("./Pages/Landing/DataPrivacy"));
 
-const WhistleBlowing = lazy(
-  () => import("./Pages/Landing/WhistleBlowing")
-);
 
 function App() {
   return (
@@ -107,6 +108,11 @@ function App() {
           </Route>
 
           <Route path="whistle-blowing" element={<WhistleBlowing />} />
+          <Route path="website-terms" element={<WebTerms />} />
+          <Route path="terms-condition" element={<TermsCondition />} />
+          <Route path="data-privacy" element={<DataPrivacy />} />
+
+          {/* Diaspora Banking */}
 
           {/* Status Pages */}
           <Route path="error" element={<Error />} />

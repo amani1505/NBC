@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import Button from "../ui/button";
 import { Input } from "../ui/input";
 import { Twitter, Facebook, Linkedin } from "lucide-react";
@@ -173,15 +174,15 @@ function Footer() {
                 regulated by the Bank of Tanzania
               </p>
               <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 text-xs">
-                <a href="/privacy" className="hover:text-[#81BEDB] transition-colors">
+                <Link to="/data-privacy" className="hover:text-[#81BEDB] transition-colors">
                   Data Privacy Statement
-                </a>
-                <a href="/terms" className="hover:text-[#81BEDB] transition-colors">
+                </Link>
+                <Link to="/terms-condition" className="hover:text-[#81BEDB] transition-colors">
                   Terms & Condition
-                </a>
-                <a href="/website-terms" className="hover:text-[#81BEDB] transition-colors">
+                </Link>
+                <Link to="/website-terms" className="hover:text-[#81BEDB] transition-colors">
                   Website Terms of use
-                </a>
+                </Link>
               </div>
             </div>
 
