@@ -1,5 +1,6 @@
-import SolutionCard from "./SolutionCard";
-import { motion } from 'framer-motion';
+import PressReleaseCard from "@/Page-Sections/AboutPageSection/Parts/News/PressReleaseCard";
+import { motion } from "framer-motion";
+import { slugify } from "@/lib/utils";
 
 function CorporateSolution() {
   const solutions = [
@@ -41,33 +42,26 @@ function CorporateSolution() {
     },
   ];
 
-
-
-
-
-
   return (
-    <motion.div 
-    key="corporate"
-    initial={{ opacity: 0, y: 20 }}
-    animate={{ opacity: 1, y: 0 }}
-    exit={{ opacity: 0, y: -20 }}
-    transition={{ duration: 0.3 }}
-    
-    className="grid grid-cols-3 gap-5">{
-      solutions.map((solution) => (
-        <SolutionCard
+    <motion.div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+      {solutions.map((solution, index) => (
+        <motion.div
           key={solution.id}
-          image={solution.image}
-          title={solution.title}
-          description={solution.description}
-        />
-      ))
-      
-      }
-  
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ delay: index * 0.2 }}
+        >
+          <PressReleaseCard
+            image={solution?.image}
+            title={solution?.title}
+            description={solution?.description}
+            learnMoreLink={`/accounts/${slugify(solution.title)}`}
+          />
+        </motion.div>
+      ))}
     </motion.div>
-  )
+  );
 }
 
-export default CorporateSolution
+export default CorporateSolution;

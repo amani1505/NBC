@@ -172,7 +172,7 @@ export interface ThirdLevelItem {
   export interface ActionButton {
     label: string;
     icon?: string;
-    variant?: 'ghost' | 'default';
+    variant?: 'ghost' | 'primary' | 'secondary' | 'success' | 'danger' | 'warning' | 'info' | 'outline' | 'link' | 'gradient';
     items?: { label: string; href?: string }[];
   }
   
@@ -195,7 +195,7 @@ export interface ThirdLevelItem {
     {
       label: 'Login',
       icon: 'User',
-      variant: 'default',
+      variant: 'primary',
       items: [
         { label: 'Personal Login' },
         { label: 'Business Login' },

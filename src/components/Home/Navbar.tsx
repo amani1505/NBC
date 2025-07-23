@@ -208,9 +208,14 @@ function Navbar({
 }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [openDropdown, setOpenDropdown] = useState<number | null>(null);
-  const [openChildDropdown, setOpenChildDropdown] = useState<number | null>(null);
-  const [dropdownTimeout, setDropdownTimeout] = useState<NodeJS.Timeout | null>(null);
-  const [childDropdownTimeout, setChildDropdownTimeout] = useState<NodeJS.Timeout | null>(null);
+  const [openChildDropdown, setOpenChildDropdown] = useState<number | null>(
+    null
+  );
+  const [dropdownTimeout, setDropdownTimeout] = useState<NodeJS.Timeout | null>(
+    null
+  );
+  const [childDropdownTimeout, setChildDropdownTimeout] =
+    useState<NodeJS.Timeout | null>(null);
 
   const handleFindUsClick = () => {};
   const handleSearchClick = () => {};
@@ -290,8 +295,12 @@ function Navbar({
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.1 }}
                   className="relative group"
-                  onMouseEnter={() => item.hasChildren && handleDropdownEnter(index)}
-                  onMouseLeave={() => item.hasChildren && handleDropdownMouseLeave()}
+                  onMouseEnter={() =>
+                    item.hasChildren && handleDropdownEnter(index)
+                  }
+                  onMouseLeave={() =>
+                    item.hasChildren && handleDropdownMouseLeave()
+                  }
                 >
                   <NavLink
                     to={item.href}
@@ -333,9 +342,14 @@ function Navbar({
                     className="flex items-center space-x-2 text-gray-600 transition-colors cursor-pointer hover:text-crdb-green-600"
                     onClick={handleFindUsClick}
                   >
-                    <Button className="bg-nbc-dark-950 hover:bg-nbc-dark-700">
+                    <Button
+                      size="md"
+                      variant="primary"
+                      className="mb-6"
+                      icon={ChevronDown}
+                      iconPosition="right"
+                    >
                       Login
-                      <ChevronDown size={16} />
                     </Button>
                   </div>
                 )}
@@ -356,7 +370,7 @@ function Navbar({
             {navigationItems.map((item, index) => (
               <div key={index}>
                 {item.hasChildren && openDropdown === index && (
-                  <div 
+                  <div
                     className=""
                     onMouseEnter={handleDropdownMouseEnter}
                     onMouseLeave={handleDropdownMouseLeave}
@@ -373,9 +387,7 @@ function Navbar({
                             onMouseEnter={() => handleChildDropdownEnter(index)}
                             onMouseLeave={handleChildDropdownMouseLeave}
                           >
-                            <button
-                              className="flex items-center space-x-1 text-[15px] font-semibold px-2 py-1 border-0 transition-all duration-200 rounded-md text-white hover:text-gray-200 hover:underline hover:underline-offset-8 hover:decoration-2"
-                            >
+                            <button className="flex items-center space-x-1 text-[15px] font-semibold px-2 py-1 border-0 transition-all duration-200 rounded-md text-white hover:text-gray-200 hover:underline hover:underline-offset-8 hover:decoration-2">
                               <span>{dropdownSection.section}</span>
                               <ChevronDown size={16} />
                             </button>
@@ -401,29 +413,33 @@ function Navbar({
               >
                 <div className="container mx-auto py-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    {navigationItems[openChildDropdown].children?.map((section, sIdx) => (
-                      <div key={sIdx} className="space-y-4">
-                        <div className="text-sm font-bold tracking-wide uppercase text-[#213A89] border-b border-gray-200 pb-2">
-                          {section.section}
+                    {navigationItems[openChildDropdown].children?.map(
+                      (section, sIdx) => (
+                        <div key={sIdx} className="space-y-4">
+                          <div className="text-sm font-bold tracking-wide uppercase text-[#213A89] border-b border-gray-200 pb-2">
+                            {section.section}
+                          </div>
+                          <ul className="space-y-2">
+                            {section.links.map((link, lIdx) => (
+                              <li key={lIdx}>
+                                <NavLink
+                                  to={link.href}
+                                  className={({ isActive }) =>
+                                    `block px-3 py-2 text-sm rounded-md transition-all duration-200 hover:bg-gray-100 ${
+                                      isActive
+                                        ? "text-[#213A89] bg-gray-50"
+                                        : "text-gray-700 hover:text-[#213A89]"
+                                    }`
+                                  }
+                                >
+                                  {link.title}
+                                </NavLink>
+                              </li>
+                            ))}
+                          </ul>
                         </div>
-                        <ul className="space-y-2">
-                          {section.links.map((link, lIdx) => (
-                            <li key={lIdx}>
-                              <NavLink
-                                to={link.href}
-                                className={({ isActive }) =>
-                                  `block px-3 py-2 text-sm rounded-md transition-all duration-200 hover:bg-gray-100 ${
-                                    isActive ? 'text-[#213A89] bg-gray-50' : 'text-gray-700 hover:text-[#213A89]'
-                                  }`
-                                }
-                              >
-                                {link.title}
-                              </NavLink>
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    ))}
+                      )
+                    )}
                   </div>
                 </div>
               </motion.div>

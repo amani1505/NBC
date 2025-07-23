@@ -1,5 +1,6 @@
-import SolutionCard from "./SolutionCard"
+import PressReleaseCard from "@/Page-Sections/AboutPageSection/Parts/News/PressReleaseCard";
 import { motion } from 'framer-motion';
+import { slugify } from "@/lib/utils";
 
 function PersonalSolution() {
   const solutions = [
@@ -48,19 +49,27 @@ function PersonalSolution() {
 
   return (
     <motion.div 
-    key="personal"
-    initial={{ opacity: 0, y: 20 }}
-    animate={{ opacity: 1, y: 0 }}
-    exit={{ opacity: 0, y: -20 }}
-    transition={{ duration: 0.3 }}
        className="grid grid-cols-1 md:grid-cols-3 gap-5">{
-      solutions.map((solution) => (
-        <SolutionCard
-          key={solution.id}
-          image={solution.image}
-          title={solution.title}
-          description={solution.description}
-        />
+      solutions.map((solution, index) => (
+
+      <motion.div
+              key={solution.id}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: index * 0.2 }}
+            >
+ <PressReleaseCard
+            image={solution?.image}
+            title={solution?.title}
+            description={solution?.description}
+              learnMoreLink={`/accounts/${slugify(solution.title)}`}
+         
+          />
+          </motion.div>    
+
+
+
       ))
       
       }

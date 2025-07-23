@@ -35,11 +35,11 @@ function HomePageSection() {
 
   return (
     <>
-      <HeroSection slides={slides} />
-      <BankingTailoredSection />
-      <BankingSolutions />
-      <BankingApps />
-      <NewsSection />
+     <HeroSection slides={slides} />
+        <BankingTailoredSection />
+     <BankingSolutions />
+       <BankingApps />
+     <NewsSection />
       <Marathonbanner />
       <CarriesandVacancies />
       <CallToAction />

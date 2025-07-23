@@ -2,6 +2,9 @@ import { useState } from "react";
 import Button from "../ui/button";
 
 function FeedbackForm() {
+   const [loadingStates, setLoadingStates] = useState(false);
+
+
  const [formData, setFormData] = useState({
       firstName: '',
       lastName: '',
@@ -113,7 +116,7 @@ function FeedbackForm() {
   
         {/* Submit Button */}
 
-        <Button className="w-full bg-nbc-dark-800 hover:bg-nbc-dark-700" onClick={handleSubmit} >
+        <Button variant="primary" onClick={handleSubmit} className="w-full" loading={loadingStates}>
         Submit Request
         </Button>
         {/* <button

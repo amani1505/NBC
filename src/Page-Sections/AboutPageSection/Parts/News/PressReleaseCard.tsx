@@ -1,4 +1,6 @@
 import { Badge } from "@/components/ui/badge";
+import { ChevronRight } from "lucide-react";
+import { Link } from "react-router-dom";
 
 interface PressReleaseCardProps {
   image: string;
@@ -7,6 +9,7 @@ interface PressReleaseCardProps {
   badgeText?: string;
   className?: string;
   rightSide?: boolean;
+  learnMoreLink?: string;
 }
 
 const PressReleaseCard = ({
@@ -16,6 +19,7 @@ const PressReleaseCard = ({
   className = "",
   badgeText,
   rightSide = false,
+  learnMoreLink,
 }: PressReleaseCardProps) => {
   return (
     <div
@@ -37,25 +41,38 @@ const PressReleaseCard = ({
       </div>
       {/* Content */}
       <div
-        className={`p-4 sm:p-6 space-y-4 w-full ${
-          rightSide ? "md:w-1/2 flex flex-col justify-center" : ""
+        className={`p-4 sm:p-6 space-y-2 w-full ${
+          rightSide ? "md:w-1/2 flex flex-col" : ""
         }`}
       >
-        <div>
-          <span className="text-xs mr-3">{'13 January 2025'}</span>
-          <Badge variant="outline" className="rounded-full border-gray-300 ">
-      
-            {badgeText || "Badge"}
-        
-        </Badge>
-        </div>
-       
+        {badgeText && (
+          <div>
+            <span className="text-xs mr-3">{"13 January 2025"}</span>
+            <Badge variant="outline" className="rounded-full border-gray-300 ">
+              {badgeText || "Badge"}
+            </Badge>
+          </div>
+        )}
+
         <h3 className="text-base sm:text-lg font-semibold text-foreground leading-tight">
           {title}
         </h3>
         <p className="text-muted-foreground text-xs sm:text-sm leading-relaxed line-clamp-2">
           {description}
         </p>
+
+{
+  learnMoreLink && (
+          <Link
+            to={learnMoreLink}
+            className="bg-nbc-dark-600 text-white text-xs sm:text-sm font-semibold px-3 py-2 rounded-md mt-2 inline-block hover:bg-nbc-dark-500 transition-colors duration-200"    
+          >
+            Learn More 
+            <ChevronRight className="inline ml-1 h-4 w-4" />
+          </Link>
+  )
+}
+
       </div>
     </div>
   );

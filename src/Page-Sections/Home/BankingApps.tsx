@@ -29,17 +29,15 @@ function BankingApps() {
   ];
 
   return (
-<div className="">
+    <div className=" w-full">
       <OfferingSection
         title="Our Digital Banking Solutions"
         description="Let us know how we can help you today!Let us know how we can help you today!"
         tabs={tabs}
         defaultTab="kiganjani"
-        maxWidth="max-w-4xl"
         hasContainer={false}
       />
-</div>
-
+    </div>
   );
 }
 

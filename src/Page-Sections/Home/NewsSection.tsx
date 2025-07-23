@@ -1,11 +1,5 @@
 import Button from "@/components/ui/button";
 import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-} from "@/components/ui/card";
-import {
   Select,
   SelectContent,
   SelectItem,
@@ -13,6 +7,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { motion } from "framer-motion";
+import PressReleaseCard from "../AboutPageSection/Parts/News/PressReleaseCard";
 
 function NewsSection() {
   const newsItems = [
@@ -86,103 +81,51 @@ function NewsSection() {
           </div>
         </motion.div>
 
-        {/* News Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 lg:gap-10 items-start">
-          {/* Featured Article */}
-          <motion.div
-            initial={{ opacity: 0, x: -30 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            className="w-full"
-          >
-            <Card className="!p-0">
-              <CardHeader className="!px-0">
-                <img
-                  src={newsItems[0].image}
-                  alt="Featured news"
-                  className="object-cover w-full h-48 sm:h-64 lg:h-80 rounded-t-xl"
-                />
-              </CardHeader>
-              <CardContent className="rounded-b-xl px-4 sm:px-6 py-4">
-                <div className="mb-3 inline-flex">
-                  <div className="border flex gap-1 border-gray-400 rounded-full p-1 pr-4 text-[10px] sm:text-xs items-center text-gray-400">
-                    <div className="border border-gray-400 rounded-full py-1 px-2">
-                      News
-                    </div>
-                    <div className="border border-gray-400 rounded-full py-1 px-2">
-                      Press Release
-                    </div>
-                    <div className="rounded-full py-1 px-2">5 min Read</div>
-                  </div>
-                </div>
-                <h3 className="text-lg sm:text-xl lg:text-2xl font-bold leading-relaxed text-nbc-dark-700">
-                  {newsItems[0].title}
-                </h3>
-                <p className="text-xs sm:text-sm lg:text-base text-gray-900 line-clamp-3">
-                  {newsItems[0].description}
-                </p>
-              </CardContent>
-              <CardFooter className="px-4 sm:px-6 pb-4">
-                <Button
-                  className="text-white hover:text-white bg-nbc-dark-600 font-semibold hover:bg-nbc-dark-500 w-full sm:w-auto"
-                  size="lg"
-                >
-                  {newsItems[0].date}
-                </Button>
-              </CardFooter>
-            </Card>
-          </motion.div>
+      
 
-          {/* Side Articles */}
-          <div className="flex-1 space-y-6">
-            {newsItems.slice(1).map((item, index) => (
-              <motion.div
-                key={item.id}
-                initial={{ opacity: 0, x: 30 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: index * 0.2 }}
-              >
-                <Card className="overflow-hidden !p-0">
-                  <div className="flex flex-col sm:flex-row gap-4 sm:gap-5">
-                    <div className="w-full sm:w-1/3">
-                      <img
-                        src={item.image}
-                        alt={item.title}
-                        className="object-cover w-full h-32 sm:h-24 lg:h-28 rounded-l-xl sm:rounded-r-none"
-                      />
-                    </div>
-                    <CardContent className="!py-4 px-4 sm:px-5 w-full">
-                      <div className="mb-3 inline-flex w-full">
-                        <div className="border flex gap-1 border-gray-400 rounded-full p-1 pr-4 text-[10px] sm:text-xs items-center text-gray-400">
-                          <div className="border border-gray-400 rounded-full py-1 px-2">
-                            News
-                          </div>
-                          <div className="rounded-full py-1 px-2">5 min Read</div>
-                        </div>
-                      </div>
-                      <div className="w-full">
-                        <h3 className="text-base sm:text-lg lg:text-xl font-bold leading-relaxed text-nbc-dark-700">
-                          {item.title}
-                        </h3>
-                        <p className="text-xs sm:text-sm text-gray-900 line-clamp-2">
-                          {item.description}
-                        </p>
-                      </div>
-                    </CardContent>
-                  </div>
-                </Card>
-              </motion.div>
-            ))}
-          </div>
+         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 lg:gap-10 items-start">
+        {/* Featured Article */}
+        <motion.div
+          initial={{ opacity: 0, x: -30 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: true }}
+          className="w-full"
+        >
+          <PressReleaseCard
+            image={newsItems[0]?.image}
+            title={newsItems[0]?.title}
+            description={newsItems[0]?.description}
+            badgeText={newsItems[0]?.category}
+          />
+        </motion.div>
+        {/* Side Articles */}
+        <div className="flex-1 space-y-6">
+          {newsItems?.slice(1).map((article, index) => (
+            <motion.div
+              key={article.id}
+              initial={{ opacity: 0, x: 30 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: index * 0.2 }}
+            >
+              <PressReleaseCard
+                image={article?.image}
+                title={article?.title}
+                description={article?.description}
+                badgeText={article?.category}
+                rightSide={true}
+              />
+            </motion.div>
+          ))}
         </div>
+      </div>
 
         {/* View All Button */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="mt-6 sm:mt-8 lg:mt-10 text-center"
+          className="mt-6 sm:mt-8 lg:mt-10 text-end"
         >
           <Button
             size="lg"

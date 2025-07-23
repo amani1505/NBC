@@ -15,21 +15,22 @@ function FeedbackandComplains() {
     <div className="space-y-6 animate-fade-in container">
       <div className="flex items-center gap-3 mb-4">
         <Button
-          className={`${
+          variant={`${
             feedbackType === "feedback"
-              ? "bg-nbc-dark-950 hover:bg-nbc-dark-800"
-              : "border border-gray-500 bg-transparent text-gray-500 hover:bg-nbc-dark-950 hover:text-white"
+              ? "primary"
+              : "outline"
           }`}
           onClick={() => handleFeedbackTypeChange("feedback")}
         >
           FeedBack
         </Button>
         <Button
-          className={`${
+          variant={`${
             feedbackType === "complaint"
-              ? "bg-nbc-dark-950 hover:bg-nbc-dark-800"
-              : "border border-gray-500 bg-transparent text-gray-500 hover:bg-nbc-dark-950 hover:text-white"
+              ? "primary"
+              : "outline"
           }`}
+         
           onClick={() => handleFeedbackTypeChange("complaint")}
         >
           Raise A Complain

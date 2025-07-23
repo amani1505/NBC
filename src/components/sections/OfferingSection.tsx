@@ -113,7 +113,7 @@ function OfferingSection({
       {/* Modern Tab Navigation with shadcn */}
       <Tabs defaultValue={defaultValue} className="w-full">
         {/* Desktop Tabs - Grid Layout */}
-        <TabsList className={`hidden md:grid w-full ${getGridCols(tabs.length)} mb-8 bg-gray-100 p-1 rounded-2xl ${maxWidth} mx-auto h-auto`}>
+        <TabsList className={`hidden md:grid w-full ${getGridCols(tabs.length)} mb-8 bg-gray-100 p-1 rounded-2xl ${maxWidth} mx-auto h-auto `}>
           {tabs.map((tab) => (
             <TabsTrigger
               key={tab.value}
@@ -158,7 +158,7 @@ function OfferingSection({
           )}
 
           {/* Scrollable Tabs Container - Proper TabsList structure */}
-          <TabsList className="w-full mb-0 bg-gray-100 p-1 rounded-2xl mx-auto h-auto relative overflow-hidden">
+          <TabsList className="w-full mb-0 bg-gray-100 py-1 rounded-2xl mx-auto h-auto relative overflow-hidden">
             <div
               ref={scrollContainerRef}
               className="flex gap-1 overflow-x-auto scrollbar-hide scroll-smooth px-8"
@@ -181,7 +181,7 @@ function OfferingSection({
                   <span>{tab.label}</span>
                 </TabsTrigger>
               ))}
-            </div>
+            </div>  
 
             {/* Gradient Overlays for scroll indication */}
             {showLeftChevron && (
@@ -200,7 +200,7 @@ function OfferingSection({
         {/* Tab Content */}
         <div className="relative">
           {tabs.map((tab) => (
-            <TabsContent key={tab.value} value={tab.value} className=" w-full">
+            <TabsContent key={tab.value} value={tab.value} className="mt-6 sm:mt- w-full">
               {tab.content}
             </TabsContent>
           ))}

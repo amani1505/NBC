@@ -97,7 +97,7 @@ function Footer() {
               placeholder="Enter your email to subscribe to our newsletter"
               className="!bg-nbc-dark-700 w-full sm:w-80 border border-[#D3D8E7] text-white placeholder:text-[#9CA3AF]"
             />
-            <Button className="bg-white hover:bg-white text-nbc-dark-950 font-[600] w-full sm:w-auto">
+            <Button >
               Subscribe
             </Button>
           </div>

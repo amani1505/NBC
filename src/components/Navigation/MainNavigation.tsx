@@ -144,7 +144,7 @@ export default function MainNavigation() {
 
 
   <Button
-          variant="default"
+          variant="primary"
           className="w-full sm:w-auto bg-nbc-dark-950 hover:bg-nbc-dark-700"
           onClick={()=>{}}
         >
@@ -324,11 +324,11 @@ export default function MainNavigation() {
                         <Button
                           variant={actionButton.variant}
                           size="sm"
-                          className={
-                            actionButton.variant === "default"
-                              ? "bg-nbc-dark-700 hover:bg-nbc-dark-500"
-                              : "text-nav-text hover:text-nav-text-hover"
-                          }
+                          // className={
+                          //   actionButton.variant === "primary"
+                          //     ? "bg-nbc-dark-700 hover:bg-nbc-dark-500"
+                          //     : "text-nav-text hover:text-nav-text-hover"
+                          // }
                         >
                           {actionButton.icon &&
                             renderIcon(actionButton.icon, "h-4 w-4 mr-2")}
@@ -375,12 +375,12 @@ export default function MainNavigation() {
                       <DropdownMenuTrigger asChild>
                         <Button
                           variant={actionButton.variant}
-                          size="sm"
-                          className={
-                            actionButton.variant === "default"
-                              ? "bg-nbc-dark-700 hover:bg-nbc-dark-500"
-                              : "text-nav-text hover:text-nav-text-hover"
-                          }
+                          size="md"
+                          // className={
+                          //   actionButton.variant === "primary"
+                          //     ? "bg-nbc-dark-700 hover:bg-nbc-dark-500"
+                          //     : "text-nav-text hover:text-nav-text-hover"
+                          // }
                         >
                           {actionButton.icon &&
                             renderIcon(actionButton.icon, "h-4 w-4 mr-2")}

@@ -1,7 +1,13 @@
 import { useState } from "react";
 import Button from "../ui/button";
 
+type LoadingStates = {
+  submit?: boolean;
+  [key: string]: boolean | undefined;
+};
+
 function ContactForm ()  {
+    const [loadingStates, setLoadingStates] = useState<LoadingStates>({});
     const [formData, setFormData] = useState({
       firstName: '',
       lastName: '',
@@ -113,7 +119,7 @@ function ContactForm ()  {
   
         {/* Submit Button */}
 
-        <Button className="w-full bg-nbc-dark-950 hover:bg-nbc-dark-700" onClick={handleSubmit} >
+        <Button variant="primary" onClick={handleSubmit} className="w-full" loading={loadingStates['submit']}>
         Submit Request
         </Button>
         {/* <button

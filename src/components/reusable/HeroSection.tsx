@@ -171,7 +171,7 @@ function HeroSection({
                     >
                       {slide.buttonText && (
                         <Button
-                          className="border border-white text-white font-semibold bg-transparent hover:bg-nbc-dark-700 hover:border-nbc-dark-700 w-1/2"
+                          variant="lightOutline"
                           size="lg"
                         >
                           {slide.buttonText}
