@@ -118,12 +118,12 @@ function OfferingSection({
             <TabsTrigger
               key={tab.value}
               value={tab.value}
-              className="flex items-center justify-center gap-2 px-4 lg:px-6 py-3 rounded-xl font-medium transition-all duration-300 
+              className="flex items-center justify-center gap-1 px-4 lg:px-6 py-3 rounded-xl font-medium transition-all duration-300 
                        data-[state=active]:bg-blue-950 data-[state=active]:text-white text-center 
                        data-[state=active]:shadow-lg data-[state=active]:shadow-gray-200/50 
                        data-[state=active]:scale-105 text-sm lg:text-base"
             >
-              {tab.icon && <span className="w-4 h-4 lg:w-5 lg:h-5">{tab.icon}</span>}
+            <div>  {tab.icon && <span className="w-4 h-4 lg:w-7 lg:h-7">{tab.icon}</span>}</div>
               <span>{tab.label}</span>
             </TabsTrigger>
           ))}

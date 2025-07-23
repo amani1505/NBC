@@ -1,10 +1,11 @@
 
+import { Banknote, Building, HelpCircle, MessageCircle, MessageSquare } from "lucide-react"
 import BusinessSolution from "./BankSolution/BusinessSolution"
 import CorporateSolution from "./BankSolution/CorporateSolution"
 import PersonalSolution from "./BankSolution/PersonalSolution"
 import LaRiba from "./BankSolution/LaRiba"
-import { Building, HelpCircle, MessageCircle, MessageSquare } from "lucide-react"
 import OfferingSection from "@/components/sections/OfferingSection"
+import ForeignExchange from "./BankSolution/ForeignExchange"
 
 function BankingSolutions() {
   const offeringTabs = [
@@ -31,6 +32,12 @@ function BankingSolutions() {
       label: "La Riba",
       content: <LaRiba />,
       icon: <HelpCircle />
+    },
+     {
+      value: "foreignexchange",
+      label: "Foreign Exchange",
+      content: <ForeignExchange />,
+      icon: <Banknote />
     }
   ];
 
