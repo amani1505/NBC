@@ -200,7 +200,7 @@ function OfferingSection({
         {/* Tab Content */}
         <div className="relative">
           {tabs.map((tab) => (
-            <TabsContent key={tab.value} value={tab.value} className="mt-6 sm:mt-8 w-full">
+            <TabsContent key={tab.value} value={tab.value} className=" w-full">
               {tab.content}
             </TabsContent>
           ))}

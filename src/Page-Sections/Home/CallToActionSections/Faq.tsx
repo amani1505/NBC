@@ -48,6 +48,7 @@ const tabs: SideTabConfig[] = [
 function Faq() {
   const [selectedTab, setSelectedTab] = useState<string>("Genaral");
   const [articles, setArticles] = useState<[]>([]);
+    const [loading, setLoading] = useState(false);
 
   const renderTabContent = () => {
     const tab = tabs.find((t) => t.name === selectedTab);
@@ -58,18 +59,18 @@ function Faq() {
       ? articles.filter(tab.filter)
       : articles;
 
-    return <TabComponent articles={filteredArticles} />;
+    return <TabComponent articles={filteredArticles} loading={loading}/>;
   };
 
   return (
-    <div className="space-y-6 animate-fade-in">
+    <div className="animate-fade-in flex" >
       <NewsSidebar
         selectedTab={selectedTab}
         onTabSelect={setSelectedTab}
         tabs={tabs.map((t) => t.name)}
       />
 
-      <div className="w-full p-4">
+      <div className="w-full p-4  animate-fade-in">
         <section>{renderTabContent()}</section>
       </div>
     </div>

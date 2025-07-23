@@ -23,17 +23,19 @@ type FinancialReportAccordionProps = {
   title?: string;
   items: Item[];
   itemTitleColor?: string;
+  titleColor?:string
 };
 
 function FinancialReportAccordion({
   title,
   items,
   itemTitleColor,
+  titleColor= "text-black"
 }: FinancialReportAccordionProps) {
   return (
     <div className="w-full  mx-auto">
       <Card className="p-10 shadow-card-custom border-gray-300">
-        {title && <h4 className="text-lg font-semibold  mb-4">{title}</h4>}
+        {title && <h4 className={`text-lg font-semibold  mb-4 ${titleColor}`}>{title}</h4>}
 
         <Accordion type="single" collapsible className="w-full">
           {items.map((item) => (

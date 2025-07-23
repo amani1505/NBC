@@ -10,7 +10,8 @@ interface AccordionSectionItemData {
 interface AccordionSectionProps {
   title?: string;
   items?: AccordionSectionItemData[];
-  itemTitleColor?:string
+  itemTitleColor?:string;
+   titleColor?:string
 }
 
 const defaultItems: AccordionSectionItemData[] = [
@@ -39,14 +40,15 @@ const defaultItems: AccordionSectionItemData[] = [
 function AccordionSection ({
   title ,
   items = defaultItems,
-  itemTitleColor
+  itemTitleColor,
+  titleColor= "text-black"
 }: AccordionSectionProps)  {
   return (
     <div className="w-full  mx-auto">
       <Card className="p-10 shadow-card-custom border-gray-300">
     {
       title &&(
-        <h4 className="text-lg font-semibold text-nbc-dark-950 mb-4">
+        <h4 className={`text-lg font-semibold text-nbc-dark-950 mb-4 ${titleColor}`}>
         {title}
       </h4>
       )
