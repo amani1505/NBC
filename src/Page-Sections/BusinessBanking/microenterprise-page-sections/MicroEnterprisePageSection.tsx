@@ -1,14 +1,14 @@
 import HeroSection from "@/components/reusable/HeroSection";
 import OfferingSection from "@/components/sections/OfferingSection";
 import SolutionsSection from "@/components/sections/SolutionsSection";
-import AccountContent from "./TabsContent/AccountContent";
-import LoanContent from "./TabsContent/LoanContent";
-import InsuranceContent from "./TabsContent/InsuranceContent";
-import WayToBankContent from "./TabsContent/WayToBankContent";
 import WhyYouShouldSection from "@/components/sections/WhyYouShouldSection";
 import CallToActionBanner from "@/components/sections/CallToActionBanner";
 import ContactForm from "@/components/sections/ContactForm";
 import { useModal } from "@/hooks/useModal";
+import AccountContent from "@/components/sections/offering-tab-contents/AccountContent";
+import LoanContent from "@/components/sections/offering-tab-contents/LoanContent";
+import InsuranceContent from "@/components/sections/offering-tab-contents/InsuranceContent";
+import WayToBankContent from "@/components/sections/offering-tab-contents/WayToBankContent";
 
 function MicroEnterprisePageSection() {
 
@@ -64,29 +64,78 @@ function MicroEnterprisePageSection() {
 
     // Add more cards as needed
   ];
+
+
+
+    const solutions = [
+    {
+      id: "1",
+      title: "NBC Bank Honors Yanga SC as 2024/25 NBC Premier League Champions",
+      description:
+        "Yesterday, we proudly handed over the 2024/25 NBC Premier League trophy to Young Africans SC after their",
+      image: "/images/offering.jpg",
+      category: "CUSTOMER STORIES",
+      date: "Continue Reading →",
+      href: "/",
+      compareLink: "/",
+    },
+    {
+      id: "2",
+      title: "NBC and GSM Partner",
+      description: "Learn the essential steps to turn your product idea",
+      image: "/images/news2.jpg",
+      category: "INVESTMENT",
+      date: "Continue Reading →",
+      featured: false,
+      href: "/",
+      compareLink: "/",
+    },
+    {
+      id: "3",
+      title: "Mbogo Ranches & NBC",
+      description: "Learn valuable techniques and strategies to manage",
+      image: "/images/news3.jpg",
+      category: "",
+      date: "Continue Reading →",
+      featured: false,
+      href: "/",
+      compareLink: "/",
+    },
+    {
+      id: "4",
+      title: "NBC Bank Presents BMW X1 Car Prize to Winner of ",
+      description: "Learn valuable techniques and strategies to manage",
+      image: "/images/news4.jpg",
+      category: "BEYOND BANKING",
+      date: "Continue Reading →",
+      featured: false,
+      href: "/",
+      compareLink: "/",
+    },
+  ];
   const offeringTabs = [
     {
       value: "account",
       label: "Account",
-      content: <AccountContent />,
+      content: <AccountContent items={solutions}/>,
       // icon: <MessageCircle />
     },
     {
       value: "loan",
       label: "Loan",
-      content: <LoanContent />,
+      content: <LoanContent items={solutions} />,
       // icon: <MessageSquare />
     },
     {
       value: "insurance",
       label: "Insurance",
-      content: <InsuranceContent />,
+      content: <InsuranceContent items={solutions} />,
       // icon: <Building />
     },
     {
       value: "waytobank",
       label: "Way to Bank",
-      content: <WayToBankContent />,
+      content: <WayToBankContent  items={solutions} />,
       // icon: <HelpCircle />
     },
   ];

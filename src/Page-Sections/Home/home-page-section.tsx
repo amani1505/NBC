@@ -28,18 +28,17 @@ function HomePageSection() {
       description:
         "Invest smarter with our expert guidance and personalized strategies.",
       buttonText: "Explore Now",
-      imageUrl:
-        "/images/hero1.jpg",
+      imageUrl: "/images/hero1.jpg",
     },
   ];
 
   return (
     <>
-     <HeroSection slides={slides} />
-        <BankingTailoredSection />
-     <BankingSolutions />
-       <BankingApps />
-     <NewsSection />
+      <HeroSection slides={slides} />
+      <BankingTailoredSection />
+      <BankingSolutions />
+      <BankingApps />
+      <NewsSection />
       <Marathonbanner />
       <CarriesandVacancies />
       <CallToAction />

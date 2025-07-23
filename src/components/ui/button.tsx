@@ -57,7 +57,7 @@ const Button = ({
       "bg-yellow-500 text-white shadow-sm  hover:bg-yellow-600 hover:shadow-yellow-200/50 transition-colors duration-300",
     info: "bg-cyan-600 text-white shadow-sm  hover:bg-cyan-700 hover:shadow-cyan-200/50 transition-colors duration-300",
     outline:
-      "border-2 border-nbc-dark-950 text-nbc-dark-700 bg-transparent  group hover:border-nbc-dark-700 transition-colors duration-300",
+      "border-2 border-nbc-dark-950 text-nbc-dark-950 bg-transparent  group hover:border-nbc-dark-950 transition-colors duration-300",
     ghost:
       "text-gray-700 bg-transparent  hover:bg-gray-100 hover:text-gray-800 transition-colors duration-300",
     link: "text-nbc-dark-600 bg-transparent p-0 hover:scale-105 underline-offset-4 hover:underline hover:text-nbc-dark-500 transition-colors duration-300",
@@ -103,7 +103,7 @@ const Button = ({
     >
       {/* Outline button fill animation */}
       {isOutline && (
-        <span className="absolute inset-0 bg-nbc-dark-700 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left rounded-inherit"></span>
+        <span className="absolute inset-0 bg-nbc-dark-950 transform scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left rounded-inherit"></span>
       )}
 
           {isLightOutline && (

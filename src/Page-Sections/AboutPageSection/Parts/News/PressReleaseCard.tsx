@@ -1,6 +1,7 @@
-import { Badge } from "@/components/ui/badge";
+import { useNavigate } from "react-router-dom";
 import { ChevronRight } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Badge } from "@/components/ui/badge";
+import Button from "@/components/ui/button";
 
 interface PressReleaseCardProps {
   image: string;
@@ -10,6 +11,7 @@ interface PressReleaseCardProps {
   className?: string;
   rightSide?: boolean;
   learnMoreLink?: string;
+  compareLink?: string;
 }
 
 const PressReleaseCard = ({
@@ -20,7 +22,10 @@ const PressReleaseCard = ({
   badgeText,
   rightSide = false,
   learnMoreLink,
+  compareLink,
 }: PressReleaseCardProps) => {
+  const navigate = useNavigate();
+
   return (
     <div
       className={`flex bg-white border border-gray-300 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300 ${
@@ -60,19 +65,34 @@ const PressReleaseCard = ({
         <p className="text-muted-foreground text-xs sm:text-sm leading-relaxed line-clamp-2">
           {description}
         </p>
+        <div className="flex items-center justify-between mt-auto">
+          {compareLink && (
+            <Button
+              variant="outline"
+              icon={ChevronRight}
+              iconPosition="right"
+              onClick={() => {
+                navigate(compareLink);
+              }}
+            >
+              Compare Account
+            </Button>
+          )}
 
-{
-  learnMoreLink && (
-          <Link
-            to={learnMoreLink}
-            className="bg-nbc-dark-600 text-white text-xs sm:text-sm font-semibold px-3 py-2 rounded-md mt-2 inline-block hover:bg-nbc-dark-500 transition-colors duration-200"    
-          >
-            Learn More 
-            <ChevronRight className="inline ml-1 h-4 w-4" />
-          </Link>
-  )
-}
-
+          {learnMoreLink && (
+            <Button
+              variant="primary"
+              icon={ChevronRight}
+              iconPosition="right"
+              size="lg"
+              onClick={() => {
+                navigate(learnMoreLink);
+              }}
+            >
+              Learn More
+            </Button>
+          )}
+        </div>
       </div>
     </div>
   );
