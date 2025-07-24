@@ -7,7 +7,7 @@ function WhistleBlowingPageSection() {
       description:
         "Empower your project with our comprehensive wireframe kits designed to meet the needs of any platform",
       buttonText: "",
-      imageUrl: "/images/individual-hero.jpg",
+      imageUrl: "/images/whistle-blowing.png",
     },
   ];
 
