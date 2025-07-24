@@ -187,6 +187,7 @@ function SingleAccountPageSection() {
       <FeaturesComparison
         featureSection={featureSection}
         howToGetItSection={howToGetItSection}
+        accountName={accountName}
       />
       <FAQ {...faqData} />
       <CallToActionBanner

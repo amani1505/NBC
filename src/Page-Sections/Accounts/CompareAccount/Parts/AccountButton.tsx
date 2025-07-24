@@ -12,7 +12,7 @@ interface AccountButtonProps {
 export function AccountButton({ account, isSelected, onClick }: AccountButtonProps) {
   return (
     <Button
-      variant={isSelected ? "default" : "outline"}
+      variant={isSelected ? "primary" : "outline"}
       onClick={onClick}
       className={cn(
         "px-4 py-2 rounded text-sm font-medium transition-all cursor-pointer",

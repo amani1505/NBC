@@ -30,12 +30,14 @@ export default function  ImageCard ({ product, className = "" }: ProductCardProp
           </p>
           
           <Button
-            variant="default"
+            variant="primary"
             className="w-full sm:w-auto"
             onClick={product.onLearnMore}
+            icon={ChevronRight}
+            iconPosition="right"
           >
             {product.buttonText || "Learn more"}
-            <ChevronRight className="ml-1 h-4 w-4" />
+           
           </Button>
         </div>
       </div>

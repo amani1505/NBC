@@ -29,7 +29,7 @@ function InsuranceContent({items}: { items: InsuranceInterface[] }) {
             image={item?.image}
             title={item?.title}
             description={item?.description}
-            learnMoreLink={`/accounts/${slugify(item.title)}`}
+            learnMoreLink={`/insurances/${slugify(item.title)}`}
              />
         </motion.div>
       ))}

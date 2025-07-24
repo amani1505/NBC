@@ -56,6 +56,8 @@ const WebTerms = lazy(() => import("./Pages/Landing/WebTerms"));
 const TermsCondition = lazy(() => import("./Pages/Landing/TermsCondition"));
 const DataPrivacy= lazy(() => import("./Pages/Landing/DataPrivacy"));
 
+const SingleNews = lazy(() => import("./Pages/Landing/SingleNews"));
+
 
 function App() {
   return (
@@ -111,6 +113,8 @@ function App() {
           <Route path="website-terms" element={<WebTerms />} />
           <Route path="terms-condition" element={<TermsCondition />} />
           <Route path="data-privacy" element={<DataPrivacy />} />
+
+          <Route path="single-news" element={<SingleNews />} />
 
           {/* Diaspora Banking */}
 

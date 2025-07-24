@@ -1,6 +1,5 @@
 import CallToActionBanner from "@/components/sections/CallToActionBanner";
 
-
 function CarriesandVacancies() {
   return (
     <>
@@ -11,9 +10,10 @@ function CarriesandVacancies() {
             lessen the chance of work having to be completely redone. A manager
             could create a visual guide for the team to complete the build-out."
         buttonText="View Vacancies"
-        onButtonClick={()=>{}}
+        onButtonClick={() => {
+          window.open("https://absa.wd3.myworkdayjobs.com/NBC_Careers", "_blank");
+        }}
       />
-
     </>
   );
 }

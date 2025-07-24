@@ -1,6 +1,7 @@
 import { Check } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Button from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
 
 interface Feature {
   text: string;
@@ -23,9 +24,13 @@ interface HowToGetItSection {
 interface FeaturesComparisonProps {
   featureSection: FeatureSection;
   howToGetItSection: HowToGetItSection;
+  accountName?: string;
 }
 
 const FeatureList = ({ features, title }: { features: Feature[]; title: string }) => (
+
+
+  
   <div>
     {title && <h3 className="font-semibold text-lg text-foreground mb-4">{title}</h3>}
     <ul className="space-y-4">
@@ -55,7 +60,8 @@ const HowToGetItList = ({ items, title }: { items: string[]; title: string }) =>
   </div>
 );
 
-export default function FeaturesComparison({ featureSection, howToGetItSection }: FeaturesComparisonProps) {
+export default function FeaturesComparison({ featureSection, howToGetItSection,accountName }: FeaturesComparisonProps) {
+  const navigate = useNavigate();
 
   
   return (
@@ -121,7 +127,7 @@ export default function FeaturesComparison({ featureSection, howToGetItSection }
 
         {/* Action Buttons */}
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <Button variant="outline" size="lg" className="min-w-40 border-2">
+          <Button variant="outline" size="lg" className="min-w-40 border-2" onClick={()=> navigate(`/compare-account/${accountName}`)}>
             Compare Account
           </Button>
           <Button variant="default" size="lg" className="min-w-40 bg-nbc-dark-950 hover:bg-nbc-dark-900">

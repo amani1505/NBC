@@ -3,8 +3,6 @@ import Button from "@/components/ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import ImageCard from "./ImageCard";
 
-
-
 export interface Product {
   id: string;
   title?: string;
@@ -14,8 +12,6 @@ export interface Product {
   onLearnMore?: () => void;
 }
 
-
-
 interface RelatedProductsProps {
   products: Product[];
   title?: string;
@@ -24,19 +20,19 @@ interface RelatedProductsProps {
   autoPlayInterval?: number;
 }
 
-function  RecentProductSection  ({ 
-  products, 
+function RecentProductSection({
+  products,
   title = "Related Products",
   className = "",
   autoPlay = true,
-  autoPlayInterval = 5000
+  autoPlayInterval = 5000,
 }: RelatedProductsProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(false);
 
   // Responsive items per view
   const getItemsPerView = () => {
-    if (typeof window === 'undefined') return 4;
+    if (typeof window === "undefined") return 4;
     if (window.innerWidth < 640) return 1;
     if (window.innerWidth < 1024) return 2;
     return 4;
@@ -50,19 +46,17 @@ function  RecentProductSection  ({
       setItemsPerView(getItemsPerView());
     };
 
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  const totalSlides = products.length > itemsPerView
-    ? products.length
-    : 1;
+  const totalSlides = products.length > itemsPerView ? products.length : 1;
 
   // Infinite loop navigation
   const handlePrev = () => {
     if (!isTransitioning) {
       setIsTransitioning(true);
-      setCurrentIndex(prev => {
+      setCurrentIndex((prev) => {
         const newIndex = prev === 0 ? totalSlides - 1 : prev - 1;
         return newIndex;
       });
@@ -73,7 +67,7 @@ function  RecentProductSection  ({
   const handleNext = () => {
     if (!isTransitioning) {
       setIsTransitioning(true);
-      setCurrentIndex(prev => {
+      setCurrentIndex((prev) => {
         const newIndex = prev === totalSlides - 1 ? 0 : prev + 1;
         return newIndex;
       });
@@ -115,16 +109,14 @@ function  RecentProductSection  ({
     <div className={`w-full ${className} px-5`}>
       {/* Header */}
       <div className=" mb-8">
-        <h2 className="text-3xl font-bold text-nbc-dark-950">
-          {title}
-        </h2>
+        <h2 className="text-3xl font-bold text-nbc-dark-950">{title}</h2>
       </div>
 
       {/* Products Grid */}
       <div className="relative overflow-hidden">
         <div
           className={`grid transition-all duration-300 ease-in-out ${
-            isTransitioning ? 'opacity-90' : 'opacity-100'
+            isTransitioning ? "opacity-90" : "opacity-100"
           } grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6`}
         >
           {getVisibleProducts().map((product, index) => (
@@ -139,42 +131,26 @@ function  RecentProductSection  ({
 
       {/* Bottom Section */}
       <div className="relative my-5">
-  
-        
         {/* Navigation Controls - Bottom Right */}
         <div className=" bottom-0 right-0 flex items-center gap-2 justify-end">
           <Button
-            variant="outline"
-            size="icon"
+            variant="iconOutline"
+            icon={ChevronLeft}
             onClick={handlePrev}
             disabled={isTransitioning}
             className="rounded-full border hover:border-brand-blue hover:text-brand-blue disabled:opacity-50 transition-all duration-200 shadow-sm"
-          >
-            <ChevronLeft className="h-4 w-4" />
-          </Button>
+          ></Button>
           <Button
-            variant="outline"
-            size="icon"
+            variant="iconOutline"
+            icon={ChevronRight}
             onClick={handleNext}
             disabled={isTransitioning}
             className="rounded-full border hover:border-brand-blue hover:text-brand-blue disabled:opacity-50 transition-all duration-200 shadow-sm"
-          >
-            <ChevronRight className="h-4 w-4" />
-          </Button>
+          ></Button>
         </div>
       </div>
     </div>
   );
-};
+}
 
-
-
-
-
-
-
-
-
-
-
-export default RecentProductSection
+export default RecentProductSection;

@@ -45,7 +45,7 @@ function InsuranceAccordion() {
       />
       <div className=" py-8 flex justify-center gap-5">
         <Button variant="outline">Fill Claim Form</Button>
-        <Button>Apply For Motor Insurance</Button>
+        <Button variant="primary">Apply For Motor Insurance</Button>
       </div>
     </div>
   );

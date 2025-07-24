@@ -9,7 +9,7 @@ import {
   X,
   ChevronRight,
 } from "lucide-react";
-import  Button  from "@/components/ui/button";
+import Button from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
   DropdownMenu,
@@ -125,36 +125,55 @@ export default function MainNavigation() {
                 })}
               </div>
 
-            <div className="absolute bottom-0">
-            <div className="px-3 py-5 flex gap-2">
-                <span className="text-gray-400 font-[600]">Quick Links:</span>
-                <div className="flex gap-4">
-                  <Link to="/find-branches-atm" className="hover:text-nbc-dark-950 hover:underline">Find Branch & ATMs</Link>
-                  <Link to="/whistle-blowing" className="hover:text-nbc-dark-950 hover:underline">Whistleblowing</Link>
-                  <Link to="/contact-us" className="hover:text-nbc-dark-950 hover:underline">Contact Us</Link>
+              <div className="absolute bottom-0">
+                <div className="px-3 py-5 flex gap-2">
+                  <span className="text-gray-400 font-[600]">Quick Links:</span>
+                  <div className="flex gap-4">
+                    <Link
+                      to="/find-branches-atm"
+                      className="hover:text-nbc-dark-950 hover:underline"
+                    >
+                      Find Branch & ATMs
+                    </Link>
+                    <Link
+                      to="/whistle-blowing"
+                      className="hover:text-nbc-dark-950 hover:underline"
+                    >
+                      Whistleblowing
+                    </Link>
+                    <Link
+                      to="/contact-us"
+                      className="hover:text-nbc-dark-950 hover:underline"
+                    >
+                      Contact Us
+                    </Link>
+                  </div>
                 </div>
               </div>
             </div>
-            </div>
             <div>
-<div className="p-5 flex flex-col gap-3 w-1/2">
-<h1 className="text-[24px] font-[700]">Simplify Your Work Life</h1>
-<p className="line-clamp-2">Our product is the ultimate tool for simplifying your work life and increase in movement</p>
-<img src="/images/recent-product.jpg" alt="" className=" rounded-lg"/>
+              <div className="p-5 flex flex-col gap-3 w-1/2">
+                <h1 className="text-[24px] font-[700]">
+                  Simplify Your Work Life
+                </h1>
+                <p className="line-clamp-2">
+                  Our product is the ultimate tool for simplifying your work
+                  life and increase in movement
+                </p>
+                <img
+                  src="/images/recent-product.jpg"
+                  alt=""
+                  className=" rounded-lg"
+                />
 
-
-  <Button
-          variant="primary"
-          className="w-full sm:w-auto bg-nbc-dark-950 hover:bg-nbc-dark-700"
-          onClick={()=>{}}
-        >
-          { "Learn more"}
-          <ChevronRight className="ml-1 h-4 w-4" />
-        </Button>
-
-
-</div>
-
+                <Button
+                  variant="primary"
+                                  onClick={() => {}}
+                >
+                  {"Learn more"}
+                  <ChevronRight className="ml-1 h-4 w-4" />
+                </Button>
+              </div>
             </div>
           </div>
         </div>
@@ -171,7 +190,8 @@ export default function MainNavigation() {
                   src="/images/logo.svg"
                   alt="NBC Logo"
                   width={90}
-                  height={100}className="z-[10000000]"
+                  height={100}
+                  className="z-[10000000]"
                 />
               </div>
             </div>
@@ -203,7 +223,7 @@ export default function MainNavigation() {
 
                         {/* Second Level Links - Inside Navbar */}
                         {hasThirdLevel && (
-                          <div className="absolute left-0 top-full opacity-0 invisible group-hover/item:opacity-100 group-hover/item:visible transition-all duration-300 z-40 flex items-center justify-start h-12">
+                          <div className=" absolute left-7 top-full opacity-0 invisible group-hover/item:opacity-100 group-hover/item:visible transition-all duration-300 z-40 flex items-center justify-start h-12">
                             <div className="flex items-center space-x-8 ">
                               {item.subItems?.map((subItem, index) => (
                                 <div
@@ -316,50 +336,52 @@ export default function MainNavigation() {
             {/* Right Side Actions */}
             <div className="hidden lg:flex items-center space-x-4">
               {/* Render action buttons except Login */}
-              {actionButtons.filter(btn => btn.label !== 'Login').map((actionButton) => (
-                <div key={actionButton.label} >
-                  {actionButton.items ? (
-                    <DropdownMenu >
-                      <DropdownMenuTrigger asChild>
-                        <Button
-                          variant={actionButton.variant}
-                          size="sm"
-                          // className={
-                          //   actionButton.variant === "primary"
-                          //     ? "bg-nbc-dark-700 hover:bg-nbc-dark-500"
-                          //     : "text-nav-text hover:text-nav-text-hover"
-                          // }
-                        >
-                          {actionButton.icon &&
-                            renderIcon(actionButton.icon, "h-4 w-4 mr-2")}
-                          {actionButton.label}
-                          <ChevronDown className="h-4 w-4 ml-1" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent className="z-[10000000]">
-                        {actionButton.items.map((item) => (
-                          <DropdownMenuItem
-                            key={item.label}
-                            onClick={closeAllDropdowns}
+              {actionButtons
+                .filter((btn) => btn.label !== "Login")
+                .map((actionButton) => (
+                  <div key={actionButton.label}>
+                    {actionButton.items ? (
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button
+                            variant={actionButton.variant}
+                            size="sm"
+                            // className={
+                            //   actionButton.variant === "primary"
+                            //     ? "bg-nbc-dark-700 hover:bg-nbc-dark-500"
+                            //     : "text-nav-text hover:text-nav-text-hover"
+                            // }
                           >
-                            {item.label}
-                          </DropdownMenuItem>
-                        ))}
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  ) : (
-                    <Button
-                      variant={actionButton.variant}
-                      size="sm"
-                      className="text-nav-text hover:text-nav-text-hover"
-                    >
-                      {actionButton.icon &&
-                        renderIcon(actionButton.icon, "h-4 w-4 mr-2")}
-                      {actionButton.label}
-                    </Button>
-                  )}
-                </div>
-              ))}
+                            {actionButton.icon &&
+                              renderIcon(actionButton.icon, "h-4 w-4 mr-2")}
+                            {actionButton.label}
+                            <ChevronDown className="h-4 w-4 ml-1" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent className="z-[10000000]">
+                          {actionButton.items.map((item) => (
+                            <DropdownMenuItem
+                              key={item.label}
+                              onClick={closeAllDropdowns}
+                            >
+                              {item.label}
+                            </DropdownMenuItem>
+                          ))}
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    ) : (
+                      <Button
+                        variant={actionButton.variant}
+                        size="sm"
+                        className="text-nav-text hover:text-nav-text-hover"
+                      >
+                        {actionButton.icon &&
+                          renderIcon(actionButton.icon, "h-4 w-4 mr-2")}
+                        {actionButton.label}
+                      </Button>
+                    )}
+                  </div>
+                ))}
 
               {/* Search Bar before Login button */}
               <div className="relative">
@@ -368,50 +390,52 @@ export default function MainNavigation() {
               </div>
 
               {/* Render Login button last */}
-              {actionButtons.filter(btn => btn.label === 'Login').map((actionButton) => (
-                <div key={actionButton.label} >
-                  {actionButton.items ? (
-                    <DropdownMenu >
-                      <DropdownMenuTrigger asChild>
-                        <Button
-                          variant={actionButton.variant}
-                          size="md"
-                          // className={
-                          //   actionButton.variant === "primary"
-                          //     ? "bg-nbc-dark-700 hover:bg-nbc-dark-500"
-                          //     : "text-nav-text hover:text-nav-text-hover"
-                          // }
-                        >
-                          {actionButton.icon &&
-                            renderIcon(actionButton.icon, "h-4 w-4 mr-2")}
-                          {actionButton.label}
-                          <ChevronDown className="h-4 w-4 ml-1" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent className="z-[10000000]">
-                        {actionButton.items.map((item) => (
-                          <DropdownMenuItem
-                            key={item.label}
-                            onClick={closeAllDropdowns}
+              {actionButtons
+                .filter((btn) => btn.label === "Login")
+                .map((actionButton) => (
+                  <div key={actionButton.label}>
+                    {actionButton.items ? (
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button
+                            variant={actionButton.variant}
+                            size="md"
+                            // className={
+                            //   actionButton.variant === "primary"
+                            //     ? "bg-nbc-dark-700 hover:bg-nbc-dark-500"
+                            //     : "text-nav-text hover:text-nav-text-hover"
+                            // }
                           >
-                            {item.label}
-                          </DropdownMenuItem>
-                        ))}
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  ) : (
-                    <Button
-                      variant={actionButton.variant}
-                      size="sm"
-                      className="text-nav-text hover:text-nav-text-hover"
-                    >
-                      {actionButton.icon &&
-                        renderIcon(actionButton.icon, "h-4 w-4 mr-2")}
-                      {actionButton.label}
-                    </Button>
-                  )}
-                </div>
-              ))}
+                            {actionButton.icon &&
+                              renderIcon(actionButton.icon, "h-4 w-4 mr-2")}
+                            {actionButton.label}
+                            <ChevronDown className="h-4 w-4 ml-1" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent className="z-[10000000]">
+                          {actionButton.items.map((item) => (
+                            <DropdownMenuItem
+                              key={item.label}
+                              onClick={closeAllDropdowns}
+                            >
+                              {item.label}
+                            </DropdownMenuItem>
+                          ))}
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    ) : (
+                      <Button
+                        variant={actionButton.variant}
+                        size="sm"
+                        className="text-nav-text hover:text-nav-text-hover"
+                      >
+                        {actionButton.icon &&
+                          renderIcon(actionButton.icon, "h-4 w-4 mr-2")}
+                        {actionButton.label}
+                      </Button>
+                    )}
+                  </div>
+                ))}
             </div>
 
             {/* Mobile menu button */}
