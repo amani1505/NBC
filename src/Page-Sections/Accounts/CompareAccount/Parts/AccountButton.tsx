@@ -1,24 +1,54 @@
-import  Button  from "@/components/ui/button";
+// import  Button  from "@/components/ui/button";
+// import { cn } from "@/lib/utils";
+// import type { AccountType } from "@/types/accounts";
+
+
+// interface AccountButtonProps {
+//   account: AccountType;
+//   isSelected: boolean;
+//   onClick: () => void;
+// }
+
+// export function AccountButton({ account, isSelected, onClick }: AccountButtonProps) {
+//   return (
+//     <Button
+//       variant={isSelected ? "primary" : "outline"}
+//       onClick={onClick}
+//       className={cn(
+//         "px-4 py-2 rounded text-sm font-medium transition-all cursor-pointer",
+//         isSelected
+//           ? "bg-nbc-dark-950 text-primary-foreground border-primary"
+//           : "bg-banking-gray text-foreground border-banking-gray-dark hover:bg-banking-gray-dark"
+//       )}
+//     >
+//       {account.name}
+//     </Button>
+//   );
+// }
+
+import Button from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import type { AccountType } from "@/types/accounts";
-
 
 interface AccountButtonProps {
   account: AccountType;
   isSelected: boolean;
+  isDisabled?: boolean;
   onClick: () => void;
 }
 
-export function AccountButton({ account, isSelected, onClick }: AccountButtonProps) {
+export function AccountButton({ account, isSelected, isDisabled = false, onClick }: AccountButtonProps) {
   return (
     <Button
       variant={isSelected ? "primary" : "outline"}
       onClick={onClick}
+      disabled={isDisabled}
       className={cn(
         "px-4 py-2 rounded text-sm font-medium transition-all cursor-pointer",
         isSelected
           ? "bg-nbc-dark-950 text-primary-foreground border-primary"
-          : "bg-banking-gray text-foreground border-banking-gray-dark hover:bg-banking-gray-dark"
+          : "bg-banking-gray text-foreground border-banking-gray-dark hover:bg-banking-gray-dark",
+        isDisabled && " cursor-not-allowed hover:text-gray-400"
       )}
     >
       {account.name}

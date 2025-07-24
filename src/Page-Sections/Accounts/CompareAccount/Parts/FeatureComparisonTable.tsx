@@ -91,7 +91,7 @@ export function FeatureComparisonTable({ comparisons, features }: FeatureCompari
               index < comparisons.length - 1 ? 'border-r border-gray-300' : ''
             }`}
           >
-            <Button className="bg-nbc-dark-950 hover:bg-banking-blue-light text-primary-foreground px-6 py-2 rounded font-medium">
+            <Button variant="primary" >
               Open Account
             </Button>
           </div>

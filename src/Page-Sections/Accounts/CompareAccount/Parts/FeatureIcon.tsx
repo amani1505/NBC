@@ -10,7 +10,7 @@ export function FeatureIcon({ hasFeature, className }: FeatureIconProps) {
   if (hasFeature) {
     return (
       <Check 
-        className={cn("h-5 w-5 text-success", className)} 
+        className={cn("h-5 w-5 text-green-700", className)} 
         strokeWidth={2.5}
       />
     );
@@ -18,7 +18,7 @@ export function FeatureIcon({ hasFeature, className }: FeatureIconProps) {
 
   return (
     <X 
-      className={cn("h-5 w-5 text-error", className)} 
+      className={cn("h-5 w-5 text-red-500", className)} 
       strokeWidth={2.5}
     />
   );
