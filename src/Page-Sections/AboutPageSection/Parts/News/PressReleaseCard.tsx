@@ -1,7 +1,8 @@
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { ChevronRight } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import Button from "@/components/ui/button";
+import { slugify } from "@/lib/utils";
 
 interface PressReleaseCardProps {
   image: string;
@@ -59,9 +60,19 @@ const PressReleaseCard = ({
           </div>
         )}
 
-        <h3 className="text-base sm:text-lg font-semibold text-foreground leading-tight">
-          {title}
-        </h3>
+        {learnMoreLink && (
+          <h3 className="text-base sm:text-lg font-semibold text-foreground leading-tight">
+            {title}
+          </h3>
+        )}
+        {!learnMoreLink && (
+          <Link
+            to={`/news/${slugify(title || "")}`}
+            className="text-base sm:text-lg font-semibold text-foreground leading-tight hover:text-nbc-dark-950"
+          >
+            {title}
+          </Link>
+        )}
         <p className="text-muted-foreground text-xs sm:text-sm leading-relaxed line-clamp-2">
           {description}
         </p>

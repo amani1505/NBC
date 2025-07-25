@@ -14,6 +14,7 @@ const footerLinkPaths = {
   "Forms & Tariff Guides": "/forms-tariff-guides",
   "Whistle Blowing": "/whistle-blowing",
   "Fraud Alert": "/fraud-alert",
+  
   "Calculators": "/calculators",
   // About US
   "Investor Relation": "/investor-relation",
@@ -25,7 +26,7 @@ const footerLinkPaths = {
   "Contact Us": "/contact-us",
   "Feedback & Complains": "/feedback-complains",
   "ATMs & Branches": "/atms-branches",
-  "Security Tips": "/security-tips",
+  "Security Tips": "/security-center",
   "Cookies": "/cookies",
   // Micro Sites
   "NBC League": "/nbc-league",
@@ -115,12 +116,12 @@ function Footer() {
               <ul className="text-white space-y-3">
                 {section.items.map((item, itemIndex) => (
                   <li key={itemIndex} className="text-xs">
-                    <a
-                      href={footerLinkPaths[item as keyof typeof footerLinkPaths] || "#"}
+                    <Link
+                      to={footerLinkPaths[item as keyof typeof footerLinkPaths] || "#"}
                       className="hover:underline hover:text-[#81BEDB] transition-colors"
                     >
                       {item}
-                    </a>
+                    </Link>
                   </li>
                 ))}
               </ul>

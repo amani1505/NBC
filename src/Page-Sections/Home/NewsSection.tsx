@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 import Button from "@/components/ui/button";
 import {
   Select,
@@ -10,6 +11,8 @@ import { motion } from "framer-motion";
 import PressReleaseCard from "../AboutPageSection/Parts/News/PressReleaseCard";
 
 function NewsSection() {
+  const navigate = useNavigate()
+
   const newsItems = [
     {
       id: "1",
@@ -129,7 +132,10 @@ function NewsSection() {
         >
           <Button
             size="lg"
-            className="text-white hover:text-white bg-nbc-dark-600 font-semibold hover:bg-nbc-dark-500 w-full sm:w-auto"
+          variant="primary"
+          onClick={()=>{
+            navigate("/about/news")
+          }}
           >
             View All News
           </Button>

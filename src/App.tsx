@@ -54,10 +54,13 @@ const Commercial = lazy(
 const WhistleBlowing = lazy(() => import("./Pages/Landing/WhistleBlowing"));
 const WebTerms = lazy(() => import("./Pages/Landing/WebTerms"));
 const TermsCondition = lazy(() => import("./Pages/Landing/TermsCondition"));
-const DataPrivacy= lazy(() => import("./Pages/Landing/DataPrivacy"));
+const DataPrivacy = lazy(() => import("./Pages/Landing/DataPrivacy"));
 
 const SingleNews = lazy(() => import("./Pages/Landing/SingleNews"));
 
+// Security Pages
+const SecurityCenter = lazy(() => import("./Pages/Landing/SecurityCenter"));
+const FraudaAlert = lazy(() => import("./Pages/Landing/FraudAlert"));
 
 function App() {
   return (
@@ -114,9 +117,11 @@ function App() {
           <Route path="terms-condition" element={<TermsCondition />} />
           <Route path="data-privacy" element={<DataPrivacy />} />
 
-          <Route path="single-news" element={<SingleNews />} />
+          <Route path="news/:newsName" element={<SingleNews />} />
 
-          {/* Diaspora Banking */}
+          {/* security pages */}
+          <Route path="security-center" element={<SecurityCenter />} />
+          <Route path="fraud-alert" element={<FraudaAlert />} />
 
           {/* Status Pages */}
           <Route path="error" element={<Error />} />
