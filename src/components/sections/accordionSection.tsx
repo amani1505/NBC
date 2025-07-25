@@ -54,7 +54,7 @@ function AccordionSection ({
       )
     }
         
-        <Accordion type="single" collapsible className="w-full">
+        <Accordion type="single" collapsible className="w-full"  defaultValue={items[0]?.id}  >
           {items.map((item) => (
             <AccordionItem key={item.id} value={item.id} className="border-gray-300">
               <AccordionTrigger className={`font-bold text-[14px] hover:text-finance-blue-light ${itemTitleColor}`} iconType="plus-minus">

@@ -9,6 +9,8 @@ import AccountContent from "@/components/sections/offering-tab-contents/AccountC
 import LoanContent from "@/components/sections/offering-tab-contents/LoanContent";
 import InsuranceContent from "@/components/sections/offering-tab-contents/InsuranceContent";
 import WayToBankContent from "@/components/sections/offering-tab-contents/WayToBankContent";
+import FooterHero from "@/components/sections/FooterHero";
+import BusinessSolutionContent from "@/components/sections/offering-tab-contents/BusinessSolution";
 
 function CommercialPageSection() {
   const { openModal } = useModal();
@@ -130,6 +132,12 @@ function CommercialPageSection() {
       // icon: <Building />
     },
     {
+      value: "businessSolutions",
+      label: "Business Solution",
+      content: <BusinessSolutionContent items={solutions} />,
+      // icon: <HelpCircle />
+    },
+     {
       value: "waytobank",
       label: "Way to Bank",
       content: <WayToBankContent items={solutions} />,
@@ -193,6 +201,12 @@ function CommercialPageSection() {
         description=""
         buttonText="Request Call Back"
         onButtonClick={handleButtonClick}
+      />
+       <FooterHero
+        title="Greet, Meet & Connect with our business club"
+        description="Join our business club today"
+        buttonText="Register Now"
+       
       />
     </>
   );

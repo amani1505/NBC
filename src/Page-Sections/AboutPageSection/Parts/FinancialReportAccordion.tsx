@@ -37,7 +37,7 @@ function FinancialReportAccordion({
       <Card className="p-10 shadow-card-custom border-gray-300">
         {title && <h4 className={`text-lg font-semibold  mb-4 ${titleColor}`}>{title}</h4>}
 
-        <Accordion type="single" collapsible className="w-full">
+        <Accordion type="single" collapsible className="w-full" defaultValue={items[0]?.id}>
           {items.map((item) => (
             <AccordionItem
               key={item.id}
