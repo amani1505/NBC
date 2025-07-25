@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @import "tw-animate-css";
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
 
 /* @custom-variant dark (&:is(.dark *)); */
 
@@ -25,7 +26,7 @@
   --color-nbc-dark-300: oklch(0.7267 0.2107 156.63);  
   --color-nbc-dark-400: oklch(0.6324 0.2512 155.86); 
 
-  --color-nbc-dark-500: oklch(0.1265 0.2025 273.72);  
+  --color-nbc-dark-500: #111d45;  
   --color-nbc-dark-600: oklch(0.2076 0.2917 273.47);  
   --color-nbc-dark-700: #172960;
   --color-nbc-dark-800: #1a2e6e;  
@@ -100,6 +101,7 @@
 
 body {
   margin: 0;
+ font-family: "Inter", sans-serif;
 
 
 }

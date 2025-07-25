@@ -86,7 +86,7 @@ function Footer() {
   ];
 
   return (
-    <div className="bg-nbc-dark-500 border-t-2 border-[#DD0A14]">
+    <div className="bg-nbc-dark-500 border-t-[4px] border-[#DD0A14]">
       <div className="container w-full mx-auto px-4 py-5">
         {/* Header Section - Logo and Newsletter */}
         <div className="flex flex-col lg:flex-row lg:justify-between lg:items-center gap-4 mb-6 border-b border-gray-500 py-5">

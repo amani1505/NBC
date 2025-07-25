@@ -1,11 +1,11 @@
 import Faq from "./CallToActionSections/Faq";
 import FeedbackandComplains from "./CallToActionSections/FeedbackandComplains";
 import TalktoUs from "./CallToActionSections/TalktoUs";
-import {
-    HelpCircle,
-  MessageCircle,
-  MessageSquare,
-} from "lucide-react";
+// import {
+//     HelpCircle,
+//   MessageCircle,
+//   MessageSquare,
+// } from "lucide-react";
 // import { useState } from "react";
 import "./styles/calltoaction.css";
 
@@ -116,20 +116,20 @@ function CallToAction() {
       label: "Talk to Us",
       value: "talktous",
       content:<TalktoUs contacts={contactData} />,
-      icon: <MessageCircle className="w-5 h-5" />
+      // icon: <MessageCircle className="w-5 h-5" />
     },
     {
       label: "Feedback & Complains",
       value: "feedback",
       content:<FeedbackandComplains />,
-      icon:  <MessageSquare className="w-5 h-5" />
+      // icon:  <MessageSquare className="w-5 h-5" />
       
     },
     {
       label: "Frquently Asked Question",
       value: "faq",
       content:  <Faq />,
-      icon: <HelpCircle className="w-5 h-5" />
+      // icon: <HelpCircle className="w-5 h-5" />
     },
    
   ];

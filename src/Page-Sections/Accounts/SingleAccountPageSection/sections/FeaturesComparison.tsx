@@ -130,7 +130,7 @@ export default function FeaturesComparison({ featureSection, howToGetItSection,a
           <Button variant="outline" size="lg" className="min-w-40 border-2" onClick={()=> navigate(`/compare-account/${accountName}`)}>
             Compare Account
           </Button>
-          <Button variant="default" size="lg" className="min-w-40 bg-nbc-dark-950 hover:bg-nbc-dark-900">
+          <Button variant="primary" size="lg" >
             Open Account
           </Button>
         </div>

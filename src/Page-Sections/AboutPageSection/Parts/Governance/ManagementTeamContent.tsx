@@ -5,19 +5,19 @@ function ManagementTeamContent() {
   const contents: Content[] = [
     {
       id: "1",
-      title: "Erick Hubert",
+      title: "John Deo",
       description: "UX/UI Designer",
       image: "/images/recent-product.jpg",
     },
     {
       id: "2",
-      title: "Erick Hubert",
+      title: "John Deo",
       description: "UX/UI Designer",
       image: "/images/recent-product.jpg",
     },
     {
       id: "3",
-      title: "Erick Hubert",
+      title: "John Deo",
       description: "UX/UI Designer",
       image: "/images/recent-product.jpg",
     },

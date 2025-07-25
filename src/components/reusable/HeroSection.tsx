@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import Autoplay from "embla-carousel-autoplay";
-import Button  from "@/components/ui/button";
+import Button from "@/components/ui/button";
 import {
   Carousel,
   CarouselContent,
@@ -10,13 +10,14 @@ import { cn } from "@/lib/utils";
 import type { EmblaCarouselType } from "embla-carousel";
 import useCarousel, { CarouselContext } from "@/Context/CorouselContext";
 import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 
- type Slide = {
+type Slide = {
   title: string;
   description: string;
   buttonText?: string;
   imageUrl: string;
-  dateText?:string
+  dateText?: string;
 };
 
 interface HeroSectionProps {
@@ -53,10 +54,11 @@ function CarouselDots() {
 function HeroSection({
   slides,
   hasForex = true,
-  height = "87vh",
+  height = "84vh",
 }: HeroSectionProps) {
   const [api, setApi] = useState<EmblaCarouselType | null>(null);
   const [selected, setSelected] = useState(0);
+  const navigate = useNavigate();
 
   const forexRates = [
     {
@@ -134,20 +136,17 @@ function HeroSection({
                 }}
               >
                 <div className="container mx-auto h-full flex items-center">
-                  
                   <div className="max-w-lg text-white">
-            {
-              slide.dateText &&(
-                <motion.h1
-                className="text-4xl md:text-2xl font-bold mb-4 text-[#DD0A14]"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.2 }}
-              >
-                {slide.dateText}
-              </motion.h1>
-              )
-            }
+                    {slide.dateText && (
+                      <motion.h1
+                        className="text-4xl md:text-2xl font-bold mb-4 text-[#DD0A14]"
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ delay: 0.2 }}
+                      >
+                        {slide.dateText}
+                      </motion.h1>
+                    )}
                     <motion.h1
                       className="text-4xl md:text-5xl font-bold mb-4"
                       initial={{ opacity: 0, y: 20 }}
@@ -170,10 +169,7 @@ function HeroSection({
                       transition={{ delay: 1 }}
                     >
                       {slide.buttonText && (
-                        <Button
-                          variant="lightOutline"
-                          size="lg"
-                        >
+                        <Button variant="lightOutline" size="lg">
                           {slide.buttonText}
                         </Button>
                       )}
@@ -210,14 +206,28 @@ function HeroSection({
                         {rate.code}:
                       </span>
                       <span className="ml-2">
-                        Buying  <span className="text-green-500 font-bold"> {rate.buy}</span>   - Selling<span className="text-red-500 font-bold"> {rate.sell}</span>
+                        Buying{" "}
+                        <span className="text-green-500 font-bold">
+                          {" "}
+                          {rate.buy}
+                        </span>{" "}
+                        - Selling
+                        <span className="text-red-500 font-bold">
+                          {" "}
+                          {rate.sell}
+                        </span>
                       </span>
                     </div>
                   ))}
                 </div>
               </div>
               <div className="flex justify-center md:block">
-                <Button className="ml-5 bg-white text-[#213A89] py-2 hover:bg-white cursor-pointer font-[600]">
+                <Button
+                  className="ml-5 bg-white text-[#213A89] py-2 hover:bg-white cursor-pointer font-[600]"
+                  onClick={() => {
+                    navigate("/currency-convetor");
+                  }}
+                >
                   Currency Calculator
                 </Button>
               </div>

@@ -5,6 +5,7 @@ import MainNavigation from "./components/Navigation/MainNavigation";
 import "./App.css";
 import BusinessBanking from "./Pages/Landing/BusinessBanking/BusinessBanking";
 
+
 // Lazy Loading PAges
 
 const Home = lazy(() => import("./Pages/Landing/Home"));
@@ -30,6 +31,7 @@ const CompareAccount = lazy(() => import("./Pages/Landing/CompareAccount"));
 
 // ABOUT PAGES
 const About = lazy(() => import("./Pages/Landing/About/About"));
+const ContactUs = lazy(()=>import('./Pages/Landing/ContactUs'))
 const Overview = lazy(() => import("./Pages/Landing/About/Overview"));
 const Careers = lazy(() => import("./Pages/Landing/About/Careers"));
 const Governance = lazy(() => import("./Pages/Landing/About/Governance"));
@@ -61,6 +63,10 @@ const SingleNews = lazy(() => import("./Pages/Landing/SingleNews"));
 // Security Pages
 const SecurityCenter = lazy(() => import("./Pages/Landing/SecurityCenter"));
 const FraudaAlert = lazy(() => import("./Pages/Landing/FraudAlert"));
+
+// Currency Convetor
+
+const CurrencyConvetor = lazy(()=> import('./Pages/Landing/CurrencyConvetor'))
 
 function App() {
   return (
@@ -102,6 +108,7 @@ function App() {
             <Route path="sustainability" element={<Sustainability />} />
             <Route path="tenders" element={<Tenders />} />
           </Route>
+          <Route path="contact-us" element={<ContactUs/>} />
 
           {/* Bussiness Banking Pages */}
 
@@ -122,6 +129,11 @@ function App() {
           {/* security pages */}
           <Route path="security-center" element={<SecurityCenter />} />
           <Route path="fraud-alert" element={<FraudaAlert />} />
+
+
+          {/* Currency Convetor */}
+
+          <Route path="currency-convetor" element={<CurrencyConvetor />} />
 
           {/* Status Pages */}
           <Route path="error" element={<Error />} />
