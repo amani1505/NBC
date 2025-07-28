@@ -5,6 +5,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Badge } from "@/components/ui/badge";
+import Button from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 
 type Content = {
@@ -69,15 +70,18 @@ function FinancialReportAccordion({
                       </Badge>
                     )}
                    </div>
+                   <div>
+                    <Button variant="primary" disabled={content.status === "closed"}>Apply Now</Button>
+                   </div>
 
-                   {
+                   {/* {
                     content.deadlineDate &&(
                       <div>
                       Deadline: {content.deadlineDate}
                      </div>
 
                     )
-                   }
+                   } */}
                 
                   </div>
                 ))}

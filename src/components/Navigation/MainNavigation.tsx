@@ -8,6 +8,8 @@ import {
   Menu,
   X,
   ChevronRight,
+  Plus,
+  Minus,
 } from "lucide-react";
 import Button from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -18,6 +20,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useNavigation } from "@/hooks/useNavigation";
+import { useState } from "react";
 
 export default function MainNavigation() {
   const {
@@ -34,11 +37,35 @@ export default function MainNavigation() {
     setActiveParent,
   } = useNavigation();
 
+  const [hoveredSubItem, setHoveredSubItem] = useState<string | null>(null);
+  const [hoveredSecondLevel, setHoveredSecondLevel] = useState<string | null>(
+    null
+  );
+  const [expandedAccordions, setExpandedAccordions] = useState<Set<string>>(
+    new Set()
+  );
+
   // Function to close all dropdowns
   const closeAllDropdowns = () => {
     setActiveThirdLevel(null);
     setActiveParent(null);
+    setHoveredSubItem(null);
+    setHoveredSecondLevel(null);
+    setExpandedAccordions(new Set());
     closeMobileMenu();
+  };
+
+  // Toggle accordion expansion
+  const toggleAccordion = (itemId: string) => {
+    setExpandedAccordions((prev) => {
+      const newSet = new Set(prev);
+      if (newSet.has(itemId)) {
+        newSet.delete(itemId);
+      } else {
+        newSet.add(itemId);
+      }
+      return newSet;
+    });
   };
 
   const renderIcon = (iconName: string, className = "h-4 w-4") => {
@@ -56,120 +83,388 @@ export default function MainNavigation() {
     return IconComponent ? <IconComponent className={className} /> : null;
   };
 
+  // Get the active third level content
+  const getThirdLevelContent = () => {
+    if (!activeThirdLevel) return null;
+
+    for (const item of navigationItems) {
+      if (item.subItems) {
+        const subItem = item.subItems.find(
+          (sub) => sub.label === activeThirdLevel
+        );
+        if (subItem?.thirdLevelItems) {
+          return {
+            parentItem: item,
+            subItem: subItem,
+            items: subItem.thirdLevelItems,
+          };
+        }
+      }
+    }
+    return null;
+  };
+
+  // Get categorized items for second level display
+  interface SubItem {
+    categories?: Record<
+      string,
+      { label: string; href?: string; description?: string }[]
+    >;
+  }
+
+  const getCategorizedItems = (subItem: SubItem) => {
+    if (!subItem || !subItem.categories) return [];
+
+    return Object.entries(subItem.categories).map(([categoryName, items]) => ({
+      label: categoryName,
+      items: items as { label: string; href?: string; description?: string }[],
+    }));
+  };
+
+  const thirdLevelContent = getThirdLevelContent();
+
   return (
     <header className="w-full border-nav-border border-b-[4px] border-[#DD0A14] py-2 sticky top-0 z-[10000] bg-white">
-      {/* Third Level Full Width Dropdown - Moved outside nav container */}
-      {activeThirdLevel && (
+      {/* Third Level Full Width Dropdown */}
+      {activeThirdLevel && thirdLevelContent && (
         <div
-          className="absolute left-0 top-full w-full bg-nav-dropdown shadow-lg z-50 bg-gray-100"
+          className="absolute left-0 top-full w-full bg-white shadow-lg z-50 border-t border-gray-200"
           onMouseEnter={() => setActiveThirdLevel(activeThirdLevel)}
-          onMouseLeave={() => setActiveThirdLevel(null)}
+          onMouseLeave={() => {
+            setActiveThirdLevel(null);
+            setHoveredSubItem(null);
+            setHoveredSecondLevel(null);
+          }}
         >
-          <div className=" grid mx-auto  grid-cols-2 gap-5">
-            <div className="bg-white px-4 py-4 ">
-              <div className="container px-4  py-3 border-b border-gray-400">
-                {navigationItems.map((item) => {
-                  const thirdLevelItems =
-                    item.subItems?.find(
-                      (subItem) => subItem.label === activeThirdLevel
-                    )?.thirdLevelItems || [];
-                  if (!thirdLevelItems.length) return null;
-                  const firstColumn = thirdLevelItems.filter(
-                    (_, idx) => idx % 2 === 0
-                  );
-                  const secondColumn = thirdLevelItems.filter(
-                    (_, idx) => idx % 2 === 1
-                  );
-                  return (
-                    <div key={item.label} className="grid grid-cols-2 gap-8">
-                      <div className="border-r border-gray-400">
-                        {firstColumn.map((thirdItem, idx) => (
-                          <Link
-                            key={idx}
-                            to={thirdItem.href}
-                            onClick={closeAllDropdowns}
-                            className="block p-4 rounded-lg hover:bg-accent transition-colors duration-150"
-                          >
-                            <div className="font-medium text-nav-text mb-2">
-                              {thirdItem.label}
+          <div className="container mx-auto grid grid-cols-3 gap-0 min-h-[400px]">
+            {/* First Column - Main Items from navigationData */}
+            <div className="bg-gray-50 border-r border-gray-200">
+              <div className="p-6">
+                <h3 className="text-lg font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-300">
+                  {thirdLevelContent.subItem.label}
+                </h3>
+                <div className="space-y-1">
+                  {thirdLevelContent.items.map((item, idx) => (
+                    <div
+                      key={idx}
+                      className="relative"
+                      onMouseEnter={() => {
+                        setHoveredSubItem(item.label);
+                        setHoveredSecondLevel(null);
+                      }}
+                    >
+                      <Link
+                        to={item.href}
+                        onClick={closeAllDropdowns}
+                        className="group flex items-center justify-between p-3 rounded-lg hover:bg-white hover:shadow-sm transition-all duration-200 text-gray-700 hover:text-gray-900"
+                      >
+                        <div>
+                          <div className="font-medium">{item.label}</div>
+                          {item.description && (
+                            <div className="text-sm text-gray-500 mt-1">
+                              {item.description}
                             </div>
-                            {thirdItem.description && (
-                              <div className="text-sm text-muted-foreground">
-                                {thirdItem.description}
-                              </div>
-                            )}
-                          </Link>
-                        ))}
-                      </div>
-                      <div>
-                        {secondColumn.map((thirdItem, idx) => (
-                          <Link
-                            key={idx}
-                            to={thirdItem.href}
-                            onClick={closeAllDropdowns}
-                            className="block p-4 rounded-lg hover:bg-accent transition-colors duration-150"
-                          >
-                            <div className="font-medium text-nav-text mb-2">
-                              {thirdItem.label}
-                            </div>
-                            {thirdItem.description && (
-                              <div className="text-sm text-muted-foreground">
-                                {thirdItem.description}
-                              </div>
-                            )}
-                          </Link>
-                        ))}
-                      </div>
+                          )}
+                        </div>
+                        <ChevronRight className="h-4 w-4 opacity-0 group-hover:opacity-100 transition-opacity" />
+                      </Link>
                     </div>
-                  );
-                })}
-              </div>
-
-              <div className="absolute bottom-0">
-                <div className="px-3 py-5 flex gap-2">
-                  <span className="text-gray-400 font-[600]">Quick Links:</span>
-                  <div className="flex gap-4">
-                    <Link
-                      to="/find-branches-atm"
-                      className="hover:text-nbc-dark-950 hover:underline"
-                    >
-                      Find Branch & ATMs
-                    </Link>
-                    <Link
-                      to="/whistle-blowing"
-                      className="hover:text-nbc-dark-950 hover:underline"
-                    >
-                      Whistleblowing
-                    </Link>
-                    <Link
-                      to="/contact-us"
-                      className="hover:text-nbc-dark-950 hover:underline"
-                    >
-                      Contact Us
-                    </Link>
-                  </div>
+                  ))}
                 </div>
               </div>
             </div>
-            <div>
-              <div className="p-5 flex flex-col gap-3 w-1/2">
-                <h1 className="text-[24px] font-[700]">
-                  Simplify Your Work Life
-                </h1>
-                <p className="line-clamp-2">
-                  Our product is the ultimate tool for simplifying your work
-                  life and increase in movement
-                </p>
-                <img
-                  src="/images/recent-product.jpg"
-                  alt=""
-                  className=" rounded-lg"
-                />
 
-                <Button variant="primary" onClick={() => {}}>
-                  {"Learn more"}
-                  <ChevronRight className="ml-1 h-4 w-4" />
-                </Button>
+            {/* Second Column - Categories based on hovered first level item */}
+            <div className="bg-white border-r border-gray-200">
+              {hoveredSubItem && thirdLevelContent.subItem.categories && (
+                <div
+                  className="p-6"
+                  onMouseEnter={() => setHoveredSubItem(hoveredSubItem)}
+                >
+                  <h4 className="text-md font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-300">
+                    {hoveredSubItem} Categories
+                  </h4>
+                  <div className="space-y-1">
+                    {getCategorizedItems(thirdLevelContent.subItem).map(
+                      (category, idx) => {
+                        const itemId = `${hoveredSubItem}-${idx}`;
+                        const isExpanded = expandedAccordions.has(itemId);
+
+                        return (
+                          <div
+                            key={idx}
+                            className="border border-gray-200 rounded-lg overflow-hidden"
+                          >
+                            <div
+                              className="group flex items-center justify-between p-3 hover:bg-gray-50 transition-all duration-200 cursor-pointer"
+                              onMouseEnter={() =>
+                                setHoveredSecondLevel(category.label)
+                              }
+                              onClick={() => toggleAccordion(itemId)}
+                            >
+                              <div className="flex-1">
+                                <div className="font-medium text-gray-700 group-hover:text-gray-900">
+                                  {category.label}
+                                </div>
+                                <div className="text-sm text-gray-500 mt-1">
+                                  {category.items.length} options available
+                                </div>
+                              </div>
+                              <div className="flex items-center space-x-2">
+                                <button
+                                  className="p-1 rounded-full hover:bg-gray-200 transition-colors"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    toggleAccordion(itemId);
+                                  }}
+                                >
+                                  {isExpanded ? (
+                                    <Minus className="h-4 w-4 text-gray-600" />
+                                  ) : (
+                                    <Plus className="h-4 w-4 text-gray-600" />
+                                  )}
+                                </button>
+                              </div>
+                            </div>
+
+                            {/* Accordion Content */}
+                            <div
+                              className={`overflow-hidden transition-all duration-300 ease-in-out ${
+                                isExpanded
+                                  ? "max-h-96 opacity-100"
+                                  : "max-h-0 opacity-0"
+                              }`}
+                            >
+                              <div className="bg-gray-50 border-t border-gray-200">
+                                <div className="p-3 space-y-2">
+                                  {category.items.map(
+                                    (categoryItem, subIdx) => (
+                                      <Link
+                                        key={subIdx}
+                                        to={categoryItem.href || "#"}
+                                        onClick={closeAllDropdowns}
+                                        className="group/nested flex items-center justify-between p-2 rounded hover:bg-white transition-all duration-150 cursor-pointer"
+                                        onMouseEnter={() =>
+                                          setHoveredSecondLevel(
+                                            categoryItem.label
+                                          )
+                                        }
+                                      >
+                                        <div className="flex-1">
+                                          <div className="text-sm font-medium text-gray-700 group-hover/nested:text-gray-900">
+                                            {categoryItem.label}
+                                          </div>
+                                          {categoryItem.description && (
+                                            <div className="text-xs text-gray-500 mt-0.5">
+                                              {categoryItem.description}
+                                            </div>
+                                          )}
+                                        </div>
+                                        <ChevronRight className="h-3 w-3 opacity-0 group-hover/nested:opacity-100 transition-opacity text-gray-400" />
+                                      </Link>
+                                    )
+                                  )}
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      }
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Third Column - Featured Content or Additional Details */}
+            <div className="bg-white">
+              {hoveredSecondLevel ? (
+                <div className="p-6">
+                  <h4 className="text-md font-semibold text-gray-900 mb-4">
+                    {hoveredSecondLevel}
+                  </h4>
+                  <div className="space-y-4">
+                    <img
+                      src="/images/service-feature.jpg"
+                      alt={hoveredSecondLevel}
+                      className="w-full h-32 object-cover rounded-lg"
+                      onError={(e) => {
+                        e.currentTarget.src =
+                          "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='128' viewBox='0 0 300 128'%3E%3Crect width='300' height='128' fill='%23f3f4f6'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='Arial, sans-serif' font-size='14' fill='%236b7280'%3EService Image%3C/text%3E%3C/svg%3E";
+                      }}
+                    />
+                    <div>
+                      <h5 className="font-medium text-gray-900 mb-2">
+                        Key Features
+                      </h5>
+                      <ul className="text-sm text-gray-600 space-y-1">
+                        <li>• 24/7 customer support</li>
+                        <li>• Competitive rates and terms</li>
+                        <li>• Easy online application process</li>
+                        <li>• Quick approval and processing</li>
+                        <li>• Flexible payment options</li>
+                      </ul>
+                    </div>
+                    <Button
+                      variant="primary"
+                      size="sm"
+                      onClick={closeAllDropdowns}
+                      className="w-full"
+                    >
+                      Learn More
+                      <ChevronRight className="ml-1 h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
+              ) : hoveredSubItem ? (
+                <div className="p-6">
+                  <h4 className="text-lg font-semibold text-gray-900 mb-4">
+                    {hoveredSubItem}
+                  </h4>
+                  <div className="space-y-4">
+                    <img
+                      src="/images/recent-product.jpg"
+                      alt={hoveredSubItem}
+                      className="w-full h-40 object-cover rounded-lg"
+                      onError={(e) => {
+                        e.currentTarget.src =
+                          "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='160' viewBox='0 0 300 160'%3E%3Crect width='300' height='160' fill='%23f3f4f6'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='Arial, sans-serif' font-size='14' fill='%236b7280'%3EProduct Image%3C/text%3E%3C/svg%3E";
+                      }}
+                    />
+                    <div>
+                      <p className="text-gray-600 text-sm mb-4">
+                        Discover our comprehensive{" "}
+                        {hoveredSubItem.toLowerCase()} solutions designed to
+                        meet your financial needs with competitive rates and
+                        excellent service.
+                      </p>
+                      <div className="space-y-2">
+                        <div className="flex items-center text-sm text-gray-600">
+                          <div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
+                          Competitive rates and flexible terms
+                        </div>
+                        <div className="flex items-center text-sm text-gray-600">
+                          <div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
+                          Simple and fast application process
+                        </div>
+                        <div className="flex items-center text-sm text-gray-600">
+                          <div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
+                          Expert guidance and support
+                        </div>
+                        <div className="flex items-center text-sm text-gray-600">
+                          <div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
+                          Secure and reliable service
+                        </div>
+                      </div>
+                    </div>
+                    <Button
+                      variant="primary"
+                      onClick={closeAllDropdowns}
+                      className="w-full"
+                    >
+                      Get Started
+                      <ChevronRight className="ml-1 h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
+              ) : (
+                <div className="p-6">
+                  <h4 className="text-lg font-semibold text-gray-900 mb-4">
+                    {thirdLevelContent.parentItem.label} Banking Solutions
+                  </h4>
+                  <div className="space-y-4">
+                    <img
+                      src="/images/recent-product.jpg"
+                      alt={`${thirdLevelContent.parentItem.label} Banking`}
+                      className="w-full h-40 object-cover rounded-lg"
+                      onError={(e) => {
+                        e.currentTarget.src =
+                          "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='160' viewBox='0 0 300 160'%3E%3Crect width='300' height='160' fill='%23f3f4f6'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='Arial, sans-serif' font-size='14' fill='%236b7280'%3E{thirdLevelContent.parentItem.label} Banking%3C/text%3E%3C/svg%3E";
+                      }}
+                    />
+                    <p className="text-gray-600 text-sm">
+                      Our {thirdLevelContent.parentItem.label.toLowerCase()}{" "}
+                      banking solutions are designed to provide you with the
+                      financial tools and services you need to achieve your
+                      goals and manage your finances effectively.
+                    </p>
+                    <div className="space-y-2">
+                      <div className="text-sm font-medium text-gray-700">
+                        Why Choose Our {thirdLevelContent.parentItem.label}{" "}
+                        Solutions:
+                      </div>
+                      <div className="grid grid-cols-1 gap-2 text-sm text-gray-600">
+                        <div className="flex items-center">
+                          <div className="w-2 h-2 bg-blue-500 rounded-full mr-2"></div>
+                          Tailored financial products
+                        </div>
+                        <div className="flex items-center">
+                          <div className="w-2 h-2 bg-blue-500 rounded-full mr-2"></div>
+                          Expert advisory services
+                        </div>
+                        <div className="flex items-center">
+                          <div className="w-2 h-2 bg-blue-500 rounded-full mr-2"></div>
+                          Digital banking convenience
+                        </div>
+                        <div className="flex items-center">
+                          <div className="w-2 h-2 bg-blue-500 rounded-full mr-2"></div>
+                          24/7 customer support
+                        </div>
+                      </div>
+                    </div>
+                    <Button
+                      variant="primary"
+                      onClick={closeAllDropdowns}
+                      className="w-full"
+                    >
+                      Explore {thirdLevelContent.parentItem.label} Solutions
+                      <ChevronRight className="ml-1 h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Quick Links Footer - Dynamic based on parent category */}
+          <div className="border-t border-gray-200 bg-gray-50">
+            <div className="container mx-auto px-6 py-4">
+              <div className="flex items-center gap-6">
+                <span className="text-gray-500 font-medium text-sm">
+                  Quick Links:
+                </span>
+                <div className="flex gap-6">
+                  {/* <Link
+                    to={`${thirdLevelContent.parentItem.href || "#"}/apply`}
+                    className="text-sm text-gray-600 hover:text-nbc-dark-950 hover:underline transition-colors"
+                    onClick={closeAllDropdowns}
+                  >
+                    Apply Now
+                  </Link> */}
+
+                  <Link
+                    to="/find-branches-atm"
+                    className="text-sm text-gray-600 hover:text-nbc-dark-950 hover:underline transition-colors"
+                    onClick={closeAllDropdowns}
+                  >
+                    Find Branch & ATMs
+                  </Link>
+                  <Link
+                    to={"/whistle-blowing"}
+                    className="text-sm text-gray-600 hover:text-nbc-dark-950 hover:underline transition-colors"
+                    onClick={closeAllDropdowns}
+                  >
+                    Whistleblowing
+                  </Link>
+
+                  <Link
+                    to="/contact-us"
+                    className="text-sm text-gray-600 hover:text-nbc-dark-950 hover:underline transition-colors"
+                    onClick={closeAllDropdowns}
+                  >
+                    Contact Us
+                  </Link>
+                </div>
               </div>
             </div>
           </div>
@@ -226,10 +521,13 @@ export default function MainNavigation() {
                                 <div
                                   key={index}
                                   className="relative group/subitem"
-                                  onMouseEnter={() =>
-                                    subItem.hasThirdLevel &&
-                                    setActiveThirdLevel(subItem.label)
-                                  }
+                                  onMouseEnter={() => {
+                                    if (subItem.hasThirdLevel) {
+                                      setActiveThirdLevel(subItem.label);
+                                      setHoveredSubItem(null);
+                                      setHoveredSecondLevel(null);
+                                    }
+                                  }}
                                 >
                                   {subItem.hasThirdLevel ? (
                                     subItem.href ? (
@@ -340,15 +638,7 @@ export default function MainNavigation() {
                     {actionButton.items ? (
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                          <Button
-                            variant={actionButton.variant}
-                            size="sm"
-                            // className={
-                            //   actionButton.variant === "primary"
-                            //     ? "bg-nbc-dark-700 hover:bg-nbc-dark-500"
-                            //     : "text-nav-text hover:text-nav-text-hover"
-                            // }
-                          >
+                          <Button variant={actionButton.variant} size="sm">
                             {actionButton.icon &&
                               renderIcon(actionButton.icon, "h-4 w-4 mr-2")}
                             {actionButton.label}
@@ -394,15 +684,7 @@ export default function MainNavigation() {
                     {actionButton.items ? (
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                          <Button
-                            variant={actionButton.variant}
-                            size="md"
-                            // className={
-                            //   actionButton.variant === "primary"
-                            //     ? "bg-nbc-dark-700 hover:bg-nbc-dark-500"
-                            //     : "text-nav-text hover:text-nav-text-hover"
-                            // }
-                          >
+                          <Button variant={actionButton.variant} size="md">
                             {actionButton.icon &&
                               renderIcon(actionButton.icon, "h-4 w-4 mr-2")}
                             {actionButton.label}

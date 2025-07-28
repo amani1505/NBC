@@ -16,7 +16,7 @@ export const ForexBoard = () => {
 
   return (
     <div className="w-full max-w-2xl p-6">
-      <h2 className="text-xl font-semibold text-foreground mb-4">Forex Board</h2>
+      <h2 className="text-xl font-semibold text-nbc-dark-950 mb-4">Forex Board</h2>
       
       {/* Search Bar */}
       <div className="relative mb-6">

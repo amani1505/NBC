@@ -106,7 +106,7 @@ function RecentProductSection({
   };
 
   return (
-    <div className={`w-full ${className} px-5`}>
+    <div className={` container w-full ${className} px-5 mx-auto`}>
       {/* Header */}
       <div className=" mb-8">
         <h2 className="text-3xl font-bold text-nbc-dark-950">{title}</h2>

@@ -58,7 +58,7 @@ export const CurrencyCalculator = () => {
 
   return (
     <div className="w-full max-w-md p-6">
-      <h2 className="text-xl font-semibold text-foreground mb-6">
+      <h2 className="text-xl font-semibold text-nbc-dark-950 mb-6">
         Currency Calculator
       </h2>
 
