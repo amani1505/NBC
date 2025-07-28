@@ -197,9 +197,9 @@ export interface ThirdLevelItem {
       icon: 'User',
       variant: 'primary',
       items: [
-        { label: 'Personal Login' },
-        { label: 'Business Login' },
-        { label: 'Corporate Login' }
+        { label: 'Personal Banking' },
+        { label: 'Business Banking' },
+        { label: 'Corporate Banking' }
       ]
     }
   ];

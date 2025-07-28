@@ -1,4 +1,4 @@
-import CurrencyConvetorPageSection from "@/Page-Sections/CurrencyConvetorPageSection";
+import CurrencyConvetorPageSection from "@/Page-Sections/ForexCalculator/CurrencyConvetorPageSection";
 
 function CurrencyConvetor() {
   return (

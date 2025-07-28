@@ -166,10 +166,7 @@ export default function MainNavigation() {
                   className=" rounded-lg"
                 />
 
-                <Button
-                  variant="primary"
-                                  onClick={() => {}}
-                >
+                <Button variant="primary" onClick={() => {}}>
                   {"Learn more"}
                   <ChevronRight className="ml-1 h-4 w-4" />
                 </Button>
@@ -412,11 +409,12 @@ export default function MainNavigation() {
                             <ChevronDown className="h-4 w-4 ml-1" />
                           </Button>
                         </DropdownMenuTrigger>
-                        <DropdownMenuContent className="z-[10000000]">
+                        <DropdownMenuContent className="z-[10000000] ">
                           {actionButton.items.map((item) => (
                             <DropdownMenuItem
                               key={item.label}
                               onClick={closeAllDropdowns}
+                              className="text-nav-text hover:bg-gray-100 transition-colors duration-200 hover:text-nbc-dark-200 cursor-pointer"
                             >
                               {item.label}
                             </DropdownMenuItem>
