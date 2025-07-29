@@ -118,7 +118,48 @@ export default function MainNavigation() {
     return Object.entries(subItem.categories).map(([categoryName, items]) => ({
       label: categoryName,
       items: items as { label: string; href?: string; description?: string }[],
+      hasItems: items.length > 0, // Add this flag to check if category has items
     }));
+  };
+
+  // Helper function to check if a category is independent (no children)
+  const isIndependentCategory = (category: { items: { label: string; href?: string; description?: string }[]; hasItems?: boolean }) => {
+    return !category.hasItems || category.items.length === 0;
+  };
+
+  // Helper function to generate a default href for independent categories
+  interface SubItemType {
+    href: string;
+  }
+
+  const getIndependentCategoryHref = (categoryName: string, subItem: SubItemType) => {
+    // Generate a slug from the category name
+    const slug = categoryName.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+    return `${subItem.href}/${slug}`;
+  };
+
+  // Helper function to get description for independent categories
+  const getIndependentCategoryDescription = (categoryName: string) => {
+    // You can customize these descriptions based on the category name
+    const descriptions: Record<string, string> = {
+      "NBC Individual Current Account": "Our flagship individual current account with competitive benefits",
+      "NBC Direct Current Account": "Direct banking solutions for modern customers",
+      "NBC Kikundi Account": "Group savings account designed for community banking",
+      "Fixed Deposit Account": "Secure investment option with guaranteed returns",
+      "Pure Save": "Simple savings account with attractive interest rates",
+      "Ordinary Account": "Basic banking account for everyday transactions",
+      "Malengo Account": "Special account designed for your financial goals",
+      "Chanua Account": "Savings account with monthly benefits",
+      "Student Account": "Specially designed account for students with exclusive benefits",
+      "Fasta Account": "Fast and convenient banking solution",
+      "NBC Private Wealth Management": "Exclusive wealth management services for high-net-worth individuals",
+      "NBC Private Investment Advisory": "Professional investment advisory services",
+      "NBC Privileged Priority Banking": "Premium banking services with exclusive privileges",
+      "NBC Business Express": "Fast-track business banking solutions",
+      "NBC Digital Business Platform": "Complete digital banking platform for businesses"
+    };
+    
+    return descriptions[categoryName] || "Specialized banking service tailored to your needs";
   };
 
   const thirdLevelContent = getThirdLevelContent();
@@ -136,14 +177,14 @@ export default function MainNavigation() {
             setHoveredSecondLevel(null);
           }}
         >
-          <div className="container mx-auto grid grid-cols-3 gap-0 min-h-[400px]">
+          <div className="container mx-auto grid grid-cols-3 gap-0 min-h-[400px] max-h-[600px]">
             {/* First Column - Main Items from navigationData */}
             <div className="bg-gray-50 border-r border-gray-200">
               <div className="p-6">
                 <h3 className="text-lg font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-300">
                   {thirdLevelContent.subItem.label}
                 </h3>
-                <div className="space-y-1">
+                <div className="space-y-1 overflow-y-auto max-h-[480px] pr-2 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
                   {thirdLevelContent.items.map((item, idx) => (
                     <div
                       key={idx}
@@ -178,99 +219,148 @@ export default function MainNavigation() {
             <div className="bg-white border-r border-gray-200">
               {hoveredSubItem && thirdLevelContent.subItem.categories && (
                 <div
-                  className="p-6"
+                  className="p-6 h-full flex flex-col"
                   onMouseEnter={() => setHoveredSubItem(hoveredSubItem)}
                 >
-                  <h4 className="text-md font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-300">
+                  <h4 className="text-md font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-300 flex-shrink-0">
                     {hoveredSubItem} Categories
                   </h4>
-                  <div className="space-y-1">
-                    {getCategorizedItems(thirdLevelContent.subItem).map(
-                      (category, idx) => {
-                        const itemId = `${hoveredSubItem}-${idx}`;
-                        const isExpanded = expandedAccordions.has(itemId);
+                  <div className="flex-1 overflow-y-auto max-h-[480px] pr-2 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
+                    <div className="space-y-1">
+                      {getCategorizedItems(thirdLevelContent.subItem).map(
+                        (category, idx) => {
+                          const itemId = `${hoveredSubItem}-${idx}`;
+                          const isExpanded = expandedAccordions.has(itemId);
+                          const independent = isIndependentCategory(category);
+                          const isHovered = hoveredSecondLevel === category.label;
 
-                        return (
-                          <div
-                            key={idx}
-                            className="border border-gray-200 rounded-lg overflow-hidden"
-                          >
+                          return (
                             <div
-                              className="group flex items-center justify-between p-3 hover:bg-gray-50 transition-all duration-200 cursor-pointer"
-                              onMouseEnter={() =>
-                                setHoveredSecondLevel(category.label)
-                              }
-                              onClick={() => toggleAccordion(itemId)}
-                            >
-                              <div className="flex-1">
-                                <div className="font-medium text-gray-700 group-hover:text-gray-900">
-                                  {category.label}
-                                </div>
-                                <div className="text-sm text-gray-500 mt-1">
-                                  {category.items.length} options available
-                                </div>
-                              </div>
-                              <div className="flex items-center space-x-2">
-                                <button
-                                  className="p-1 rounded-full hover:bg-gray-200 transition-colors"
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    toggleAccordion(itemId);
-                                  }}
-                                >
-                                  {isExpanded ? (
-                                    <Minus className="h-4 w-4 text-gray-600" />
-                                  ) : (
-                                    <Plus className="h-4 w-4 text-gray-600" />
-                                  )}
-                                </button>
-                              </div>
-                            </div>
-
-                            {/* Accordion Content */}
-                            <div
-                              className={`overflow-hidden transition-all duration-300 ease-in-out ${
-                                isExpanded
-                                  ? "max-h-96 opacity-100"
-                                  : "max-h-0 opacity-0"
+                              key={idx}
+                              className={`rounded-lg overflow-hidden transition-all duration-200 ${
+                                isHovered || isExpanded 
+                                  ? 'shadow-md shadow-gray-300/50' 
+                                  : 'shadow-none'
                               }`}
                             >
-                              <div className="bg-gray-50 border-t border-gray-200">
-                                <div className="p-3 space-y-2">
-                                  {category.items.map(
-                                    (categoryItem, subIdx) => (
-                                      <Link
-                                        key={subIdx}
-                                        to={categoryItem.href || "#"}
-                                        onClick={closeAllDropdowns}
-                                        className="group/nested flex items-center justify-between p-2 rounded hover:bg-white transition-all duration-150 cursor-pointer"
-                                        onMouseEnter={() =>
-                                          setHoveredSecondLevel(
-                                            categoryItem.label
-                                          )
-                                        }
+                              {independent ? (
+                                // Render independent categories as direct links
+                                <Link
+                                  to={getIndependentCategoryHref(category.label, { ...thirdLevelContent.subItem, href: thirdLevelContent.subItem.href || "#" })}
+                                  onClick={closeAllDropdowns}
+                                  className={`group flex items-center justify-between p-3 transition-all duration-200 cursor-pointer w-full rounded-lg ${
+                                    isHovered 
+                                      ? 'bg-gray-50 shadow-md shadow-gray-300/50' 
+                                      : 'hover:bg-gray-50 hover:shadow-md hover:shadow-gray-300/50'
+                                  }`}
+                                  onMouseEnter={() =>
+                                    setHoveredSecondLevel(category.label)
+                                  }
+                                  onMouseLeave={() =>
+                                    setHoveredSecondLevel(null)
+                                  }
+                                >
+                                  <div className="flex-1">
+                                    <div className="font-medium text-gray-700 group-hover:text-gray-900">
+                                      {category.label}
+                                    </div>
+                                    <div className="text-sm text-gray-500 mt-1">
+                                      {getIndependentCategoryDescription(category.label)}
+                                    </div>
+                                  </div>
+                                  <ChevronRight className="h-4 w-4 opacity-0 group-hover:opacity-100 transition-opacity text-gray-400" />
+                                </Link>
+                              ) : (
+                                // Render categories with children as expandable accordions
+                                <>
+                                  <div
+                                    className={`group flex items-center justify-between p-3 transition-all duration-200 cursor-pointer rounded-lg ${
+                                      isHovered || isExpanded 
+                                        ? 'bg-gray-50' 
+                                        : 'hover:bg-gray-50'
+                                    }`}
+                                    onMouseEnter={() =>
+                                      setHoveredSecondLevel(category.label)
+                                    }
+                                    onMouseLeave={() => {
+                                      if (!isExpanded) {
+                                        setHoveredSecondLevel(null)
+                                      }
+                                    }}
+                                    onClick={() => toggleAccordion(itemId)}
+                                  >
+                                    <div className="flex-1">
+                                      <div className="font-medium text-gray-700 group-hover:text-gray-900">
+                                        {category.label}
+                                      </div>
+                                      <div className="text-sm text-gray-500 mt-1">
+                                        {category.items.length} options available
+                                      </div>
+                                    </div>
+                                    <div className="flex items-center space-x-2">
+                                      <button
+                                        className="p-1 rounded-full hover:bg-gray-200 transition-colors"
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          toggleAccordion(itemId);
+                                        }}
                                       >
-                                        <div className="flex-1">
-                                          <div className="text-sm font-medium text-gray-700 group-hover/nested:text-gray-900">
-                                            {categoryItem.label}
-                                          </div>
-                                          {categoryItem.description && (
-                                            <div className="text-xs text-gray-500 mt-0.5">
-                                              {categoryItem.description}
-                                            </div>
-                                          )}
-                                        </div>
-                                        <ChevronRight className="h-3 w-3 opacity-0 group-hover/nested:opacity-100 transition-opacity text-gray-400" />
-                                      </Link>
-                                    )
-                                  )}
-                                </div>
-                              </div>
+                                        {isExpanded ? (
+                                          <Minus className="h-4 w-4 text-gray-600" />
+                                        ) : (
+                                          <Plus className="h-4 w-4 text-gray-600" />
+                                        )}
+                                      </button>
+                                    </div>
+                                  </div>
+
+                                  {/* Accordion Content for categories with children */}
+                                  <div
+                                    className={`overflow-hidden transition-all duration-300 ease-in-out ${
+                                      isExpanded
+                                        ? "max-h-96 opacity-100"
+                                        : "max-h-0 opacity-0"
+                                    }`}
+                                  >
+                                    <div className="bg-gray-50 rounded-b-lg">
+                                      <div className="p-3 space-y-2">
+                                        {category.items.map(
+                                          (categoryItem, subIdx) => (
+                                            <Link
+                                              key={subIdx}
+                                              to={categoryItem.href || "#"}
+                                              onClick={closeAllDropdowns}
+                                              className="group/nested flex items-center justify-between p-2 rounded hover:bg-white hover:shadow-sm transition-all duration-150 cursor-pointer"
+                                              onMouseEnter={() =>
+                                                setHoveredSecondLevel(
+                                                  categoryItem.label
+                                                )
+                                              }
+                                            >
+                                              <div className="flex-1">
+                                                <div className="text-sm font-medium text-gray-700 group-hover/nested:text-gray-900">
+                                                  {categoryItem.label}
+                                                </div>
+                                                {categoryItem.description && (
+                                                  <div className="text-xs text-gray-500 mt-0.5">
+                                                    {categoryItem.description}
+                                                  </div>
+                                                )}
+                                              </div>
+                                              <ChevronRight className="h-3 w-3 opacity-0 group-hover/nested:opacity-100 transition-opacity text-gray-400" />
+                                            </Link>
+                                          )
+                                        )}
+                                      </div>
+                                    </div>
+                                  </div>
+                                </>
+                              )}
                             </div>
-                          </div>
-                        );
-                      }
-                    )}
+                          );
+                        }
+                      )}
+                    </div>
                   </div>
                 </div>
               )}
@@ -434,14 +524,6 @@ export default function MainNavigation() {
                   Quick Links:
                 </span>
                 <div className="flex gap-6">
-                  {/* <Link
-                    to={`${thirdLevelContent.parentItem.href || "#"}/apply`}
-                    className="text-sm text-gray-600 hover:text-nbc-dark-950 hover:underline transition-colors"
-                    onClick={closeAllDropdowns}
-                  >
-                    Apply Now
-                  </Link> */}
-
                   <Link
                     to="/find-branches-atm"
                     className="text-sm text-gray-600 hover:text-nbc-dark-950 hover:underline transition-colors"
@@ -471,6 +553,7 @@ export default function MainNavigation() {
         </div>
       )}
 
+      {/* Rest of the component remains the same... */}
       {/* Top Navigation Bar */}
       <nav className="container mx-auto px-4 group">
         <div className="min-h-16 has-[.has-third-level:hover]:min-h-28 transition-all duration-200">

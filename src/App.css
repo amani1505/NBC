@@ -96,3 +96,61 @@ html {
 
 
   }
+
+
+
+
+
+  /* Add these styles to your global CSS file or component styles */
+
+/* Custom scrollbar styles for navigation dropdowns */
+.scrollbar-thin {
+  scrollbar-width: thin;
+}
+
+.scrollbar-thumb-gray-300::-webkit-scrollbar-thumb {
+  background-color: rgb(209 213 219);
+  border-radius: 4px;
+}
+
+.scrollbar-track-gray-100::-webkit-scrollbar-track {
+  background-color: rgb(243 244 246);
+}
+
+.scrollbar-thin::-webkit-scrollbar {
+  width: 6px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background-color: rgb(209 213 219);
+  border-radius: 4px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb:hover {
+  background-color: rgb(156 163 175);
+}
+
+.scrollbar-thin::-webkit-scrollbar-track {
+  background-color: rgb(243 244 246);
+  border-radius: 4px;
+}
+
+/* Additional styles for smooth scrolling */
+.smooth-scroll {
+  scroll-behavior: smooth;
+}
+
+/* Hide scrollbar for Firefox */
+@-moz-document url-prefix() {
+  .scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: rgb(209 213 219) rgb(243 244 246);
+  }
+}
+
+/* For better mobile experience */
+@media (max-width: 768px) {
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 4px;
+  }
+}
