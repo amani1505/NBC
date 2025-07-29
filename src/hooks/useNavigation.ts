@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import { navigationData, actionButtonsData } from '@/data/navigationData';
+import { navigationData, actionButtons } from '@/data/navigationData';
 import type { MenuItem, ActionButton } from '@/data/navigationData';
 
 export const useNavigation = () => {
@@ -14,7 +14,7 @@ export const useNavigation = () => {
   };
 
   const getActionButtons = (): ActionButton[] => {
-    return actionButtonsData;
+    return actionButtons;
   };
 
   const hasThirdLevelItems = (item: MenuItem): boolean => {

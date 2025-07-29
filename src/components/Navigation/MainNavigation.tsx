@@ -21,6 +21,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useNavigation } from "@/hooks/useNavigation";
 import { useState } from "react";
+import { quickLinks } from "@/data/navigationData";
 
 export default function MainNavigation() {
   const {
@@ -45,7 +46,6 @@ export default function MainNavigation() {
     new Set()
   );
 
-  // Function to close all dropdowns
   const closeAllDropdowns = () => {
     setActiveThirdLevel(null);
     setActiveParent(null);
@@ -55,7 +55,6 @@ export default function MainNavigation() {
     closeMobileMenu();
   };
 
-  // Toggle accordion expansion
   const toggleAccordion = (itemId: string) => {
     setExpandedAccordions((prev) => {
       const newSet = new Set(prev);
@@ -83,10 +82,8 @@ export default function MainNavigation() {
     return IconComponent ? <IconComponent className={className} /> : null;
   };
 
-  // Get the active third level content
   const getThirdLevelContent = () => {
     if (!activeThirdLevel) return null;
-
     for (const item of navigationItems) {
       if (item.subItems) {
         const subItem = item.subItems.find(
@@ -97,6 +94,7 @@ export default function MainNavigation() {
             parentItem: item,
             subItem: subItem,
             items: subItem.thirdLevelItems,
+            content: subItem.thirdLevelContent,
           };
         }
       }
@@ -104,7 +102,6 @@ export default function MainNavigation() {
     return null;
   };
 
-  // Get categorized items for second level display
   interface SubItem {
     categories?: Record<
       string,
@@ -114,62 +111,42 @@ export default function MainNavigation() {
 
   const getCategorizedItems = (subItem: SubItem) => {
     if (!subItem || !subItem.categories) return [];
-
     return Object.entries(subItem.categories).map(([categoryName, items]) => ({
       label: categoryName,
-      items: items as { label: string; href?: string; description?: string }[],
-      hasItems: items.length > 0, // Add this flag to check if category has items
+      items,
+      hasItems: items.length > 0,
     }));
   };
 
-  // Helper function to check if a category is independent (no children)
-  const isIndependentCategory = (category: { items: { label: string; href?: string; description?: string }[]; hasItems?: boolean }) => {
+  const isIndependentCategory = (category: {
+    items: { label: string; href?: string; description?: string }[];
+    hasItems?: boolean;
+  }) => {
     return !category.hasItems || category.items.length === 0;
   };
 
-  // Helper function to generate a default href for independent categories
   interface SubItemType {
     href: string;
   }
 
-  const getIndependentCategoryHref = (categoryName: string, subItem: SubItemType) => {
-    // Generate a slug from the category name
-    const slug = categoryName.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+  const getIndependentCategoryHref = (
+    categoryName: string,
+    subItem: SubItemType
+  ) => {
+    const slug = categoryName
+      .toLowerCase()
+      .replace(/\s+/g, "-")
+      .replace(/[^a-z0-9-]/g, "");
     return `${subItem.href}/${slug}`;
-  };
-
-  // Helper function to get description for independent categories
-  const getIndependentCategoryDescription = (categoryName: string) => {
-    // You can customize these descriptions based on the category name
-    const descriptions: Record<string, string> = {
-      "NBC Individual Current Account": "Our flagship individual current account with competitive benefits",
-      "NBC Direct Current Account": "Direct banking solutions for modern customers",
-      "NBC Kikundi Account": "Group savings account designed for community banking",
-      "Fixed Deposit Account": "Secure investment option with guaranteed returns",
-      "Pure Save": "Simple savings account with attractive interest rates",
-      "Ordinary Account": "Basic banking account for everyday transactions",
-      "Malengo Account": "Special account designed for your financial goals",
-      "Chanua Account": "Savings account with monthly benefits",
-      "Student Account": "Specially designed account for students with exclusive benefits",
-      "Fasta Account": "Fast and convenient banking solution",
-      "NBC Private Wealth Management": "Exclusive wealth management services for high-net-worth individuals",
-      "NBC Private Investment Advisory": "Professional investment advisory services",
-      "NBC Privileged Priority Banking": "Premium banking services with exclusive privileges",
-      "NBC Business Express": "Fast-track business banking solutions",
-      "NBC Digital Business Platform": "Complete digital banking platform for businesses"
-    };
-    
-    return descriptions[categoryName] || "Specialized banking service tailored to your needs";
   };
 
   const thirdLevelContent = getThirdLevelContent();
 
   return (
     <header className="w-full border-nav-border border-b-[4px] border-[#DD0A14] py-2 sticky top-0 z-[10000] bg-white">
-      {/* Third Level Full Width Dropdown */}
       {activeThirdLevel && thirdLevelContent && (
         <div
-          className="absolute left-0 top-full w-full bg-white shadow-lg z-50 border-t border-gray-200"
+          className="absolute left-0 top-full w-full shadow-lg z-50 border-t border-gray-20 bg-white"
           onMouseEnter={() => setActiveThirdLevel(activeThirdLevel)}
           onMouseLeave={() => {
             setActiveThirdLevel(null);
@@ -177,8 +154,7 @@ export default function MainNavigation() {
             setHoveredSecondLevel(null);
           }}
         >
-          <div className="container mx-auto grid grid-cols-3 gap-0 min-h-[400px] max-h-[600px]">
-            {/* First Column - Main Items from navigationData */}
+          <div className="container mx-auto grid grid-cols-3 gap-0 min-h-[400px] max-h-[700px]">
             <div className="bg-gray-50 border-r border-gray-200">
               <div className="p-6">
                 <h3 className="text-lg font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-300">
@@ -214,8 +190,6 @@ export default function MainNavigation() {
                 </div>
               </div>
             </div>
-
-            {/* Second Column - Categories based on hovered first level item */}
             <div className="bg-white border-r border-gray-200">
               {hoveredSubItem && thirdLevelContent.subItem.categories && (
                 <div
@@ -232,26 +206,32 @@ export default function MainNavigation() {
                           const itemId = `${hoveredSubItem}-${idx}`;
                           const isExpanded = expandedAccordions.has(itemId);
                           const independent = isIndependentCategory(category);
-                          const isHovered = hoveredSecondLevel === category.label;
-
+                          const isHovered =
+                            hoveredSecondLevel === category.label;
                           return (
                             <div
                               key={idx}
                               className={`rounded-lg overflow-hidden transition-all duration-200 ${
-                                isHovered || isExpanded 
-                                  ? 'shadow-md shadow-gray-300/50' 
-                                  : 'shadow-none'
+                                isHovered || isExpanded
+                                  ? "shadow-md shadow-gray-300/50"
+                                  : "shadow-none"
                               }`}
                             >
                               {independent ? (
-                                // Render independent categories as direct links
                                 <Link
-                                  to={getIndependentCategoryHref(category.label, { ...thirdLevelContent.subItem, href: thirdLevelContent.subItem.href || "#" })}
+                                  to={getIndependentCategoryHref(
+                                    category.label,
+                                    {
+                                      ...thirdLevelContent.subItem,
+                                      href:
+                                        thirdLevelContent.subItem.href || "#",
+                                    }
+                                  )}
                                   onClick={closeAllDropdowns}
                                   className={`group flex items-center justify-between p-3 transition-all duration-200 cursor-pointer w-full rounded-lg ${
-                                    isHovered 
-                                      ? 'bg-gray-50 shadow-md shadow-gray-300/50' 
-                                      : 'hover:bg-gray-50 hover:shadow-md hover:shadow-gray-300/50'
+                                    isHovered
+                                      ? "bg-gray-50 shadow-md shadow-gray-300/50"
+                                      : "hover:bg-gray-50 hover:shadow-md hover:shadow-gray-300/50"
                                   }`}
                                   onMouseEnter={() =>
                                     setHoveredSecondLevel(category.label)
@@ -265,26 +245,27 @@ export default function MainNavigation() {
                                       {category.label}
                                     </div>
                                     <div className="text-sm text-gray-500 mt-1">
-                                      {getIndependentCategoryDescription(category.label)}
+                                      {thirdLevelContent.content?.[
+                                        category.label
+                                      ]?.description || "Explore our services"}
                                     </div>
                                   </div>
                                   <ChevronRight className="h-4 w-4 opacity-0 group-hover:opacity-100 transition-opacity text-gray-400" />
                                 </Link>
                               ) : (
-                                // Render categories with children as expandable accordions
                                 <>
                                   <div
                                     className={`group flex items-center justify-between p-3 transition-all duration-200 cursor-pointer rounded-lg ${
-                                      isHovered || isExpanded 
-                                        ? 'bg-gray-50' 
-                                        : 'hover:bg-gray-50'
+                                      isHovered || isExpanded
+                                        ? "bg-gray-50"
+                                        : "hover:bg-gray-50"
                                     }`}
                                     onMouseEnter={() =>
                                       setHoveredSecondLevel(category.label)
                                     }
                                     onMouseLeave={() => {
                                       if (!isExpanded) {
-                                        setHoveredSecondLevel(null)
+                                        setHoveredSecondLevel(null);
                                       }
                                     }}
                                     onClick={() => toggleAccordion(itemId)}
@@ -294,7 +275,8 @@ export default function MainNavigation() {
                                         {category.label}
                                       </div>
                                       <div className="text-sm text-gray-500 mt-1">
-                                        {category.items.length} options available
+                                        {category.items.length} options
+                                        available
                                       </div>
                                     </div>
                                     <div className="flex items-center space-x-2">
@@ -313,8 +295,6 @@ export default function MainNavigation() {
                                       </button>
                                     </div>
                                   </div>
-
-                                  {/* Accordion Content for categories with children */}
                                   <div
                                     className={`overflow-hidden transition-all duration-300 ease-in-out ${
                                       isExpanded
@@ -365,22 +345,27 @@ export default function MainNavigation() {
                 </div>
               )}
             </div>
-
-            {/* Third Column - Featured Content or Additional Details */}
             <div className="bg-white">
-              {hoveredSecondLevel ? (
+              {hoveredSecondLevel &&
+              thirdLevelContent.content?.[hoveredSecondLevel] ? (
                 <div className="p-6">
                   <h4 className="text-md font-semibold text-gray-900 mb-4">
                     {hoveredSecondLevel}
                   </h4>
                   <div className="space-y-4">
                     <img
-                      src="/images/service-feature.jpg"
-                      alt={hoveredSecondLevel}
+                      src={
+                        thirdLevelContent.content[hoveredSecondLevel].imageUrl
+                      }
+                      alt={
+                        thirdLevelContent.content[hoveredSecondLevel].altText
+                      }
                       className="w-full h-32 object-cover rounded-lg"
                       onError={(e) => {
-                        e.currentTarget.src =
-                          "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='128' viewBox='0 0 300 128'%3E%3Crect width='300' height='128' fill='%23f3f4f6'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='Arial, sans-serif' font-size='14' fill='%236b7280'%3EService Image%3C/text%3E%3C/svg%3E";
+                        const altText =
+                          thirdLevelContent?.content?.[hoveredSecondLevel]
+                            ?.altText || "Image not found";
+                        e.currentTarget.src = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='128' viewBox='0 0 300 128'%3E%3Crect width='300' height='128' fill='%23f3f4f6'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='Arial, sans-serif' font-size='14' fill='%236b7280'%3E${altText}%3C/text%3E`;
                       }}
                     />
                     <div>
@@ -388,11 +373,11 @@ export default function MainNavigation() {
                         Key Features
                       </h5>
                       <ul className="text-sm text-gray-600 space-y-1">
-                        <li>• 24/7 customer support</li>
-                        <li>• Competitive rates and terms</li>
-                        <li>• Easy online application process</li>
-                        <li>• Quick approval and processing</li>
-                        <li>• Flexible payment options</li>
+                        {thirdLevelContent.content[
+                          hoveredSecondLevel
+                        ].keyFeatures.map((feature, idx) => (
+                          <li key={idx}>• {feature}</li>
+                        ))}
                       </ul>
                     </div>
                     <Button
@@ -400,123 +385,148 @@ export default function MainNavigation() {
                       size="sm"
                       onClick={closeAllDropdowns}
                       className="w-full"
+                      asChild
+                      icon={ChevronRight}
+                      iconPosition="right"
                     >
-                      Learn More
-                      <ChevronRight className="ml-1 h-4 w-4" />
+                      <Link
+                        to={
+                          thirdLevelContent.content[hoveredSecondLevel]
+                            .buttonLink
+                        }
+                      >
+                        {
+                          thirdLevelContent.content[hoveredSecondLevel]
+                            .buttonText
+                        }
+                      </Link>
                     </Button>
                   </div>
                 </div>
-              ) : hoveredSubItem ? (
+              ) : hoveredSubItem &&
+                thirdLevelContent.content?.[hoveredSubItem] ? (
                 <div className="p-6">
                   <h4 className="text-lg font-semibold text-gray-900 mb-4">
                     {hoveredSubItem}
                   </h4>
                   <div className="space-y-4">
                     <img
-                      src="/images/recent-product.jpg"
-                      alt={hoveredSubItem}
+                      src={thirdLevelContent.content[hoveredSubItem].imageUrl}
+                      alt={thirdLevelContent.content[hoveredSubItem].altText}
                       className="w-full h-40 object-cover rounded-lg"
                       onError={(e) => {
-                        e.currentTarget.src =
-                          "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='160' viewBox='0 0 300 160'%3E%3Crect width='300' height='160' fill='%23f3f4f6'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='Arial, sans-serif' font-size='14' fill='%236b7280'%3EProduct Image%3C/text%3E%3C/svg%3E";
+                        const altText =
+                          thirdLevelContent?.content?.[hoveredSubItem]
+                            ?.altText || "Image not found";
+                        e.currentTarget.src = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='160' viewBox='0 0 300 160'%3E%3Crect width='300' height='160' fill='%23f3f4f6'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='Arial, sans-serif' font-size='14' fill='%236b7280'%3E${altText}%3C/text%3E`;
                       }}
                     />
+                    <p className="text-gray-600 text-sm mb-4">
+                      {thirdLevelContent.content[hoveredSubItem].description}
+                    </p>
                     <div>
-                      <p className="text-gray-600 text-sm mb-4">
-                        Discover our comprehensive{" "}
-                        {hoveredSubItem.toLowerCase()} solutions designed to
-                        meet your financial needs with competitive rates and
-                        excellent service.
-                      </p>
-                      <div className="space-y-2">
-                        <div className="flex items-center text-sm text-gray-600">
-                          <div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
-                          Competitive rates and flexible terms
-                        </div>
-                        <div className="flex items-center text-sm text-gray-600">
-                          <div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
-                          Simple and fast application process
-                        </div>
-                        <div className="flex items-center text-sm text-gray-600">
-                          <div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
-                          Expert guidance and support
-                        </div>
-                        <div className="flex items-center text-sm text-gray-600">
-                          <div className="w-2 h-2 bg-green-500 rounded-full mr-2"></div>
-                          Secure and reliable service
-                        </div>
-                      </div>
+                      <h5 className="font-medium text-gray-900 mb-2">
+                        Key Features
+                      </h5>
+                      <ul className="text-sm text-gray-600 space-y-1">
+                        {thirdLevelContent.content[
+                          hoveredSubItem
+                        ].keyFeatures.map((feature, idx) => (
+                          <li key={idx}>• {feature}</li>
+                        ))}
+                      </ul>
                     </div>
                     <Button
                       variant="primary"
+                      size="sm"
                       onClick={closeAllDropdowns}
                       className="w-full"
+                      asChild
+                      icon={ChevronRight}
+                      iconPosition="right"
                     >
-                      Get Started
-                      <ChevronRight className="ml-1 h-4 w-4" />
+                      <Link
+                        to={
+                          thirdLevelContent.content[hoveredSubItem].buttonLink
+                        }
+                      >
+                        {thirdLevelContent.content[hoveredSubItem].buttonText}
+                      </Link>
                     </Button>
                   </div>
                 </div>
               ) : (
                 <div className="p-6">
                   <h4 className="text-lg font-semibold text-gray-900 mb-4">
-                    {thirdLevelContent.parentItem.label} Banking Solutions
+                    {thirdLevelContent.parentItem.label} Solutions
                   </h4>
                   <div className="space-y-4">
                     <img
-                      src="/images/recent-product.jpg"
-                      alt={`${thirdLevelContent.parentItem.label} Banking`}
+                      src={
+                        thirdLevelContent.subItem.thirdLevelContent?.[
+                          thirdLevelContent.subItem.label
+                        ]?.imageUrl || "/images/default-solution.jpg"
+                      }
+                      alt={thirdLevelContent.subItem.label}
                       className="w-full h-40 object-cover rounded-lg"
                       onError={(e) => {
-                        e.currentTarget.src =
-                          "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='160' viewBox='0 0 300 160'%3E%3Crect width='300' height='160' fill='%23f3f4f6'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='Arial, sans-serif' font-size='14' fill='%236b7280'%3E{thirdLevelContent.parentItem.label} Banking%3C/text%3E%3C/svg%3E";
+                        e.currentTarget.src = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='160' viewBox='0 0 300 160'%3E%3Crect width='300' height='160' fill='%23f3f4f6'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='Arial, sans-serif' font-size='14' fill='%236b7280'%3E${thirdLevelContent.subItem.label}%3C/text%3E`;
                       }}
                     />
                     <p className="text-gray-600 text-sm">
-                      Our {thirdLevelContent.parentItem.label.toLowerCase()}{" "}
-                      banking solutions are designed to provide you with the
-                      financial tools and services you need to achieve your
-                      goals and manage your finances effectively.
+                      {thirdLevelContent.subItem.thirdLevelContent?.[
+                        thirdLevelContent.subItem.label
+                      ]?.description ||
+                        `Our ${thirdLevelContent.parentItem.label.toLowerCase()} solutions are designed to meet your financial needs.`}
                     </p>
-                    <div className="space-y-2">
-                      <div className="text-sm font-medium text-gray-700">
-                        Why Choose Our {thirdLevelContent.parentItem.label}{" "}
-                        Solutions:
-                      </div>
-                      <div className="grid grid-cols-1 gap-2 text-sm text-gray-600">
-                        <div className="flex items-center">
-                          <div className="w-2 h-2 bg-blue-500 rounded-full mr-2"></div>
-                          Tailored financial products
-                        </div>
-                        <div className="flex items-center">
-                          <div className="w-2 h-2 bg-blue-500 rounded-full mr-2"></div>
-                          Expert advisory services
-                        </div>
-                        <div className="flex items-center">
-                          <div className="w-2 h-2 bg-blue-500 rounded-full mr-2"></div>
-                          Digital banking convenience
-                        </div>
-                        <div className="flex items-center">
-                          <div className="w-2 h-2 bg-blue-500 rounded-full mr-2"></div>
-                          24/7 customer support
-                        </div>
-                      </div>
+                    <div>
+                      <h5 className="font-medium text-gray-900 mb-2">
+                        Key Features
+                      </h5>
+                      <ul className="text-sm text-gray-600 space-y-1">
+                        {thirdLevelContent.subItem.thirdLevelContent?.[
+                          thirdLevelContent.subItem.label
+                        ]?.keyFeatures?.map((feature, idx) => (
+                          <li key={idx}>• {feature}</li>
+                        )) || (
+                          <>
+                            <li>• Tailored financial products</li>
+                            <li>• Expert advisory services</li>
+                            <li>• Digital banking convenience</li>
+                            <li>• 24/7 customer support</li>
+                          </>
+                        )}
+                      </ul>
                     </div>
                     <Button
                       variant="primary"
+                      size="sm"
                       onClick={closeAllDropdowns}
                       className="w-full"
+                      asChild
+                      icon={ChevronRight}
+                      iconPosition="right"
                     >
-                      Explore {thirdLevelContent.parentItem.label} Solutions
-                      <ChevronRight className="ml-1 h-4 w-4" />
+                      <Link
+                        to={
+                          thirdLevelContent.subItem.thirdLevelContent?.[
+                            thirdLevelContent.subItem.label
+                          ]?.buttonLink ||
+                          thirdLevelContent.subItem.href ||
+                          "#"
+                        }
+                      >
+                        {thirdLevelContent.subItem.thirdLevelContent?.[
+                          thirdLevelContent.subItem.label
+                        ]?.buttonText ||
+                          `Explore ${thirdLevelContent.parentItem.label} Solutions`}
+                      </Link>
                     </Button>
                   </div>
                 </div>
               )}
             </div>
           </div>
-
-          {/* Quick Links Footer - Dynamic based on parent category */}
           <div className="border-t border-gray-200 bg-gray-50">
             <div className="container mx-auto px-6 py-4">
               <div className="flex items-center gap-6">
@@ -524,42 +534,26 @@ export default function MainNavigation() {
                   Quick Links:
                 </span>
                 <div className="flex gap-6">
-                  <Link
-                    to="/find-branches-atm"
-                    className="text-sm text-gray-600 hover:text-nbc-dark-950 hover:underline transition-colors"
-                    onClick={closeAllDropdowns}
-                  >
-                    Find Branch & ATMs
-                  </Link>
-                  <Link
-                    to={"/whistle-blowing"}
-                    className="text-sm text-gray-600 hover:text-nbc-dark-950 hover:underline transition-colors"
-                    onClick={closeAllDropdowns}
-                  >
-                    Whistleblowing
-                  </Link>
-
-                  <Link
-                    to="/contact-us"
-                    className="text-sm text-gray-600 hover:text-nbc-dark-950 hover:underline transition-colors"
-                    onClick={closeAllDropdowns}
-                  >
-                    Contact Us
-                  </Link>
+                  {quickLinks.map((link, idx) => (
+                    <Link
+                      key={idx}
+                      to={link.href}
+                      className="text-sm text-gray-600 hover:text-nbc-dark-950 hover:underline transition-colors"
+                      onClick={closeAllDropdowns}
+                    >
+                      {link.label}
+                    </Link>
+                  ))}
                 </div>
               </div>
             </div>
           </div>
         </div>
       )}
-
-      {/* Rest of the component remains the same... */}
-      {/* Top Navigation Bar */}
       <nav className="container mx-auto px-4 group">
         <div className="min-h-16 has-[.has-third-level:hover]:min-h-28 transition-all duration-200">
           <div className="flex items-center justify-between h-16">
-            {/* Logo */}
-            <div className="flex items-center ">
+            <div className="flex items-center">
               <div className="flex-shrink-0 py-10">
                 <img
                   src="/images/logo.svg"
@@ -570,9 +564,7 @@ export default function MainNavigation() {
                 />
               </div>
             </div>
-
-            {/* Desktop Navigation */}
-            <div className="hidden lg:flex items-center space-x-8">
+            <div className="hidden lg:flex items-center space-x-4 gap-5">
               {navigationItems.map((item, index) => {
                 const hasThirdLevel = hasThirdLevelItems(item);
                 return (
@@ -595,11 +587,9 @@ export default function MainNavigation() {
                           <span className="font-medium">{item.label}</span>
                           <ChevronDown className="h-4 w-4 group-hover/item:rotate-180 transition-transform duration-200" />
                         </button>
-
-                        {/* Second Level Links - Inside Navbar */}
                         {hasThirdLevel && (
-                          <div className=" absolute left-7 top-full opacity-0 invisible group-hover/item:opacity-100 group-hover/item:visible transition-all duration-300 z-40 flex items-center justify-start h-12">
-                            <div className="flex items-center space-x-8 ">
+                          <div className="absolute left-7 top-full opacity-0 invisible group-hover/item:opacity-100 group-hover/item:visible transition-all duration-300 z-40 flex items-center justify-start h-12">
+                            <div className="flex items-center space-x-8">
                               {item.subItems?.map((subItem, index) => (
                                 <div
                                   key={index}
@@ -629,7 +619,7 @@ export default function MainNavigation() {
                                       </Link>
                                     ) : (
                                       <button
-                                        className={`text-nav-text hover:text-nav-text-hover transition-colors duration-150 font-medium whitespace-nowrap flex items-center h-12 space-x-1 relative hover:after:w-full after:absolute after:bottom-0 after:left-0 after:h-0.5 after:bg-nbc-dark-700 after:transition-all after:duration-200  ${
+                                        className={`text-nav-text hover:text-nav-text-hover transition-colors duration-150 font-medium whitespace-nowrap flex items-center h-12 space-x-1 relative hover:after:w-full after:absolute after:bottom-0 after:left-0 after:h-0.5 after:bg-nbc-dark-700 after:transition-all after:duration-200 ${
                                           subItem.href &&
                                           isActiveLink(subItem.href)
                                             ? "after:w-full"
@@ -665,18 +655,16 @@ export default function MainNavigation() {
                             </div>
                           </div>
                         )}
-
-                        {/* Regular Dropdown for items without third level */}
                         {!hasThirdLevel && item.subItems && (
                           <div className="absolute left-0 top-full mt-1 w-80 bg-nav-dropdown border border-nav-border rounded-lg shadow-lg opacity-0 invisible group-hover/item:opacity-100 group-hover/item:visible transition-all duration-200 z-50">
                             <div className="p-4">
-                              <div className="grid gap-2 ">
+                              <div className="grid gap-2">
                                 {item.subItems?.map((subItem, index) => (
                                   <Link
                                     key={index}
                                     to={subItem.href ?? "/"}
                                     onClick={closeAllDropdowns}
-                                    className="block p-3 rounded-md hover:bg-accent transition-colors duration-150 "
+                                    className="block p-3 rounded-md hover:bg-accent transition-colors duration-150"
                                   >
                                     <div className="font-medium text-nav-text">
                                       {subItem.label}
@@ -710,10 +698,7 @@ export default function MainNavigation() {
                 );
               })}
             </div>
-
-            {/* Right Side Actions */}
             <div className="hidden lg:flex items-center space-x-4">
-              {/* Render action buttons except Login */}
               {actionButtons
                 .filter((btn) => btn.label !== "Login")
                 .map((actionButton) => (
@@ -721,11 +706,11 @@ export default function MainNavigation() {
                     {actionButton.items ? (
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                          <Button variant={actionButton.variant} size="sm">
+                          <Button variant={actionButton.variant} size="sm" icon={ChevronDown} iconPosition="right">
                             {actionButton.icon &&
                               renderIcon(actionButton.icon, "h-4 w-4 mr-2")}
                             {actionButton.label}
-                            <ChevronDown className="h-4 w-4 ml-1" />
+                            
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent className="z-[10000000]">
@@ -734,7 +719,7 @@ export default function MainNavigation() {
                               key={item.label}
                               onClick={closeAllDropdowns}
                             >
-                              {item.label}
+                              <Link to={item.href}>{item.label}</Link>
                             </DropdownMenuItem>
                           ))}
                         </DropdownMenuContent>
@@ -744,70 +729,61 @@ export default function MainNavigation() {
                         variant={actionButton.variant}
                         size="sm"
                         className="text-nav-text hover:text-nav-text-hover"
+                        asChild
                       >
-                        {actionButton.icon &&
-                          renderIcon(actionButton.icon, "h-4 w-4 mr-2")}
-                        {actionButton.label}
+                        <Link
+                          to={actionButton.href ?? "#"}
+                          onClick={closeAllDropdowns}
+                          className="flex items-center"
+                        >
+                          {actionButton.icon &&
+                            renderIcon(actionButton.icon, "h-4 w-4 mr-2")}
+                          {actionButton.label}
+                        </Link>
                       </Button>
                     )}
                   </div>
                 ))}
-
-              {/* Search Bar before Login button */}
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input placeholder="Search" className="w-48 pl-10 h-9" />
+                <Input
+                  type="search"
+                  placeholder="Search..."
+                  className="pl-10 w-40 bg-gray-50 border-gray-200 focus:ring-0 focus:border-nbc-dark-700"
+                />
               </div>
-
-              {/* Render Login button last */}
               {actionButtons
                 .filter((btn) => btn.label === "Login")
                 .map((actionButton) => (
                   <div key={actionButton.label}>
-                    {actionButton.items ? (
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant={actionButton.variant} size="md">
-                            {actionButton.icon &&
-                              renderIcon(actionButton.icon, "h-4 w-4 mr-2")}
-                            {actionButton.label}
-                            <ChevronDown className="h-4 w-4 ml-1" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent className="z-[10000000] ">
-                          {actionButton.items.map((item) => (
-                            <DropdownMenuItem
-                              key={item.label}
-                              onClick={closeAllDropdowns}
-                              className="text-nav-text hover:bg-gray-100 transition-colors duration-200 hover:text-nbc-dark-200 cursor-pointer"
-                            >
-                              {item.label}
-                            </DropdownMenuItem>
-                          ))}
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    ) : (
-                      <Button
-                        variant={actionButton.variant}
-                        size="sm"
-                        className="text-nav-text hover:text-nav-text-hover"
-                      >
-                        {actionButton.icon &&
-                          renderIcon(actionButton.icon, "h-4 w-4 mr-2")}
-                        {actionButton.label}
-                      </Button>
-                    )}
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant={actionButton.variant} size="sm" icon={ChevronDown} iconPosition="right">
+                          {actionButton.icon &&
+                            renderIcon(actionButton.icon, "h-4 w-4 mr-2")}
+                          {actionButton.label}
+                       
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent className="z-[10000000]">
+                        {actionButton.items?.map((item) => (
+                          <DropdownMenuItem
+                            key={item.label}
+                            onClick={closeAllDropdowns}
+                          >
+                            <Link to={item.href}>{item.label}</Link>
+                          </DropdownMenuItem>
+                        ))}
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   </div>
                 ))}
             </div>
-
-            {/* Mobile menu button */}
-            <div className="lg:hidden">
+            <div className="lg:hidden flex items-center">
               <Button
-                variant="ghost"
-                size="sm"
+                variant="iconRounded"
                 onClick={toggleMobileMenu}
-                className="text-nav-text"
+                aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
               >
                 {isMobileMenuOpen ? (
                   <X className="h-6 w-6" />
@@ -818,63 +794,171 @@ export default function MainNavigation() {
             </div>
           </div>
         </div>
-
-        {/* Mobile Navigation Menu */}
         {isMobileMenuOpen && (
-          <div className="lg:hidden border-t border-nav-border bg-nav-secondary">
-            <div className="px-4 py-6 space-y-4">
-              {/* Search */}
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                <Input placeholder="Search" className="w-full pl-10" />
-              </div>
-
-              {/* Navigation Items */}
-              {navigationItems.map((item, index) => (
-                <div key={index} className="space-y-2">
-                  {item.hasDropdown ? (
-                    <div>
-                      <div className="font-medium text-nav-text py-2 border-b border-nav-border">
+          <div className="lg:hidden bg-white border-t border-gray-200">
+            <div className="container mx-auto px-4 py-4">
+              <div className="space-y-4">
+                {navigationItems.map((item, index) => (
+                  <div key={index}>
+                    {item.hasDropdown ? (
+                      <div>
+                        <button
+                          className="flex items-center justify-between w-full text-nav-text font-medium py-2"
+                          onClick={() => toggleAccordion(item.label)}
+                        >
+                          {item.label}
+                          {expandedAccordions.has(item.label) ? (
+                            <Minus className="h-4 w-4" />
+                          ) : (
+                            <Plus className="h-4 w-4" />
+                          )}
+                        </button>
+                        {expandedAccordions.has(item.label) &&
+                          item.subItems && (
+                            <div className="pl-4 space-y-2 mt-2">
+                              {item.subItems.map((subItem, subIndex) => (
+                                <div key={subIndex}>
+                                  {subItem.hasThirdLevel ? (
+                                    <div>
+                                      <button
+                                        className="flex items-center justify-between w-full text-nav-text text-sm py-2"
+                                        onClick={() =>
+                                          toggleAccordion(
+                                            `${item.label}-${subItem.label}`
+                                          )
+                                        }
+                                      >
+                                        {subItem.label}
+                                        {expandedAccordions.has(
+                                          `${item.label}-${subItem.label}`
+                                        ) ? (
+                                          <Minus className="h-4 w-4" />
+                                        ) : (
+                                          <Plus className="h-4 w-4" />
+                                        )}
+                                      </button>
+                                      {expandedAccordions.has(
+                                        `${item.label}-${subItem.label}`
+                                      ) &&
+                                        subItem.thirdLevelItems && (
+                                          <div className="pl-4 space-y-2 mt-2">
+                                            {subItem.thirdLevelItems.map(
+                                              (thirdLevelItem, thirdIndex) => (
+                                                <Link
+                                                  key={thirdIndex}
+                                                  to={thirdLevelItem.href}
+                                                  onClick={closeAllDropdowns}
+                                                  className="block text-sm text-gray-600 hover:text-nbc-dark-950"
+                                                >
+                                                  {thirdLevelItem.label}
+                                                </Link>
+                                              )
+                                            )}
+                                          </div>
+                                        )}
+                                    </div>
+                                  ) : (
+                                    <Link
+                                      to={subItem.href ?? "#"}
+                                      onClick={closeAllDropdowns}
+                                      className="block text-sm text-gray-600 hover:text-nbc-dark-950 py-2"
+                                    >
+                                      {subItem.label}
+                                    </Link>
+                                  )}
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                      </div>
+                    ) : (
+                      <Link
+                        to={item.href ?? "#"}
+                        onClick={closeAllDropdowns}
+                        className="block text-nav-text font-medium py-2"
+                      >
                         {item.label}
-                      </div>
-                      <div className="pl-4 space-y-2 mt-2">
-                        {item.subItems?.map((subItem) => (
-                          <Link
-                            key={subItem.label}
-                            to={subItem.href ?? "#"}
-                            onClick={closeAllDropdowns}
-                            className="block py-2 text-nav-text hover:text-nav-text-hover transition-colors"
-                          >
-                            {subItem.label}
-                          </Link>
-                        ))}
-                      </div>
-                    </div>
-                  ) : (
-                    <Link
-                      to={item.href ?? "#"}
-                      onClick={closeAllDropdowns}
-                      className="block font-medium text-nav-text hover:text-nav-text-hover transition-colors py-2"
-                    >
-                      {item.label}
-                    </Link>
-                  )}
-                </div>
-              ))}
-
-              {/* Mobile Actions */}
-              <div className="pt-4 border-t border-nav-border space-y-3">
-                {actionButtons.map((actionButton, index) => (
-                  <button
-                    key={index}
-                    onClick={closeAllDropdowns}
-                    className="flex items-center space-x-1 text-[15px] font-semibold px-2 py-1 border-0 transition-all duration-200 rounded-md text-white hover:text-gray-200 hover:underline hover:underline-offset-8 hover:decoration-2"
-                  >
-                    {actionButton.icon &&
-                      renderIcon(actionButton.icon, "h-4 w-4 mr-2")}
-                    {actionButton.label}
-                  </button>
+                      </Link>
+                    )}
+                  </div>
                 ))}
+                <div className="pt-4 border-t border-gray-200">
+                  <Input
+                    type="search"
+                    placeholder="Search..."
+                    className="w-full bg-gray-50 border-gray-200 focus:ring-0 focus:border-nbc-dark-700"
+                  />
+                </div>
+                <div className="space-y-2">
+                  {actionButtons.map((actionButton, index) => (
+                    <div key={index}>
+                      {actionButton.items ? (
+                        <div>
+                          <button
+                            className="flex items-center justify-between w-full text-nav-text text-sm py-2"
+                            onClick={() =>
+                              toggleAccordion(`action-${actionButton.label}`)
+                            }
+                          >
+                            {actionButton.icon &&
+                              renderIcon(actionButton.icon, "h-4 w-4 mr-2")}
+                            {actionButton.label}
+                            {expandedAccordions.has(
+                              `action-${actionButton.label}`
+                            ) ? (
+                              <Minus className="h-4 w-4" />
+                            ) : (
+                              <Plus className="h-4 w-4" />
+                            )}
+                          </button>
+                          {expandedAccordions.has(
+                            `action-${actionButton.label}`
+                          ) && (
+                            <div className="pl-4 space-y-2 mt-2">
+                              {actionButton.items.map((item, itemIndex) => (
+                                <Link
+                                  key={itemIndex}
+                                  to={item.href}
+                                  onClick={closeAllDropdowns}
+                                  className="block text-sm text-gray-600 hover:text-nbc-dark-950"
+                                >
+                                  {item.label}
+                                </Link>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      ) : (
+                        <Link
+                          to={actionButton.href ?? "#"}
+                          onClick={closeAllDropdowns}
+                          className="flex items-center text-sm text-gray-600 hover:text-nbc-dark-950 py-2"
+                        >
+                          {actionButton.icon &&
+                            renderIcon(actionButton.icon, "h-4 w-4 mr-2")}
+                          {actionButton.label}
+                        </Link>
+                      )}
+                    </div>
+                  ))}
+                </div>
+                <div className="pt-4 border-t border-gray-200">
+                  <div className="flex flex-col gap-2">
+                    <span className="text-gray-500 font-medium text-sm">
+                      Quick Links:
+                    </span>
+                    {quickLinks.map((link, idx) => (
+                      <Link
+                        key={idx}
+                        to={link.href}
+                        onClick={closeAllDropdowns}
+                        className="text-sm text-gray-600 hover:text-nbc-dark-950 hover:underline"
+                      >
+                        {link.label}
+                      </Link>
+                    ))}
+                  </div>
+                </div>
               </div>
             </div>
           </div>
