@@ -69,75 +69,316 @@ export const navigationData: MenuItem[] = [
         hasThirdLevel: true,
         href: "/personal-banking",
         categories: {
-          "NBC Individual Current Account": [],
-          "NBC Direct Current Account": [],
-          "NBC Kikundi Account": [],
-          "Fixed Deposit Account": [],
-          "Pure Save": [],
-          "Ordinary Account": [],
-          "Malengo Account": [],
-          "Chanua Account": [],
-          "Student Account": [],
-          "Fasta Account": [],
-          "Digital Services": [
+          Accounts: [
+            {
+              label: "NBC Individual Current Account",
+              href: "/personal/accounts/nbc-individual-current",
+              description: "Our flagship individual current account",
+              parentCategory: "Accounts",
+            },
+            {
+              label: "NBC Direct Current Account",
+              href: "/personal/accounts/nbc-direct-current",
+              description: "Direct banking solutions for modern customers",
+              parentCategory: "Accounts",
+            },
+            {
+              label: "NBC Kikundi Account",
+              href: "/personal/accounts/nbc-kikundi",
+              description: "Group savings account designed for community banking",
+              parentCategory: "Accounts",
+              hasNested: true,
+              nestedItems: [
+                {
+                  label: "Community Savings Plan",
+                  href: "/personal/accounts/nbc-kikundi/community",
+                  description: "Savings plan for community groups",
+                },
+                {
+                  label: "Group Investment Option",
+                  href: "/personal/accounts/nbc-kikundi/investment",
+                  description: "Investment opportunities for groups",
+                },
+              ],
+            },
+            {
+              label: "Fixed Deposit Account",
+              href: "/personal/accounts/fixed-deposit",
+              description: "Secure investment option with guaranteed returns",
+              parentCategory: "Accounts",
+            },
+            {
+              label: "Pure Save",
+              href: "/personal/accounts/pure-save",
+              description: "Simple savings account with attractive interest rates",
+              parentCategory: "Accounts",
+            },
+            {
+              label: "Ordinary Account",
+              href: "/personal/accounts/ordinary",
+              description: "Basic banking account for everyday transactions",
+              parentCategory: "Accounts",
+            },
+            {
+              label: "Malengo Account",
+              href: "/personal/accounts/malengo",
+              description: "Special account designed for your financial goals",
+              parentCategory: "Accounts",
+            },
+            {
+              label: "Chanua Account",
+              href: "/personal/accounts/chanua",
+              description: "Savings account with monthly benefits",
+              parentCategory: "Accounts",
+            },
+            {
+              label: "Student Account",
+              href: "/personal/accounts/student",
+              description: "Specially designed account for students with exclusive benefits",
+              parentCategory: "Accounts",
+              hasNested: true,
+              nestedItems: [
+                {
+                  label: "Student Budget Plan",
+                  href: "/personal/accounts/student/budget",
+                  description: "Budgeting tools for students",
+                },
+                {
+                  label: "Student Rewards",
+                  href: "/personal/accounts/student/rewards",
+                  description: "Exclusive rewards for student account holders",
+                },
+              ],
+            },
+            {
+              label: "Fasta Account",
+              href: "/personal/accounts/fasta",
+              description: "Fast and convenient banking solution",
+              parentCategory: "Accounts",
+            },
+          ],
+          Loans: [
+            {
+              label: "Personal Loan",
+              href: "/personal/loans/personal",
+              description: "Quick personal financing for your needs",
+              parentCategory: "Loans",
+            },
+            {
+              label: "Group Scheme Loan",
+              href: "/personal/loans/group-scheme",
+              description: "Collective borrowing for groups",
+              parentCategory: "Loans",
+            },
+            {
+              label: "Pensioners Loan",
+              href: "/personal/loans/pensioners",
+              description: "Special loans for pensioners",
+              parentCategory: "Loans",
+            },
+            {
+              label: "Government Security Loan",
+              href: "/personal/loans/government-security",
+              description: "Loans against government securities",
+              parentCategory: "Loans",
+            },
+            {
+              label: "Mortgage",
+              href: "/personal/loans/mortgage",
+              description: "Home financing solutions",
+              parentCategory: "Loans",
+              hasNested: true,
+              nestedItems: [
+                {
+                  label: "Fixed Rate Mortgage",
+                  href: "/personal/loans/mortgage/fixed",
+                  description: "Stable interest rates for predictable payments",
+                },
+                {
+                  label: "Variable Rate Mortgage",
+                  href: "/personal/loans/mortgage/variable",
+                  description: "Flexible rates with potential savings",
+                },
+              ],
+            },
+            {
+              label: "Home Purchase Loan",
+              href: "/personal/loans/home-purchase",
+              description: "Make your dream home a reality",
+              parentCategory: "Loans",
+            },
+            {
+              label: "Refinancing Home Loan",
+              href: "/personal/loans/refinancing-home",
+              description: "Refinance your existing home loan",
+              parentCategory: "Loans",
+            },
+            {
+              label: "Equity Release Loan",
+              href: "/personal/loans/equity-release",
+              description: "Unlock the value in your property",
+              parentCategory: "Loans",
+            },
+          ],
+          Insurance: [
+            {
+              label: "Edu Care",
+              href: "/personal/insurance/edu-care",
+              description: "Education insurance for your children's future",
+              parentCategory: "Insurance",
+            },
+            {
+              label: "Credit Life Insurance",
+              href: "/personal/insurance/credit-life",
+              description: "Protection for your loans and credit",
+              parentCategory: "Insurance",
+            },
+            {
+              label: "Domestic Insurance",
+              href: "/personal/insurance/domestic",
+              description: "Comprehensive home and contents insurance",
+              parentCategory: "Insurance",
+            },
+            {
+              label: "Motor Insurance",
+              href: "/personal/insurance/motor",
+              description: "Complete vehicle protection coverage",
+              parentCategory: "Insurance",
+              hasNested: true,
+              nestedItems: [
+                {
+                  label: "Comprehensive Coverage",
+                  href: "/personal/insurance/motor/comprehensive",
+                  description: "Full protection for your vehicle",
+                },
+                {
+                  label: "Third-Party Coverage",
+                  href: "/personal/insurance/motor/third-party",
+                  description: "Basic liability protection",
+                },
+              ],
+            },
+          ],
+          "Ways To Bank": [
             {
               label: "Online Banking",
-              href: "/personal/digital/online",
-              description: "Bank from anywhere",
-              parentCategory: "Digital Services",
+              href: "/personal/ways-to-bank/online",
+              description: "Bank from anywhere, anytime",
+              parentCategory: "Ways To Bank",
             },
             {
               label: "Mobile App",
-              href: "/personal/digital/mobile",
-              description: "Banking on the go",
-              parentCategory: "Digital Services",
+              href: "/personal/ways-to-bank/mobile",
+              description: "Banking on the go with our mobile app",
+              parentCategory: "Ways To Bank",
+            },
+            {
+              label: "ATM Services",
+              href: "/personal/ways-to-bank/atm",
+              description: "24/7 ATM access nationwide",
+              parentCategory: "Ways To Bank",
+            },
+            {
+              label: "Branch Banking",
+              href: "/personal/ways-to-bank/branch",
+              description: "Visit our branches for personalized service",
+              parentCategory: "Ways To Bank",
+            },
+            {
+              label: "Phone Banking",
+              href: "/personal/ways-to-bank/phone",
+              description: "Banking services over the phone",
+              parentCategory: "Ways To Bank",
             },
           ],
         },
         thirdLevelItems: [
           {
             label: "Accounts",
-            href: "/personal/accounts/current",
-            description: "Everyday banking account",
-            parentCategory: "Deposit Accounts",
+            href: "/personal/accounts",
+            description: "Complete range of personal accounts",
+            parentCategory: "Accounts",
           },
           {
             label: "Loans",
-            href: "/personal/accounts/savings",
-            description: "Grow your savings",
-            parentCategory: "Deposit Accounts",
+            href: "/personal/loans",
+            description: "Personal financing solutions",
+            parentCategory: "Loans",
           },
           {
             label: "Insurance",
-            href: "/personal/accounts/fixed",
-            description: "Secure investment option",
-            parentCategory: "Deposit Accounts",
+            href: "/personal/insurance",
+            description: "Protection for you and your family",
+            parentCategory: "Insurance",
           },
           {
             label: "Ways To Bank",
-            href: "/personal/accounts/premium",
-            description: "Exclusive banking benefits",
-            parentCategory: "Premium Services",
-          },
-          {
-            label: "NBC Individual Current Account",
-            href: "/personal/nbc-individual-current-account",
-            description: "Our flagship current account",
-            parentCategory: "NBC Individual Current Account",
-          },
-          {
-            label: "NBC Mobile Banking",
-            href: "/personal/nbc-mobile-banking",
-            description: "Advanced mobile banking features",
-            parentCategory: "NBC Mobile Banking",
+            href: "/personal/ways-to-bank",
+            description: "Convenient banking channels",
+            parentCategory: "Ways To Bank",
           },
         ],
         thirdLevelContent: {
+          Accounts: {
+            imageUrl: "/images/personal-accounts.jpg",
+            altText: "Personal Accounts",
+            description: "Choose from our comprehensive range of personal banking accounts designed to meet your financial needs.",
+            keyFeatures: [
+              "Competitive interest rates",
+              "Low or no monthly fees",
+              "24/7 online and mobile access",
+              "Nationwide ATM network",
+              "Personalized customer service",
+            ],
+            buttonText: "Explore Accounts",
+            buttonLink: "/personal/accounts",
+          },
+          Loans: {
+            imageUrl: "/images/personal-loans.jpg",
+            altText: "Personal Loans",
+            description: "Flexible financing solutions to help you achieve your personal and financial goals.",
+            keyFeatures: [
+              "Competitive interest rates",
+              "Quick approval process",
+              "Flexible repayment terms",
+              "Minimal documentation",
+              "Expert financial guidance",
+            ],
+            buttonText: "Apply for Loan",
+            buttonLink: "/personal/loans",
+          },
+          Insurance: {
+            imageUrl: "/images/personal-insurance.jpg",
+            altText: "Personal Insurance",
+            description: "Comprehensive insurance solutions to protect you, your family, and your assets.",
+            keyFeatures: [
+              "Wide coverage options",
+              "Affordable premiums",
+              "Quick claim processing",
+              "24/7 customer support",
+              "Flexible payment plans",
+            ],
+            buttonText: "Get Protected",
+            buttonLink: "/personal/insurance",
+          },
+          "Ways To Bank": {
+            imageUrl: "/images/ways-to-bank.jpg",
+            altText: "Ways To Bank",
+            description: "Multiple convenient channels to access your banking services anytime, anywhere.",
+            keyFeatures: [
+              "24/7 online banking",
+              "Mobile app with full features",
+              "Nationwide ATM network",
+              "Personalized branch service",
+              "Secure phone banking",
+            ],
+            buttonText: "Explore Options",
+            buttonLink: "/personal/ways-to-bank",
+          },
           "NBC Individual Current Account": {
             imageUrl: "/images/individual-current-account.jpg",
             altText: "NBC Individual Current Account",
-            description:
-              "Our flagship individual current account with competitive benefits.",
+            description: "Our flagship individual current account with competitive benefits.",
             keyFeatures: [
               "24/7 customer support",
               "Competitive rates and terms",
@@ -146,7 +387,7 @@ export const navigationData: MenuItem[] = [
               "Flexible payment options",
             ],
             buttonText: "Learn More",
-            buttonLink: "/personal/nbc-individual-current-account",
+            buttonLink: "/personal/accounts/nbc-individual-current",
           },
           "NBC Direct Current Account": {
             imageUrl: "/images/direct-current-account.jpg",
@@ -160,13 +401,12 @@ export const navigationData: MenuItem[] = [
               "Customizable alerts",
             ],
             buttonText: "Get Started",
-            buttonLink: "/personal/nbc-direct-current-account",
+            buttonLink: "/personal/accounts/nbc-direct-current",
           },
           "NBC Kikundi Account": {
             imageUrl: "/images/kikundi-account.jpg",
             altText: "NBC Kikundi Account",
-            description:
-              "Group savings account designed for community banking.",
+            description: "Group savings account designed for community banking.",
             keyFeatures: [
               "Group savings plans",
               "Shared account management",
@@ -175,7 +415,7 @@ export const navigationData: MenuItem[] = [
               "Community support programs",
             ],
             buttonText: "Explore Now",
-            buttonLink: "/personal/nbc-kikundi-account",
+            buttonLink: "/personal/accounts/nbc-kikundi",
           },
           "Fixed Deposit Account": {
             imageUrl: "/images/fixed-deposit-account.jpg",
@@ -189,13 +429,12 @@ export const navigationData: MenuItem[] = [
               "Easy renewal process",
             ],
             buttonText: "Invest Now",
-            buttonLink: "/personal/fixed-deposit-account",
+            buttonLink: "/personal/accounts/fixed-deposit",
           },
           "Pure Save": {
             imageUrl: "/images/pure-save.jpg",
             altText: "Pure Save",
-            description:
-              "Simple savings account with attractive interest rates.",
+            description: "Simple savings account with attractive interest rates.",
             keyFeatures: [
               "Competitive interest rates",
               "No maintenance fees",
@@ -204,7 +443,7 @@ export const navigationData: MenuItem[] = [
               "Savings goal tracker",
             ],
             buttonText: "Start Saving",
-            buttonLink: "/personal/pure-save",
+            buttonLink: "/personal/accounts/pure-save",
           },
           "Ordinary Account": {
             imageUrl: "/images/ordinary-account.jpg",
@@ -218,7 +457,7 @@ export const navigationData: MenuItem[] = [
               "Flexible transactions",
             ],
             buttonText: "Open Now",
-            buttonLink: "/personal/ordinary-account",
+            buttonLink: "/personal/accounts/ordinary",
           },
           "Malengo Account": {
             imageUrl: "/images/malengo-account.jpg",
@@ -232,7 +471,7 @@ export const navigationData: MenuItem[] = [
               "Progress tracking",
             ],
             buttonText: "Plan Your Goals",
-            buttonLink: "/personal/malengo-account",
+            buttonLink: "/personal/accounts/malengo",
           },
           "Chanua Account": {
             imageUrl: "/images/chanua-account.jpg",
@@ -246,13 +485,12 @@ export const navigationData: MenuItem[] = [
               "Savings rewards",
             ],
             buttonText: "Join Now",
-            buttonLink: "/personal/chanua-account",
+            buttonLink: "/personal/accounts/chanua",
           },
           "Student Account": {
             imageUrl: "/images/student-account.jpg",
             altText: "Student Account",
-            description:
-              "Specially designed account for students with exclusive benefits.",
+            description: "Specially designed account for students with exclusive benefits.",
             keyFeatures: [
               "No monthly fees",
               "Student discounts",
@@ -261,7 +499,7 @@ export const navigationData: MenuItem[] = [
               "Budgeting tools",
             ],
             buttonText: "Apply Today",
-            buttonLink: "/personal/student-account",
+            buttonLink: "/personal/accounts/student",
           },
           "Fasta Account": {
             imageUrl: "/images/fasta-account.jpg",
@@ -275,27 +513,13 @@ export const navigationData: MenuItem[] = [
               "Quick setup",
             ],
             buttonText: "Get Started",
-            buttonLink: "/personal/fasta-account",
-          },
-          "Digital Services": {
-            imageUrl: "/images/digital-services.jpg",
-            altText: "Digital Services",
-            description: "Advanced digital banking solutions for convenience.",
-            keyFeatures: [
-              "24/7 online banking",
-              "Mobile app with full features",
-              "Secure transactions",
-              "Bill payments and transfers",
-              "Real-time notifications",
-            ],
-            buttonText: "Go Digital",
-            buttonLink: "/personal/digital-services",
+            buttonLink: "/personal/accounts/fasta",
           },
         },
       },
       {
         label: "Private",
-        description: "Credit and debit solutions",
+        description: "Private banking and wealth management",
         hasThirdLevel: true,
         href: "/personal-banking/private",
         categories: {
@@ -311,6 +535,19 @@ export const navigationData: MenuItem[] = [
               href: "/personal/cards/credit",
               description: "Flexible payment solutions",
               parentCategory: "Payment Cards",
+              hasNested: true,
+              nestedItems: [
+                {
+                  label: "Platinum Credit Card",
+                  href: "/personal/cards/credit/platinum",
+                  description: "Premium credit card with exclusive benefits",
+                },
+                {
+                  label: "Gold Credit Card",
+                  href: "/personal/cards/credit/gold",
+                  description: "Enhanced rewards and travel benefits",
+                },
+              ],
             },
             {
               label: "Prepaid Cards",
@@ -341,65 +578,52 @@ export const navigationData: MenuItem[] = [
               parentCategory: "Business Solutions",
             },
           ],
-          "NBC Private Wealth Management": [],
-          "NBC Private Investment Advisory": [],
+          "NBC Private Services": [
+            {
+              label: "NBC Private Wealth Management",
+              href: "/personal/private/wealth-management",
+              description: "Comprehensive wealth management services",
+              parentCategory: "NBC Private Services",
+            },
+            {
+              label: "NBC Private Investment Advisory",
+              href: "/personal/private/investment-advisory",
+              description: "Expert investment guidance",
+              parentCategory: "NBC Private Services",
+            },
+          ],
         },
         thirdLevelItems: [
           {
-            label: "Debit Cards",
-            href: "/personal/cards/debit",
-            description: "Access your money anywhere",
+            label: "Payment Cards",
+            href: "/personal/cards",
+            description: "Complete range of payment cards",
             parentCategory: "Payment Cards",
           },
           {
-            label: "Credit Cards",
-            href: "/personal/cards/credit",
-            description: "Flexible payment solutions",
-            parentCategory: "Payment Cards",
-          },
-          {
-            label: "Prepaid Cards",
-            href: "/personal/cards/prepaid",
-            description: "Control your spending",
-            parentCategory: "Payment Cards",
-          },
-          {
-            label: "Travel Cards",
-            href: "/personal/cards/travel",
-            description: "Perfect for international travel",
+            label: "Specialty Cards",
+            href: "/personal/cards/specialty",
+            description: "Specialized card solutions",
             parentCategory: "Specialty Cards",
           },
           {
-            label: "Rewards Cards",
-            href: "/personal/cards/rewards",
-            description: "Earn points on every purchase",
-            parentCategory: "Specialty Cards",
-          },
-          {
-            label: "Business Cards",
+            label: "Business Solutions",
             href: "/personal/cards/business",
             description: "Corporate payment solutions",
             parentCategory: "Business Solutions",
           },
           {
-            label: "NBC Private Wealth Management",
-            href: "/personal/private/wealth-management",
-            description: "Comprehensive wealth management services",
-            parentCategory: "NBC Private Wealth Management",
-          },
-          {
-            label: "NBC Private Investment Advisory",
-            href: "/personal/private/investment-advisory",
-            description: "Expert investment guidance",
-            parentCategory: "NBC Private Investment Advisory",
+            label: "NBC Private Services",
+            href: "/personal/private",
+            description: "Exclusive private banking services",
+            parentCategory: "NBC Private Services",
           },
         ],
         thirdLevelContent: {
           "Payment Cards": {
             imageUrl: "/images/payment-cards.jpg",
             altText: "Payment Cards",
-            description:
-              "Flexible and secure card solutions for all your needs.",
+            description: "Flexible and secure card solutions for all your needs.",
             keyFeatures: [
               "Global acceptance",
               "Contactless payments",
@@ -438,11 +662,10 @@ export const navigationData: MenuItem[] = [
             buttonText: "Learn More",
             buttonLink: "/personal/cards/business",
           },
-          "NBC Private Wealth Management": {
-            imageUrl: "/images/private-wealth-management.jpg",
-            altText: "NBC Private Wealth Management",
-            description:
-              "Exclusive wealth management services for high-net-worth individuals.",
+          "NBC Private Services": {
+            imageUrl: "/images/private-services.jpg",
+            altText: "NBC Private Services",
+            description: "Exclusive private banking and wealth management services.",
             keyFeatures: [
               "Personalized financial planning",
               "Dedicated advisors",
@@ -451,27 +674,55 @@ export const navigationData: MenuItem[] = [
               "Estate planning",
             ],
             buttonText: "Get Started",
-            buttonLink: "/personal/private/wealth-management",
+            buttonLink: "/personal/private",
           },
-          "NBC Private Investment Advisory": {
-            imageUrl: "/images/investment-advisory.jpg",
-            altText: "NBC Private Investment Advisory",
-            description: "Expert investment guidance for your portfolio.",
+          "Debit Cards": {
+            imageUrl: "/images/debit-cards.jpg",
+            altText: "Debit Cards",
+            description: "Access your money anywhere with secure debit cards.",
             keyFeatures: [
-              "Customized investment strategies",
-              "Market insights",
-              "Risk management",
-              "Portfolio diversification",
-              "Regular reviews",
+              "Global ATM access",
+              "Contactless payments",
+              "Real-time transaction tracking",
+              "Zero liability protection",
+              "Customizable limits",
             ],
-            buttonText: "Consult Now",
-            buttonLink: "/personal/private/investment-advisory",
+            buttonText: "Apply Now",
+            buttonLink: "/personal/cards/debit",
+          },
+          "Credit Cards": {
+            imageUrl: "/images/credit-cards.jpg",
+            altText: "Credit Cards",
+            description: "Flexible payment solutions with exclusive benefits.",
+            keyFeatures: [
+              "Reward points",
+              "Cashback offers",
+              "Travel insurance",
+              "Low interest rates",
+              "Online management",
+            ],
+            buttonText: "Apply Now",
+            buttonLink: "/personal/cards/credit",
+          },
+          "Prepaid Cards": {
+            imageUrl: "/images/prepaid-cards.jpg",
+            altText: "Prepaid Cards",
+            description: "Control your spending with prepaid card solutions.",
+            keyFeatures: [
+              "No credit checks",
+              "Reloadable funds",
+              "Secure transactions",
+              "Budget control",
+              "Global acceptance",
+            ],
+            buttonText: "Get Started",
+            buttonLink: "/personal/cards/prepaid",
           },
         },
       },
       {
         label: "Privileged",
-        description: "Personal financing options",
+        description: "Premium banking services",
         hasThirdLevel: true,
         href: "/personal-banking/privileged",
         categories: {
@@ -489,6 +740,19 @@ export const navigationData: MenuItem[] = [
               href: "/personal/loans/home",
               description: "Make your dream home reality",
               parentCategory: "Property Finance",
+              hasNested: true,
+              nestedItems: [
+                {
+                  label: "First-Time Buyer Loan",
+                  href: "/personal/loans/home/first-time",
+                  description: "Special rates for first-time home buyers",
+                },
+                {
+                  label: "Luxury Property Loan",
+                  href: "/personal/loans/home/luxury",
+                  description: "Financing for high-value properties",
+                },
+              ],
             },
             {
               label: "Loan Against Property",
@@ -519,58 +783,52 @@ export const navigationData: MenuItem[] = [
               parentCategory: "Education Finance",
             },
           ],
-          "NBC Privileged Priority Banking": [],
+          "NBC Privileged Services": [
+            {
+              label: "NBC Privileged Priority Banking",
+              href: "/personal/privileged/priority-banking",
+              description: "Exclusive privileged banking services",
+              parentCategory: "NBC Privileged Services",
+            },
+          ],
         },
         thirdLevelItems: [
           {
-            label: "Personal Loan",
+            label: "Personal Loans",
             href: "/personal/loans/personal",
             description: "Quick personal financing",
             parentCategory: "Personal Loans",
           },
           {
-            label: "Home Loan",
-            href: "/personal/loans/home",
-            description: "Make your dream home reality",
+            label: "Property Finance",
+            href: "/personal/loans/property",
+            description: "Home and property financing",
             parentCategory: "Property Finance",
           },
           {
-            label: "Car Loan",
-            href: "/personal/loans/car",
-            description: "Drive your dream car today",
+            label: "Asset Finance",
+            href: "/personal/loans/asset",
+            description: "Financing for your assets",
             parentCategory: "Asset Finance",
           },
           {
-            label: "Education Loan",
+            label: "Education Finance",
             href: "/personal/loans/education",
             description: "Invest in your future",
             parentCategory: "Education Finance",
           },
           {
-            label: "Gold Loan",
-            href: "/personal/loans/gold",
-            description: "Quick loan against gold",
-            parentCategory: "Asset Finance",
-          },
-          {
-            label: "Loan Against Property",
-            href: "/personal/loans/property",
-            description: "Unlock property value",
-            parentCategory: "Property Finance",
-          },
-          {
-            label: "NBC Privileged Priority Banking",
-            href: "/personal/privileged/priority-banking",
-            description: "Exclusive privileged banking services",
-            parentCategory: "NBC Privileged Priority Banking",
+            label: "NBC Privileged Services",
+            href: "/personal/privileged",
+            description: "Premium privileged banking",
+            parentCategory: "NBC Privileged Services",
           },
         ],
         thirdLevelContent: {
           "Personal Loans": {
             imageUrl: "/images/personal-loans.jpg",
             altText: "Personal Loans",
-            description:
-              "Quick and flexible financing for your personal needs.",
+            description: "Quick and flexible financing for your personal needs.",
             keyFeatures: [
               "Fast approval process",
               "Competitive interest rates",
@@ -612,8 +870,7 @@ export const navigationData: MenuItem[] = [
           "Education Finance": {
             imageUrl: "/images/education-finance.jpg",
             altText: "Education Finance",
-            description:
-              "Invest in your future with affordable education loans.",
+            description: "Invest in your future with affordable education loans.",
             keyFeatures: [
               "Low interest rates",
               "Flexible repayment",
@@ -624,9 +881,9 @@ export const navigationData: MenuItem[] = [
             buttonText: "Apply Today",
             buttonLink: "/personal/loans/education",
           },
-          "NBC Privileged Priority Banking": {
-            imageUrl: "/images/privileged-priority-banking.jpg",
-            altText: "NBC Privileged Priority Banking",
+          "NBC Privileged Services": {
+            imageUrl: "/images/privileged-services.jpg",
+            altText: "NBC Privileged Services",
             description: "Premium banking services with exclusive privileges.",
             keyFeatures: [
               "Dedicated relationship manager",
@@ -636,7 +893,7 @@ export const navigationData: MenuItem[] = [
               "Enhanced security",
             ],
             buttonText: "Join Now",
-            buttonLink: "/personal/privileged/priority-banking",
+            buttonLink: "/personal/privileged",
           },
         },
       },
@@ -669,6 +926,19 @@ export const navigationData: MenuItem[] = [
               href: "/business/banking/savings",
               description: "Business savings solutions",
               parentCategory: "Business Accounts",
+              hasNested: true,
+              nestedItems: [
+                {
+                  label: "High-Yield Savings",
+                  href: "/business/banking/savings/high-yield",
+                  description: "Maximize your business savings",
+                },
+                {
+                  label: "Flexible Savings",
+                  href: "/business/banking/savings/flexible",
+                  description: "Access funds anytime",
+                },
+              ],
             },
           ],
           "Credit Facilities": [
@@ -699,6 +969,19 @@ export const navigationData: MenuItem[] = [
               href: "/business/banking/forex",
               description: "Foreign exchange solutions",
               parentCategory: "International Services",
+              hasNested: true,
+              nestedItems: [
+                {
+                  label: "Spot Forex",
+                  href: "/business/banking/forex/spot",
+                  description: "Immediate currency exchange",
+                },
+                {
+                  label: "Forward Forex",
+                  href: "/business/banking/forex/forward",
+                  description: "Future currency exchange contracts",
+                },
+              ],
             },
           ],
           "NBC Business Express": [],
@@ -706,7 +989,7 @@ export const navigationData: MenuItem[] = [
         },
         thirdLevelItems: [
           {
-            label: "Current Account",
+            label: "Business Accounts",
             href: "/business/banking/current",
             description: "Business current account",
             parentCategory: "Business Accounts",
@@ -859,6 +1142,19 @@ export const navigationData: MenuItem[] = [
               href: "/business/loans/supply-chain",
               description: "Optimize cash flow",
               parentCategory: "Working Capital",
+              hasNested: true,
+              nestedItems: [
+                {
+                  label: "Supplier Financing",
+                  href: "/business/loans/supply-chain/supplier",
+                  description: "Finance for suppliers",
+                },
+                {
+                  label: "Buyer Financing",
+                  href: "/business/loans/supply-chain/buyer",
+                  description: "Financing for buyers",
+                },
+              ],
             },
           ],
           "Term Financing": [
@@ -976,8 +1272,7 @@ export const navigationData: MenuItem[] = [
           "Government Schemes": {
             imageUrl: "/images/government-schemes.jpg",
             altText: "Government Schemes",
-            description:
-              "Support for small enterprises through government-backed loans.",
+            description: "Support for small enterprises through government-backed loans.",
             keyFeatures: [
               "Subsidized rates",
               "Easy eligibility",
@@ -1008,6 +1303,19 @@ export const navigationData: MenuItem[] = [
               href: "/business/loans/supply-chain",
               description: "Optimize cash flow",
               parentCategory: "Working Capital",
+              hasNested: true,
+              nestedItems: [
+                {
+                  label: "Large-Scale Supplier Financing",
+                  href: "/business/loans/supply-chain/large-supplier",
+                  description: "Financing for large suppliers",
+                },
+                {
+                  label: "Global Buyer Financing",
+                  href: "/business/loans/supply-chain/global-buyer",
+                  description: "Global financing for buyers",
+                },
+              ],
             },
           ],
           "Term Financing": [
@@ -1125,8 +1433,7 @@ export const navigationData: MenuItem[] = [
           "Government Schemes": {
             imageUrl: "/images/government-schemes-commercial.jpg",
             altText: "Government Schemes",
-            description:
-              "Government-backed financing for commercial enterprises.",
+            description: "Government-backed financing for commercial enterprises.",
             keyFeatures: [
               "Subsidized rates",
               "Easy eligibility",
@@ -1163,6 +1470,19 @@ export const navigationData: MenuItem[] = [
               href: "/corporate/investment/debt",
               description: "Debt financing options",
               parentCategory: "Capital Markets",
+              hasNested: true,
+              nestedItems: [
+                {
+                  label: "Corporate Bonds",
+                  href: "/corporate/investment/debt/bonds",
+                  description: "Issue corporate bonds for financing",
+                },
+                {
+                  label: "Convertible Bonds",
+                  href: "/corporate/investment/debt/convertible",
+                  description: "Flexible debt financing options",
+                },
+              ],
             },
           ],
           "Advisory Services": [
@@ -1238,8 +1558,7 @@ export const navigationData: MenuItem[] = [
           "Capital Markets": {
             imageUrl: "/images/capital-markets.jpg",
             altText: "Capital Markets",
-            description:
-              "Comprehensive solutions for equity and debt financing.",
+            description: "Comprehensive solutions for equity and debt financing.",
             keyFeatures: [
               "Equity fundraising",
               "Debt issuance",
@@ -1312,6 +1631,19 @@ export const navigationData: MenuItem[] = [
               href: "/corporate/banking/payments",
               description: "Efficient payment systems",
               parentCategory: "Cash Management",
+              hasNested: true,
+              nestedItems: [
+                {
+                  label: "Bulk Payments",
+                  href: "/corporate/banking/payments/bulk",
+                  description: "Streamlined bulk payment solutions",
+                },
+                {
+                  label: "Automated Payments",
+                  href: "/corporate/banking/payments/automated",
+                  description: "Automated recurring payments",
+                },
+              ],
             },
           ],
           "Trade Services": [
@@ -1385,8 +1717,7 @@ export const navigationData: MenuItem[] = [
           "Cash Management": {
             imageUrl: "/images/cash-management.jpg",
             altText: "Cash Management",
-            description:
-              "Optimize your corporate cash flow with tailored solutions.",
+            description: "Optimize your corporate cash flow with tailored solutions.",
             keyFeatures: [
               "Real-time cash tracking",
               "Automated payments",
@@ -1461,6 +1792,19 @@ export const navigationData: MenuItem[] = [
               href: "/corporate/treasury/commodities",
               description: "Protect against price volatility",
               parentCategory: "Commodities",
+              hasNested: true,
+              nestedItems: [
+                {
+                  label: "Energy Hedging",
+                  href: "/corporate/treasury/commodities/energy",
+                  description: "Hedge against energy price fluctuations",
+                },
+                {
+                  label: "Metals Hedging",
+                  href: "/corporate/treasury/commodities/metals",
+                  description: "Protect against metal price volatility",
+                },
+              ],
             },
           ],
         },
@@ -1508,8 +1852,7 @@ export const navigationData: MenuItem[] = [
           "Interest Rate Management": {
             imageUrl: "/images/interest-rate-management.jpg",
             altText: "Interest Rate Management",
-            description:
-              "Protect your business from interest rate fluctuations.",
+            description: "Protect your business from interest rate fluctuations.",
             keyFeatures: [
               "Interest rate swaps",
               "Risk mitigation",
