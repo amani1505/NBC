@@ -30,25 +30,31 @@ const PressReleaseCard = ({
   return (
     <div
       className={`flex bg-white border border-gray-300 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300 ${
-        rightSide ? "flex-col md:flex-row" : "flex-col"
+        rightSide ? "flex-col md:flex-row h-auto md:h-40" : "flex-col"
       } ${className}`}
     >
       {/* Image Container */}
       <div
         className={`relative w-full ${
-          rightSide ? "md:w-1/2 h-48 sm:h-64 md:h-full" : "h-48 sm:h-64"
-        } overflow-hidden`}
+          rightSide ? "md:w-1/2 h-40 md:h-full flex-shrink-0 min-h-0" : "h-48 sm:h-64 lg:h-80"
+        } overflow-hidden bg-gray-100`}
       >
         <img
           src={image}
           alt={title}
           className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
+          style={{ 
+            minHeight: '100%', 
+            objectFit: 'cover',
+            height: '100%',
+            width: '100%'
+          }}
         />
       </div>
       {/* Content */}
       <div
-        className={`p-4 sm:p-6 space-y-2 w-full ${
-          rightSide ? "md:w-1/2 flex flex-col" : ""
+        className={`p-4 sm:p-6 space-y-2 w-full flex flex-col ${
+          rightSide ? "md:w-1/2 md:p-4" : ""
         }`}
       >
         {badgeText && (
@@ -73,10 +79,10 @@ const PressReleaseCard = ({
             {title}
           </Link>
         )}
-        <p className="text-muted-foreground text-xs sm:text-sm leading-relaxed line-clamp-2">
+        <p className="text-muted-foreground text-xs sm:text-sm leading-relaxed line-clamp-2 flex-grow">
           {description}
         </p>
-        <div className="flex items-center justify-between mt-auto">
+        <div className="flex items-center justify-between mt-auto pt-2">
           {compareLink && (
             <Button
               variant="outline"
@@ -95,7 +101,7 @@ const PressReleaseCard = ({
               variant="primary"
               icon={ChevronRight}
               iconPosition="right"
-              size="lg"
+              size="md"
               onClick={() => {
                 navigate(learnMoreLink);
               }}

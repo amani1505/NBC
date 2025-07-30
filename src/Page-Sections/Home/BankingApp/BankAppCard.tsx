@@ -3,7 +3,7 @@ function BankAppCard() {
   const bg = "/images/kiganjani-bg.svg";
   return (
    <div
-      className="h-[53vh] min-h-[400px] bg-nbc-dark-700 relative"
+      className="h-[53vh] min-h-[483px] bg-nbc-dark-700 relative"
       style={{
         backgroundImage: `url(${bg})`,
         backgroundSize: "cover",
@@ -12,10 +12,16 @@ function BankAppCard() {
       }}
     >
       <div className="flex h-full">
-        <div className="py-8 sm:py-12 md:py-16 lg:py-50 px-4 sm:px-8 md:px-12 lg:pl-80 pr-4 sm:pr-8 md:pr-12 lg:pr-50 flex flex-col justify-center h-full w-full">
-          <h1 className="text-white text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-[48px] font-[700] mb-3 leading-tight">
+        <div className="px-4 sm:px-8 md:px-12 lg:pl-80 pr-4 sm:pr-8 md:pr-12 lg:pr-50 flex flex-col justify-evenly h-full w-full">
+          {/* <h1 className="text-white text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-[48px] font-[700] mb-3 leading-tight">
             Download NBC Kiganjani Now
-          </h1>
+          </h1> */}
+          <div >
+            <img src="images/ukigusa.png" alt=""  className='w-1/2'/>
+          </div>
+             <div>
+            <img src="images/microsite.png" alt="" className='' />
+          </div>
           <div>
           
             <div className="flex gap-3">
@@ -58,8 +64,8 @@ function BankAppCard() {
          transition={{ duration: 0.3 }}
         
         className=" w-full">
-         <div className="absolute bottom-0 right-0 md:block hidden">
-            <img src="/images/kiganjani.png" alt="" className="w-full"/>
+         <div className="  md:block hidden  h-full relative">
+            <img src="/images/kiganjani.png" alt="" className="w-full absolute -top-61 right-24"/>
          </div>
         </motion.div>
       </div>

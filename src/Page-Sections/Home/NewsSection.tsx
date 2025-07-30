@@ -84,44 +84,47 @@ function NewsSection() {
           </div>
         </motion.div>
 
-      
+        {/* News Grid - Equal Height Layout */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 lg:gap-10">
+          {/* Featured Article - Left Side */}
+          <motion.div
+            initial={{ opacity: 0, x: -30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            className="h-full"
+          >
+            <PressReleaseCard
+              image={newsItems[0]?.image}
+              title={newsItems[0]?.title}
+              description={newsItems[0]?.description}
+              badgeText={newsItems[0]?.category}
+              className="h-full"
+            />
+          </motion.div>
 
-         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 lg:gap-10 items-start">
-        {/* Featured Article */}
-        <motion.div
-          initial={{ opacity: 0, x: -30 }}
-          whileInView={{ opacity: 1, x: 0 }}
-          viewport={{ once: true }}
-          className="w-full"
-        >
-          <PressReleaseCard
-            image={newsItems[0]?.image}
-            title={newsItems[0]?.title}
-            description={newsItems[0]?.description}
-            badgeText={newsItems[0]?.category}
-          />
-        </motion.div>
-        {/* Side Articles */}
-        <div className="flex-1 space-y-6">
-          {newsItems?.slice(1).map((article, index) => (
-            <motion.div
-              key={article.id}
-              initial={{ opacity: 0, x: 30 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: index * 0.2 }}
-            >
-              <PressReleaseCard
-                image={article?.image}
-                title={article?.title}
-                description={article?.description}
-                badgeText={article?.category}
-                rightSide={true}
-              />
-            </motion.div>
-          ))}
+          {/* Side Articles - Right Side */}
+          <div className="flex flex-col space-y-4 lg:space-y-6">
+            {newsItems?.slice(1).map((article, index) => (
+              <motion.div
+                key={article.id}
+                initial={{ opacity: 0, x: 30 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: index * 0.2 }}
+                className=""
+              >
+                <PressReleaseCard
+                  image={article?.image}
+                  title={article?.title}
+                  description={article?.description}
+                  badgeText={article?.category}
+                  rightSide={true}
+                  className=""
+                />
+              </motion.div>
+            ))}
+          </div>
         </div>
-      </div>
 
         {/* View All Button */}
         <motion.div
@@ -132,10 +135,10 @@ function NewsSection() {
         >
           <Button
             size="lg"
-          variant="primary"
-          onClick={()=>{
-            navigate("/about/news")
-          }}
+            variant="primary"
+            onClick={() => {
+              navigate("/about/news")
+            }}
           >
             View All News
           </Button>
