@@ -1,176 +1,282 @@
-import axios, { AxiosResponse, AxiosError } from "axios";
-import { errorMessage, successMessage } from "../utils/notification.js";
+i am getting this error
 
-interface ApiResponse<T = any> {
-  data: T;
-  status_code?: number;
-  message?: string;
-}
+Property 'metadata' does not exist on type 'InternalAxiosRequestConfig<any>'.ts(2339)
+any
 
-interface ApiError {
-  response?: {
-    status?: number;
-    data?: {
-      message?: string;
-      errors?: {
-        error?: string;
-        redirect?: string;
-      };
-    };
-  };
-  message?: string;
-}
-
-class Api {
-  private handleSuccess: (message: string) => void;
-  private preCondt: number;
-
-  constructor() {
-    this.handleSuccess = (message: string) => successMessage(message);
-    this.preCondt = 428;
-
-    this.confirmDelete = this.confirmDelete.bind(this);
-    this.get = this.get.bind(this);
-    this.post = this.post.bind(this);
-    this.put = this.put.bind(this);
-    this.delete = this.delete.bind(this);
-    this.deletePost = this.deletePost.bind(this);
-  }
-
-  private async confirmDelete(message: string): Promise<boolean> {
-    const result = await window.Swal.fire({
-      title: "Are you sure??",
-      text: message,
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#DD6B55",
-      confirmButtonText: "Yes, proceed!",
-      cancelButtonText: "No, cancel!",
-      customClass: { container: "" },
-    });
-
-    // Optionally set z-index after showing the modal
-    const container = document.querySelector(".swal2-container");
-    if (container) {
-      (container as HTMLElement).style.zIndex = "99999";
+from
+import type { ApiError, ApiResponse, RequestConfig } from '@/types/api';
+import { showConfirmation } from '@/utils/confirmation';
+import { showError, showSuccess } from '@/utils/toast';
+import axios, {  AxiosError, type AxiosInstance, type AxiosResponse } from 'axios'
+export class ApiService {
+    private axiosInstance: AxiosInstance;
+    private readonly PRECONDITION_FAILED = 428;
+    private readonly STATUS_ERROR_THRESHOLD = 300;
+  
+    constructor(baseURL: string = process.env.NEXT_PUBLIC_API_URL || '/api') {
+      this.axiosInstance = axios.create({
+        baseURL,
+        timeout: 30000,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+  
+      this.setupInterceptors();
     }
-
-    return result.isConfirmed;
-  }
-
-  private handleFailure(error: ApiError): { error: string; path?: string } {
-    if (!error.response) {
-      console.error("Network error or no response received:", error.message);
-      return { error: "Request failed, no response from server" };
+  
+    private setupInterceptors(): void {
+      // Request interceptor
+      this.axiosInstance.interceptors.request.use(
+        (config) => {
+          // Add auth token if available
+          const token = localStorage.getItem('auth_token');
+          if (token) {
+            config.headers.Authorization = `Bearer ${token}`;
+          }
+  
+          // Add request timestamp for debugging
+          config.metadata = { startTime: new Date() };
+          
+          console.log(`🚀 ${config.method?.toUpperCase()} ${config.url}`, config.data || config.params);
+          
+          return config;
+        },
+        (error) => {
+          console.error('❌ Request Error:', error);
+          return Promise.reject(error);
+        }
+      );
+  
+      // Response interceptor
+      this.axiosInstance.interceptors.response.use(
+        (response: AxiosResponse) => {
+          const duration = new Date().getTime() - response.config.metadata?.startTime?.getTime();
+          console.log(`✅ ${response.config.method?.toUpperCase()} ${response.config.url} (${duration}ms)`, response.data);
+          
+          return response;
+        },
+        (error: AxiosError) => {
+          const duration = error.config?.metadata?.startTime ? 
+            new Date().getTime() - error.config.metadata.startTime.getTime() : 0;
+          
+          console.error(`❌ ${error.config?.method?.toUpperCase()} ${error.config?.url} (${duration}ms)`, error.response?.data || error.message);
+  
+          // Handle token expiration
+          if (error.response?.status === 401) {
+            localStorage.removeItem('auth_token');
+            window.location.href = '/login';
+          }
+  
+          return Promise.reject(error);
+        }
+      );
     }
-
-    const errorData = error.response.data;
-    const errorMsg = errorData?.message?.trim() || "An error occurred!";
-    let redirectPath = errorData?.errors?.redirect;
-
-    if (typeof redirectPath === "string" && redirectPath.startsWith("\\")) {
-      redirectPath = redirectPath.replace(/\\/g, "");
-    }
-
-    const redirectMessages = [
-      "Forbidden. Admin access required.",
-      "Forbidden - You do not have permission to access this resource.",
-    ];
-
-    if (redirectPath && redirectMessages.some((msg: any) => errorMsg?.includes(msg))) {
-      setTimeout(() => {
-        window.location.assign(redirectPath);
-      }, 100);
-      return { error: "Redirecting", path: redirectPath };
-    }
-
-    try {
-      errorMessage(error.response?.data?.errors?.error || errorMsg);
-    } catch (e: any) {
-      console.error("Error while calling errorMessage:", e);
-    }
-
-    return { error: errorMsg };
-  }
-
-  async post<T = any>(url: string, data: any, message?: string): Promise<ApiResponse<T>> {
-    try {
-      const response:any = await axios.post<ApiResponse<T>>(url, data);
+  
+    private handleSuccess(message?: string): void {
       if (message) {
-        this.handleSuccess(message);
+        showSuccess(message);
       }
-      return response.data;
-    } catch (error: any) {
-      if ((error as ApiError).response?.status === this.preCondt) {
-        return "preCondition" as any;
-      }
-      this.handleFailure(error as ApiError);
-      throw error;
     }
-  }
-
-  async get<T = any>(url: string, params?: any): Promise<ApiResponse<T>> {
-    const statusError = 300;
-    try {
-      const response:any = await axios.get<ApiResponse<T>>(url, { params });
-      return response.data;
-    } catch (error: any) {
-      this.handleFailure(error as ApiError);
-      const apiError = error as ApiError;
-      const response = apiError.response;
-      if (response && response.status !== undefined && response.status > statusError) {
+  
+    private handleFailure(error: ApiError): { error: string; path?: string } {
+      if (!error.response) {
+        console.error('Network error or no response received:', error.message);
+        const errorMsg = 'Network error. Please check your connection.';
+        showError(errorMsg);
+        return { error: errorMsg };
+      }
+  
+      const errorData = error.response.data;
+      const errorMsg = errorData?.message?.trim() || 'An unexpected error occurred';
+      let redirectPath = errorData?.errors?.redirect;
+  
+      // Clean up redirect path
+      if (typeof redirectPath === 'string' && redirectPath.startsWith('\\')) {
+        redirectPath = redirectPath.replace(/\\/g, '');
+      }
+  
+      // Handle specific redirect scenarios
+      const redirectMessages = [
+        'Forbidden. Admin access required.',
+        'Forbidden - You do not have permission to access this resource.',
+      ];
+  
+      if (redirectPath && redirectMessages.some(msg => errorMsg?.includes(msg))) {
+        setTimeout(() => {
+          window.location.assign(redirectPath);
+        }, 100);
+        return { error: 'Redirecting...', path: redirectPath };
+      }
+  
+      // Show error message
+      showError(error.response?.data?.errors?.error || errorMsg);
+      return { error: errorMsg };
+    }
+  
+    async get<T = any>(
+      url: string, 
+      params?: any, 
+    //   config: RequestConfig = {}
+    ): Promise<ApiResponse<T>> {
+      try {
+        const response = await this.axiosInstance.get<ApiResponse<T>>(url, { params });
+        return response.data;
+      } catch (error: any) {
+        this.handleFailure(error as ApiError);
+        
+        const apiError = error as ApiError;
+        if (apiError.response?.status && apiError.response.status > this.STATUS_ERROR_THRESHOLD) {
+          throw error;
+        }
         throw error;
       }
-      throw error;
     }
-  }
-
-  async put<T = any>(url: string, data: any, message?: string): Promise<ApiResponse<T>> {
-    try {
-      const response = await axios.put<ApiResponse<T>>(url, data);
-      if (message) {
-        this.handleSuccess(message);
+  
+    async post<T = any>(
+      url: string, 
+      data: any, 
+      config: RequestConfig = {}
+    ): Promise<ApiResponse<T>> {
+      try {
+        const response = await this.axiosInstance.post<ApiResponse<T>>(url, data);
+        
+        if (config.successMessage || config.showSuccessMessage) {
+          this.handleSuccess(config.successMessage || 'Operation completed successfully');
+        }
+        
+        return response.data;
+      } catch (error: any) {
+        if ((error as ApiError).response?.status === this.PRECONDITION_FAILED) {
+          return { data: null, message: 'Precondition failed' } as any;
+        }
+        
+        this.handleFailure(error as ApiError);
+        throw error;
       }
-      return response.data;
-    } catch (error: any) {
-      this.handleFailure(error as ApiError);
-      throw error;
     }
-  }
-
-  async delete<T = any>(url: string, message?: string): Promise<ApiResponse<T> | false> {
-    try {
-      const shouldDelete = await this.confirmDelete(message || "");
-      if (shouldDelete) {
-        const response = await axios.delete<ApiResponse<T>>(url);
+  
+    async put<T = any>(
+      url: string, 
+      data: any, 
+      config: RequestConfig = {}
+    ): Promise<ApiResponse<T>> {
+      try {
+        const response = await this.axiosInstance.put<ApiResponse<T>>(url, data);
+        
+        if (config.successMessage || config.showSuccessMessage) {
+          this.handleSuccess(config.successMessage || 'Updated successfully');
+        }
+        
+        return response.data;
+      } catch (error: any) {
+        this.handleFailure(error as ApiError);
+        throw error;
+      }
+    }
+  
+    async patch<T = any>(
+      url: string, 
+      data: any, 
+      config: RequestConfig = {}
+    ): Promise<ApiResponse<T>> {
+      try {
+        const response = await this.axiosInstance.patch<ApiResponse<T>>(url, data);
+        
+        if (config.successMessage || config.showSuccessMessage) {
+          this.handleSuccess(config.successMessage || 'Updated successfully');
+        }
+        
+        return response.data;
+      } catch (error: any) {
+        this.handleFailure(error as ApiError);
+        throw error;
+      }
+    }
+  
+    async delete<T = any>(
+      url: string, 
+      config: RequestConfig = {}
+    ): Promise<ApiResponse<T> | false> {
+      try {
+        // Show confirmation dialog if required
+        if (config.confirmationMessage) {
+          const confirmed = await showConfirmation(
+            'Confirm Deletion',
+            config.confirmationMessage,
+            'Delete',
+            'Cancel'
+          );
+          
+          if (!confirmed) {
+            return false;
+          }
+        }
+  
+        const response = await this.axiosInstance.delete<ApiResponse<T>>(url);
+        
         if (response.data.message) {
           this.handleSuccess(response.data.message);
+        } else if (config.successMessage) {
+          this.handleSuccess(config.successMessage);
         }
+        
         return response.data;
+      } catch (error: any) {
+        this.handleFailure(error as ApiError);
+        throw error;
       }
-      return false;
-    } catch (error: any) {
-      this.handleFailure(error as ApiError);
-      throw error;
     }
-  }
-
-  async deletePost<T = any>(url: string, message?: string): Promise<ApiResponse<T> | false> {
-    try {
-      const shouldDelete = await this.confirmDelete(message || "");
-      if (shouldDelete) {
-        const response = await axios.post<ApiResponse<T>>(url);
+  
+    async deleteWithPayload<T = any>(
+      url: string, 
+      data?: any,
+      config: RequestConfig = {}
+    ): Promise<ApiResponse<T> | false> {
+      try {
+        // Show confirmation dialog if required
+        if (config.confirmationMessage) {
+          const confirmed = await showConfirmation(
+            'Confirm Action',
+            config.confirmationMessage,
+            'Proceed',
+            'Cancel'
+          );
+          
+          if (!confirmed) {
+            return false;
+          }
+        }
+  
+        const response = await this.axiosInstance.post<ApiResponse<T>>(url, data);
+        
         if (response.data.message) {
           this.handleSuccess(response.data.message);
+        } else if (config.successMessage) {
+          this.handleSuccess(config.successMessage);
         }
+        
         return response.data;
+      } catch (error: any) {
+        this.handleFailure(error as ApiError);
+        throw error;
       }
-      return false;
-    } catch (error: any) {
-      this.handleFailure(error as ApiError);
-      throw error;
     }
-  }
+  
+    // Utility method to set auth token
+    setAuthToken(token: string): void {
+      localStorage.setItem('auth_token', token);
+    }
+  
+    // Utility method to clear auth token
+    clearAuthToken(): void {
+      localStorage.removeItem('auth_token');
+    }
+  
+    // Get axios instance for advanced usage
+    getAxiosInstance(): AxiosInstance {
+      return this.axiosInstance;
+    }
 }
 
-export const api = new Api();
+export const apiService = new ApiService();
