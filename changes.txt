@@ -1,9 +1,3 @@
-It Bring the not found page and the cms dashboard content 
-After
-http://localhost:3000/cms
-
-Then  I want to refactor the routes and make them properly
-
 import { Suspense, lazy } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Footer from "./components/Home/Footer";
@@ -12,9 +6,7 @@ import "./App.css";
 import BusinessBanking from "./Pages/Landing/BusinessBanking/BusinessBanking";
 import CMSLayout from "./Pages/Dashboard/CMS/CMSLayout";
 
-
-// Lazy Loading PAges
-
+// Lazy Loading Pages
 const Home = lazy(() => import("./Pages/Landing/Home"));
 const PersonalBanking = lazy(
   () => import("./Pages/Landing/PersonalBaking/PersonalBanking")
@@ -38,7 +30,7 @@ const CompareAccount = lazy(() => import("./Pages/Landing/CompareAccount"));
 
 // ABOUT PAGES
 const About = lazy(() => import("./Pages/Landing/About/About"));
-const ContactUs = lazy(()=>import('./Pages/Landing/ContactUs'))
+const ContactUs = lazy(() => import('./Pages/Landing/ContactUs'));
 const Overview = lazy(() => import("./Pages/Landing/About/Overview"));
 const Careers = lazy(() => import("./Pages/Landing/About/Careers"));
 const Governance = lazy(() => import("./Pages/Landing/About/Governance"));
@@ -51,7 +43,7 @@ const Sustainability = lazy(
 );
 const Tenders = lazy(() => import("./Pages/Landing/About/Tenders"));
 
-// Bussiness Banking Pages
+// Business Banking Pages
 const SMEs = lazy(() => import("./Pages/Landing/BusinessBanking/SMEs"));
 const MicroEnterprise = lazy(
   () => import("./Pages/Landing/BusinessBanking/MicroEnterprise")
@@ -71,98 +63,104 @@ const SingleNews = lazy(() => import("./Pages/Landing/SingleNews"));
 const SecurityCenter = lazy(() => import("./Pages/Landing/SecurityCenter"));
 const FraudaAlert = lazy(() => import("./Pages/Landing/FraudAlert"));
 
-// Currency Convetor
+// Currency Converter
+const CurrencyConvetor = lazy(() => import('./Pages/Landing/CurrencyConvetor'));
 
-const CurrencyConvetor = lazy(()=> import('./Pages/Landing/CurrencyConvetor'))
+// Layout Components
+const MainLayout = ({ children }) => (
+  <>
+    <MainNavigation />
+    {children}
+    <Footer />
+  </>
+);
+
+const LoadingFallback = () => (
+  <div style={{ textAlign: "center", marginTop: "2rem" }}>
+    Loading...
+  </div>
+);
 
 function App() {
   return (
     <BrowserRouter>
-      <Suspense
-        fallback={
-          <div style={{ textAlign: "center", marginTop: "2rem" }}>
-            Loading...
-          </div>
-        }
-      >
-{/* CMS Dashbaord Start*/}
-<Routes>
-<Route path="/cms" element={<CMSLayout />}>
-
-</Route>
-
-</Routes>
-
-{/* CMS Dashbaord Start*/}
-
-
-        <MainNavigation />
+      <Suspense fallback={<LoadingFallback />}>
         <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="personal-banking" element={<PersonalBanking />}>
-            <Route index element={<Individual />} />
-            <Route path="diaspora" element={<Diaspora />} />
-            <Route path="priveleged" element={<Privilages />} />
-            <Route path="private" element={<Private />} />
-          </Route>
-          <Route path="accounts/:accountName" element={<SingleAccount />} />
-          <Route path="loans/:loanName" element={<SingleLoan />} />
-          <Route
-            path="insurances/:insuranceName"
-            element={<SingleInsurance />}
-          />
-          <Route path="way-to-bank/:wayToBankName" element={<WaytoBank />} />
+          {/* CMS Dashboard Routes - No navigation/footer */}
+          <Route path="/cms/*" element={<CMSLayout />} />
 
-          <Route
-            path="compare-account/:compareAccountName"
-            element={<CompareAccount />}
-          />
-          <Route path="about" element={<About />}>
-            <Route index element={<Overview />} />
-            <Route path="careers" element={<Careers />} />
-            <Route path="governance" element={<Governance />} />
-            <Route path="investor-relations" element={<InvestorRelations />} />
-            <Route path="news" element={<News />} />
-            <Route path="sustainability" element={<Sustainability />} />
-            <Route path="tenders" element={<Tenders />} />
-          </Route>
-          <Route path="contact-us" element={<ContactUs/>} />
+          {/* Main Website Routes - With navigation/footer */}
+          <Route path="/*" element={
+            <MainLayout>
+              <Routes>
+                {/* Home Route */}
+                <Route path="/" element={<Home />} />
 
-          {/* Bussiness Banking Pages */}
+                {/* Personal Banking Routes */}
+                <Route path="personal-banking" element={<PersonalBanking />}>
+                  <Route index element={<Individual />} />
+                  <Route path="diaspora" element={<Diaspora />} />
+                  <Route path="priveleged" element={<Privilages />} />
+                  <Route path="private" element={<Private />} />
+                </Route>
 
-          <Route path="business-banking" element={<BusinessBanking />}>
-            <Route index element={<MicroEnterprise />} />
-            <Route path="smes" element={<SMEs />} />
+                {/* Dynamic Product Routes */}
+                <Route path="accounts/:accountName" element={<SingleAccount />} />
+                <Route path="loans/:loanName" element={<SingleLoan />} />
+                <Route path="insurances/:insuranceName" element={<SingleInsurance />} />
+                <Route path="way-to-bank/:wayToBankName" element={<WaytoBank />} />
+                <Route path="compare-account/:compareAccountName" element={<CompareAccount />} />
 
-            <Route path="commercial" element={<Commercial />} />
-          </Route>
+                {/* About Section Routes */}
+                <Route path="about" element={<About />}>
+                  <Route index element={<Overview />} />
+                  <Route path="careers" element={<Careers />} />
+                  <Route path="governance" element={<Governance />} />
+                  <Route path="investor-relations" element={<InvestorRelations />} />
+                  <Route path="news" element={<News />} />
+                  <Route path="sustainability" element={<Sustainability />} />
+                  <Route path="tenders" element={<Tenders />} />
+                </Route>
 
-          <Route path="whistle-blowing" element={<WhistleBlowing />} />
-          <Route path="website-terms" element={<WebTerms />} />
-          <Route path="terms-condition" element={<TermsCondition />} />
-          <Route path="data-privacy" element={<DataPrivacy />} />
+                {/* Contact Route */}
+                <Route path="contact-us" element={<ContactUs />} />
 
-          <Route path="news/:newsName" element={<SingleNews />} />
+                {/* Business Banking Routes */}
+                <Route path="business-banking" element={<BusinessBanking />}>
+                  <Route index element={<MicroEnterprise />} />
+                  <Route path="smes" element={<SMEs />} />
+                  <Route path="commercial" element={<Commercial />} />
+                </Route>
 
-          {/* security pages */}
-          <Route path="security-center" element={<SecurityCenter />} />
-          <Route path="fraud-alert" element={<FraudaAlert />} />
+                {/* Legal & Compliance Routes */}
+                <Route path="whistle-blowing" element={<WhistleBlowing />} />
+                <Route path="website-terms" element={<WebTerms />} />
+                <Route path="terms-condition" element={<TermsCondition />} />
+                <Route path="data-privacy" element={<DataPrivacy />} />
 
+                {/* News Route */}
+                <Route path="news/:newsName" element={<SingleNews />} />
 
-          {/* Currency Convetor */}
+                {/* Security Routes */}
+                <Route path="security-center" element={<SecurityCenter />} />
+                <Route path="fraud-alert" element={<FraudaAlert />} />
 
-          <Route path="currency-convetor" element={<CurrencyConvetor />} />
+                {/* Utility Routes */}
+                <Route path="currency-convetor" element={<CurrencyConvetor />} />
 
-          {/* Status Pages */}
-          <Route path="error" element={<Error />} />
-          <Route path="under-maintenance" element={<UnderMaintenance />} />
-          <Route path="*" element={<NotFound />} />
+                {/* Status Routes */}
+                <Route path="error" element={<Error />} />
+                <Route path="under-maintenance" element={<UnderMaintenance />} />
+                
+                {/* 404 Route - Must be last */}
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </MainLayout>
+          } />
         </Routes>
-        <Footer />
       </Suspense>
     </BrowserRouter>
   );
 }
 
 export default App;
-
