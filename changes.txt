@@ -1,273 +1,1499 @@
-i am getting this error and warning in my console
-Uncaught Error: Objects are not valid as a React child (found: object with keys {children}). If you meant to render a collection of children, use an array instead.
-    at throwOnInvalidObjectType (react-dom_client.js?v=d5c08e9d:5440:15)
-    at createChild (react-dom_client.js?v=d5c08e9d:5608:13)
-    at reconcileChildrenArray (react-dom_client.js?v=d5c08e9d:5789:26)
-    at reconcileChildFibersImpl (react-dom_client.js?v=d5c08e9d:5995:88)
-    at react-dom_client.js?v=d5c08e9d:6061:35
-    at reconcileChildren (react-dom_client.js?v=d5c08e9d:6444:53)
-    at updateFunctionComponent (react-dom_client.js?v=d5c08e9d:6633:9)
-    at beginWork (react-dom_client.js?v=d5c08e9d:7654:20)
-    at runWithFiberInDEV (react-dom_client.js?v=d5c08e9d:1485:72)
-    at performUnitOfWork (react-dom_client.js?v=d5c08e9d:10868:98)
-throwOnInvalidObjectType @ react-dom_client.js?v=d5c08e9d:5440
-createChild @ react-dom_client.js?v=d5c08e9d:5608
-reconcileChildrenArray @ react-dom_client.js?v=d5c08e9d:5789
-reconcileChildFibersImpl @ react-dom_client.js?v=d5c08e9d:5995
-(anonymous) @ react-dom_client.js?v=d5c08e9d:6061
-reconcileChildren @ react-dom_client.js?v=d5c08e9d:6444
-updateFunctionComponent @ react-dom_client.js?v=d5c08e9d:6633
-beginWork @ react-dom_client.js?v=d5c08e9d:7654
-runWithFiberInDEV @ react-dom_client.js?v=d5c08e9d:1485
-performUnitOfWork @ react-dom_client.js?v=d5c08e9d:10868
-workLoopSync @ react-dom_client.js?v=d5c08e9d:10728
-renderRootSync @ react-dom_client.js?v=d5c08e9d:10711
-performWorkOnRoot @ react-dom_client.js?v=d5c08e9d:10359
-performWorkOnRootViaSchedulerTask @ react-dom_client.js?v=d5c08e9d:11623
-performWorkUntilDeadline @ react-dom_client.js?v=d5c08e9d:36
-<MainLayout>
-exports.jsxDEV @ react_jsx-dev-runtime.js?v=7f3b71d0:250
-App @ App.tsx:94
-react-stack-bottom-frame @ react-dom_client.js?v=d5c08e9d:17424
-renderWithHooksAgain @ react-dom_client.js?v=d5c08e9d:4281
-renderWithHooks @ react-dom_client.js?v=d5c08e9d:4217
-updateFunctionComponent @ react-dom_client.js?v=d5c08e9d:6619
-beginWork @ react-dom_client.js?v=d5c08e9d:7654
-runWithFiberInDEV @ react-dom_client.js?v=d5c08e9d:1485
-performUnitOfWork @ react-dom_client.js?v=d5c08e9d:10868
-workLoopSync @ react-dom_client.js?v=d5c08e9d:10728
-renderRootSync @ react-dom_client.js?v=d5c08e9d:10711
-performWorkOnRoot @ react-dom_client.js?v=d5c08e9d:10359
-performWorkOnRootViaSchedulerTask @ react-dom_client.js?v=d5c08e9d:11623
-performWorkUntilDeadline @ react-dom_client.js?v=d5c08e9d:36
-<App>
-exports.jsxDEV @ react_jsx-dev-runtime.js?v=7f3b71d0:250
-(anonymous) @ main.tsx:8Understand this error
-App.tsx:94 An error occurred in the <MainLayout> component.
+diff --git a/eslint.config.js b/eslint.config.js
+index d94e7de..25d90ec 100644
+--- a/eslint.config.js
++++ b/eslint.config.js
+@@ -19,5 +19,8 @@ export default tseslint.config([
+       ecmaVersion: 2020,
+       globals: globals.browser,
+     },
++    "rules": {
++    "@typescript-eslint/no-explicit-any": "off"
++  }
+   },
+ ])
+diff --git a/package-lock.json b/package-lock.json
+index 72253b8..6ca7150 100644
+--- a/package-lock.json
++++ b/package-lock.json
+@@ -21,6 +21,7 @@
+         "@radix-ui/react-tabs": "^1.1.12",
+         "@radix-ui/react-tooltip": "^1.2.7",
+         "@tailwindcss/vite": "^4.1.11",
++        "axios": "^1.11.0",
+         "class-variance-authority": "^0.7.1",
+         "clsx": "^2.1.1",
+         "embla-carousel-autoplay": "^8.6.0",
+@@ -32,6 +33,7 @@
+         "react-dom": "19.1.0",
+         "react-router-dom": "^7.6.3",
+         "react-svg": "^16.3.0",
++        "sonner": "^2.0.6",
+         "tailwind-merge": "^3.3.1",
+         "tailwindcss": "^4.1.11",
+         "yup": "^1.6.1"
+@@ -3046,6 +3048,21 @@
+         "node": ">=10"
+       }
+     },
++    "node_modules/asynckit": {
++      "version": "0.4.0",
++      "resolved": "https://registry.npmjs.org/asynckit/-/asynckit-0.4.0.tgz",
++      "integrity": "sha512-Oei9OH4tRh0YqU3GxhX79dM/mwVgvbZJaSNaRk+bshkj0S5cfHcgYakreBjrHwatXKbz+IoIdYLxrKim2MjW0Q=="
++    },
++    "node_modules/axios": {
++      "version": "1.11.0",
++      "resolved": "https://registry.npmjs.org/axios/-/axios-1.11.0.tgz",
++      "integrity": "sha512-1Lx3WLFQWm3ooKDYZD1eXmoGO9fxYQjrycfHFC8P0sCfQVXyROp0p9PFWBehewBOdCwHc+f/b8I0fMto5eSfwA==",
++      "dependencies": {
++        "follow-redirects": "^1.15.6",
++        "form-data": "^4.0.4",
++        "proxy-from-env": "^1.1.0"
++      }
++    },
+     "node_modules/balanced-match": {
+       "version": "1.0.2",
+       "resolved": "https://registry.npmjs.org/balanced-match/-/balanced-match-1.0.2.tgz",
+@@ -3110,6 +3127,18 @@
+         "node": "^6 || ^7 || ^8 || ^9 || ^10 || ^11 || ^12 || >=13.7"
+       }
+     },
++    "node_modules/call-bind-apply-helpers": {
++      "version": "1.0.2",
++      "resolved": "https://registry.npmjs.org/call-bind-apply-helpers/-/call-bind-apply-helpers-1.0.2.tgz",
++      "integrity": "sha512-Sp1ablJ0ivDkSzjcaJdxEunN5/XvksFJ2sMBFfq6x0ryhQV/2b/KwFe21cMpmHtPOSij8K99/wSfoEuTObmuMQ==",
++      "dependencies": {
++        "es-errors": "^1.3.0",
++        "function-bind": "^1.1.2"
++      },
++      "engines": {
++        "node": ">= 0.4"
++      }
++    },
+     "node_modules/callsites": {
+       "version": "3.1.0",
+       "resolved": "https://registry.npmjs.org/callsites/-/callsites-3.1.0.tgz",
+@@ -3208,6 +3237,17 @@
+       "dev": true,
+       "license": "MIT"
+     },
++    "node_modules/combined-stream": {
++      "version": "1.0.8",
++      "resolved": "https://registry.npmjs.org/combined-stream/-/combined-stream-1.0.8.tgz",
++      "integrity": "sha512-FQN4MRfuJeHf7cBbBMJFXhKSDq+2kAArBlmRBvcvFE5BB1HZKXtSFASDhdlz9zOYwxh8lDdnvmMOe/+5cdoEdg==",
++      "dependencies": {
++        "delayed-stream": "~1.0.0"
++      },
++      "engines": {
++        "node": ">= 0.8"
++      }
++    },
+     "node_modules/concat-map": {
+       "version": "0.0.1",
+       "resolved": "https://registry.npmjs.org/concat-map/-/concat-map-0.0.1.tgz",
+@@ -3295,6 +3335,14 @@
+         "node": ">=0.10.0"
+       }
+     },
++    "node_modules/delayed-stream": {
++      "version": "1.0.0",
++      "resolved": "https://registry.npmjs.org/delayed-stream/-/delayed-stream-1.0.0.tgz",
++      "integrity": "sha512-ZySD7Nf91aLB0RxL4KGrKHBXl7Eds1DAmEdcoVawXnLD7SDhpNgtuII2aAkg7a7QS41jxPSZ17p4VdGnMHk3MQ==",
++      "engines": {
++        "node": ">=0.4.0"
++      }
++    },
+     "node_modules/detect-libc": {
+       "version": "2.0.4",
+       "resolved": "https://registry.npmjs.org/detect-libc/-/detect-libc-2.0.4.tgz",
+@@ -3310,6 +3358,19 @@
+       "integrity": "sha512-ypdmJU/TbBby2Dxibuv7ZLW3Bs1QEmM7nHjEANfohJLvE0XVujisn1qPJcZxg+qDucsr+bP6fLD1rPS3AhJ7EQ==",
+       "license": "MIT"
+     },
++    "node_modules/dunder-proto": {
++      "version": "1.0.1",
++      "resolved": "https://registry.npmjs.org/dunder-proto/-/dunder-proto-1.0.1.tgz",
++      "integrity": "sha512-KIN/nDJBQRcXw0MLVhZE9iQHmG68qAVIBg9CqmUYjmQIhgij9U5MFvrqkUL5FbtyyzZuOeOt0zdeRe4UY7ct+A==",
++      "dependencies": {
++        "call-bind-apply-helpers": "^1.0.1",
++        "es-errors": "^1.3.0",
++        "gopd": "^1.2.0"
++      },
++      "engines": {
++        "node": ">= 0.4"
++      }
++    },
+     "node_modules/electron-to-chromium": {
+       "version": "1.5.182",
+       "resolved": "https://registry.npmjs.org/electron-to-chromium/-/electron-to-chromium-1.5.182.tgz",
+@@ -3367,6 +3428,47 @@
+         "node": ">=10.13.0"
+       }
+     },
++    "node_modules/es-define-property": {
++      "version": "1.0.1",
++      "resolved": "https://registry.npmjs.org/es-define-property/-/es-define-property-1.0.1.tgz",
++      "integrity": "sha512-e3nRfgfUZ4rNGL232gUgX06QNyyez04KdjFrF+LTRoOXmrOgFKDg4BCdsjW8EnT69eqdYGmRpJwiPVYNrCaW3g==",
++      "engines": {
++        "node": ">= 0.4"
++      }
++    },
++    "node_modules/es-errors": {
++      "version": "1.3.0",
++      "resolved": "https://registry.npmjs.org/es-errors/-/es-errors-1.3.0.tgz",
++      "integrity": "sha512-Zf5H2Kxt2xjTvbJvP2ZWLEICxA6j+hAmMzIlypy4xcBg1vKVnx89Wy0GbS+kf5cwCVFFzdCFh2XSCFNULS6csw==",
++      "engines": {
++        "node": ">= 0.4"
++      }
++    },
++    "node_modules/es-object-atoms": {
++      "version": "1.1.1",
++      "resolved": "https://registry.npmjs.org/es-object-atoms/-/es-object-atoms-1.1.1.tgz",
++      "integrity": "sha512-FGgH2h8zKNim9ljj7dankFPcICIK9Cp5bm+c2gQSYePhpaG5+esrLODihIorn+Pe6FGJzWhXQotPv73jTaldXA==",
++      "dependencies": {
++        "es-errors": "^1.3.0"
++      },
++      "engines": {
++        "node": ">= 0.4"
++      }
++    },
++    "node_modules/es-set-tostringtag": {
++      "version": "2.1.0",
++      "resolved": "https://registry.npmjs.org/es-set-tostringtag/-/es-set-tostringtag-2.1.0.tgz",
++      "integrity": "sha512-j6vWzfrGVfyXxge+O0x5sh6cvxAog0a/4Rdd2K36zCMV5eJ+/+tOAngRO8cODMNWbVRdVlmGZQL2YS3yR8bIUA==",
++      "dependencies": {
++        "es-errors": "^1.3.0",
++        "get-intrinsic": "^1.2.6",
++        "has-tostringtag": "^1.0.2",
++        "hasown": "^2.0.2"
++      },
++      "engines": {
++        "node": ">= 0.4"
++      }
++    },
+     "node_modules/esbuild": {
+       "version": "0.25.6",
+       "resolved": "https://registry.npmjs.org/esbuild/-/esbuild-0.25.6.tgz",
+@@ -3734,6 +3836,40 @@
+       "dev": true,
+       "license": "ISC"
+     },
++    "node_modules/follow-redirects": {
++      "version": "1.15.10",
++      "resolved": "https://registry.npmjs.org/follow-redirects/-/follow-redirects-1.15.10.tgz",
++      "integrity": "sha512-V7O/fFKM539IC2bweloFWuoiJ9OtI3W2uIqJPWM8IT5xxNyt73QtvVqmSpcDmk07ivmmlKB+rRY0vpQjIYNtKw==",
++      "funding": [
++        {
++          "type": "individual",
++          "url": "https://github.com/sponsors/RubenVerborgh"
++        }
++      ],
++      "engines": {
++        "node": ">=4.0"
++      },
++      "peerDependenciesMeta": {
++        "debug": {
++          "optional": true
++        }
++      }
++    },
++    "node_modules/form-data": {
++      "version": "4.0.4",
++      "resolved": "https://registry.npmjs.org/form-data/-/form-data-4.0.4.tgz",
++      "integrity": "sha512-KrGhL9Q4zjj0kiUt5OO4Mr/A/jlI2jDYs5eHBpYHPcBEVSiipAvn2Ko2HnPe20rmcuuvMHNdZFp+4IlGTMF0Ow==",
++      "dependencies": {
++        "asynckit": "^0.4.0",
++        "combined-stream": "^1.0.8",
++        "es-set-tostringtag": "^2.1.0",
++        "hasown": "^2.0.2",
++        "mime-types": "^2.1.12"
++      },
++      "engines": {
++        "node": ">= 6"
++      }
++    },
+     "node_modules/formik": {
+       "version": "2.4.6",
+       "resolved": "https://registry.npmjs.org/formik/-/formik-2.4.6.tgz",
+@@ -3800,6 +3936,14 @@
+         "node": "^8.16.0 || ^10.6.0 || >=11.0.0"
+       }
+     },
++    "node_modules/function-bind": {
++      "version": "1.1.2",
++      "resolved": "https://registry.npmjs.org/function-bind/-/function-bind-1.1.2.tgz",
++      "integrity": "sha512-7XHNxH7qX9xG5mIwxkhumTox/MIRNcOgDrxWsMt2pAr23WHp6MrRlN7FBSFpCpr+oVO0F744iUgR82nJMfG2SA==",
++      "funding": {
++        "url": "https://github.com/sponsors/ljharb"
++      }
++    },
+     "node_modules/gensync": {
+       "version": "1.0.0-beta.2",
+       "resolved": "https://registry.npmjs.org/gensync/-/gensync-1.0.0-beta.2.tgz",
+@@ -3810,6 +3954,29 @@
+         "node": ">=6.9.0"
+       }
+     },
++    "node_modules/get-intrinsic": {
++      "version": "1.3.0",
++      "resolved": "https://registry.npmjs.org/get-intrinsic/-/get-intrinsic-1.3.0.tgz",
++      "integrity": "sha512-9fSjSaos/fRIVIp+xSJlE6lfwhES7LNtKaCBIamHsjr2na1BiABJPo0mOjjz8GJDURarmCPGqaiVg5mfjb98CQ==",
++      "dependencies": {
++        "call-bind-apply-helpers": "^1.0.2",
++        "es-define-property": "^1.0.1",
++        "es-errors": "^1.3.0",
++        "es-object-atoms": "^1.1.1",
++        "function-bind": "^1.1.2",
++        "get-proto": "^1.0.1",
++        "gopd": "^1.2.0",
++        "has-symbols": "^1.1.0",
++        "hasown": "^2.0.2",
++        "math-intrinsics": "^1.1.0"
++      },
++      "engines": {
++        "node": ">= 0.4"
++      },
++      "funding": {
++        "url": "https://github.com/sponsors/ljharb"
++      }
++    },
+     "node_modules/get-nonce": {
+       "version": "1.0.1",
+       "resolved": "https://registry.npmjs.org/get-nonce/-/get-nonce-1.0.1.tgz",
+@@ -3819,6 +3986,18 @@
+         "node": ">=6"
+       }
+     },
++    "node_modules/get-proto": {
++      "version": "1.0.1",
++      "resolved": "https://registry.npmjs.org/get-proto/-/get-proto-1.0.1.tgz",
++      "integrity": "sha512-sTSfBjoXBp89JvIKIefqw7U2CCebsc74kiY6awiGogKtoSGbgjYE/G/+l9sF3MWFPNc9IcoOC4ODfKHfxFmp0g==",
++      "dependencies": {
++        "dunder-proto": "^1.0.1",
++        "es-object-atoms": "^1.0.0"
++      },
++      "engines": {
++        "node": ">= 0.4"
++      }
++    },
+     "node_modules/glob-parent": {
+       "version": "6.0.2",
+       "resolved": "https://registry.npmjs.org/glob-parent/-/glob-parent-6.0.2.tgz",
+@@ -3845,6 +4024,17 @@
+         "url": "https://github.com/sponsors/sindresorhus"
+       }
+     },
++    "node_modules/gopd": {
++      "version": "1.2.0",
++      "resolved": "https://registry.npmjs.org/gopd/-/gopd-1.2.0.tgz",
++      "integrity": "sha512-ZUKRh6/kUFoAiTAtTYPZJ3hw9wNxx+BIBOijnlG9PnrJsCcSjs1wyyD6vJpaYtgnzDrKYRSqf3OO6Rfa93xsRg==",
++      "engines": {
++        "node": ">= 0.4"
++      },
++      "funding": {
++        "url": "https://github.com/sponsors/ljharb"
++      }
++    },
+     "node_modules/graceful-fs": {
+       "version": "4.2.11",
+       "resolved": "https://registry.npmjs.org/graceful-fs/-/graceful-fs-4.2.11.tgz",
+@@ -3868,6 +4058,42 @@
+         "node": ">=8"
+       }
+     },
++    "node_modules/has-symbols": {
++      "version": "1.1.0",
++      "resolved": "https://registry.npmjs.org/has-symbols/-/has-symbols-1.1.0.tgz",
++      "integrity": "sha512-1cDNdwJ2Jaohmb3sg4OmKaMBwuC48sYni5HUw2DvsC8LjGTLK9h+eb1X6RyuOHe4hT0ULCW68iomhjUoKUqlPQ==",
++      "engines": {
++        "node": ">= 0.4"
++      },
++      "funding": {
++        "url": "https://github.com/sponsors/ljharb"
++      }
++    },
++    "node_modules/has-tostringtag": {
++      "version": "1.0.2",
++      "resolved": "https://registry.npmjs.org/has-tostringtag/-/has-tostringtag-1.0.2.tgz",
++      "integrity": "sha512-NqADB8VjPFLM2V0VvHUewwwsw0ZWBaIdgo+ieHtK3hasLz4qeCRjYcqfB6AQrBggRKppKF8L52/VqdVsO47Dlw==",
++      "dependencies": {
++        "has-symbols": "^1.0.3"
++      },
++      "engines": {
++        "node": ">= 0.4"
++      },
++      "funding": {
++        "url": "https://github.com/sponsors/ljharb"
++      }
++    },
++    "node_modules/hasown": {
++      "version": "2.0.2",
++      "resolved": "https://registry.npmjs.org/hasown/-/hasown-2.0.2.tgz",
++      "integrity": "sha512-0hJU9SCPvmMzIBdZFqNPXWa6dqh7WdH0cII9y+CyS8rG3nL48Bclra9HmKhVVUHyPWNH5Y7xDwAB7bfgSjkUMQ==",
++      "dependencies": {
++        "function-bind": "^1.1.2"
++      },
++      "engines": {
++        "node": ">= 0.4"
++      }
++    },
+     "node_modules/hoist-non-react-statics": {
+       "version": "3.3.2",
+       "resolved": "https://registry.npmjs.org/hoist-non-react-statics/-/hoist-non-react-statics-3.3.2.tgz",
+@@ -4356,6 +4582,14 @@
+         "@jridgewell/sourcemap-codec": "^1.5.0"
+       }
+     },
++    "node_modules/math-intrinsics": {
++      "version": "1.1.0",
++      "resolved": "https://registry.npmjs.org/math-intrinsics/-/math-intrinsics-1.1.0.tgz",
++      "integrity": "sha512-/IXtbwEk5HTPyEwyKX6hGkYXxM9nbj64B+ilVJnC/R6B0pH5G4V3b0pVbL7DBj4tkhBAppbQUlf6F6Xl9LHu1g==",
++      "engines": {
++        "node": ">= 0.4"
++      }
++    },
+     "node_modules/merge2": {
+       "version": "1.4.1",
+       "resolved": "https://registry.npmjs.org/merge2/-/merge2-1.4.1.tgz",
+@@ -4380,6 +4614,25 @@
+         "node": ">=8.6"
+       }
+     },
++    "node_modules/mime-db": {
++      "version": "1.52.0",
++      "resolved": "https://registry.npmjs.org/mime-db/-/mime-db-1.52.0.tgz",
++      "integrity": "sha512-sPU4uV7dYlvtWJxwwxHD0PuihVNiE7TyAbQ5SWxDCB9mUYvOgroQOwYQQOKPJ8CIbE+1ETVlOoK1UC2nU3gYvg==",
++      "engines": {
++        "node": ">= 0.6"
++      }
++    },
++    "node_modules/mime-types": {
++      "version": "2.1.35",
++      "resolved": "https://registry.npmjs.org/mime-types/-/mime-types-2.1.35.tgz",
++      "integrity": "sha512-ZDY+bPm5zTTF+YpCrAU9nK0UgICYPT0QtT1NZWFv4s++TNkcgVaT0g6+4R2uI4MjQjzysHB1zxuWL50hzaeXiw==",
++      "dependencies": {
++        "mime-db": "1.52.0"
++      },
++      "engines": {
++        "node": ">= 0.6"
++      }
++    },
+     "node_modules/minimatch": {
+       "version": "3.1.2",
+       "resolved": "https://registry.npmjs.org/minimatch/-/minimatch-3.1.2.tgz",
+@@ -4649,6 +4902,11 @@
+       "integrity": "sha512-SVtmxhRE/CGkn3eZY1T6pC8Nln6Fr/lu1mKSgRud0eC73whjGfoAogbn78LkD8aFL0zz3bAFerKSnOl7NlErBA==",
+       "license": "MIT"
+     },
++    "node_modules/proxy-from-env": {
++      "version": "1.1.0",
++      "resolved": "https://registry.npmjs.org/proxy-from-env/-/proxy-from-env-1.1.0.tgz",
++      "integrity": "sha512-D+zkORCbA9f1tdWRK0RaCR3GPv50cMxcrz4X8k5LTSUD1Dkw47mKJEZQNunItRTkWwgtaUSo1RVFRIG9ZXiFYg=="
++    },
+     "node_modules/punycode": {
+       "version": "2.3.1",
+       "resolved": "https://registry.npmjs.org/punycode/-/punycode-2.3.1.tgz",
+@@ -4975,6 +5233,15 @@
+         "node": ">=8"
+       }
+     },
++    "node_modules/sonner": {
++      "version": "2.0.6",
++      "resolved": "https://registry.npmjs.org/sonner/-/sonner-2.0.6.tgz",
++      "integrity": "sha512-yHFhk8T/DK3YxjFQXIrcHT1rGEeTLliVzWbO0xN8GberVun2RiBnxAjXAYpZrqwEVHBG9asI/Li8TAAhN9m59Q==",
++      "peerDependencies": {
++        "react": "^18.0.0 || ^19.0.0 || ^19.0.0-rc",
++        "react-dom": "^18.0.0 || ^19.0.0 || ^19.0.0-rc"
++      }
++    },
+     "node_modules/source-map-js": {
+       "version": "1.2.1",
+       "resolved": "https://registry.npmjs.org/source-map-js/-/source-map-js-1.2.1.tgz",
+diff --git a/package.json b/package.json
+index 80797d6..28ab3a0 100644
+--- a/package.json
++++ b/package.json
+@@ -23,6 +23,7 @@
+     "@radix-ui/react-tabs": "^1.1.12",
+     "@radix-ui/react-tooltip": "^1.2.7",
+     "@tailwindcss/vite": "^4.1.11",
++    "axios": "^1.11.0",
+     "class-variance-authority": "^0.7.1",
+     "clsx": "^2.1.1",
+     "embla-carousel-autoplay": "^8.6.0",
+@@ -34,6 +35,7 @@
+     "react-dom": "19.1.0",
+     "react-router-dom": "^7.6.3",
+     "react-svg": "^16.3.0",
++    "sonner": "^2.0.6",
+     "tailwind-merge": "^3.3.1",
+     "tailwindcss": "^4.1.11",
+     "yup": "^1.6.1"
+diff --git a/src/App.tsx b/src/App.tsx
+index 4dc532e..5214d0b 100644
+--- a/src/App.tsx
++++ b/src/App.tsx
+@@ -4,10 +4,9 @@ import Footer from "./components/Home/Footer";
+ import MainNavigation from "./components/Navigation/MainNavigation";
+ import "./App.css";
+ import BusinessBanking from "./Pages/Landing/BusinessBanking/BusinessBanking";
++import CMSLayout from "./Pages/Dashboard/CMS/CMSLayout";
+ 
+-
+-// Lazy Loading PAges
+-
++// Lazy Loading Pages
+ const Home = lazy(() => import("./Pages/Landing/Home"));
+ const PersonalBanking = lazy(
+   () => import("./Pages/Landing/PersonalBaking/PersonalBanking")
+@@ -31,7 +30,7 @@ const CompareAccount = lazy(() => import("./Pages/Landing/CompareAccount"));
+ 
+ // ABOUT PAGES
+ const About = lazy(() => import("./Pages/Landing/About/About"));
+-const ContactUs = lazy(()=>import('./Pages/Landing/ContactUs'))
++const ContactUs = lazy(() => import("./Pages/Landing/ContactUs"));
+ const Overview = lazy(() => import("./Pages/Landing/About/Overview"));
+ const Careers = lazy(() => import("./Pages/Landing/About/Careers"));
+ const Governance = lazy(() => import("./Pages/Landing/About/Governance"));
+@@ -44,7 +43,7 @@ const Sustainability = lazy(
+ );
+ const Tenders = lazy(() => import("./Pages/Landing/About/Tenders"));
+ 
+-// Bussiness Banking Pages
++// Business Banking Pages
+ const SMEs = lazy(() => import("./Pages/Landing/BusinessBanking/SMEs"));
+ const MicroEnterprise = lazy(
+   () => import("./Pages/Landing/BusinessBanking/MicroEnterprise")
+@@ -64,83 +63,123 @@ const SingleNews = lazy(() => import("./Pages/Landing/SingleNews"));
+ const SecurityCenter = lazy(() => import("./Pages/Landing/SecurityCenter"));
+ const FraudaAlert = lazy(() => import("./Pages/Landing/FraudAlert"));
+ 
+-// Currency Convetor
++// Currency Converter
++const CurrencyConvetor = lazy(() => import("./Pages/Landing/CurrencyConvetor"));
+ 
+-const CurrencyConvetor = lazy(()=> import('./Pages/Landing/CurrencyConvetor'))
++// Layout Components
++const MainLayout = ({children}:{children: React.ReactNode}) => (
++  <>
++    <MainNavigation />
++    {children}
++    <Footer />
++  </>
++);
++
++const LoadingFallback = () => (
++  <div style={{ textAlign: "center", marginTop: "2rem" }}>Loading...</div>
++);
+ 
+ function App() {
+   return (
+     <BrowserRouter>
+-      <Suspense
+-        fallback={
+-          <div style={{ textAlign: "center", marginTop: "2rem" }}>
+-            Loading...
+-          </div>
+-        }
+-      >
+-        <MainNavigation />
++      <Suspense fallback={<LoadingFallback />}>
+         <Routes>
+-          <Route path="/" element={<Home />} />
+-          <Route path="personal-banking" element={<PersonalBanking />}>
+-            <Route index element={<Individual />} />
+-            <Route path="diaspora" element={<Diaspora />} />
+-            <Route path="priveleged" element={<Privilages />} />
+-            <Route path="private" element={<Private />} />
+-          </Route>
+-          <Route path="accounts/:accountName" element={<SingleAccount />} />
+-          <Route path="loans/:loanName" element={<SingleLoan />} />
+-          <Route
+-            path="insurances/:insuranceName"
+-            element={<SingleInsurance />}
+-          />
+-          <Route path="way-to-bank/:wayToBankName" element={<WaytoBank />} />
++          {/* CMS Dashboard Routes - No navigation/footer */}
++          <Route path="/cms/*" element={<CMSLayout />} />
+ 
++          {/* Main Website Routes - With navigation/footer */}
+           <Route
+-            path="compare-account/:compareAccountName"
+-            element={<CompareAccount />}
++            path="/*"
++            element={
++              <MainLayout>
++                <Routes>
++                  {/* Home Route */}
++                  <Route path="/" element={<Home />} />
++
++                  {/* Personal Banking Routes */}
++                  <Route path="personal-banking" element={<PersonalBanking />}>
++                    <Route index element={<Individual />} />
++                    <Route path="diaspora" element={<Diaspora />} />
++                    <Route path="priveleged" element={<Privilages />} />
++                    <Route path="private" element={<Private />} />
++                  </Route>
++
++                  {/* Dynamic Product Routes */}
++                  <Route
++                    path="accounts/:accountName"
++                    element={<SingleAccount />}
++                  />
++                  <Route path="loans/:loanName" element={<SingleLoan />} />
++                  <Route
++                    path="insurances/:insuranceName"
++                    element={<SingleInsurance />}
++                  />
++                  <Route
++                    path="way-to-bank/:wayToBankName"
++                    element={<WaytoBank />}
++                  />
++                  <Route
++                    path="compare-account/:compareAccountName"
++                    element={<CompareAccount />}
++                  />
++
++                  {/* About Section Routes */}
++                  <Route path="about" element={<About />}>
++                    <Route index element={<Overview />} />
++                    <Route path="careers" element={<Careers />} />
++                    <Route path="governance" element={<Governance />} />
++                    <Route
++                      path="investor-relations"
++                      element={<InvestorRelations />}
++                    />
++                    <Route path="news" element={<News />} />
++                    <Route path="sustainability" element={<Sustainability />} />
++                    <Route path="tenders" element={<Tenders />} />
++                  </Route>
++
++                  {/* Contact Route */}
++                  <Route path="contact-us" element={<ContactUs />} />
++
++                  {/* Business Banking Routes */}
++                  <Route path="business-banking" element={<BusinessBanking />}>
++                    <Route index element={<MicroEnterprise />} />
++                    <Route path="smes" element={<SMEs />} />
++                    <Route path="commercial" element={<Commercial />} />
++                  </Route>
++
++                  {/* Legal & Compliance Routes */}
++                  <Route path="whistle-blowing" element={<WhistleBlowing />} />
++                  <Route path="website-terms" element={<WebTerms />} />
++                  <Route path="terms-condition" element={<TermsCondition />} />
++                  <Route path="data-privacy" element={<DataPrivacy />} />
++
++                  {/* News Route */}
++                  <Route path="news/:newsName" element={<SingleNews />} />
++
++                  {/* Security Routes */}
++                  <Route path="security-center" element={<SecurityCenter />} />
++                  <Route path="fraud-alert" element={<FraudaAlert />} />
++
++                  {/* Utility Routes */}
++                  <Route
++                    path="currency-convetor"
++                    element={<CurrencyConvetor />}
++                  />
++
++                  {/* Status Routes */}
++                  <Route path="error" element={<Error />} />
++                  <Route
++                    path="under-maintenance"
++                    element={<UnderMaintenance />}
++                  />
++
++                  {/* 404 Route - Must be last */}
++                  <Route path="*" element={<NotFound />} />
++                </Routes>
++              </MainLayout>
++            }
+           />
+-          <Route path="about" element={<About />}>
+-            <Route index element={<Overview />} />
+-            <Route path="careers" element={<Careers />} />
+-            <Route path="governance" element={<Governance />} />
+-            <Route path="investor-relations" element={<InvestorRelations />} />
+-            <Route path="news" element={<News />} />
+-            <Route path="sustainability" element={<Sustainability />} />
+-            <Route path="tenders" element={<Tenders />} />
+-          </Route>
+-          <Route path="contact-us" element={<ContactUs/>} />
+-
+-          {/* Bussiness Banking Pages */}
+-
+-          <Route path="business-banking" element={<BusinessBanking />}>
+-            <Route index element={<MicroEnterprise />} />
+-            <Route path="smes" element={<SMEs />} />
+-
+-            <Route path="commercial" element={<Commercial />} />
+-          </Route>
+-
+-          <Route path="whistle-blowing" element={<WhistleBlowing />} />
+-          <Route path="website-terms" element={<WebTerms />} />
+-          <Route path="terms-condition" element={<TermsCondition />} />
+-          <Route path="data-privacy" element={<DataPrivacy />} />
+-
+-          <Route path="news/:newsName" element={<SingleNews />} />
+-
+-          {/* security pages */}
+-          <Route path="security-center" element={<SecurityCenter />} />
+-          <Route path="fraud-alert" element={<FraudaAlert />} />
+-
+-
+-          {/* Currency Convetor */}
+-
+-          <Route path="currency-convetor" element={<CurrencyConvetor />} />
+-
+-          {/* Status Pages */}
+-          <Route path="error" element={<Error />} />
+-          <Route path="under-maintenance" element={<UnderMaintenance />} />
+-          <Route path="*" element={<NotFound />} />
+         </Routes>
+-        <Footer />
+       </Suspense>
+     </BrowserRouter>
+   );
+diff --git a/src/components/ui/alert-dialog.tsx b/src/components/ui/alert-dialog.tsx
+index 935eecf..1a8d6b3 100644
+--- a/src/components/ui/alert-dialog.tsx
++++ b/src/components/ui/alert-dialog.tsx
+@@ -1,155 +1,150 @@
+-import * as React from "react"
+-import * as AlertDialogPrimitive from "@radix-ui/react-alert-dialog"
++import React, { createContext, useContext, useState } from 'react';
+ 
+-import { cn } from "@/lib/utils"
+-import { buttonVariants } from "@/components/ui/button"
+-
+-function AlertDialog({
+-  ...props
+-}: React.ComponentProps<typeof AlertDialogPrimitive.Root>) {
+-  return <AlertDialogPrimitive.Root data-slot="alert-dialog" {...props} />
++interface AlertDialogContextType {
++  open: boolean;
++  setOpen: (open: boolean) => void;
++  onConfirm?: () => void;
++  onCancel?: () => void;
+ }
+ 
+-function AlertDialogTrigger({
+-  ...props
+-}: React.ComponentProps<typeof AlertDialogPrimitive.Trigger>) {
+-  return (
+-    <AlertDialogPrimitive.Trigger data-slot="alert-dialog-trigger" {...props} />
+-  )
+-}
++const AlertDialogContext = createContext<AlertDialogContextType | undefined>(undefined);
+ 
+-function AlertDialogPortal({
+-  ...props
+-}: React.ComponentProps<typeof AlertDialogPrimitive.Portal>) {
+-  return (
+-    <AlertDialogPrimitive.Portal data-slot="alert-dialog-portal" {...props} />
+-  )
+-}
++export const AlertDialog: React.FC<{ children: React.ReactNode }> = ({ children }) => {
++  const [open, setOpen] = useState(false);
++  const [onConfirm, ] = useState<(() => void) | undefined>();
++  const [onCancel, ] = useState<(() => void) | undefined>();
+ 
+-function AlertDialogOverlay({
+-  className,
+-  ...props
+-}: React.ComponentProps<typeof AlertDialogPrimitive.Overlay>) {
+   return (
+-    <AlertDialogPrimitive.Overlay
+-      data-slot="alert-dialog-overlay"
+-      className={cn(
+-        "data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-0 z-50 bg-black/50",
+-        className
+-      )}
+-      {...props}
+-    />
+-  )
+-}
++    <AlertDialogContext.Provider value={{ open, setOpen, onConfirm, onCancel }}>
++      {children}
++    </AlertDialogContext.Provider>
++  );
++};
+ 
+-function AlertDialogContent({
+-  className,
+-  ...props
+-}: React.ComponentProps<typeof AlertDialogPrimitive.Content>) {
+-  return (
+-    <AlertDialogPortal>
+-      <AlertDialogOverlay />
+-      <AlertDialogPrimitive.Content
+-        data-slot="alert-dialog-content"
+-        className={cn(
+-          "bg-background data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 fixed top-[50%] left-[50%] z-50 grid w-full max-w-[calc(100%-2rem)] translate-x-[-50%] translate-y-[-50%] gap-4 rounded-lg border p-6 shadow-lg duration-200 sm:max-w-lg",
+-          className
+-        )}
+-        {...props}
+-      />
+-    </AlertDialogPortal>
+-  )
+-}
++export const AlertDialogTrigger: React.FC<{ 
++  children: React.ReactNode; 
++  onClick?: () => void;
++}> = ({ children, onClick }) => {
++  const context = useContext(AlertDialogContext);
++  if (!context) throw new Error('AlertDialogTrigger must be used within AlertDialog');
+ 
+-function AlertDialogHeader({
+-  className,
+-  ...props
+-}: React.ComponentProps<"div">) {
+   return (
+-    <div
+-      data-slot="alert-dialog-header"
+-      className={cn("flex flex-col gap-2 text-center sm:text-left", className)}
+-      {...props}
+-    />
+-  )
+-}
++    <div onClick={() => { context.setOpen(true); onClick?.(); }}>
++      {children}
++    </div>
++  );
++};
+ 
+-function AlertDialogFooter({
+-  className,
+-  ...props
+-}: React.ComponentProps<"div">) {
+-  return (
+-    <div
+-      data-slot="alert-dialog-footer"
+-      className={cn(
+-        "flex flex-col-reverse gap-2 sm:flex-row sm:justify-end",
+-        className
+-      )}
+-      {...props}
+-    />
+-  )
+-}
++export const AlertDialogContent: React.FC<{ 
++  children: React.ReactNode;
++  className?: string;
++}> = ({ children, className = '' }) => {
++  const context = useContext(AlertDialogContext);
++  if (!context) throw new Error('AlertDialogContent must be used within AlertDialog');
+ 
+-function AlertDialogTitle({
+-  className,
+-  ...props
+-}: React.ComponentProps<typeof AlertDialogPrimitive.Title>) {
+-  return (
+-    <AlertDialogPrimitive.Title
+-      data-slot="alert-dialog-title"
+-      className={cn("text-lg font-semibold", className)}
+-      {...props}
+-    />
+-  )
+-}
++  if (!context.open) return null;
+ 
+-function AlertDialogDescription({
+-  className,
+-  ...props
+-}: React.ComponentProps<typeof AlertDialogPrimitive.Description>) {
+   return (
+-    <AlertDialogPrimitive.Description
+-      data-slot="alert-dialog-description"
+-      className={cn("text-muted-foreground text-sm", className)}
+-      {...props}
+-    />
+-  )
+-}
++    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
++      <div className={`
++        bg-white dark:bg-gray-900 rounded-lg p-6 max-w-md w-full mx-4 
++        shadow-xl border border-gray-200 dark:border-gray-700
++        animate-in fade-in-0 zoom-in-95 duration-300
++        ${className}
++      `}>
++        {children}
++      </div>
++    </div>
++  );
++};
+ 
+-function AlertDialogAction({
+-  className,
+-  ...props
+-}: React.ComponentProps<typeof AlertDialogPrimitive.Action>) {
+-  return (
+-    <AlertDialogPrimitive.Action
+-      className={cn(buttonVariants(), className)}
+-      {...props}
+-    />
+-  )
+-}
++export const AlertDialogHeader: React.FC<{ 
++  children: React.ReactNode;
++  className?: string;
++}> = ({ children, className = '' }) => (
++  <div className={`mb-4 ${className}`}>{children}</div>
++);
++
++export const AlertDialogTitle: React.FC<{ 
++  children: React.ReactNode;
++  className?: string;
++}> = ({ children, className = '' }) => (
++  <h2 className={`text-lg font-semibold text-gray-900 dark:text-white mb-2 ${className}`}>
++    {children}
++  </h2>
++);
++
++export const AlertDialogDescription: React.FC<{ 
++  children: React.ReactNode;
++  className?: string;
++}> = ({ children, className = '' }) => (
++  <p className={`text-sm text-gray-600 dark:text-gray-400 ${className}`}>
++    {children}
++  </p>
++);
++
++export const AlertDialogFooter: React.FC<{ 
++  children: React.ReactNode;
++  className?: string;
++}> = ({ children, className = '' }) => (
++  <div className={`flex justify-end gap-2 mt-6 ${className}`}>
++    {children}
++  </div>
++);
++
++export const AlertDialogAction: React.FC<{ 
++  children: React.ReactNode;
++  onClick?: () => void;
++  variant?: 'default' | 'destructive';
++  className?: string;
++}> = ({ children, onClick, variant = 'default', className = '' }) => {
++  const context = useContext(AlertDialogContext);
++  if (!context) throw new Error('AlertDialogAction must be used within AlertDialog');
++
++  const baseClasses = "px-4 py-2 rounded-md text-sm font-medium transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2";
++  const variantClasses = {
++    default: "bg-blue-600 text-white hover:bg-blue-700 focus:ring-blue-500",
++    destructive: "bg-red-600 text-white hover:bg-red-700 focus:ring-red-500"
++  };
+ 
+-function AlertDialogCancel({
+-  className,
+-  ...props
+-}: React.ComponentProps<typeof AlertDialogPrimitive.Cancel>) {
+   return (
+-    <AlertDialogPrimitive.Cancel
+-      className={cn(buttonVariants({ variant: "outline" }), className)}
+-      {...props}
+-    />
+-  )
+-}
++    <button
++      className={`${baseClasses} ${variantClasses[variant]} ${className}`}
++      onClick={() => {
++        onClick?.();
++        context.onConfirm?.();
++        context.setOpen(false);
++      }}
++    >
++      {children}
++    </button>
++  );
++};
+ 
+-export {
+-  AlertDialog,
+-  AlertDialogPortal,
+-  AlertDialogOverlay,
+-  AlertDialogTrigger,
+-  AlertDialogContent,
+-  AlertDialogHeader,
+-  AlertDialogFooter,
+-  AlertDialogTitle,
+-  AlertDialogDescription,
+-  AlertDialogAction,
+-  AlertDialogCancel,
+-}
++export const AlertDialogCancel: React.FC<{ 
++  children: React.ReactNode;
++  onClick?: () => void;
++  className?: string;
++}> = ({ children, onClick, className = '' }) => {
++  const context = useContext(AlertDialogContext);
++  if (!context) throw new Error('AlertDialogCancel must be used within AlertDialog');
++
++  return (
++    <button
++      className={`
++        px-4 py-2 rounded-md text-sm font-medium 
++        bg-gray-200 text-gray-900 hover:bg-gray-300 
++        dark:bg-gray-700 dark:text-gray-100 dark:hover:bg-gray-600
++        transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500
++        ${className}
++      `}
++      onClick={() => {
++        onClick?.();
++        context.onCancel?.();
++        context.setOpen(false);
++      }}
++    >
++      {children}
++    </button>
++  );
++};
+\ No newline at end of file
+diff --git a/src/services/Api.service.ts b/src/services/Api.service.ts
+index 87d84a6..5c320b9 100644
+--- a/src/services/Api.service.ts
++++ b/src/services/Api.service.ts
+@@ -1,172 +1,280 @@
+-// services/ApiService.ts
+-
+-import type { ApiOptions, ApiResponse, ConfirmationDialog, Toast } from "@/types/api";
++import type { ApiError, ApiResponse, RequestConfig } from '@/types/api';
++import { showConfirmation } from '@/utils/confirmation';
++import { showError, showSuccess } from '@/utils/toast';
++import axios, { AxiosError, type AxiosInstance, type AxiosResponse } from 'axios';
+ 
+ export class ApiService {
+-  private baseUrl: string;
+-  private defaultHeaders: Record<string, string>;
+-  private timeout: number;
+-  private toastHandler?: (toast: Omit<Toast, 'id'>) => void;
+-  private confirmationHandler?: (dialog: Omit<ConfirmationDialog, 'isOpen'>) => Promise<boolean>;
+-
+-  constructor(baseUrl = '', defaultHeaders = {}, timeout = 10000) {
+-    this.baseUrl = baseUrl;
+-    this.defaultHeaders = {
+-      'Content-Type': 'application/json',
+-      ...defaultHeaders
+-    };
+-    this.timeout = timeout;
+-  }
++  private axiosInstance: AxiosInstance;
++  private readonly PRECONDITION_FAILED = 428;
++  private readonly STATUS_ERROR_THRESHOLD = 300;
+ 
+-  setToastHandler(handler: (toast: Omit<Toast, 'id'>) => void) {
+-    this.toastHandler = handler;
+-  }
++  constructor(baseURL: string = process.env.NEXT_PUBLIC_API_URL || '/api') {
++    this.axiosInstance = axios.create({
++      baseURL,
++      timeout: 30000,
++      headers: {
++        'Content-Type': 'application/json',
++      },
++    });
+ 
+-  setConfirmationHandler(handler: (dialog: Omit<ConfirmationDialog, 'isOpen'>) => Promise<boolean>) {
+-    this.confirmationHandler = handler;
++    this.setupInterceptors();
+   }
+ 
+-  private async makeRequest<T, D = unknown>(
+-    url: string,
+-    method: string,
+-    data?: D,
+-    options: ApiOptions = {}
+-  ): Promise<ApiResponse<T>> {
+-    try {
+-      // Handle confirmation if required
+-      if (options.requiresConfirmation && this.confirmationHandler) {
+-        const confirmed = await this.confirmationHandler({
+-          title: 'Confirm Action',
+-          message: options.confirmationMessage || `Are you sure you want to ${method.toLowerCase()} this item?`,
+-          onConfirm: () => {},
+-          onCancel: () => {}
+-        });
+-
+-        if (!confirmed) {
+-          return {
+-            success: false,
+-            status: 0,
+-            error: 'Action cancelled by user'
+-          };
++  private setupInterceptors(): void {
++    // Request interceptor
++    this.axiosInstance.interceptors.request.use(
++      (config) => {
++        // Add auth token if available
++        const token = localStorage.getItem('auth_token');
++        if (token) {
++          config.headers.Authorization = `Bearer ${token}`;
+         }
++
++        // Add request timestamp for debugging
++        config.metadata = { startTime: new Date() };
++        
++        console.log(`🚀 ${config.method?.toUpperCase()} ${config.url}`, config.data || config.params);
++        
++        return config;
++      },
++      (error) => {
++        console.error('❌ Request Error:', error);
++        return Promise.reject(error);
+       }
++    );
+ 
+-      const controller = new AbortController();
+-      const timeoutId = setTimeout(() => controller.abort(), options.timeout || this.timeout);
++    // Response interceptor
++    this.axiosInstance.interceptors.response.use(
++      (response: AxiosResponse) => {
++        // Safe access to metadata with proper null checks
++        const startTime = response.config?.metadata?.startTime;
++        const duration = startTime ? new Date().getTime() - startTime.getTime() : 0;
++        
++        console.log(`✅ ${response.config.method?.toUpperCase()} ${response.config.url} (${duration}ms)`, response.data);
++        
++        return response;
++      },
++      (error: AxiosError) => {
++        // Safe access to metadata with proper null checks
++        const startTime = error.config?.metadata?.startTime;
++        const duration = startTime ? new Date().getTime() - startTime.getTime() : 0;
++        
++        console.error(`❌ ${error.config?.method?.toUpperCase()} ${error.config?.url} (${duration}ms)`, error.response?.data || error.message);
+ 
+-      const config: RequestInit = {
+-        method,
+-        headers: {
+-          ...this.defaultHeaders,
+-          ...options.headers
+-        },
+-        signal: controller.signal
+-      };
++        // Handle token expiration
++        if (error.response?.status === 401) {
++          localStorage.removeItem('auth_token');
++          window.location.href = '/login';
++        }
+ 
+-      if (data && ['POST', 'PUT', 'PATCH'].includes(method)) {
+-        config.body = JSON.stringify(data);
++        return Promise.reject(error);
+       }
++    );
++  }
+ 
+-      const response = await fetch(`${this.baseUrl}${url}`, config);
+-      clearTimeout(timeoutId);
++  private handleSuccess(message?: string): void {
++    if (message) {
++      showSuccess(message);
++    }
++  }
+ 
+-      let responseData;
+-      const contentType = response.headers.get('content-type');
+-      
+-      if (contentType && contentType.includes('application/json')) {
+-        responseData = await response.json();
+-      } else {
+-        responseData = await response.text();
+-      }
++  private handleFailure(error: ApiError): { error: string; path?: string } {
++    if (!error.response) {
++      console.error('Network error or no response received:', error.message);
++      const errorMsg = 'Network error. Please check your connection.';
++      showError(errorMsg);
++      return { error: errorMsg };
++    }
++
++    const errorData = error.response.data;
++    const errorMsg = errorData?.message?.trim() || 'An unexpected error occurred';
++    let redirectPath = errorData?.errors?.redirect;
++
++    // Clean up redirect path
++    if (typeof redirectPath === 'string' && redirectPath.startsWith('\\')) {
++      redirectPath = redirectPath.replace(/\\/g, '');
++    }
++
++    // Handle specific redirect scenarios
++    const redirectMessages = [
++      'Forbidden. Admin access required.',
++      'Forbidden - You do not have permission to access this resource.',
++    ];
+ 
+-      const result: ApiResponse<T> = {
+-        data: responseData,
+-        success: response.ok,
+-        status: response.status
+-      };
++    if (redirectPath && redirectMessages.some(msg => errorMsg?.includes(msg))) {
++      setTimeout(() => {
++        window.location.assign(redirectPath);
++      }, 100);
++      return { error: 'Redirecting...', path: redirectPath };
++    }
++
++    // Show error message
++    showError(error.response?.data?.errors?.error || errorMsg);
++    return { error: errorMsg };
++  }
+ 
+-      if (!response.ok) {
+-        result.error = responseData?.message || `HTTP ${response.status}: ${response.statusText}`;
++  async get<T = any>(
++    url: string, 
++    params?: any, 
++  ): Promise<ApiResponse<T>> {
++    try {
++      const response = await this.axiosInstance.get<ApiResponse<T>>(url, { params });
++      return response.data;
++    } catch (error: any) {
++      this.handleFailure(error as ApiError);
++      
++      const apiError = error as ApiError;
++      if (apiError.response?.status && apiError.response.status > this.STATUS_ERROR_THRESHOLD) {
++        throw error;
+       }
++      throw error;
++    }
++  }
+ 
+-      // Handle toast messages
+-      if (this.toastHandler) {
+-        if (result.success && options.successMessage) {
+-          this.toastHandler({
+-            type: 'success',
+-            message: options.successMessage
+-          });
+-        } else if (!result.success) {
+-          this.toastHandler({
+-            type: 'error',
+-            message: options.errorMessage || result.error || 'An error occurred'
+-          });
+-        }
++  async post<T = any>(
++    url: string, 
++    data: any, 
++    config: RequestConfig = {}
++  ): Promise<ApiResponse<T>> {
++    try {
++      const response = await this.axiosInstance.post<ApiResponse<T>>(url, data);
++      
++      if (config.successMessage || config.showSuccessMessage) {
++        this.handleSuccess(config.successMessage || 'Operation completed successfully');
+       }
++      
++      return response.data;
++    } catch (error: any) {
++      if ((error as ApiError).response?.status === this.PRECONDITION_FAILED) {
++        return { data: null, message: 'Precondition failed' } as any;
++      }
++      
++      this.handleFailure(error as ApiError);
++      throw error;
++    }
++  }
+ 
+-      return result;
++  async put<T = any>(
++    url: string, 
++    data: any, 
++    config: RequestConfig = {}
++  ): Promise<ApiResponse<T>> {
++    try {
++      const response = await this.axiosInstance.put<ApiResponse<T>>(url, data);
++      
++      if (config.successMessage || config.showSuccessMessage) {
++        this.handleSuccess(config.successMessage || 'Updated successfully');
++      }
++      
++      return response.data;
++    } catch (error: any) {
++      this.handleFailure(error as ApiError);
++      throw error;
++    }
++  }
+ 
+-    } catch (error: unknown) {
+-      const result: ApiResponse<T> = {
+-        success: false,
+-        status: 0,
+-        error: error instanceof Error ? (error.name === 'AbortError' ? 'Request timeout' : error.message) : 'Network error'
+-      };
++  async patch<T = any>(
++    url: string, 
++    data: any, 
++    config: RequestConfig = {}
++  ): Promise<ApiResponse<T>> {
++    try {
++      const response = await this.axiosInstance.patch<ApiResponse<T>>(url, data);
++      
++      if (config.successMessage || config.showSuccessMessage) {
++        this.handleSuccess(config.successMessage || 'Updated successfully');
++      }
++      
++      return response.data;
++    } catch (error: any) {
++      this.handleFailure(error as ApiError);
++      throw error;
++    }
++  }
+ 
+-      if (this.toastHandler) {
+-        this.toastHandler({
+-          type: 'error',
+-          message: options.errorMessage || result.error || 'An error occurred'
+-        });
++  async delete<T = any>(
++    url: string, 
++    config: RequestConfig = {}
++  ): Promise<ApiResponse<T> | false> {
++    try {
++      // Show confirmation dialog if required
++      if (config.confirmationMessage) {
++        const confirmed = await showConfirmation(
++          'Confirm Deletion',
++          config.confirmationMessage,
++          'Delete',
++          'Cancel'
++        );
++        
++        if (!confirmed) {
++          return false;
++        }
+       }
+ 
+-      return result;
++      const response = await this.axiosInstance.delete<ApiResponse<T>>(url);
++      
++      if (response.data.message) {
++        this.handleSuccess(response.data.message);
++      } else if (config.successMessage) {
++        this.handleSuccess(config.successMessage);
++      }
++      
++      return response.data;
++    } catch (error: any) {
++      this.handleFailure(error as ApiError);
++      throw error;
+     }
+   }
+ 
+-  // GET method
+-  async get<T>(url: string, options: ApiOptions = {}): Promise<ApiResponse<T>> {
+-    return this.makeRequest<T>(url, 'GET', undefined, {
+-      successMessage: 'Data retrieved successfully',
+-      ...options
+-    });
+-  }
++  async deleteWithPayload<T = any>(
++    url: string, 
++    data?: any,
++    config: RequestConfig = {}
++  ): Promise<ApiResponse<T> | false> {
++    try {
++      // Show confirmation dialog if required
++      if (config.confirmationMessage) {
++        const confirmed = await showConfirmation(
++          'Confirm Action',
++          config.confirmationMessage,
++          'Proceed',
++          'Cancel'
++        );
++        
++        if (!confirmed) {
++          return false;
++        }
++      }
+ 
+-  // POST method
+-  async post<T, D = unknown>(url: string, data: D, options: ApiOptions = {}): Promise<ApiResponse<T>> {
+-    return this.makeRequest<T>(url, 'POST', data, {
+-      successMessage: 'Created successfully',
+-      ...options
+-    });
++      const response = await this.axiosInstance.post<ApiResponse<T>>(url, data);
++      
++      if (response.data.message) {
++        this.handleSuccess(response.data.message);
++      } else if (config.successMessage) {
++        this.handleSuccess(config.successMessage);
++      }
++      
++      return response.data;
++    } catch (error: any) {
++      this.handleFailure(error as ApiError);
++      throw error;
++    }
+   }
+ 
+-  // PUT method
+-  async put<T, D = unknown>(url: string, data: D, options: ApiOptions = {}): Promise<ApiResponse<T>> {
+-    return this.makeRequest<T>(url, 'PUT', data, {
+-      requiresConfirmation: true,
+-      confirmationMessage: 'Are you sure you want to update this item?',
+-      successMessage: 'Updated successfully',
+-      ...options
+-    });
++  // Utility method to set auth token
++  setAuthToken(token: string): void {
++    localStorage.setItem('auth_token', token);
+   }
+ 
+-  // PATCH method (UPDATE)
+-  async update<T, D = unknown>(url: string, data: D, options: ApiOptions = {}): Promise<ApiResponse<T>> {
+-    return this.makeRequest<T>(url, 'PATCH', data, {
+-      requiresConfirmation: true,
+-      confirmationMessage: 'Are you sure you want to update this item?',
+-      successMessage: 'Updated successfully',
+-      ...options
+-    });
++  // Utility method to clear auth token
++  clearAuthToken(): void {
++    localStorage.removeItem('auth_token');
+   }
+ 
+-  // DELETE method
+-  async delete<T>(url: string, options: ApiOptions = {}): Promise<ApiResponse<T>> {
+-    return this.makeRequest<T>(url, 'DELETE', undefined, {
+-      requiresConfirmation: true,
+-      confirmationMessage: 'Are you sure you want to delete this item? This action cannot be undone.',
+-      successMessage: 'Deleted successfully',
+-      ...options
+-    });
++  // Get axios instance for advanced usage
++  getAxiosInstance(): AxiosInstance {
++    return this.axiosInstance;
+   }
+-}
+\ No newline at end of file
++}
++
++export const apiService = new ApiService();
+diff --git a/src/types/api.ts b/src/types/api.ts
+index 9556f4e..a2410ad 100644
+--- a/src/types/api.ts
++++ b/src/types/api.ts
+@@ -1,39 +1,36 @@
+-export interface ApiResponse<T = unknown> {
+-    data?: T;
+-    error?: string;
+-    success: boolean;
+-    status: number;
+-  }
+-  
+-  export interface ApiOptions {
+-    headers?: Record<string, string>;
+-    timeout?: number;
+-    requiresConfirmation?: boolean;
+-    confirmationMessage?: string;
+-    successMessage?: string;
+-    errorMessage?: string;
+-  }
+-  
+-  export interface Toast {
+-    id: string;
+-    type: 'success' | 'error' | 'warning' | 'info';
+-    message: string;
+-    duration?: number;
+-  }
+-  
+-  export interface ConfirmationDialog {
+-    isOpen: boolean;
+-    title: string;
+-    message: string;
+-    onConfirm: () => void;
+-    onCancel: () => void;
+-  }
+-  
+-  // Context for global state management
+-  export interface ApiContextType {
+-    toasts: Toast[];
+-    addToast: (toast: Omit<Toast, 'id'>) => void;
+-    removeToast: (id: string) => void;
+-    showConfirmation: (dialog: Omit<ConfirmationDialog, 'isOpen'>) => void;
+-    hideConfirmation: () => void;
+-  }
+\ No newline at end of file
++export interface ApiResponse<T = any> {
++  data: T;
++  status_code?: number;
++  message?: string;
++  success?: boolean;
++}
++
++export interface ApiError {
++  response?: {
++    status?: number;
++    data?: {
++      message?: string;
++      errors?: {
++        error?: string;
++        redirect?: string;
++      };
++    };
++  };
++  message?: string;
++}
++
++export interface RequestConfig {
++  showSuccessMessage?: boolean;
++  showErrorMessage?: boolean;
++  confirmationMessage?: string;
++  successMessage?: string;
++}
++
++export interface User {
++  id: string;
++  name: string;
++  email: string;
++  role: string;
++  createdAt: string;
++  updatedAt: string;
++}
+\ No newline at end of file
+diff --git a/tsconfig.app.json b/tsconfig.app.json
+index 0b235e3..342e112 100644
+--- a/tsconfig.app.json
++++ b/tsconfig.app.json
+@@ -8,9 +8,7 @@
+     "skipLibCheck": true,
+     "baseUrl": ".",
+     "paths": {
+-      "@/*": [
+-        "./src/*"
+-      ]
++      "@/*": ["./src/*"]
+     },
+ 
+     /* Bundler mode */
+@@ -27,7 +25,9 @@
+     "noUnusedParameters": true,
+     "erasableSyntaxOnly": true,
+     "noFallthroughCasesInSwitch": true,
+-    "noUncheckedSideEffectImports": true
++    "noUncheckedSideEffectImports": true,
++
++    "typeRoots": ["./node_modules/@types", "./types"]
+   },
+-  "include": ["src"]
++  "include": ["src", "types/**/*"]
+ }
+diff --git a/tsconfig.json b/tsconfig.json
+index 1e17393..b932e33 100644
+--- a/tsconfig.json
++++ b/tsconfig.json
+@@ -12,6 +12,9 @@
+     "baseUrl": ".",
+     "paths": {
+       "@/*": ["./src/*"]
+-    }
+-  }
++    },
++   
++  },
++  
++  
+ }
 
-Consider adding an error boundary to your tree to customize error handling behavior.
-Visit https://react.dev/link/error-boundaries to learn more about error boundaries.
-
-defaultOnUncaughtError @ react-dom_client.js?v=d5c08e9d:6229
-logUncaughtError @ react-dom_client.js?v=d5c08e9d:6283
-runWithFiberInDEV @ react-dom_client.js?v=d5c08e9d:1485
-lane.callback @ react-dom_client.js?v=d5c08e9d:6311
-callCallback @ react-dom_client.js?v=d5c08e9d:4097
-commitCallbacks @ react-dom_client.js?v=d5c08e9d:4109
-runWithFiberInDEV @ react-dom_client.js?v=d5c08e9d:1487
-commitLayoutEffectOnFiber @ react-dom_client.js?v=d5c08e9d:9029
-flushLayoutEffects @ react-dom_client.js?v=d5c08e9d:11174
-commitRoot @ react-dom_client.js?v=d5c08e9d:11080
-commitRootWhenReady @ react-dom_client.js?v=d5c08e9d:10512
-performWorkOnRoot @ react-dom_client.js?v=d5c08e9d:10457
-performWorkOnRootViaSchedulerTask @ react-dom_client.js?v=d5c08e9d:11623
-performWorkUntilDeadline @ react-dom_client.js?v=d5c08e9d:36
-<MainLayout>
-exports.jsxDEV @ react_jsx-dev-runtime.js?v=7f3b71d0:250
-App @ App.tsx:94
-react-stack-bottom-frame @ react-dom_client.js?v=d5c08e9d:17424
-renderWithHooksAgain @ react-dom_client.js?v=d5c08e9d:4281
-renderWithHooks @ react-dom_client.js?v=d5c08e9d:4217
-updateFunctionComponent @ react-dom_client.js?v=d5c08e9d:6619
-beginWork @ react-dom_client.js?v=d5c08e9d:7654
-runWithFiberInDEV @ react-dom_client.js?v=d5c08e9d:1485
-performUnitOfWork @ react-dom_client.js?v=d5c08e9d:10868
-workLoopSync @ react-dom_client.js?v=d5c08e9d:10728
-renderRootSync @ react-dom_client.js?v=d5c08e9d:10711
-performWorkOnRoot @ react-dom_client.js?v=d5c08e9d:10359
-performWorkOnRootViaSchedulerTask @ react-dom_client.js?v=d5c08e9d:11623
-performWorkUntilDeadline @ react-dom_client.js?v=d5c08e9d:36
-<App>
-exports.jsxDEV @ react_jsx-dev-runtime.js?v=7f3b71d0:250
-(anonymous) @ main.tsx:8Understand this warning
-24The resource <URL> was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.
-
-
-import { Suspense, lazy } from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Footer from "./components/Home/Footer";
-import MainNavigation from "./components/Navigation/MainNavigation";
-import "./App.css";
-import BusinessBanking from "./Pages/Landing/BusinessBanking/BusinessBanking";
-import CMSLayout from "./Pages/Dashboard/CMS/CMSLayout";
-
-// Lazy Loading Pages
-const Home = lazy(() => import("./Pages/Landing/Home"));
-const PersonalBanking = lazy(
-  () => import("./Pages/Landing/PersonalBaking/PersonalBanking")
-);
-const NotFound = lazy(() => import("./Pages/Status/NotFound"));
-const Error = lazy(() => import("./Pages/Status/Error"));
-const UnderMaintenance = lazy(() => import("./Pages/Status/UnderMaintenance"));
-const Diaspora = lazy(() => import("./Pages/Landing/PersonalBaking/Diaspora"));
-const Individual = lazy(
-  () => import("./Pages/Landing/PersonalBaking/Individual")
-);
-const Private = lazy(() => import("./Pages/Landing/PersonalBaking/Private"));
-const Privilages = lazy(
-  () => import("./Pages/Landing/PersonalBaking/Privilages")
-);
-const SingleAccount = lazy(() => import("./Pages/Landing/SingleAccount"));
-const SingleInsurance = lazy(() => import("./Pages/Landing/SingleInsurance"));
-const SingleLoan = lazy(() => import("./Pages/Landing/SingleLoan"));
-const WaytoBank = lazy(() => import("./Pages/Landing/WaytoBank"));
-const CompareAccount = lazy(() => import("./Pages/Landing/CompareAccount"));
-
-// ABOUT PAGES
-const About = lazy(() => import("./Pages/Landing/About/About"));
-const ContactUs = lazy(() => import("./Pages/Landing/ContactUs"));
-const Overview = lazy(() => import("./Pages/Landing/About/Overview"));
-const Careers = lazy(() => import("./Pages/Landing/About/Careers"));
-const Governance = lazy(() => import("./Pages/Landing/About/Governance"));
-const InvestorRelations = lazy(
-  () => import("./Pages/Landing/About/InvestorRelations")
-);
-const News = lazy(() => import("./Pages/Landing/About/News"));
-const Sustainability = lazy(
-  () => import("./Pages/Landing/About/Sustainability")
-);
-const Tenders = lazy(() => import("./Pages/Landing/About/Tenders"));
-
-// Business Banking Pages
-const SMEs = lazy(() => import("./Pages/Landing/BusinessBanking/SMEs"));
-const MicroEnterprise = lazy(
-  () => import("./Pages/Landing/BusinessBanking/MicroEnterprise")
-);
-const Commercial = lazy(
-  () => import("./Pages/Landing/BusinessBanking/Commercial")
-);
-
-const WhistleBlowing = lazy(() => import("./Pages/Landing/WhistleBlowing"));
-const WebTerms = lazy(() => import("./Pages/Landing/WebTerms"));
-const TermsCondition = lazy(() => import("./Pages/Landing/TermsCondition"));
-const DataPrivacy = lazy(() => import("./Pages/Landing/DataPrivacy"));
-
-const SingleNews = lazy(() => import("./Pages/Landing/SingleNews"));
-
-// Security Pages
-const SecurityCenter = lazy(() => import("./Pages/Landing/SecurityCenter"));
-const FraudaAlert = lazy(() => import("./Pages/Landing/FraudAlert"));
-
-// Currency Converter
-const CurrencyConvetor = lazy(() => import("./Pages/Landing/CurrencyConvetor"));
-
-// Layout Components
-const MainLayout = (children:any) => (
-  <>
-    <MainNavigation />
-    {children}
-    <Footer />
-  </>
-);
-
-const LoadingFallback = () => (
-  <div style={{ textAlign: "center", marginTop: "2rem" }}>Loading...</div>
-);
-
-function App() {
-  return (
-    <BrowserRouter>
-      <Suspense fallback={<LoadingFallback />}>
-        <Routes>
-          {/* CMS Dashboard Routes - No navigation/footer */}
-          <Route path="/cms/*" element={<CMSLayout />} />
-
-          {/* Main Website Routes - With navigation/footer */}
-          <Route
-            path="/*"
-            element={
-              <MainLayout>
-                <Routes>
-                  {/* Home Route */}
-                  <Route path="/" element={<Home />} />
-
-                  {/* Personal Banking Routes */}
-                  <Route path="personal-banking" element={<PersonalBanking />}>
-                    <Route index element={<Individual />} />
-                    <Route path="diaspora" element={<Diaspora />} />
-                    <Route path="priveleged" element={<Privilages />} />
-                    <Route path="private" element={<Private />} />
-                  </Route>
-
-                  {/* Dynamic Product Routes */}
-                  <Route
-                    path="accounts/:accountName"
-                    element={<SingleAccount />}
-                  />
-                  <Route path="loans/:loanName" element={<SingleLoan />} />
-                  <Route
-                    path="insurances/:insuranceName"
-                    element={<SingleInsurance />}
-                  />
-                  <Route
-                    path="way-to-bank/:wayToBankName"
-                    element={<WaytoBank />}
-                  />
-                  <Route
-                    path="compare-account/:compareAccountName"
-                    element={<CompareAccount />}
-                  />
-
-                  {/* About Section Routes */}
-                  <Route path="about" element={<About />}>
-                    <Route index element={<Overview />} />
-                    <Route path="careers" element={<Careers />} />
-                    <Route path="governance" element={<Governance />} />
-                    <Route
-                      path="investor-relations"
-                      element={<InvestorRelations />}
-                    />
-                    <Route path="news" element={<News />} />
-                    <Route path="sustainability" element={<Sustainability />} />
-                    <Route path="tenders" element={<Tenders />} />
-                  </Route>
-
-                  {/* Contact Route */}
-                  <Route path="contact-us" element={<ContactUs />} />
-
-                  {/* Business Banking Routes */}
-                  <Route path="business-banking" element={<BusinessBanking />}>
-                    <Route index element={<MicroEnterprise />} />
-                    <Route path="smes" element={<SMEs />} />
-                    <Route path="commercial" element={<Commercial />} />
-                  </Route>
-
-                  {/* Legal & Compliance Routes */}
-                  <Route path="whistle-blowing" element={<WhistleBlowing />} />
-                  <Route path="website-terms" element={<WebTerms />} />
-                  <Route path="terms-condition" element={<TermsCondition />} />
-                  <Route path="data-privacy" element={<DataPrivacy />} />
-
-                  {/* News Route */}
-                  <Route path="news/:newsName" element={<SingleNews />} />
-
-                  {/* Security Routes */}
-                  <Route path="security-center" element={<SecurityCenter />} />
-                  <Route path="fraud-alert" element={<FraudaAlert />} />
-
-                  {/* Utility Routes */}
-                  <Route
-                    path="currency-convetor"
-                    element={<CurrencyConvetor />}
-                  />
-
-                  {/* Status Routes */}
-                  <Route path="error" element={<Error />} />
-                  <Route
-                    path="under-maintenance"
-                    element={<UnderMaintenance />}
-                  />
-
-                  {/* 404 Route - Must be last */}
-                  <Route path="*" element={<NotFound />} />
-                </Routes>
-              </MainLayout>
-            }
-          />
-        </Routes>
-      </Suspense>
-    </BrowserRouter>
-  );
-}
-
-export default App;
