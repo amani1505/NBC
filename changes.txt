@@ -1,9 +1,8 @@
 i am getting this error
+Object is possibly 'undefined'.ts(2532)
 
-Property 'metadata' does not exist on type 'InternalAxiosRequestConfig<any>'.ts(2339)
-any
 
-from
+/Users/abaa429/Downloads/NBC-SITE/src/services/Api.service.ts
 import type { ApiError, ApiResponse, RequestConfig } from '@/types/api';
 import { showConfirmation } from '@/utils/confirmation';
 import { showError, showSuccess } from '@/utils/toast';
@@ -51,7 +50,7 @@ export class ApiService {
       // Response interceptor
       this.axiosInstance.interceptors.response.use(
         (response: AxiosResponse) => {
-          const duration = new Date().getTime() - response.config.metadata?.startTime?.getTime();
+          const duration = new Date().getTime() - response?.config.metadata?.startTime?.getTime();
           console.log(`✅ ${response.config.method?.toUpperCase()} ${response.config.url} (${duration}ms)`, response.data);
           
           return response;
@@ -280,3 +279,17 @@ export class ApiService {
 }
 
 export const apiService = new ApiService();
+
+/Users/abaa429/Downloads/NBC-SITE/src/types/axios.d.ts
+
+
+
+import 'axios';
+declare module 'axios'{
+export interface InternalAxiosRequestConfig{
+    metadata?:{
+        startTime?: Date;
+        [key:string]: any;
+    }
+}
+}
