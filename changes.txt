@@ -1,253 +1,168 @@
-Navigation API Data Structure & Implementation Guide
-How API Data is Displayed
-1. Main Navigation Structure
-The navigation follows a 3-level hierarchy:
-Main Menu → Sub Items → Third Level Items (with categories)
-Example Flow:
+It Bring the not found page and the cms dashboard content 
+After
+http://localhost:3000/cms
 
-Personal (Main Menu)
+Then  I want to refactor the routes and make them properly
 
-Individual (Sub Item)
-
-Accounts (Category)
-
-NBC Individual Current Account (Third Level Item)
-NBC Direct Current Account (Third Level Item)
-etc.
+import { Suspense, lazy } from "react";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Footer from "./components/Home/Footer";
+import MainNavigation from "./components/Navigation/MainNavigation";
+import "./App.css";
+import BusinessBanking from "./Pages/Landing/BusinessBanking/BusinessBanking";
+import CMSLayout from "./Pages/Dashboard/CMS/CMSLayout";
 
 
+// Lazy Loading PAges
 
+const Home = lazy(() => import("./Pages/Landing/Home"));
+const PersonalBanking = lazy(
+  () => import("./Pages/Landing/PersonalBaking/PersonalBanking")
+);
+const NotFound = lazy(() => import("./Pages/Status/NotFound"));
+const Error = lazy(() => import("./Pages/Status/Error"));
+const UnderMaintenance = lazy(() => import("./Pages/Status/UnderMaintenance"));
+const Diaspora = lazy(() => import("./Pages/Landing/PersonalBaking/Diaspora"));
+const Individual = lazy(
+  () => import("./Pages/Landing/PersonalBaking/Individual")
+);
+const Private = lazy(() => import("./Pages/Landing/PersonalBaking/Private"));
+const Privilages = lazy(
+  () => import("./Pages/Landing/PersonalBaking/Privilages")
+);
+const SingleAccount = lazy(() => import("./Pages/Landing/SingleAccount"));
+const SingleInsurance = lazy(() => import("./Pages/Landing/SingleInsurance"));
+const SingleLoan = lazy(() => import("./Pages/Landing/SingleLoan"));
+const WaytoBank = lazy(() => import("./Pages/Landing/WaytoBank"));
+const CompareAccount = lazy(() => import("./Pages/Landing/CompareAccount"));
 
+// ABOUT PAGES
+const About = lazy(() => import("./Pages/Landing/About/About"));
+const ContactUs = lazy(()=>import('./Pages/Landing/ContactUs'))
+const Overview = lazy(() => import("./Pages/Landing/About/Overview"));
+const Careers = lazy(() => import("./Pages/Landing/About/Careers"));
+const Governance = lazy(() => import("./Pages/Landing/About/Governance"));
+const InvestorRelations = lazy(
+  () => import("./Pages/Landing/About/InvestorRelations")
+);
+const News = lazy(() => import("./Pages/Landing/About/News"));
+const Sustainability = lazy(
+  () => import("./Pages/Landing/About/Sustainability")
+);
+const Tenders = lazy(() => import("./Pages/Landing/About/Tenders"));
 
+// Bussiness Banking Pages
+const SMEs = lazy(() => import("./Pages/Landing/BusinessBanking/SMEs"));
+const MicroEnterprise = lazy(
+  () => import("./Pages/Landing/BusinessBanking/MicroEnterprise")
+);
+const Commercial = lazy(
+  () => import("./Pages/Landing/BusinessBanking/Commercial")
+);
 
+const WhistleBlowing = lazy(() => import("./Pages/Landing/WhistleBlowing"));
+const WebTerms = lazy(() => import("./Pages/Landing/WebTerms"));
+const TermsCondition = lazy(() => import("./Pages/Landing/TermsCondition"));
+const DataPrivacy = lazy(() => import("./Pages/Landing/DataPrivacy"));
 
-2. Data Display Pattern
-Main Menu Items (MenuItem[])
-typescript{
-  label: "Personal",           // Display name
-  hasDropdown: true,          // Shows dropdown indicator
-  subItems: [...]             // Contains sub-navigation
-}
-Sub Menu Items (SubMenuItem[])
-typescript{
-  label: "Individual",
-  description: "Personal banking solutions",  // Subtitle text
-  hasThirdLevel: true,                       // Enables third level
-  categories: {                              // Groups third level items
-    "Accounts": [...],
-    "Loans": [...],
-    "Insurance": [...]
-  },
-  thirdLevelContent: {                       // Hero content for each category
-    "Accounts": {
-      imageUrl: "/images/...",
-      description: "...",
-      keyFeatures: [...],
-      buttonText: "...",
-      buttonLink: "..."
-    }
-  }
-}
-Third Level Items (ThirdLevelItem[])
-typescript{
-  label: "NBC Individual Current Account",
-  href: "/personal/accounts/nbc-individual-current",
-  description: "Our flagship individual current account",
-  parentCategory: "Accounts",              // Links to category
-  hasNested: true,                        // Optional: has sub-items
-  nestedItems: [...]                      // Optional: nested navigation
-}
-3. Visual Display Components
-Mega Menu Layout
+const SingleNews = lazy(() => import("./Pages/Landing/SingleNews"));
 
-Left Panel: Categories list
-Center Panel: Items in selected category
-Right Panel: Hero content with image, features, and CTA
+// Security Pages
+const SecurityCenter = lazy(() => import("./Pages/Landing/SecurityCenter"));
+const FraudaAlert = lazy(() => import("./Pages/Landing/FraudAlert"));
 
-Action Buttons
-typescript{
-  label: "Login",
-  variant: "primary",        // Styling variant
-  icon: "User",             // Icon component
-  items: [...]              // Dropdown items
-}
+// Currency Convetor
 
-How to Create New Navigation Items
-1. Adding a New Main Menu Item
-typescript// Add to navigationData array
-{
-  label: "Investments",              // New main menu
-  hasDropdown: true,
-  subItems: [
-    {
-      label: "Portfolio Management",
-      description: "Investment portfolio services",
-      hasThirdLevel: true,
-      href: "/investments/portfolio",
-      categories: {
-        "Mutual Funds": [...],
-        "Stocks": [...],
-        "Bonds": [...]
-      },
-      thirdLevelContent: {
-        "Mutual Funds": {
-          imageUrl: "/images/mutual-funds.jpg",
-          altText: "Mutual Funds",
-          description: "Diversified investment options",
-          keyFeatures: [
-            "Professional management",
-            "Diversified portfolio",
-            "Low minimum investment"
-          ],
-          buttonText: "Start Investing",
-          buttonLink: "/investments/mutual-funds"
+const CurrencyConvetor = lazy(()=> import('./Pages/Landing/CurrencyConvetor'))
+
+function App() {
+  return (
+    <BrowserRouter>
+      <Suspense
+        fallback={
+          <div style={{ textAlign: "center", marginTop: "2rem" }}>
+            Loading...
+          </div>
         }
-      }
-    }
-  ]
-}
-2. Adding a New Sub Menu Item
-typescript// Add to existing MenuItem's subItems array
-{
-  label: "Wealth Management",
-  description: "High net worth solutions",
-  hasThirdLevel: true,
-  href: "/personal/wealth",
-  categories: {
-    "Investment Advisory": [
-      {
-        label: "Personal Investment Advisory",
-        href: "/personal/wealth/advisory",
-        description: "Personalized investment guidance",
-        parentCategory: "Investment Advisory"
-      }
-    ],
-    "Estate Planning": [
-      {
-        label: "Trust Services",
-        href: "/personal/wealth/trust",
-        description: "Professional trust management",
-        parentCategory: "Estate Planning"
-      }
-    ]
-  },
-  thirdLevelContent: {
-    "Investment Advisory": {
-      imageUrl: "/images/investment-advisory.jpg",
-      altText: "Investment Advisory",
-      description: "Expert investment guidance tailored to your goals",
-      keyFeatures: [
-        "Personalized strategies",
-        "Market research",
-        "Risk assessment",
-        "Regular reviews"
-      ],
-      buttonText: "Get Advice",
-      buttonLink: "/personal/wealth/advisory"
-    }
-  }
-}
-3. Adding Third Level Items to Existing Categories
-typescript// Add to existing category array
-{
-  label: "Premium Savings Account",
-  href: "/personal/accounts/premium-savings",
-  description: "High-yield savings with premium benefits",
-  parentCategory: "Accounts",
-  hasNested: true,
-  nestedItems: [
-    {
-      label: "Platinum Tier",
-      href: "/personal/accounts/premium-savings/platinum",
-      description: "Highest tier with maximum benefits"
-    },
-    {
-      label: "Gold Tier",
-      href: "/personal/accounts/premium-savings/gold",
-      description: "Premium benefits for growing savings"
-    }
-  ]
-}
-4. Adding Nested Items
-typescript// For items that need sub-navigation
-{
-  label: "Business Credit Cards",
-  href: "/business/cards/credit",
-  description: "Corporate credit solutions",
-  parentCategory: "Payment Solutions",
-  hasNested: true,
-  nestedItems: [
-    {
-      label: "Corporate Platinum Card",
-      href: "/business/cards/credit/platinum",
-      description: "Premium corporate credit card"
-    },
-    {
-      label: "Business Rewards Card", 
-      href: "/business/cards/credit/rewards",
-      description: "Earn rewards on business purchases"
-    },
-    {
-      label: "Travel Business Card",
-      href: "/business/cards/credit/travel", 
-      description: "Perfect for business travel"
-    }
-  ]
-}
-5. Adding New Action Buttons
-typescript// Add to actionButtons array
-{
-  label: "Calculator",
-  variant: "secondary",
-  icon: "Calculator",
-  items: [
-    { label: "Loan Calculator", href: "/tools/loan-calculator" },
-    { label: "Savings Calculator", href: "/tools/savings-calculator" },
-    { label: "Mortgage Calculator", href: "/tools/mortgage-calculator" }
-  ]
-}
-6. Adding Quick Links
-typescript// Add to quickLinks array
-{
-  label: "Career Opportunities",
-  href: "/careers"
+      >
+{/* CMS Dashbaord Start*/}
+<Routes>
+<Route path="/cms" element={<CMSLayout />}>
+
+</Route>
+
+</Routes>
+
+{/* CMS Dashbaord Start*/}
+
+
+        <MainNavigation />
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="personal-banking" element={<PersonalBanking />}>
+            <Route index element={<Individual />} />
+            <Route path="diaspora" element={<Diaspora />} />
+            <Route path="priveleged" element={<Privilages />} />
+            <Route path="private" element={<Private />} />
+          </Route>
+          <Route path="accounts/:accountName" element={<SingleAccount />} />
+          <Route path="loans/:loanName" element={<SingleLoan />} />
+          <Route
+            path="insurances/:insuranceName"
+            element={<SingleInsurance />}
+          />
+          <Route path="way-to-bank/:wayToBankName" element={<WaytoBank />} />
+
+          <Route
+            path="compare-account/:compareAccountName"
+            element={<CompareAccount />}
+          />
+          <Route path="about" element={<About />}>
+            <Route index element={<Overview />} />
+            <Route path="careers" element={<Careers />} />
+            <Route path="governance" element={<Governance />} />
+            <Route path="investor-relations" element={<InvestorRelations />} />
+            <Route path="news" element={<News />} />
+            <Route path="sustainability" element={<Sustainability />} />
+            <Route path="tenders" element={<Tenders />} />
+          </Route>
+          <Route path="contact-us" element={<ContactUs/>} />
+
+          {/* Bussiness Banking Pages */}
+
+          <Route path="business-banking" element={<BusinessBanking />}>
+            <Route index element={<MicroEnterprise />} />
+            <Route path="smes" element={<SMEs />} />
+
+            <Route path="commercial" element={<Commercial />} />
+          </Route>
+
+          <Route path="whistle-blowing" element={<WhistleBlowing />} />
+          <Route path="website-terms" element={<WebTerms />} />
+          <Route path="terms-condition" element={<TermsCondition />} />
+          <Route path="data-privacy" element={<DataPrivacy />} />
+
+          <Route path="news/:newsName" element={<SingleNews />} />
+
+          {/* security pages */}
+          <Route path="security-center" element={<SecurityCenter />} />
+          <Route path="fraud-alert" element={<FraudaAlert />} />
+
+
+          {/* Currency Convetor */}
+
+          <Route path="currency-convetor" element={<CurrencyConvetor />} />
+
+          {/* Status Pages */}
+          <Route path="error" element={<Error />} />
+          <Route path="under-maintenance" element={<UnderMaintenance />} />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+        <Footer />
+      </Suspense>
+    </BrowserRouter>
+  );
 }
 
-Best Practices
-Naming Conventions
+export default App;
 
-Main Menu: Broad categories (Personal, Business, Corporate)
-Sub Menu: Specific customer segments (Individual, Private, Privileged)
-Categories: Product/service types (Accounts, Loans, Cards)
-Items: Specific products (NBC Individual Current Account)
-
-URL Structure
-/main-menu/sub-menu/category/item
-/personal/accounts/nbc-individual-current
-/business/loans/working-capital
-/corporate/treasury/spot-fx
-Content Requirements
-
-Description: Brief, clear explanation
-Key Features: 3-5 bullet points highlighting benefits
-Images: High-quality, relevant visuals
-CTAs: Action-oriented button text
-
-Data Consistency
-
-Always include parentCategory for proper grouping
-Maintain consistent href patterns
-Provide thirdLevelContent for categories with hero sections
-Use descriptive altText for images
-
-
-Implementation Steps
-
-Define the structure - Decide on main menu, sub-menu, and categories
-Create the data objects - Follow the TypeScript interfaces
-Add routing - Ensure all href values have corresponding routes
-Create content - Add images, descriptions, and features
-Test navigation - Verify all links and dropdowns work
-Update components - Ensure UI components handle the new structure
-
-This structure provides a flexible, scalable navigation system that can accommodate complex banking products while maintaining a clear user experience.
