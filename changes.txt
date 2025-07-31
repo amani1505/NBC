@@ -1,3 +1,88 @@
+i am getting this error and warning in my console
+Uncaught Error: Objects are not valid as a React child (found: object with keys {children}). If you meant to render a collection of children, use an array instead.
+    at throwOnInvalidObjectType (react-dom_client.js?v=d5c08e9d:5440:15)
+    at createChild (react-dom_client.js?v=d5c08e9d:5608:13)
+    at reconcileChildrenArray (react-dom_client.js?v=d5c08e9d:5789:26)
+    at reconcileChildFibersImpl (react-dom_client.js?v=d5c08e9d:5995:88)
+    at react-dom_client.js?v=d5c08e9d:6061:35
+    at reconcileChildren (react-dom_client.js?v=d5c08e9d:6444:53)
+    at updateFunctionComponent (react-dom_client.js?v=d5c08e9d:6633:9)
+    at beginWork (react-dom_client.js?v=d5c08e9d:7654:20)
+    at runWithFiberInDEV (react-dom_client.js?v=d5c08e9d:1485:72)
+    at performUnitOfWork (react-dom_client.js?v=d5c08e9d:10868:98)
+throwOnInvalidObjectType @ react-dom_client.js?v=d5c08e9d:5440
+createChild @ react-dom_client.js?v=d5c08e9d:5608
+reconcileChildrenArray @ react-dom_client.js?v=d5c08e9d:5789
+reconcileChildFibersImpl @ react-dom_client.js?v=d5c08e9d:5995
+(anonymous) @ react-dom_client.js?v=d5c08e9d:6061
+reconcileChildren @ react-dom_client.js?v=d5c08e9d:6444
+updateFunctionComponent @ react-dom_client.js?v=d5c08e9d:6633
+beginWork @ react-dom_client.js?v=d5c08e9d:7654
+runWithFiberInDEV @ react-dom_client.js?v=d5c08e9d:1485
+performUnitOfWork @ react-dom_client.js?v=d5c08e9d:10868
+workLoopSync @ react-dom_client.js?v=d5c08e9d:10728
+renderRootSync @ react-dom_client.js?v=d5c08e9d:10711
+performWorkOnRoot @ react-dom_client.js?v=d5c08e9d:10359
+performWorkOnRootViaSchedulerTask @ react-dom_client.js?v=d5c08e9d:11623
+performWorkUntilDeadline @ react-dom_client.js?v=d5c08e9d:36
+<MainLayout>
+exports.jsxDEV @ react_jsx-dev-runtime.js?v=7f3b71d0:250
+App @ App.tsx:94
+react-stack-bottom-frame @ react-dom_client.js?v=d5c08e9d:17424
+renderWithHooksAgain @ react-dom_client.js?v=d5c08e9d:4281
+renderWithHooks @ react-dom_client.js?v=d5c08e9d:4217
+updateFunctionComponent @ react-dom_client.js?v=d5c08e9d:6619
+beginWork @ react-dom_client.js?v=d5c08e9d:7654
+runWithFiberInDEV @ react-dom_client.js?v=d5c08e9d:1485
+performUnitOfWork @ react-dom_client.js?v=d5c08e9d:10868
+workLoopSync @ react-dom_client.js?v=d5c08e9d:10728
+renderRootSync @ react-dom_client.js?v=d5c08e9d:10711
+performWorkOnRoot @ react-dom_client.js?v=d5c08e9d:10359
+performWorkOnRootViaSchedulerTask @ react-dom_client.js?v=d5c08e9d:11623
+performWorkUntilDeadline @ react-dom_client.js?v=d5c08e9d:36
+<App>
+exports.jsxDEV @ react_jsx-dev-runtime.js?v=7f3b71d0:250
+(anonymous) @ main.tsx:8Understand this error
+App.tsx:94 An error occurred in the <MainLayout> component.
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://react.dev/link/error-boundaries to learn more about error boundaries.
+
+defaultOnUncaughtError @ react-dom_client.js?v=d5c08e9d:6229
+logUncaughtError @ react-dom_client.js?v=d5c08e9d:6283
+runWithFiberInDEV @ react-dom_client.js?v=d5c08e9d:1485
+lane.callback @ react-dom_client.js?v=d5c08e9d:6311
+callCallback @ react-dom_client.js?v=d5c08e9d:4097
+commitCallbacks @ react-dom_client.js?v=d5c08e9d:4109
+runWithFiberInDEV @ react-dom_client.js?v=d5c08e9d:1487
+commitLayoutEffectOnFiber @ react-dom_client.js?v=d5c08e9d:9029
+flushLayoutEffects @ react-dom_client.js?v=d5c08e9d:11174
+commitRoot @ react-dom_client.js?v=d5c08e9d:11080
+commitRootWhenReady @ react-dom_client.js?v=d5c08e9d:10512
+performWorkOnRoot @ react-dom_client.js?v=d5c08e9d:10457
+performWorkOnRootViaSchedulerTask @ react-dom_client.js?v=d5c08e9d:11623
+performWorkUntilDeadline @ react-dom_client.js?v=d5c08e9d:36
+<MainLayout>
+exports.jsxDEV @ react_jsx-dev-runtime.js?v=7f3b71d0:250
+App @ App.tsx:94
+react-stack-bottom-frame @ react-dom_client.js?v=d5c08e9d:17424
+renderWithHooksAgain @ react-dom_client.js?v=d5c08e9d:4281
+renderWithHooks @ react-dom_client.js?v=d5c08e9d:4217
+updateFunctionComponent @ react-dom_client.js?v=d5c08e9d:6619
+beginWork @ react-dom_client.js?v=d5c08e9d:7654
+runWithFiberInDEV @ react-dom_client.js?v=d5c08e9d:1485
+performUnitOfWork @ react-dom_client.js?v=d5c08e9d:10868
+workLoopSync @ react-dom_client.js?v=d5c08e9d:10728
+renderRootSync @ react-dom_client.js?v=d5c08e9d:10711
+performWorkOnRoot @ react-dom_client.js?v=d5c08e9d:10359
+performWorkOnRootViaSchedulerTask @ react-dom_client.js?v=d5c08e9d:11623
+performWorkUntilDeadline @ react-dom_client.js?v=d5c08e9d:36
+<App>
+exports.jsxDEV @ react_jsx-dev-runtime.js?v=7f3b71d0:250
+(anonymous) @ main.tsx:8Understand this warning
+24The resource <URL> was preloaded using link preload but not used within a few seconds from the window's load event. Please make sure it has an appropriate `as` value and it is preloaded intentionally.
+
+
 import { Suspense, lazy } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Footer from "./components/Home/Footer";
@@ -30,7 +115,7 @@ const CompareAccount = lazy(() => import("./Pages/Landing/CompareAccount"));
 
 // ABOUT PAGES
 const About = lazy(() => import("./Pages/Landing/About/About"));
-const ContactUs = lazy(() => import('./Pages/Landing/ContactUs'));
+const ContactUs = lazy(() => import("./Pages/Landing/ContactUs"));
 const Overview = lazy(() => import("./Pages/Landing/About/Overview"));
 const Careers = lazy(() => import("./Pages/Landing/About/Careers"));
 const Governance = lazy(() => import("./Pages/Landing/About/Governance"));
@@ -64,10 +149,10 @@ const SecurityCenter = lazy(() => import("./Pages/Landing/SecurityCenter"));
 const FraudaAlert = lazy(() => import("./Pages/Landing/FraudAlert"));
 
 // Currency Converter
-const CurrencyConvetor = lazy(() => import('./Pages/Landing/CurrencyConvetor'));
+const CurrencyConvetor = lazy(() => import("./Pages/Landing/CurrencyConvetor"));
 
 // Layout Components
-const MainLayout = ({ children }) => (
+const MainLayout = (children:any) => (
   <>
     <MainNavigation />
     {children}
@@ -76,9 +161,7 @@ const MainLayout = ({ children }) => (
 );
 
 const LoadingFallback = () => (
-  <div style={{ textAlign: "center", marginTop: "2rem" }}>
-    Loading...
-  </div>
+  <div style={{ textAlign: "center", marginTop: "2rem" }}>Loading...</div>
 );
 
 function App() {
@@ -90,73 +173,97 @@ function App() {
           <Route path="/cms/*" element={<CMSLayout />} />
 
           {/* Main Website Routes - With navigation/footer */}
-          <Route path="/*" element={
-            <MainLayout>
-              <Routes>
-                {/* Home Route */}
-                <Route path="/" element={<Home />} />
+          <Route
+            path="/*"
+            element={
+              <MainLayout>
+                <Routes>
+                  {/* Home Route */}
+                  <Route path="/" element={<Home />} />
 
-                {/* Personal Banking Routes */}
-                <Route path="personal-banking" element={<PersonalBanking />}>
-                  <Route index element={<Individual />} />
-                  <Route path="diaspora" element={<Diaspora />} />
-                  <Route path="priveleged" element={<Privilages />} />
-                  <Route path="private" element={<Private />} />
-                </Route>
+                  {/* Personal Banking Routes */}
+                  <Route path="personal-banking" element={<PersonalBanking />}>
+                    <Route index element={<Individual />} />
+                    <Route path="diaspora" element={<Diaspora />} />
+                    <Route path="priveleged" element={<Privilages />} />
+                    <Route path="private" element={<Private />} />
+                  </Route>
 
-                {/* Dynamic Product Routes */}
-                <Route path="accounts/:accountName" element={<SingleAccount />} />
-                <Route path="loans/:loanName" element={<SingleLoan />} />
-                <Route path="insurances/:insuranceName" element={<SingleInsurance />} />
-                <Route path="way-to-bank/:wayToBankName" element={<WaytoBank />} />
-                <Route path="compare-account/:compareAccountName" element={<CompareAccount />} />
+                  {/* Dynamic Product Routes */}
+                  <Route
+                    path="accounts/:accountName"
+                    element={<SingleAccount />}
+                  />
+                  <Route path="loans/:loanName" element={<SingleLoan />} />
+                  <Route
+                    path="insurances/:insuranceName"
+                    element={<SingleInsurance />}
+                  />
+                  <Route
+                    path="way-to-bank/:wayToBankName"
+                    element={<WaytoBank />}
+                  />
+                  <Route
+                    path="compare-account/:compareAccountName"
+                    element={<CompareAccount />}
+                  />
 
-                {/* About Section Routes */}
-                <Route path="about" element={<About />}>
-                  <Route index element={<Overview />} />
-                  <Route path="careers" element={<Careers />} />
-                  <Route path="governance" element={<Governance />} />
-                  <Route path="investor-relations" element={<InvestorRelations />} />
-                  <Route path="news" element={<News />} />
-                  <Route path="sustainability" element={<Sustainability />} />
-                  <Route path="tenders" element={<Tenders />} />
-                </Route>
+                  {/* About Section Routes */}
+                  <Route path="about" element={<About />}>
+                    <Route index element={<Overview />} />
+                    <Route path="careers" element={<Careers />} />
+                    <Route path="governance" element={<Governance />} />
+                    <Route
+                      path="investor-relations"
+                      element={<InvestorRelations />}
+                    />
+                    <Route path="news" element={<News />} />
+                    <Route path="sustainability" element={<Sustainability />} />
+                    <Route path="tenders" element={<Tenders />} />
+                  </Route>
 
-                {/* Contact Route */}
-                <Route path="contact-us" element={<ContactUs />} />
+                  {/* Contact Route */}
+                  <Route path="contact-us" element={<ContactUs />} />
 
-                {/* Business Banking Routes */}
-                <Route path="business-banking" element={<BusinessBanking />}>
-                  <Route index element={<MicroEnterprise />} />
-                  <Route path="smes" element={<SMEs />} />
-                  <Route path="commercial" element={<Commercial />} />
-                </Route>
+                  {/* Business Banking Routes */}
+                  <Route path="business-banking" element={<BusinessBanking />}>
+                    <Route index element={<MicroEnterprise />} />
+                    <Route path="smes" element={<SMEs />} />
+                    <Route path="commercial" element={<Commercial />} />
+                  </Route>
 
-                {/* Legal & Compliance Routes */}
-                <Route path="whistle-blowing" element={<WhistleBlowing />} />
-                <Route path="website-terms" element={<WebTerms />} />
-                <Route path="terms-condition" element={<TermsCondition />} />
-                <Route path="data-privacy" element={<DataPrivacy />} />
+                  {/* Legal & Compliance Routes */}
+                  <Route path="whistle-blowing" element={<WhistleBlowing />} />
+                  <Route path="website-terms" element={<WebTerms />} />
+                  <Route path="terms-condition" element={<TermsCondition />} />
+                  <Route path="data-privacy" element={<DataPrivacy />} />
 
-                {/* News Route */}
-                <Route path="news/:newsName" element={<SingleNews />} />
+                  {/* News Route */}
+                  <Route path="news/:newsName" element={<SingleNews />} />
 
-                {/* Security Routes */}
-                <Route path="security-center" element={<SecurityCenter />} />
-                <Route path="fraud-alert" element={<FraudaAlert />} />
+                  {/* Security Routes */}
+                  <Route path="security-center" element={<SecurityCenter />} />
+                  <Route path="fraud-alert" element={<FraudaAlert />} />
 
-                {/* Utility Routes */}
-                <Route path="currency-convetor" element={<CurrencyConvetor />} />
+                  {/* Utility Routes */}
+                  <Route
+                    path="currency-convetor"
+                    element={<CurrencyConvetor />}
+                  />
 
-                {/* Status Routes */}
-                <Route path="error" element={<Error />} />
-                <Route path="under-maintenance" element={<UnderMaintenance />} />
-                
-                {/* 404 Route - Must be last */}
-                <Route path="*" element={<NotFound />} />
-              </Routes>
-            </MainLayout>
-          } />
+                  {/* Status Routes */}
+                  <Route path="error" element={<Error />} />
+                  <Route
+                    path="under-maintenance"
+                    element={<UnderMaintenance />}
+                  />
+
+                  {/* 404 Route - Must be last */}
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+              </MainLayout>
+            }
+          />
         </Routes>
       </Suspense>
     </BrowserRouter>
