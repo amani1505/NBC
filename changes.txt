@@ -1,0 +1,176 @@
+import axios, { AxiosResponse, AxiosError } from "axios";
+import { errorMessage, successMessage } from "../utils/notification.js";
+
+interface ApiResponse<T = any> {
+  data: T;
+  status_code?: number;
+  message?: string;
+}
+
+interface ApiError {
+  response?: {
+    status?: number;
+    data?: {
+      message?: string;
+      errors?: {
+        error?: string;
+        redirect?: string;
+      };
+    };
+  };
+  message?: string;
+}
+
+class Api {
+  private handleSuccess: (message: string) => void;
+  private preCondt: number;
+
+  constructor() {
+    this.handleSuccess = (message: string) => successMessage(message);
+    this.preCondt = 428;
+
+    this.confirmDelete = this.confirmDelete.bind(this);
+    this.get = this.get.bind(this);
+    this.post = this.post.bind(this);
+    this.put = this.put.bind(this);
+    this.delete = this.delete.bind(this);
+    this.deletePost = this.deletePost.bind(this);
+  }
+
+  private async confirmDelete(message: string): Promise<boolean> {
+    const result = await window.Swal.fire({
+      title: "Are you sure??",
+      text: message,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#DD6B55",
+      confirmButtonText: "Yes, proceed!",
+      cancelButtonText: "No, cancel!",
+      customClass: { container: "" },
+    });
+
+    // Optionally set z-index after showing the modal
+    const container = document.querySelector(".swal2-container");
+    if (container) {
+      (container as HTMLElement).style.zIndex = "99999";
+    }
+
+    return result.isConfirmed;
+  }
+
+  private handleFailure(error: ApiError): { error: string; path?: string } {
+    if (!error.response) {
+      console.error("Network error or no response received:", error.message);
+      return { error: "Request failed, no response from server" };
+    }
+
+    const errorData = error.response.data;
+    const errorMsg = errorData?.message?.trim() || "An error occurred!";
+    let redirectPath = errorData?.errors?.redirect;
+
+    if (typeof redirectPath === "string" && redirectPath.startsWith("\\")) {
+      redirectPath = redirectPath.replace(/\\/g, "");
+    }
+
+    const redirectMessages = [
+      "Forbidden. Admin access required.",
+      "Forbidden - You do not have permission to access this resource.",
+    ];
+
+    if (redirectPath && redirectMessages.some((msg: any) => errorMsg?.includes(msg))) {
+      setTimeout(() => {
+        window.location.assign(redirectPath);
+      }, 100);
+      return { error: "Redirecting", path: redirectPath };
+    }
+
+    try {
+      errorMessage(error.response?.data?.errors?.error || errorMsg);
+    } catch (e: any) {
+      console.error("Error while calling errorMessage:", e);
+    }
+
+    return { error: errorMsg };
+  }
+
+  async post<T = any>(url: string, data: any, message?: string): Promise<ApiResponse<T>> {
+    try {
+      const response:any = await axios.post<ApiResponse<T>>(url, data);
+      if (message) {
+        this.handleSuccess(message);
+      }
+      return response.data;
+    } catch (error: any) {
+      if ((error as ApiError).response?.status === this.preCondt) {
+        return "preCondition" as any;
+      }
+      this.handleFailure(error as ApiError);
+      throw error;
+    }
+  }
+
+  async get<T = any>(url: string, params?: any): Promise<ApiResponse<T>> {
+    const statusError = 300;
+    try {
+      const response:any = await axios.get<ApiResponse<T>>(url, { params });
+      return response.data;
+    } catch (error: any) {
+      this.handleFailure(error as ApiError);
+      const apiError = error as ApiError;
+      const response = apiError.response;
+      if (response && response.status !== undefined && response.status > statusError) {
+        throw error;
+      }
+      throw error;
+    }
+  }
+
+  async put<T = any>(url: string, data: any, message?: string): Promise<ApiResponse<T>> {
+    try {
+      const response = await axios.put<ApiResponse<T>>(url, data);
+      if (message) {
+        this.handleSuccess(message);
+      }
+      return response.data;
+    } catch (error: any) {
+      this.handleFailure(error as ApiError);
+      throw error;
+    }
+  }
+
+  async delete<T = any>(url: string, message?: string): Promise<ApiResponse<T> | false> {
+    try {
+      const shouldDelete = await this.confirmDelete(message || "");
+      if (shouldDelete) {
+        const response = await axios.delete<ApiResponse<T>>(url);
+        if (response.data.message) {
+          this.handleSuccess(response.data.message);
+        }
+        return response.data;
+      }
+      return false;
+    } catch (error: any) {
+      this.handleFailure(error as ApiError);
+      throw error;
+    }
+  }
+
+  async deletePost<T = any>(url: string, message?: string): Promise<ApiResponse<T> | false> {
+    try {
+      const shouldDelete = await this.confirmDelete(message || "");
+      if (shouldDelete) {
+        const response = await axios.post<ApiResponse<T>>(url);
+        if (response.data.message) {
+          this.handleSuccess(response.data.message);
+        }
+        return response.data;
+      }
+      return false;
+    } catch (error: any) {
+      this.handleFailure(error as ApiError);
+      throw error;
+    }
+  }
+}
+
+export const api = new Api();
