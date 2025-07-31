@@ -1,295 +1,294 @@
-i am getting this error
-Object is possibly 'undefined'.ts(2532)
-
-
-/Users/abaa429/Downloads/NBC-SITE/src/services/Api.service.ts
 import type { ApiError, ApiResponse, RequestConfig } from '@/types/api';
 import { showConfirmation } from '@/utils/confirmation';
 import { showError, showSuccess } from '@/utils/toast';
-import axios, {  AxiosError, type AxiosInstance, type AxiosResponse } from 'axios'
+import axios, { AxiosError, type AxiosInstance, type AxiosResponse } from 'axios';
+
 export class ApiService {
-    private axiosInstance: AxiosInstance;
-    private readonly PRECONDITION_FAILED = 428;
-    private readonly STATUS_ERROR_THRESHOLD = 300;
-  
-    constructor(baseURL: string = process.env.NEXT_PUBLIC_API_URL || '/api') {
-      this.axiosInstance = axios.create({
-        baseURL,
-        timeout: 30000,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-  
-      this.setupInterceptors();
-    }
-  
-    private setupInterceptors(): void {
-      // Request interceptor
-      this.axiosInstance.interceptors.request.use(
-        (config) => {
-          // Add auth token if available
-          const token = localStorage.getItem('auth_token');
-          if (token) {
-            config.headers.Authorization = `Bearer ${token}`;
-          }
-  
-          // Add request timestamp for debugging
-          config.metadata = { startTime: new Date() };
-          
-          console.log(`🚀 ${config.method?.toUpperCase()} ${config.url}`, config.data || config.params);
-          
-          return config;
-        },
-        (error) => {
-          console.error('❌ Request Error:', error);
-          return Promise.reject(error);
+  private axiosInstance: AxiosInstance;
+  private readonly PRECONDITION_FAILED = 428;
+  private readonly STATUS_ERROR_THRESHOLD = 300;
+
+  constructor(baseURL: string = process.env.NEXT_PUBLIC_API_URL || '/api') {
+    this.axiosInstance = axios.create({
+      baseURL,
+      timeout: 30000,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    this.setupInterceptors();
+  }
+
+  private setupInterceptors(): void {
+    // Request interceptor
+    this.axiosInstance.interceptors.request.use(
+      (config) => {
+        // Add auth token if available
+        const token = localStorage.getItem('auth_token');
+        if (token) {
+          config.headers.Authorization = `Bearer ${token}`;
         }
-      );
-  
-      // Response interceptor
-      this.axiosInstance.interceptors.response.use(
-        (response: AxiosResponse) => {
-          const duration = new Date().getTime() - response?.config.metadata?.startTime?.getTime();
-          console.log(`✅ ${response.config.method?.toUpperCase()} ${response.config.url} (${duration}ms)`, response.data);
-          
-          return response;
-        },
-        (error: AxiosError) => {
-          const duration = error.config?.metadata?.startTime ? 
-            new Date().getTime() - error.config.metadata.startTime.getTime() : 0;
-          
-          console.error(`❌ ${error.config?.method?.toUpperCase()} ${error.config?.url} (${duration}ms)`, error.response?.data || error.message);
-  
-          // Handle token expiration
-          if (error.response?.status === 401) {
-            localStorage.removeItem('auth_token');
-            window.location.href = '/login';
-          }
-  
-          return Promise.reject(error);
+
+        // Add request timestamp for debugging
+        config.metadata = { startTime: new Date() };
+        
+        console.log(`🚀 ${config.method?.toUpperCase()} ${config.url}`, config.data || config.params);
+        
+        return config;
+      },
+      (error) => {
+        console.error('❌ Request Error:', error);
+        return Promise.reject(error);
+      }
+    );
+
+    // Response interceptor
+    this.axiosInstance.interceptors.response.use(
+      (response: AxiosResponse) => {
+        // Safe access to metadata with proper null checks
+        const startTime = response.config?.metadata?.startTime;
+        const duration = startTime ? new Date().getTime() - startTime.getTime() : 0;
+        
+        console.log(`✅ ${response.config.method?.toUpperCase()} ${response.config.url} (${duration}ms)`, response.data);
+        
+        return response;
+      },
+      (error: AxiosError) => {
+        // Safe access to metadata with proper null checks
+        const startTime = error.config?.metadata?.startTime;
+        const duration = startTime ? new Date().getTime() - startTime.getTime() : 0;
+        
+        console.error(`❌ ${error.config?.method?.toUpperCase()} ${error.config?.url} (${duration}ms)`, error.response?.data || error.message);
+
+        // Handle token expiration
+        if (error.response?.status === 401) {
+          localStorage.removeItem('auth_token');
+          window.location.href = '/login';
         }
-      );
+
+        return Promise.reject(error);
+      }
+    );
+  }
+
+  private handleSuccess(message?: string): void {
+    if (message) {
+      showSuccess(message);
     }
-  
-    private handleSuccess(message?: string): void {
-      if (message) {
-        showSuccess(message);
-      }
-    }
-  
-    private handleFailure(error: ApiError): { error: string; path?: string } {
-      if (!error.response) {
-        console.error('Network error or no response received:', error.message);
-        const errorMsg = 'Network error. Please check your connection.';
-        showError(errorMsg);
-        return { error: errorMsg };
-      }
-  
-      const errorData = error.response.data;
-      const errorMsg = errorData?.message?.trim() || 'An unexpected error occurred';
-      let redirectPath = errorData?.errors?.redirect;
-  
-      // Clean up redirect path
-      if (typeof redirectPath === 'string' && redirectPath.startsWith('\\')) {
-        redirectPath = redirectPath.replace(/\\/g, '');
-      }
-  
-      // Handle specific redirect scenarios
-      const redirectMessages = [
-        'Forbidden. Admin access required.',
-        'Forbidden - You do not have permission to access this resource.',
-      ];
-  
-      if (redirectPath && redirectMessages.some(msg => errorMsg?.includes(msg))) {
-        setTimeout(() => {
-          window.location.assign(redirectPath);
-        }, 100);
-        return { error: 'Redirecting...', path: redirectPath };
-      }
-  
-      // Show error message
-      showError(error.response?.data?.errors?.error || errorMsg);
+  }
+
+  private handleFailure(error: ApiError): { error: string; path?: string } {
+    if (!error.response) {
+      console.error('Network error or no response received:', error.message);
+      const errorMsg = 'Network error. Please check your connection.';
+      showError(errorMsg);
       return { error: errorMsg };
     }
-  
-    async get<T = any>(
-      url: string, 
-      params?: any, 
-    //   config: RequestConfig = {}
-    ): Promise<ApiResponse<T>> {
-      try {
-        const response = await this.axiosInstance.get<ApiResponse<T>>(url, { params });
-        return response.data;
-      } catch (error: any) {
-        this.handleFailure(error as ApiError);
-        
-        const apiError = error as ApiError;
-        if (apiError.response?.status && apiError.response.status > this.STATUS_ERROR_THRESHOLD) {
-          throw error;
-        }
+
+    const errorData = error.response.data;
+    const errorMsg = errorData?.message?.trim() || 'An unexpected error occurred';
+    let redirectPath = errorData?.errors?.redirect;
+
+    // Clean up redirect path
+    if (typeof redirectPath === 'string' && redirectPath.startsWith('\\')) {
+      redirectPath = redirectPath.replace(/\\/g, '');
+    }
+
+    // Handle specific redirect scenarios
+    const redirectMessages = [
+      'Forbidden. Admin access required.',
+      'Forbidden - You do not have permission to access this resource.',
+    ];
+
+    if (redirectPath && redirectMessages.some(msg => errorMsg?.includes(msg))) {
+      setTimeout(() => {
+        window.location.assign(redirectPath);
+      }, 100);
+      return { error: 'Redirecting...', path: redirectPath };
+    }
+
+    // Show error message
+    showError(error.response?.data?.errors?.error || errorMsg);
+    return { error: errorMsg };
+  }
+
+  async get<T = any>(
+    url: string, 
+    params?: any, 
+  ): Promise<ApiResponse<T>> {
+    try {
+      const response = await this.axiosInstance.get<ApiResponse<T>>(url, { params });
+      return response.data;
+    } catch (error: any) {
+      this.handleFailure(error as ApiError);
+      
+      const apiError = error as ApiError;
+      if (apiError.response?.status && apiError.response.status > this.STATUS_ERROR_THRESHOLD) {
         throw error;
       }
+      throw error;
     }
-  
-    async post<T = any>(
-      url: string, 
-      data: any, 
-      config: RequestConfig = {}
-    ): Promise<ApiResponse<T>> {
-      try {
-        const response = await this.axiosInstance.post<ApiResponse<T>>(url, data);
-        
-        if (config.successMessage || config.showSuccessMessage) {
-          this.handleSuccess(config.successMessage || 'Operation completed successfully');
-        }
-        
-        return response.data;
-      } catch (error: any) {
-        if ((error as ApiError).response?.status === this.PRECONDITION_FAILED) {
-          return { data: null, message: 'Precondition failed' } as any;
-        }
-        
-        this.handleFailure(error as ApiError);
-        throw error;
+  }
+
+  async post<T = any>(
+    url: string, 
+    data: any, 
+    config: RequestConfig = {}
+  ): Promise<ApiResponse<T>> {
+    try {
+      const response = await this.axiosInstance.post<ApiResponse<T>>(url, data);
+      
+      if (config.successMessage || config.showSuccessMessage) {
+        this.handleSuccess(config.successMessage || 'Operation completed successfully');
       }
-    }
-  
-    async put<T = any>(
-      url: string, 
-      data: any, 
-      config: RequestConfig = {}
-    ): Promise<ApiResponse<T>> {
-      try {
-        const response = await this.axiosInstance.put<ApiResponse<T>>(url, data);
-        
-        if (config.successMessage || config.showSuccessMessage) {
-          this.handleSuccess(config.successMessage || 'Updated successfully');
-        }
-        
-        return response.data;
-      } catch (error: any) {
-        this.handleFailure(error as ApiError);
-        throw error;
+      
+      return response.data;
+    } catch (error: any) {
+      if ((error as ApiError).response?.status === this.PRECONDITION_FAILED) {
+        return { data: null, message: 'Precondition failed' } as any;
       }
+      
+      this.handleFailure(error as ApiError);
+      throw error;
     }
-  
-    async patch<T = any>(
-      url: string, 
-      data: any, 
-      config: RequestConfig = {}
-    ): Promise<ApiResponse<T>> {
-      try {
-        const response = await this.axiosInstance.patch<ApiResponse<T>>(url, data);
-        
-        if (config.successMessage || config.showSuccessMessage) {
-          this.handleSuccess(config.successMessage || 'Updated successfully');
-        }
-        
-        return response.data;
-      } catch (error: any) {
-        this.handleFailure(error as ApiError);
-        throw error;
+  }
+
+  async put<T = any>(
+    url: string, 
+    data: any, 
+    config: RequestConfig = {}
+  ): Promise<ApiResponse<T>> {
+    try {
+      const response = await this.axiosInstance.put<ApiResponse<T>>(url, data);
+      
+      if (config.successMessage || config.showSuccessMessage) {
+        this.handleSuccess(config.successMessage || 'Updated successfully');
       }
+      
+      return response.data;
+    } catch (error: any) {
+      this.handleFailure(error as ApiError);
+      throw error;
     }
-  
-    async delete<T = any>(
-      url: string, 
-      config: RequestConfig = {}
-    ): Promise<ApiResponse<T> | false> {
-      try {
-        // Show confirmation dialog if required
-        if (config.confirmationMessage) {
-          const confirmed = await showConfirmation(
-            'Confirm Deletion',
-            config.confirmationMessage,
-            'Delete',
-            'Cancel'
-          );
-          
-          if (!confirmed) {
-            return false;
-          }
-        }
-  
-        const response = await this.axiosInstance.delete<ApiResponse<T>>(url);
-        
-        if (response.data.message) {
-          this.handleSuccess(response.data.message);
-        } else if (config.successMessage) {
-          this.handleSuccess(config.successMessage);
-        }
-        
-        return response.data;
-      } catch (error: any) {
-        this.handleFailure(error as ApiError);
-        throw error;
+  }
+
+  async patch<T = any>(
+    url: string, 
+    data: any, 
+    config: RequestConfig = {}
+  ): Promise<ApiResponse<T>> {
+    try {
+      const response = await this.axiosInstance.patch<ApiResponse<T>>(url, data);
+      
+      if (config.successMessage || config.showSuccessMessage) {
+        this.handleSuccess(config.successMessage || 'Updated successfully');
       }
+      
+      return response.data;
+    } catch (error: any) {
+      this.handleFailure(error as ApiError);
+      throw error;
     }
-  
-    async deleteWithPayload<T = any>(
-      url: string, 
-      data?: any,
-      config: RequestConfig = {}
-    ): Promise<ApiResponse<T> | false> {
-      try {
-        // Show confirmation dialog if required
-        if (config.confirmationMessage) {
-          const confirmed = await showConfirmation(
-            'Confirm Action',
-            config.confirmationMessage,
-            'Proceed',
-            'Cancel'
-          );
-          
-          if (!confirmed) {
-            return false;
-          }
-        }
-  
-        const response = await this.axiosInstance.post<ApiResponse<T>>(url, data);
+  }
+
+  async delete<T = any>(
+    url: string, 
+    config: RequestConfig = {}
+  ): Promise<ApiResponse<T> | false> {
+    try {
+      // Show confirmation dialog if required
+      if (config.confirmationMessage) {
+        const confirmed = await showConfirmation(
+          'Confirm Deletion',
+          config.confirmationMessage,
+          'Delete',
+          'Cancel'
+        );
         
-        if (response.data.message) {
-          this.handleSuccess(response.data.message);
-        } else if (config.successMessage) {
-          this.handleSuccess(config.successMessage);
+        if (!confirmed) {
+          return false;
         }
-        
-        return response.data;
-      } catch (error: any) {
-        this.handleFailure(error as ApiError);
-        throw error;
       }
+
+      const response = await this.axiosInstance.delete<ApiResponse<T>>(url);
+      
+      if (response.data.message) {
+        this.handleSuccess(response.data.message);
+      } else if (config.successMessage) {
+        this.handleSuccess(config.successMessage);
+      }
+      
+      return response.data;
+    } catch (error: any) {
+      this.handleFailure(error as ApiError);
+      throw error;
     }
-  
-    // Utility method to set auth token
-    setAuthToken(token: string): void {
-      localStorage.setItem('auth_token', token);
+  }
+
+  async deleteWithPayload<T = any>(
+    url: string, 
+    data?: any,
+    config: RequestConfig = {}
+  ): Promise<ApiResponse<T> | false> {
+    try {
+      // Show confirmation dialog if required
+      if (config.confirmationMessage) {
+        const confirmed = await showConfirmation(
+          'Confirm Action',
+          config.confirmationMessage,
+          'Proceed',
+          'Cancel'
+        );
+        
+        if (!confirmed) {
+          return false;
+        }
+      }
+
+      const response = await this.axiosInstance.post<ApiResponse<T>>(url, data);
+      
+      if (response.data.message) {
+        this.handleSuccess(response.data.message);
+      } else if (config.successMessage) {
+        this.handleSuccess(config.successMessage);
+      }
+      
+      return response.data;
+    } catch (error: any) {
+      this.handleFailure(error as ApiError);
+      throw error;
     }
-  
-    // Utility method to clear auth token
-    clearAuthToken(): void {
-      localStorage.removeItem('auth_token');
-    }
-  
-    // Get axios instance for advanced usage
-    getAxiosInstance(): AxiosInstance {
-      return this.axiosInstance;
-    }
+  }
+
+  // Utility method to set auth token
+  setAuthToken(token: string): void {
+    localStorage.setItem('auth_token', token);
+  }
+
+  // Utility method to clear auth token
+  clearAuthToken(): void {
+    localStorage.removeItem('auth_token');
+  }
+
+  // Get axios instance for advanced usage
+  getAxiosInstance(): AxiosInstance {
+    return this.axiosInstance;
+  }
 }
 
 export const apiService = new ApiService();
 
-/Users/abaa429/Downloads/NBC-SITE/src/types/axios.d.ts
 
 
 
 import 'axios';
-declare module 'axios'{
-export interface InternalAxiosRequestConfig{
-    metadata?:{
-        startTime?: Date;
-        [key:string]: any;
-    }
-}
+
+declare module 'axios' {
+  export interface InternalAxiosRequestConfig {
+    metadata?: {
+      startTime: Date;
+      [key: string]: any;
+    };
+  }
 }
