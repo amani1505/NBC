@@ -1,4 +1,3 @@
-Why description is not accessible it leaves the space empty but in the object there is description
 import DataTable from "@/components/reusable/data-table";
 import { cn } from "@/lib/utils";
 import type { TableAction, TableColumn } from "@/types/table";
@@ -14,7 +13,7 @@ type Payment = {
   email: string;
   number?: string;
   activity?: string;
-  description?: string; // Added dynamic description field
+  description?: string;
   date?: string;
 };
 
@@ -85,14 +84,12 @@ function DashboardTable() {
         id: "activity",
         header: "Activity",
         accessorKey: "activity",
-        cell: ({ row }: { row: any }) => (
+        cell: ({ row }) => (
           <div className="flex flex-col">
             <div className="font-medium">{row.getValue("activity") || "-"}</div>
-            {row.getValue("description") && (
-              <div className="text-xs text-muted-foreground">
-                {row.getValue("description") || "No description available"}
-              </div>
-            )}
+            <div className="text-xs text-muted-foreground">
+              {row.original.description || "No description available"}
+            </div>
           </div>
         ),
       },
@@ -217,4 +214,3 @@ function DashboardTable() {
 }
 
 export default DashboardTable;
-
