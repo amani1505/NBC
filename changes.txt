@@ -1,10 +1,3 @@
-I am getting this error
-
-Argument of type '{ column: Column<T, unknown>; }' is not assignable to parameter of type 'HeaderContext<T, unknown>'.
-  Type '{ column: Column<T, unknown>; }' is missing the following properties from type 'HeaderContext<T, unknown>': header, tablets(2345)
-(parameter) tableColumn: Column<T, unknown>
-An instance of a column.
-
 // components/reusable/data-table.tsx
 import React, { useState, useMemo } from 'react';
 import {
@@ -120,14 +113,14 @@ function DataTable<T extends Record<string, any>>({
         accessorKey: column.accessorKey,
         enableSorting: column.enableSorting ?? true,
         enableHiding: column.enableHiding ?? true,
-        header: ({ column: tableColumn }: HeaderContext<T, unknown>) => {
+        header: (context: HeaderContext<T, unknown>) => {
           // If header is a string
           if (typeof column.header === 'string') {
             if (!column.enableSorting) return column.header;
             return (
               <Button
                 variant="ghost"
-                onClick={() => tableColumn.toggleSorting(tableColumn.getIsSorted() === 'asc')}
+                onClick={() => context.column.toggleSorting(context.column.getIsSorted() === 'asc')}
                 className={cn(
                   "h-8 px-2 -ml-2 font-medium",
                   column.meta?.align === 'right' && 'justify-end',
@@ -139,8 +132,8 @@ function DataTable<T extends Record<string, any>>({
               </Button>
             );
           }
-          // If header is a function, call it with the props
-          return column.header({ column: tableColumn });
+          // If header is a function, call it with the full context
+          return column.header(context);
         },
         cell: column.cell || (({ row }) => {
           const value = column.accessorKey ? row.getValue(column.accessorKey as string) : '';
