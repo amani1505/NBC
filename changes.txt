@@ -1,12 +1,3 @@
-Am getting this error
-
-Type 'string | ((props: HeaderContext<T, unknown>) => ReactNode)' is not assignable to type 'ReactNode'.
-  Type '(props: HeaderContext<T, unknown>) => ReactNode' is not assignable to type 'ReactNode'.ts(2322)
-(property) TableColumn<T>.header: string | ((props: HeaderContext<T, unknown>) => React.ReactNode)
-
-
-/Users/abaa429/Downloads/NBC-SITE/src/components/reusable/data-table.tsx
-
 // components/reusable/data-table.tsx
 import React, { useState, useMemo } from 'react';
 import {
@@ -122,25 +113,28 @@ function DataTable<T extends Record<string, any>>({
         accessorKey: column.accessorKey,
         enableSorting: column.enableSorting ?? true,
         enableHiding: column.enableHiding ?? true,
-        header: typeof column.header === 'string' 
-          ? ({ column: tableColumn }: HeaderContext<T, unknown>) => {
-              if (!column.enableSorting) return column.header as string;
-              return (
-                <Button
-                  variant="ghost"
-                  onClick={() => tableColumn.toggleSorting(tableColumn.getIsSorted() === 'asc')}
-                  className={cn(
-                    "h-8 px-2 -ml-2 font-medium",
-                    column.meta?.align === 'right' && 'justify-end',
-                    column.meta?.align === 'center' && 'justify-center'
-                  )}
-                >
-                  {column?.header}
-                  <ArrowUpDown className="ml-1 h-3 w-3" />
-                </Button>
-              );
-            }
-          : column.header as (props: HeaderContext<T, unknown>) => React.ReactNode,
+        header: ({ column: tableColumn }: HeaderContext<T, unknown>) => {
+          // If header is a string
+          if (typeof column.header === 'string') {
+            if (!column.enableSorting) return column.header;
+            return (
+              <Button
+                variant="ghost"
+                onClick={() => tableColumn.toggleSorting(tableColumn.getIsSorted() === 'asc')}
+                className={cn(
+                  "h-8 px-2 -ml-2 font-medium",
+                  column.meta?.align === 'right' && 'justify-end',
+                  column.meta?.align === 'center' && 'justify-center'
+                )}
+              >
+                {column.header}
+                <ArrowUpDown className="ml-1 h-3 w-3" />
+              </Button>
+            );
+          }
+          // If header is a function, call it with the props
+          return column.header({ column: tableColumn });
+        },
         cell: column.cell || (({ row }) => {
           const value = column.accessorKey ? row.getValue(column.accessorKey as string) : '';
           return (
@@ -440,47 +434,3 @@ function DataTable<T extends Record<string, any>>({
 }
 
 export default DataTable;
-
-
-/Users/abaa429/Downloads/NBC-SITE/src/types/table.ts
-
-// types/table.ts
-import type { HeaderContext } from '@tanstack/react-table';
-
-export interface TableColumn<T> {
-  id: string;
-  header: string | ((props: HeaderContext<T, unknown>) => React.ReactNode);
-  accessorKey?: keyof T;
-  cell?: (props: { row: { original: T; getValue: (key: string) => any } }) => React.ReactNode;
-  enableSorting?: boolean;
-  enableHiding?: boolean;
-  sortingFn?: string;
-  meta?: {
-    align?: 'left' | 'center' | 'right';
-    className?: string;
-  };
-}
-
-export interface TableAction<T> {
-  label: string;
-  onClick: (row: T) => void;
-  icon?: React.ReactNode;
-  variant?: 'default' | 'destructive';
-  show?: (row: T) => boolean;
-}
-
-export interface DataTableProps<T> {
-  data: T[];
-  columns: TableColumn<T>[];
-  searchableColumns?: (keyof T)[];
-  searchPlaceholder?: string;
-  actions?: TableAction<T>[];
-  enableRowSelection?: boolean;
-  enableColumnVisibility?: boolean;
-  enablePagination?: boolean;
-  pageSize?: number;
-  className?: string;
-  emptyStateMessage?: string;
-  loading?: boolean;
-  onRowSelectionChange?: (selectedRows: T[]) => void;
-}
