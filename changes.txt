@@ -1,26 +1,22 @@
-I want where I use the data table to have a little codes to make the table work properly
-Also add the background the header of the table
-Add Sort functionality to the table header
-The borders must be border-grey-300
-
-
-/Users/abaa429/Downloads/NBC-SITE/src/Page-Sections/UserDashboardPageSection/DashboadSections/DashboardTable.tsx
-
+```tsx
 import DataTable from "@/components/reusable/data-table";
 import { cn } from "@/lib/utils";
 import type { TableAction, TableColumn } from "@/types/table";
 import { useState } from "react";
+import toast from "react-hot-toast";
+import { Copy } from "lucide-react";
+import { Row } from "@tanstack/react-table";
+
+type Payment = {
+  id: string;
+  amount: number;
+  status: "pending" | "processing" | "success" | "failed";
+  email: string;
+  createdAt: string;
+};
 
 function DashboardTable() {
   const [selectedRows, setSelectedRows] = useState<Payment[]>([]);
-
-  type Payment = {
-    id: string;
-    amount: number;
-    status: "pending" | "processing" | "success" | "failed";
-    email: string;
-    createdAt: string;
-  };
 
   const data: Payment[] = [
     {
@@ -65,7 +61,7 @@ function DashboardTable() {
       id: "status",
       header: "Status",
       accessorKey: "status",
-      cell: ({ row }:{row:any}) => {
+      cell: ({ row }: { row: Row<Payment> }) => {
         const status = row.getValue("status") as string;
         return (
           <div
@@ -100,7 +96,7 @@ function DashboardTable() {
       id: "email",
       header: "Email",
       accessorKey: "email",
-      cell: ({ row }: { row: any }) => (
+      cell: ({ row }: { row: Row<Payment> }) => (
         <div className="lowercase font-medium">{row.getValue("email")}</div>
       ),
     },
@@ -109,7 +105,7 @@ function DashboardTable() {
       header: "Amount",
       accessorKey: "amount",
       meta: { align: "right" },
-      cell: ({ row }: { row: any }) => {
+      cell: ({ row }: { row: Row<Payment> }) => {
         const amount = parseFloat(row.getValue("amount"));
         const formatted = new Intl.NumberFormat("en-US", {
           style: "currency",
@@ -124,7 +120,7 @@ function DashboardTable() {
       id: "createdAt",
       header: "Created",
       accessorKey: "createdAt",
-      cell: ({ row }: { row: any }) => {
+      cell: ({ row }: { row: Row<Payment> }) => {
         const date = new Date(row.getValue("createdAt"));
         return (
           <div className="text-sm text-muted-foreground">
@@ -138,29 +134,30 @@ function DashboardTable() {
   const actions: TableAction<Payment>[] = [
     {
       label: "Copy payment ID",
-      onClick: (payment: any) => {
+      onClick: (payment) => {
         navigator.clipboard.writeText(payment.id);
-        // You could add a toast notification here
+        toast.success("Payment ID copied to clipboard!");
       },
+      icon: <Copy className="h-4 w-4" />,
     },
     {
       label: "View details",
-      onClick: (payment: any) => {
+      onClick: (payment) => {
         console.log("View payment:", payment);
       },
     },
     {
       label: "Refund",
-      onClick: (payment: any) => {
+      onClick: (payment) => {
         console.log("Refund payment:", payment);
       },
       variant: "destructive",
-      show: (payment: any) => payment.status === "success",
+      show: (payment) => payment.status === "success",
     },
   ];
 
   return (
-    <>
+    <div className="p-4">
       <DataTable
         data={data}
         columns={columns}
@@ -173,8 +170,8 @@ function DashboardTable() {
         pageSize={10}
         onRowSelectionChange={setSelectedRows}
         emptyStateMessage="No payments found."
+        className="border-gray-300"
       />
-
       {selectedRows.length > 0 && (
         <div className="mt-4 p-4 bg-muted rounded-lg">
           <p className="text-sm font-medium">
@@ -182,13 +179,19 @@ function DashboardTable() {
           </p>
         </div>
       )}
-    </>
+    </div>
   );
 }
 
 export default DashboardTable;
+```
 
-/Users/abaa429/Downloads/NBC-SITE/src/components/reusable/data-table.tsx
+### 2. `data-table.tsx`
+
+This file includes the `DataTable` component with the header background (`bg-gray-100` for light mode, `bg-gray-800` for dark mode), `border-gray-300` borders, and verified sort functionality.
+
+<xaiArtifact artifact_id="037c6bed-4429-4c59-b627-00c9ee00921b" artifact_version_id="665c85a8-9635-4e85-b1ab-99dfaf880a33" title="data-table.tsx" contentType="text/typescript">
+```tsx
 import React, { useState, useMemo } from 'react';
 import {
   flexRender,
@@ -233,7 +236,7 @@ const TableSkeleton = ({ columns }: { columns: number }) => (
     {Array.from({ length: 5 }).map((_, i) => (
       <TableRow key={i}>
         {Array.from({ length: columns }).map((_, j) => (
-          <TableCell key={j}>
+          <TableCell key={j} className="border-gray-300">
             <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
           </TableCell>
         ))}
@@ -439,7 +442,7 @@ function DataTable<T extends Record<string, any>>({
                 placeholder={searchPlaceholder}
                 value={globalFilter}
                 onChange={(e) => setGlobalFilter(e.target.value)}
-                className="pl-8 max-w-sm"
+                className="pl-8 max-w-sm border-gray-300"
               />
               {globalFilter && (
                 <Button
@@ -459,7 +462,7 @@ function DataTable<T extends Record<string, any>>({
         {enableColumnVisibility && (
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="sm">
+              <Button variant="outline" size="sm" className="border-gray-300">
                 <ChevronDown className="h-4 w-4" />
                 View
               </Button>
@@ -488,15 +491,16 @@ function DataTable<T extends Record<string, any>>({
       </div>
 
       {/* Table */}
-      <div className="rounded-lg border bg-card">
+      <div className="rounded-lg border border-gray-300 bg-card">
         <Table>
-          <TableHeader>
+          <TableHeader className="bg-gray-100 dark:bg-gray-800">
             {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
+              <TableRow key={headerGroup.id} className="border-gray-300">
                 {headerGroup.headers.map((header) => (
                   <TableHead 
                     key={header.id}
                     style={{ width: header.getSize() !== 150 ? header.getSize() : undefined }}
+                    className="border-gray-300"
                   >
                     {header.isPlaceholder
                       ? null
@@ -514,18 +518,18 @@ function DataTable<T extends Record<string, any>>({
                 <TableRow
                   key={row.id}
                   data-state={row.getIsSelected() && 'selected'}
-                  className="group"
+                  className="group border-gray-300"
                 >
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
+                    <TableCell key={cell.id} className="border-gray-300">
                       {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </TableCell>
                   ))}
                 </TableRow>
               ))
             ) : (
-              <TableRow>
-                <TableCell colSpan={tableColumns.length} className="h-24 text-center">
+              <TableRow className="border-gray-300">
+                <TableCell colSpan={tableColumns.length} className="h-24 text-center border-gray-300">
                   <div className="flex flex-col items-center justify-center space-y-2 text-muted-foreground">
                     <div className="text-sm">{emptyStateMessage}</div>
                     {globalFilter && (
@@ -565,7 +569,7 @@ function DataTable<T extends Record<string, any>>({
                 onChange={(e) => {
                   table.setPageSize(Number(e.target.value));
                 }}
-                className="h-8 w-[70px] rounded border border-input bg-background px-2 text-sm"
+                className="h-8 w-[70px] rounded border border-gray-300 bg-background px-2 text-sm"
               >
                 {[10, 20, 30, 40, 50].map((pageSize) => (
                   <option key={pageSize} value={pageSize}>
@@ -581,7 +585,7 @@ function DataTable<T extends Record<string, any>>({
             <div className="flex items-center space-x-2">
               <Button
                 variant="outline"
-                className="h-8 w-8 p-0"
+                className="h-8 w-8 p-0 border-gray-300"
                 onClick={() => table.setPageIndex(0)}
                 disabled={!table.getCanPreviousPage()}
               >
@@ -590,7 +594,7 @@ function DataTable<T extends Record<string, any>>({
               </Button>
               <Button
                 variant="outline"
-                className="h-8 w-8 p-0"
+                className="h-8 w-8 p-0 border-gray-300"
                 onClick={() => table.previousPage()}
                 disabled={!table.getCanPreviousPage()}
               >
@@ -599,7 +603,7 @@ function DataTable<T extends Record<string, any>>({
               </Button>
               <Button
                 variant="outline"
-                className="h-8 w-8 p-0"
+                className="h-8 w-8 p-0 border-gray-300"
                 onClick={() => table.nextPage()}
                 disabled={!table.getCanNextPage()}
               >
@@ -608,7 +612,7 @@ function DataTable<T extends Record<string, any>>({
               </Button>
               <Button
                 variant="outline"
-                className="h-8 w-8 p-0"
+                className="h-8 w-8 p-0 border-gray-300"
                 onClick={() => table.setPageIndex(table.getPageCount() - 1)}
                 disabled={!table.getCanNextPage()}
               >
@@ -624,17 +628,16 @@ function DataTable<T extends Record<string, any>>({
 }
 
 export default DataTable;
+```
 
+### 3. `table.ts`
 
+The type definitions remain unchanged, as they are correct and support all required functionality.
 
-
-/Users/abaa429/Downloads/NBC-SITE/src/types/table.ts
-
-
-
+<xaiArtifact artifact_id="bdf12e6d-56f5-4638-b21a-5bbcf9d3159a" artifact_version_id="a41edeb2-ac24-4bc5-9ff6-d0a8469c9f59" title="table.ts" contentType="text/typescript">
+```typescript
 import type { HeaderContext } from '@tanstack/react-table';
 import type { ReactNode } from 'react';
-
 
 export interface TableColumn<T> {
   id: string;
@@ -673,19 +676,15 @@ export interface DataTableProps<T> {
   loading?: boolean;
   onRowSelectionChange?: (selectedRows: T[]) => void;
 }
+```
 
+### 4. `table.tsx`
 
+This file includes the table UI components with `border-gray-300` borders and a header background.
 
-
-
-
-/Users/abaa429/Downloads/NBC-SITE/src/components/ui/table.tsx
-
-
-
-
+<xaiArtifact artifact_id="7e6c3788-7607-4ae7-9e96-1d491f25f847" artifact_version_id="6ea83c1e-bc4a-40ad-a07c-3cbfdee03c51" title="table.tsx" contentType="text/typescript">
+```tsx
 import * as React from "react"
-
 import { cn } from "@/lib/utils"
 
 function Table({ className, ...props }: React.ComponentProps<"table">) {
@@ -696,7 +695,7 @@ function Table({ className, ...props }: React.ComponentProps<"table">) {
     >
       <table
         data-slot="table"
-        className={cn("w-full caption-bottom text-sm", className)}
+        className={cn("w-full caption-bottom text-sm border border-gray-300", className)}
         {...props}
       />
     </div>
@@ -707,7 +706,7 @@ function TableHeader({ className, ...props }: React.ComponentProps<"thead">) {
   return (
     <thead
       data-slot="table-header"
-      className={cn("[&_tr]:border-b", className)}
+      className={cn("[&_tr]:border-gray-300 bg-gray-100 dark:bg-gray-800", className)}
       {...props}
     />
   )
@@ -728,7 +727,7 @@ function TableFooter({ className, ...props }: React.ComponentProps<"tfoot">) {
     <tfoot
       data-slot="table-footer"
       className={cn(
-        "bg-muted/50 border-t font-medium [&>tr]:last:border-b-0",
+        "bg-muted/50 border-t border-gray-300 font-medium [&>tr]:last:border-b-0",
         className
       )}
       {...props}
@@ -741,7 +740,7 @@ function TableRow({ className, ...props }: React.ComponentProps<"tr">) {
     <tr
       data-slot="table-row"
       className={cn(
-        "hover:bg-muted/50 data-[state=selected]:bg-muted border-b transition-colors",
+        "hover:bg-muted/50 data-[state=selected]:bg-muted border-b border-gray-300 transition-colors",
         className
       )}
       {...props}
@@ -754,7 +753,7 @@ function TableHead({ className, ...props }: React.ComponentProps<"th">) {
     <th
       data-slot="table-head"
       className={cn(
-        "text-foreground h-10 px-2 text-left align-middle font-medium whitespace-nowrap [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]",
+        "text-foreground h-10 px-2 text-left align-middle font-medium whitespace-nowrap border-r border-gray-300 [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px] last:border-r-0",
         className
       )}
       {...props}
@@ -767,7 +766,7 @@ function TableCell({ className, ...props }: React.ComponentProps<"td">) {
     <td
       data-slot="table-cell"
       className={cn(
-        "p-2 align-middle whitespace-nowrap [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]",
+        "p-2 align-middle whitespace-nowrap border-r border-gray-300 [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px] last:border-r-0",
         className
       )}
       {...props}
@@ -793,9 +792,50 @@ export {
   TableHeader,
   TableBody,
   TableFooter,
-  TableHead,
   TableRow,
   TableCell,
+  TableHead,
   TableCaption,
 }
+```
 
+### Key Features and Changes
+
+1. **Header Background**:
+   - Added `bg-gray-100 dark:bg-gray-800` to `TableHeader` in `table.tsx` and `data-table.tsx` to apply a light gray background in light mode and a dark gray background in dark mode.
+
+2. **Sort Functionality**:
+   - Sorting is implemented in `data-table.tsx` via the `Button` with `ArrowUpDown` in the header. Clicking a header toggles sorting (ascending/descending). The `getSortedRowModel` and `onSortingChange` are correctly set up in `useReactTable`.
+   - All columns in `DashboardTable.tsx` have `enableSorting` set to `true` by default (since `enableSorting` is not explicitly set to `false`).
+
+3. **Borders**:
+   - Applied `border-gray-300` to:
+     - `Table` (outer border).
+     - `TableRow` (bottom border).
+     - `TableHead` and `TableCell` (right border, except for the last cell/head).
+     - `TableHeader` (row border).
+     - Search `Input`, pagination `Button`s, and "View" `DropdownMenuTrigger` in `data-table.tsx`.
+   - Used `last:border-r-0` in `TableHead` and `TableCell` to avoid a right border on the last column.
+
+4. **DashboardTable Usage**:
+   - Improved typing by using `Row<Payment>` instead of `any` in column `cell` definitions.
+   - Added a `Copy` icon to the "Copy payment ID" action.
+   - Integrated `react-hot-toast` for a success notification when copying the payment ID.
+   - Wrapped the table in a `div` with `p-4` for better spacing.
+
+5. **Dependencies**:
+   - Ensure `react-hot-toast` is installed (`npm install react-hot-toast`). If you don’t want to use it, replace the `toast.success` call in `DashboardTable.tsx` with:
+     ```typescript
+     alert("Payment ID copied to clipboard!");
+     ```
+   - Verify that `@tanstack/react-table`, `lucide-react`, and Tailwind CSS are installed and configured.
+
+### Testing Instructions
+- **Sorting**: Click on column headers (e.g., "Status", "Email", "Amount", "Created") to verify sorting toggles between ascending and descending order.
+- **Header Background**: Check that the header has a light gray background (`bg-gray-100`) in light mode and a dark gray background (`bg-gray-800`) in dark mode.
+- **Borders**: Ensure `border-gray-300` appears on the table, rows, and cells (right borders except for the last column).
+- **Actions**: Click "Copy payment ID" to verify the toast notification appears. Test "View details" and "Refund" to ensure they log correctly (or update with actual logic).
+- **Row Selection**: Select rows to verify the `selectedRows` count updates below the table.
+- **Search**: Use the search input to filter by "email" or "status".
+
+Replace the contents of the respective files with the provided code. If you encounter any issues or need further modifications, let me know!
