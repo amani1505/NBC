@@ -1,3 +1,4 @@
+Why description is not accessible it leaves the space empty but in the object there is description
 import DataTable from "@/components/reusable/data-table";
 import { cn } from "@/lib/utils";
 import type { TableAction, TableColumn } from "@/types/table";
@@ -21,152 +22,163 @@ function DashboardTable() {
   const [selectedRows, setSelectedRows] = useState<Payment[]>([]);
 
   // Memoize data to prevent unnecessary re-renders
-  const data = useMemo<Payment[]>(() => [
-    {
-      id: "m5gr84i9",
-      activity: "Insurance Application Submitted",
-      description: "Application for health insurance coverage",
-      amount: 316,
-      status: "success",
-      number: "npx-5566-uiin",
-      email: "ken99@example.com",
-      date: "2024-01-15",
-    },
-    {
-      id: "3u1reuv4",
-      amount: 242,
-      activity: "Insurance Application Submitted",
-      description: "Application for auto insurance coverage",
-      status: "success",
-      number: "npx-5566-uiin",
-      email: "Abe45@example.com",
-      date: "2024-01-14",
-    },
-    {
-      id: "derv1ws0",
-      amount: 837,
-      activity: "Insurance Application Submitted",
-      description: "Application for home insurance coverage",
-      status: "processing",
-      number: "npx-5566-uiin",
-      email: "Monserrat44@example.com",
-      date: "2024-01-13",
-    },
-    {
-      id: "5kma53ae",
-      amount: 874,
-      activity: "Google",
-      description: "Google service transaction",
-      status: "success",
-      number: "npx-5566-uiin",
-      email: "Silas22@example.com",
-      date: "2024-01-12",
-    },
-    {
-      id: "bhqecj4p",
-      amount: 721,
-      activity: "Slack",
-      description: "Slack subscription payment",
-      status: "failed",
-      number: "npx-5566-uiin",
-      email: "carmella@example.com",
-      date: "2024-01-11",
-    },
-  ], []);
+  const data = useMemo<Payment[]>(
+    () => [
+      {
+        id: "m5gr84i9",
+        activity: "Insurance Application Submitted",
+        description: "Application for health insurance coverage",
+        amount: 316,
+        status: "success",
+        number: "npx-5566-uiin",
+        email: "ken99@example.com",
+        date: "2024-01-15",
+      },
+      {
+        id: "3u1reuv4",
+        amount: 242,
+        activity: "Insurance Application Submitted",
+        description: "Application for auto insurance coverage",
+        status: "success",
+        number: "npx-5566-uiin",
+        email: "Abe45@example.com",
+        date: "2024-01-14",
+      },
+      {
+        id: "derv1ws0",
+        amount: 837,
+        activity: "Insurance Application Submitted",
+        description: "Application for home insurance coverage",
+        status: "processing",
+        number: "npx-5566-uiin",
+        email: "Monserrat44@example.com",
+        date: "2024-01-13",
+      },
+      {
+        id: "5kma53ae",
+        amount: 874,
+        activity: "Google",
+        description: "Google service transaction",
+        status: "success",
+        number: "npx-5566-uiin",
+        email: "Silas22@example.com",
+        date: "2024-01-12",
+      },
+      {
+        id: "bhqecj4p",
+        amount: 721,
+        activity: "Slack",
+        description: "Slack subscription payment",
+        status: "failed",
+        number: "npx-5566-uiin",
+        email: "carmella@example.com",
+        date: "2024-01-11",
+      },
+    ],
+    []
+  );
 
   // Memoize columns to prevent unnecessary recreation
-  const columns = useMemo<TableColumn<Payment>[]>(() => [
-    {
-      id: "activity",
-      header: "Activity",
-      accessorKey: "activity",
-      cell: ({ row }: { row: any }) => (
-        <div className="flex flex-col">
-          <div className="font-medium">{row.getValue("activity") || "-"}</div>
-          <div className="text-sm text-muted-foreground">
-            {row.getValue("description") || "No description available"}
+  const columns = useMemo<TableColumn<Payment>[]>(
+    () => [
+      {
+        id: "activity",
+        header: "Activity",
+        accessorKey: "activity",
+        cell: ({ row }: { row: any }) => (
+          <div className="flex flex-col">
+            <div className="font-medium">{row.getValue("activity") || "-"}</div>
+            {row.getValue("description") && (
+              <div className="text-xs text-muted-foreground">
+                {row.getValue("description") || "No description available"}
+              </div>
+            )}
           </div>
-        </div>
-      ),
-    },
-    {
-      id: "number",
-      header: "Number",
-      accessorKey: "number",
-      cell: ({ row }: { row: any }) => (
-        <div className="font-medium uppercase">
-          {row.getValue("number") || "-"}
-        </div>
-      ),
-    },
-    {
-      id: "status",
-      header: "Status",
-      accessorKey: "status",
-      cell: ({ row }: { row: any }) => {
-        const status = row.getValue("status") as string;
-        return (
-          <Badge
-            variant={
-              status === "pending"
-                ? "warning"
-                : status === "success"
-                ? "success"
-                : status === "failed"
-                ? "danger"
-                : status === "processing"
-                ? "processing"
-                : "default"
-            }
-          >
-            <div
-              className={cn("mr-1 h-2 w-2 rounded-full", {
-                "bg-yellow-600": status === "pending",
-                "bg-blue-600": status === "processing",
-                "bg-green-600": status === "success",
-                "bg-red-600": status === "failed",
-              })}
-            />
-            {status}
-          </Badge>
-        );
+        ),
       },
-    },
-    {
-      id: "date",
-      header: "Date",
-      accessorKey: "date",
-      cell: ({ row }: { row: any }) => (
-        <div className="lowercase font-medium">{row.getValue("date")}</div>
-      ),
-    },
-  ], []);
+      {
+        id: "number",
+        header: "Number",
+        accessorKey: "number",
+        cell: ({ row }: { row: any }) => (
+          <div className="font-medium uppercase">
+            {row.getValue("number") || "-"}
+          </div>
+        ),
+      },
+      {
+        id: "status",
+        header: "Status",
+        accessorKey: "status",
+        cell: ({ row }: { row: any }) => {
+          const status = row.getValue("status") as string;
+          return (
+            <Badge
+              variant={
+                status === "pending"
+                  ? "warning"
+                  : status === "success"
+                  ? "success"
+                  : status === "failed"
+                  ? "danger"
+                  : status === "processing"
+                  ? "processing"
+                  : "default"
+              }
+            >
+              <div
+                className={cn("mr-1 h-2 w-2 rounded-full", {
+                  "bg-yellow-600": status === "pending",
+                  "bg-blue-600": status === "processing",
+                  "bg-green-600": status === "success",
+                  "bg-red-600": status === "failed",
+                })}
+              />
+              {status}
+            </Badge>
+          );
+        },
+      },
+      {
+        id: "date",
+        header: "Date",
+        accessorKey: "date",
+        cell: ({ row }: { row: any }) => (
+          <div className="lowercase font-medium">{row.getValue("date")}</div>
+        ),
+      },
+    ],
+    []
+  );
 
   // Memoize actions to prevent unnecessary recreation
-  const actions = useMemo<TableAction<Payment>[]>(() => [
-    {
-      label: "Copy payment ID",
-      onClick: (payment) => {
-        navigator.clipboard.writeText(payment.id);
-        toast.success("Payment ID copied to clipboard!");
+  const actions = useMemo<TableAction<Payment>[]>(
+    () => [
+      {
+        label: "Copy payment ID",
+        onClick: (payment) => {
+          navigator.clipboard.writeText(payment.id);
+          toast.success("Payment ID copied to clipboard!");
+        },
+        icon: <Copy className="h-4 w-4" />,
       },
-      icon: <Copy className="h-4 w-4" />,
-    },
-    {
-      label: "View details",
-      onClick: (payment) => {
-        console.log("View payment:", payment);
+      {
+        label: "View details",
+        onClick: (payment) => {
+          console.log("View payment:", payment);
+        },
       },
-    },
-    {
-      label: "Refund",
-      onClick: (payment) => {
-        console.log("Refund payment:", payment);
+      {
+        label: "Refund",
+        onClick: (payment) => {
+          console.log("Refund payment:", payment);
+        },
+        variant: "destructive",
+        show: (payment) => payment.status === "success",
       },
-      variant: "destructive",
-      show: (payment) => payment.status === "success",
-    },
-  ], []);
+    ],
+    []
+  );
 
   return (
     <div className="p-4 space-y-3 border border-gray-300 rounded-lg bg-white">
@@ -205,3 +217,4 @@ function DashboardTable() {
 }
 
 export default DashboardTable;
+
