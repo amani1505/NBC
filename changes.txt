@@ -75,7 +75,16 @@ function DashboardTable() {
       header: "Activity",
       accessorKey: "activity",
       cell: ({ row }: { row: any }) => (
-        <div className="font-medium">{row.getValue("activity") || "-"}</div>
+        <div className="flex flex-col">
+          <div className="font-medium">{row.getValue("activity") || "-"}</div>
+          <div className="text-sm text-muted-foreground">
+            {row.getValue("activity") === "Google" 
+              ? "Google service transaction"
+              : row.getValue("activity") === "Slack" 
+              ? "Slack subscription payment"
+              : "Application for insurance coverage"}
+          </div>
+        </div>
       ),
     },
     {
