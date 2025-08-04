@@ -1,4 +1,194 @@
-// components/reusable/data-table.tsx
+I want where I use the data table to have a little codes to make the table work properly
+Also add the background the header of the table
+Add Sort functionality to the table header
+The borders must be border-grey-300
+
+
+/Users/abaa429/Downloads/NBC-SITE/src/Page-Sections/UserDashboardPageSection/DashboadSections/DashboardTable.tsx
+
+import DataTable from "@/components/reusable/data-table";
+import { cn } from "@/lib/utils";
+import type { TableAction, TableColumn } from "@/types/table";
+import { useState } from "react";
+
+function DashboardTable() {
+  const [selectedRows, setSelectedRows] = useState<Payment[]>([]);
+
+  type Payment = {
+    id: string;
+    amount: number;
+    status: "pending" | "processing" | "success" | "failed";
+    email: string;
+    createdAt: string;
+  };
+
+  const data: Payment[] = [
+    {
+      id: "m5gr84i9",
+      amount: 316,
+      status: "success",
+      email: "ken99@example.com",
+      createdAt: "2024-01-15",
+    },
+    {
+      id: "3u1reuv4",
+      amount: 242,
+      status: "success",
+      email: "Abe45@example.com",
+      createdAt: "2024-01-14",
+    },
+    {
+      id: "derv1ws0",
+      amount: 837,
+      status: "processing",
+      email: "Monserrat44@example.com",
+      createdAt: "2024-01-13",
+    },
+    {
+      id: "5kma53ae",
+      amount: 874,
+      status: "success",
+      email: "Silas22@example.com",
+      createdAt: "2024-01-12",
+    },
+    {
+      id: "bhqecj4p",
+      amount: 721,
+      status: "failed",
+      email: "carmella@example.com",
+      createdAt: "2024-01-11",
+    },
+  ];
+
+  const columns: TableColumn<Payment>[] = [
+    {
+      id: "status",
+      header: "Status",
+      accessorKey: "status",
+      cell: ({ row }:{row:any}) => {
+        const status = row.getValue("status") as string;
+        return (
+          <div
+            className={cn(
+              "inline-flex items-center rounded-full px-2 py-1 text-xs font-medium",
+              {
+                "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400":
+                  status === "pending",
+                "bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400":
+                  status === "processing",
+                "bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400":
+                  status === "success",
+                "bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400":
+                  status === "failed",
+              }
+            )}
+          >
+            <div
+              className={cn("mr-1 h-2 w-2 rounded-full", {
+                "bg-yellow-600": status === "pending",
+                "bg-blue-600": status === "processing",
+                "bg-green-600": status === "success",
+                "bg-red-600": status === "failed",
+              })}
+            />
+            {status}
+          </div>
+        );
+      },
+    },
+    {
+      id: "email",
+      header: "Email",
+      accessorKey: "email",
+      cell: ({ row }: { row: any }) => (
+        <div className="lowercase font-medium">{row.getValue("email")}</div>
+      ),
+    },
+    {
+      id: "amount",
+      header: "Amount",
+      accessorKey: "amount",
+      meta: { align: "right" },
+      cell: ({ row }: { row: any }) => {
+        const amount = parseFloat(row.getValue("amount"));
+        const formatted = new Intl.NumberFormat("en-US", {
+          style: "currency",
+          currency: "USD",
+        }).format(amount);
+        return (
+          <div className="text-right font-mono font-medium">{formatted}</div>
+        );
+      },
+    },
+    {
+      id: "createdAt",
+      header: "Created",
+      accessorKey: "createdAt",
+      cell: ({ row }: { row: any }) => {
+        const date = new Date(row.getValue("createdAt"));
+        return (
+          <div className="text-sm text-muted-foreground">
+            {date.toLocaleDateString()}
+          </div>
+        );
+      },
+    },
+  ];
+
+  const actions: TableAction<Payment>[] = [
+    {
+      label: "Copy payment ID",
+      onClick: (payment: any) => {
+        navigator.clipboard.writeText(payment.id);
+        // You could add a toast notification here
+      },
+    },
+    {
+      label: "View details",
+      onClick: (payment: any) => {
+        console.log("View payment:", payment);
+      },
+    },
+    {
+      label: "Refund",
+      onClick: (payment: any) => {
+        console.log("Refund payment:", payment);
+      },
+      variant: "destructive",
+      show: (payment: any) => payment.status === "success",
+    },
+  ];
+
+  return (
+    <>
+      <DataTable
+        data={data}
+        columns={columns}
+        actions={actions}
+        searchableColumns={["email", "status"]}
+        searchPlaceholder="Search payments..."
+        enableRowSelection={true}
+        enableColumnVisibility={true}
+        enablePagination={true}
+        pageSize={10}
+        onRowSelectionChange={setSelectedRows}
+        emptyStateMessage="No payments found."
+      />
+
+      {selectedRows.length > 0 && (
+        <div className="mt-4 p-4 bg-muted rounded-lg">
+          <p className="text-sm font-medium">
+            Selected {selectedRows.length} payment(s)
+          </p>
+        </div>
+      )}
+    </>
+  );
+}
+
+export default DashboardTable;
+
+/Users/abaa429/Downloads/NBC-SITE/src/components/reusable/data-table.tsx
 import React, { useState, useMemo } from 'react';
 import {
   flexRender,
@@ -434,3 +624,178 @@ function DataTable<T extends Record<string, any>>({
 }
 
 export default DataTable;
+
+
+
+
+/Users/abaa429/Downloads/NBC-SITE/src/types/table.ts
+
+
+
+import type { HeaderContext } from '@tanstack/react-table';
+import type { ReactNode } from 'react';
+
+
+export interface TableColumn<T> {
+  id: string;
+  header: string | ((props: HeaderContext<T, unknown>) => ReactNode);
+  accessorKey?: keyof T;
+  cell?: (props: { row: { original: T; getValue: (key: string) => any } }) => ReactNode;
+  enableSorting?: boolean;
+  enableHiding?: boolean;
+  sortingFn?: string;
+  meta?: {
+    align?: 'left' | 'center' | 'right';
+    className?: string;
+  };
+}
+
+export interface TableAction<T> {
+  label: string;
+  onClick: (row: T) => void;
+  icon?: ReactNode;
+  variant?: 'default' | 'destructive';
+  show?: (row: T) => boolean;
+}
+
+export interface DataTableProps<T> {
+  data: T[];
+  columns: TableColumn<T>[];
+  searchableColumns?: (keyof T)[];
+  searchPlaceholder?: string;
+  actions?: TableAction<T>[];
+  enableRowSelection?: boolean;
+  enableColumnVisibility?: boolean;
+  enablePagination?: boolean;
+  pageSize?: number;
+  className?: string;
+  emptyStateMessage?: string;
+  loading?: boolean;
+  onRowSelectionChange?: (selectedRows: T[]) => void;
+}
+
+
+
+
+
+
+/Users/abaa429/Downloads/NBC-SITE/src/components/ui/table.tsx
+
+
+
+
+import * as React from "react"
+
+import { cn } from "@/lib/utils"
+
+function Table({ className, ...props }: React.ComponentProps<"table">) {
+  return (
+    <div
+      data-slot="table-container"
+      className="relative w-full overflow-x-auto"
+    >
+      <table
+        data-slot="table"
+        className={cn("w-full caption-bottom text-sm", className)}
+        {...props}
+      />
+    </div>
+  )
+}
+
+function TableHeader({ className, ...props }: React.ComponentProps<"thead">) {
+  return (
+    <thead
+      data-slot="table-header"
+      className={cn("[&_tr]:border-b", className)}
+      {...props}
+    />
+  )
+}
+
+function TableBody({ className, ...props }: React.ComponentProps<"tbody">) {
+  return (
+    <tbody
+      data-slot="table-body"
+      className={cn("[&_tr:last-child]:border-0", className)}
+      {...props}
+    />
+  )
+}
+
+function TableFooter({ className, ...props }: React.ComponentProps<"tfoot">) {
+  return (
+    <tfoot
+      data-slot="table-footer"
+      className={cn(
+        "bg-muted/50 border-t font-medium [&>tr]:last:border-b-0",
+        className
+      )}
+      {...props}
+    />
+  )
+}
+
+function TableRow({ className, ...props }: React.ComponentProps<"tr">) {
+  return (
+    <tr
+      data-slot="table-row"
+      className={cn(
+        "hover:bg-muted/50 data-[state=selected]:bg-muted border-b transition-colors",
+        className
+      )}
+      {...props}
+    />
+  )
+}
+
+function TableHead({ className, ...props }: React.ComponentProps<"th">) {
+  return (
+    <th
+      data-slot="table-head"
+      className={cn(
+        "text-foreground h-10 px-2 text-left align-middle font-medium whitespace-nowrap [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]",
+        className
+      )}
+      {...props}
+    />
+  )
+}
+
+function TableCell({ className, ...props }: React.ComponentProps<"td">) {
+  return (
+    <td
+      data-slot="table-cell"
+      className={cn(
+        "p-2 align-middle whitespace-nowrap [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]",
+        className
+      )}
+      {...props}
+    />
+  )
+}
+
+function TableCaption({
+  className,
+  ...props
+}: React.ComponentProps<"caption">) {
+  return (
+    <caption
+      data-slot="table-caption"
+      className={cn("text-muted-foreground mt-4 text-sm", className)}
+      {...props}
+    />
+  )
+}
+
+export {
+  Table,
+  TableHeader,
+  TableBody,
+  TableFooter,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableCaption,
+}
+
