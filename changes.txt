@@ -1,841 +1,216 @@
-```tsx
-import DataTable from "@/components/reusable/data-table";
-import { cn } from "@/lib/utils";
-import type { TableAction, TableColumn } from "@/types/table";
-import { useState } from "react";
-import toast from "react-hot-toast";
-import { Copy } from "lucide-react";
-import { Row } from "@tanstack/react-table";
+I want the error page ,not found page and the under maintenance to independent page that are not under any layout
 
-type Payment = {
-  id: string;
-  amount: number;
-  status: "pending" | "processing" | "success" | "failed";
-  email: string;
-  createdAt: string;
-};
+import { Suspense, lazy } from "react";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Footer from "./components/Home/Footer";
+import MainNavigation from "./components/Navigation/MainNavigation";
+import "./App.css";
+import BusinessBanking from "./Pages/Landing/BusinessBanking/BusinessBanking";
+import CMSLayout from "./Pages/Dashboard/CMS/CMSLayout";
+import UserDashboardLayout from "./Pages/Dashboard/User/UserDashboardLayout";
 
-function DashboardTable() {
-  const [selectedRows, setSelectedRows] = useState<Payment[]>([]);
+// Lazy Loading Pages
+const Home = lazy(() => import("./Pages/Landing/Home"));
+const PersonalBanking = lazy(
+  () => import("./Pages/Landing/PersonalBaking/PersonalBanking")
+);
+const NotFound = lazy(() => import("./Pages/Status/NotFound"));
+const Error = lazy(() => import("./Pages/Status/Error"));
+const UnderMaintenance = lazy(() => import("./Pages/Status/UnderMaintenance"));
+const Diaspora = lazy(() => import("./Pages/Landing/PersonalBaking/Diaspora"));
+const Individual = lazy(
+  () => import("./Pages/Landing/PersonalBaking/Individual")
+);
+const Private = lazy(() => import("./Pages/Landing/PersonalBaking/Private"));
+const Privilages = lazy(
+  () => import("./Pages/Landing/PersonalBaking/Privilages")
+);
+const SingleAccount = lazy(() => import("./Pages/Landing/SingleAccount"));
+const SingleInsurance = lazy(() => import("./Pages/Landing/SingleInsurance"));
+const SingleLoan = lazy(() => import("./Pages/Landing/SingleLoan"));
+const WaytoBank = lazy(() => import("./Pages/Landing/WaytoBank"));
+const CompareAccount = lazy(() => import("./Pages/Landing/CompareAccount"));
 
-  const data: Payment[] = [
-    {
-      id: "m5gr84i9",
-      amount: 316,
-      status: "success",
-      email: "ken99@example.com",
-      createdAt: "2024-01-15",
-    },
-    {
-      id: "3u1reuv4",
-      amount: 242,
-      status: "success",
-      email: "Abe45@example.com",
-      createdAt: "2024-01-14",
-    },
-    {
-      id: "derv1ws0",
-      amount: 837,
-      status: "processing",
-      email: "Monserrat44@example.com",
-      createdAt: "2024-01-13",
-    },
-    {
-      id: "5kma53ae",
-      amount: 874,
-      status: "success",
-      email: "Silas22@example.com",
-      createdAt: "2024-01-12",
-    },
-    {
-      id: "bhqecj4p",
-      amount: 721,
-      status: "failed",
-      email: "carmella@example.com",
-      createdAt: "2024-01-11",
-    },
-  ];
+// ABOUT PAGES
+const About = lazy(() => import("./Pages/Landing/About/About"));
+const ContactUs = lazy(() => import("./Pages/Landing/ContactUs"));
+const Overview = lazy(() => import("./Pages/Landing/About/Overview"));
+const Careers = lazy(() => import("./Pages/Landing/About/Careers"));
+const Governance = lazy(() => import("./Pages/Landing/About/Governance"));
+const InvestorRelations = lazy(
+  () => import("./Pages/Landing/About/InvestorRelations")
+);
+const News = lazy(() => import("./Pages/Landing/About/News"));
+const Sustainability = lazy(
+  () => import("./Pages/Landing/About/Sustainability")
+);
+const Tenders = lazy(() => import("./Pages/Landing/About/Tenders"));
 
-  const columns: TableColumn<Payment>[] = [
-    {
-      id: "status",
-      header: "Status",
-      accessorKey: "status",
-      cell: ({ row }: { row: Row<Payment> }) => {
-        const status = row.getValue("status") as string;
-        return (
-          <div
-            className={cn(
-              "inline-flex items-center rounded-full px-2 py-1 text-xs font-medium",
-              {
-                "bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-400":
-                  status === "pending",
-                "bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-400":
-                  status === "processing",
-                "bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-400":
-                  status === "success",
-                "bg-red-100 text-red-800 dark:bg-red-900/20 dark:text-red-400":
-                  status === "failed",
-              }
-            )}
-          >
-            <div
-              className={cn("mr-1 h-2 w-2 rounded-full", {
-                "bg-yellow-600": status === "pending",
-                "bg-blue-600": status === "processing",
-                "bg-green-600": status === "success",
-                "bg-red-600": status === "failed",
-              })}
-            />
-            {status}
-          </div>
-        );
-      },
-    },
-    {
-      id: "email",
-      header: "Email",
-      accessorKey: "email",
-      cell: ({ row }: { row: Row<Payment> }) => (
-        <div className="lowercase font-medium">{row.getValue("email")}</div>
-      ),
-    },
-    {
-      id: "amount",
-      header: "Amount",
-      accessorKey: "amount",
-      meta: { align: "right" },
-      cell: ({ row }: { row: Row<Payment> }) => {
-        const amount = parseFloat(row.getValue("amount"));
-        const formatted = new Intl.NumberFormat("en-US", {
-          style: "currency",
-          currency: "USD",
-        }).format(amount);
-        return (
-          <div className="text-right font-mono font-medium">{formatted}</div>
-        );
-      },
-    },
-    {
-      id: "createdAt",
-      header: "Created",
-      accessorKey: "createdAt",
-      cell: ({ row }: { row: Row<Payment> }) => {
-        const date = new Date(row.getValue("createdAt"));
-        return (
-          <div className="text-sm text-muted-foreground">
-            {date.toLocaleDateString()}
-          </div>
-        );
-      },
-    },
-  ];
+// Business Banking Pages
+const SMEs = lazy(() => import("./Pages/Landing/BusinessBanking/SMEs"));
+const MicroEnterprise = lazy(
+  () => import("./Pages/Landing/BusinessBanking/MicroEnterprise")
+);
+const Commercial = lazy(
+  () => import("./Pages/Landing/BusinessBanking/Commercial")
+);
 
-  const actions: TableAction<Payment>[] = [
-    {
-      label: "Copy payment ID",
-      onClick: (payment) => {
-        navigator.clipboard.writeText(payment.id);
-        toast.success("Payment ID copied to clipboard!");
-      },
-      icon: <Copy className="h-4 w-4" />,
-    },
-    {
-      label: "View details",
-      onClick: (payment) => {
-        console.log("View payment:", payment);
-      },
-    },
-    {
-      label: "Refund",
-      onClick: (payment) => {
-        console.log("Refund payment:", payment);
-      },
-      variant: "destructive",
-      show: (payment) => payment.status === "success",
-    },
-  ];
+const WhistleBlowing = lazy(() => import("./Pages/Landing/WhistleBlowing"));
+const WebTerms = lazy(() => import("./Pages/Landing/WebTerms"));
+const TermsCondition = lazy(() => import("./Pages/Landing/TermsCondition"));
+const DataPrivacy = lazy(() => import("./Pages/Landing/DataPrivacy"));
 
-  return (
-    <div className="p-4">
-      <DataTable
-        data={data}
-        columns={columns}
-        actions={actions}
-        searchableColumns={["email", "status"]}
-        searchPlaceholder="Search payments..."
-        enableRowSelection={true}
-        enableColumnVisibility={true}
-        enablePagination={true}
-        pageSize={10}
-        onRowSelectionChange={setSelectedRows}
-        emptyStateMessage="No payments found."
-        className="border-gray-300"
-      />
-      {selectedRows.length > 0 && (
-        <div className="mt-4 p-4 bg-muted rounded-lg">
-          <p className="text-sm font-medium">
-            Selected {selectedRows.length} payment(s)
-          </p>
-        </div>
-      )}
-    </div>
-  );
-}
+const SingleNews = lazy(() => import("./Pages/Landing/SingleNews"));
 
-export default DashboardTable;
-```
+// Security Pages
+const SecurityCenter = lazy(() => import("./Pages/Landing/SecurityCenter"));
+const FraudaAlert = lazy(() => import("./Pages/Landing/FraudAlert"));
 
-### 2. `data-table.tsx`
+// Currency Converter
+const CurrencyConvetor = lazy(() => import("./Pages/Landing/CurrencyConvetor"));
 
-This file includes the `DataTable` component with the header background (`bg-gray-100` for light mode, `bg-gray-800` for dark mode), `border-gray-300` borders, and verified sort functionality.
+// CMS DASHBOARD PAGES
+// import CMSDashboard from "./Pages/Dashboard/CMS/CMSPages/CMSDashboard";
+const CMSDashboard = lazy(
+  () => import("./Pages/Dashboard/CMS/CMSPages/CMSDashboard")
+);
+const CMSSection = lazy(
+  () => import("./Pages/Dashboard/CMS/CMSPages/Sections")
+);
 
-<xaiArtifact artifact_id="037c6bed-4429-4c59-b627-00c9ee00921b" artifact_version_id="665c85a8-9635-4e85-b1ab-99dfaf880a33" title="data-table.tsx" contentType="text/typescript">
-```tsx
-import React, { useState, useMemo } from 'react';
-import {
-  flexRender,
-  getCoreRowModel,
-  getFilteredRowModel,
-  getPaginationRowModel,
-  getSortedRowModel,
-  useReactTable,
-  type ColumnDef,
-  type ColumnFiltersState,
-  type SortingState,
-  type VisibilityState,
-  type HeaderContext,
-} from '@tanstack/react-table';
-import { ArrowUpDown, ChevronDown, MoreHorizontal, Search, X } from 'lucide-react';
-import Button from '@/components/ui/button';
-import { Checkbox } from '@/components/ui/checkbox';
-import {
-  DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { Input } from '@/components/ui/input';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from '@/components/ui/table';
-import { cn } from '@/lib/utils';
-import type { DataTableProps } from '@/types/table';
+// DASHBOARD PAGES
 
-// Loading skeleton component
-const TableSkeleton = ({ columns }: { columns: number }) => (
+const UserDashboard = lazy(
+  () => import("@/Pages/Dashboard/User/UserDashboard")
+);
+
+// Layout Components
+const MainLayout = ({ children }: { children: React.ReactNode }) => (
   <>
-    {Array.from({ length: 5 }).map((_, i) => (
-      <TableRow key={i}>
-        {Array.from({ length: columns }).map((_, j) => (
-          <TableCell key={j} className="border-gray-300">
-            <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded animate-pulse" />
-          </TableCell>
-        ))}
-      </TableRow>
-    ))}
+    <MainNavigation />
+    {children}
+    <Footer />
   </>
 );
 
-function DataTable<T extends Record<string, any>>({
-  data,
-  columns,
-  searchableColumns = [],
-  searchPlaceholder = "Search...",
-  actions = [],
-  enableRowSelection = false,
-  enableColumnVisibility = true,
-  enablePagination = true,
-  pageSize = 10,
-  className,
-  emptyStateMessage = "No results found.",
-  loading = false,
-  onRowSelectionChange,
-}: DataTableProps<T>) {
-  const [sorting, setSorting] = useState<SortingState>([]);
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
-  const [rowSelection, setRowSelection] = useState({});
-  const [globalFilter, setGlobalFilter] = useState('');
+const LoadingFallback = () => (
+  <div style={{ textAlign: "center", marginTop: "2rem" }}>Loading...</div>
+);
 
-  // Convert custom columns to TanStack Table columns
-  const tableColumns = useMemo<ColumnDef<T>[]>(() => {
-    const cols: ColumnDef<T>[] = [];
-
-    // Add selection column if enabled
-    if (enableRowSelection) {
-      cols.push({
-        id: 'select',
-        header: ({ table }) => (
-          <Checkbox
-            checked={
-              table.getIsAllPageRowsSelected() ||
-              (table.getIsSomePageRowsSelected() && 'indeterminate')
-            }
-            onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-            aria-label="Select all"
-            className="translate-y-[2px]"
-          />
-        ),
-        cell: ({ row }) => (
-          <Checkbox
-            checked={row.getIsSelected()}
-            onCheckedChange={(value) => row.toggleSelected(!!value)}
-            aria-label="Select row"
-            className="translate-y-[2px]"
-          />
-        ),
-        enableSorting: false,
-        enableHiding: false,
-        size: 40,
-      });
-    }
-
-    // Add data columns
-    columns.forEach((column) => {
-      const col: ColumnDef<T> = {
-        id: column.id,
-        accessorKey: column.accessorKey,
-        enableSorting: column.enableSorting ?? true,
-        enableHiding: column.enableHiding ?? true,
-        header: (context: HeaderContext<T, unknown>) => {
-          // If header is a string
-          if (typeof column.header === 'string') {
-            if (!column.enableSorting) return column.header;
-            return (
-              <Button
-                variant="ghost"
-                onClick={() => context.column.toggleSorting(context.column.getIsSorted() === 'asc')}
-                className={cn(
-                  "h-8 px-2 -ml-2 font-medium",
-                  column.meta?.align === 'right' && 'justify-end',
-                  column.meta?.align === 'center' && 'justify-center'
-                )}
-              >
-                {column.header}
-                <ArrowUpDown className="ml-1 h-3 w-3" />
-              </Button>
-            );
-          }
-          // If header is a function, call it with the full context
-          return column.header(context);
-        },
-        cell: column.cell || (({ row }) => {
-          const value = column.accessorKey ? row.getValue(column.accessorKey as string) : '';
-          return (
-            <div className={cn(
-              column.meta?.align === 'right' && 'text-right',
-              column.meta?.align === 'center' && 'text-center',
-              column.meta?.className
-            )}>
-              {String(value)}
-            </div>
-          );
-        }),
-      };
-      cols.push(col);
-    });
-
-    // Add actions column if actions are provided
-    if (actions.length > 0) {
-      cols.push({
-        id: 'actions',
-        enableHiding: false,
-        enableSorting: false,
-        cell: ({ row }) => {
-          const visibleActions = actions.filter(action => 
-            !action.show || action.show(row.original)
-          );
-          
-          if (visibleActions.length === 0) return null;
-
-          return (
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="h-8 w-8 p-0">
-                  <span className="sr-only">Open menu</span>
-                  <MoreHorizontal className="h-4 w-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56">
-                <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                {visibleActions.map((action, index) => (
-                  <DropdownMenuItem
-                    key={index}
-                    onClick={() => action.onClick(row.original)}
-                    className={cn(
-                      action.variant === 'destructive' && 
-                      'text-red-600 focus:text-red-600 dark:text-red-400'
-                    )}
-                  >
-                    {action.icon && <span className="mr-2">{action.icon}</span>}
-                    {action.label}
-                  </DropdownMenuItem>
-                ))}
-              </DropdownMenuContent>
-            </DropdownMenu>
-          );
-        },
-        size: 40,
-      });
-    }
-
-    return cols;
-  }, [columns, actions, enableRowSelection]);
-
-  const table = useReactTable({
-    data,
-    columns: tableColumns,
-    onSortingChange: setSorting,
-    onColumnFiltersChange: setColumnFilters,
-    getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: enablePagination ? getPaginationRowModel() : undefined,
-    getSortedRowModel: getSortedRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
-    onColumnVisibilityChange: setColumnVisibility,
-    onRowSelectionChange: setRowSelection,
-    onGlobalFilterChange: setGlobalFilter,
-    globalFilterFn: 'includesString',
-    initialState: {
-      pagination: {
-        pageSize,
-      },
-    },
-    state: {
-      sorting,
-      columnFilters,
-      columnVisibility,
-      rowSelection,
-      globalFilter,
-    },
-  });
-
-  // Handle row selection change callback
-  React.useEffect(() => {
-    if (onRowSelectionChange && enableRowSelection) {
-      const selectedRows = table.getFilteredSelectedRowModel().rows.map(row => row.original);
-      onRowSelectionChange(selectedRows);
-    }
-  }, [rowSelection, onRowSelectionChange, table, enableRowSelection]);
-
-  const hasSearchableColumns = searchableColumns.length > 0;
-
+function App() {
   return (
-    <div className={cn("w-full space-y-4", className)}>
-      {/* Table Controls */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center space-x-2">
-          {/* Global Search */}
-          {hasSearchableColumns && (
-            <div className="relative">
-              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder={searchPlaceholder}
-                value={globalFilter}
-                onChange={(e) => setGlobalFilter(e.target.value)}
-                className="pl-8 max-w-sm border-gray-300"
-              />
-              {globalFilter && (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="absolute right-1 top-1 h-6 w-6 p-0"
-                  onClick={() => setGlobalFilter('')}
-                >
-                  <X className="h-3 w-3" />
-                </Button>
-              )}
-            </div>
-          )}
-        </div>
+    <BrowserRouter>
+      <Suspense fallback={<LoadingFallback />}>
+        <Routes>
+          {/* USER DASHBOARD */}
+          <Route path="dashboard" element={<UserDashboardLayout />}>
+            <Route index element={<UserDashboard />} />
+          </Route>
 
-        {/* Column Visibility */}
-        {enableColumnVisibility && (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="sm" className="border-gray-300">
-                <ChevronDown className="h-4 w-4" />
-                View
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-56">
-              <DropdownMenuLabel>Toggle columns</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              {table
-                .getAllColumns()
-                .filter((column) => column.getCanHide())
-                .map((column) => {
-                  return (
-                    <DropdownMenuCheckboxItem
-                      key={column.id}
-                      className="capitalize"
-                      checked={column.getIsVisible()}
-                      onCheckedChange={(value) => column.toggleVisibility(!!value)}
-                    >
-                      {column.id}
-                    </DropdownMenuCheckboxItem>
-                  );
-                })}
-            </DropdownMenuContent>
-          </DropdownMenu>
-        )}
-      </div>
+          {/* CMS Dashboard Routes - No navigation/footer */}
+          <Route path="/cms/*" element={<CMSLayout />}>
+            <Route index element={<CMSDashboard />} />
+            <Route path="sections" element={<CMSSection />} />
+          </Route>
 
-      {/* Table */}
-      <div className="rounded-lg border border-gray-300 bg-card">
-        <Table>
-          <TableHeader className="bg-gray-100 dark:bg-gray-800">
-            {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id} className="border-gray-300">
-                {headerGroup.headers.map((header) => (
-                  <TableHead 
-                    key={header.id}
-                    style={{ width: header.getSize() !== 150 ? header.getSize() : undefined }}
-                    className="border-gray-300"
-                  >
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(header.column.columnDef.header, header.getContext())}
-                  </TableHead>
-                ))}
-              </TableRow>
-            ))}
-          </TableHeader>
-          <TableBody>
-            {loading ? (
-              <TableSkeleton columns={tableColumns.length} />
-            ) : table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && 'selected'}
-                  className="group border-gray-300"
-                >
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id} className="border-gray-300">
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))
-            ) : (
-              <TableRow className="border-gray-300">
-                <TableCell colSpan={tableColumns.length} className="h-24 text-center border-gray-300">
-                  <div className="flex flex-col items-center justify-center space-y-2 text-muted-foreground">
-                    <div className="text-sm">{emptyStateMessage}</div>
-                    {globalFilter && (
-                      <Button
-                        variant="link"
-                        size="sm"
-                        onClick={() => setGlobalFilter('')}
-                        className="text-xs"
-                      >
-                        Clear search
-                      </Button>
-                    )}
-                  </div>
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
-      </div>
+          {/* Main Website Routes - With navigation/footer */}
+          <Route
+            path="/*"
+            element={
+              <MainLayout>
+                <Routes>
+                  {/* Home Route */}
+                  <Route path="/" element={<Home />} />
 
-      {/* Table Footer */}
-      {enablePagination && (
-        <div className="flex items-center justify-between">
-          <div className="flex-1 text-sm text-muted-foreground">
-            {enableRowSelection && (
-              <>
-                {table.getFilteredSelectedRowModel().rows.length} of{' '}
-                {table.getFilteredRowModel().rows.length} row(s) selected.
-              </>
-            )}
-          </div>
-          <div className="flex items-center space-x-6 lg:space-x-8">
-            <div className="flex items-center space-x-2">
-              <p className="text-sm font-medium">Rows per page</p>
-              <select
-                value={table.getState().pagination.pageSize}
-                onChange={(e) => {
-                  table.setPageSize(Number(e.target.value));
-                }}
-                className="h-8 w-[70px] rounded border border-gray-300 bg-background px-2 text-sm"
-              >
-                {[10, 20, 30, 40, 50].map((pageSize) => (
-                  <option key={pageSize} value={pageSize}>
-                    {pageSize}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div className="flex w-[100px] items-center justify-center text-sm font-medium">
-              Page {table.getState().pagination.pageIndex + 1} of{' '}
-              {table.getPageCount()}
-            </div>
-            <div className="flex items-center space-x-2">
-              <Button
-                variant="outline"
-                className="h-8 w-8 p-0 border-gray-300"
-                onClick={() => table.setPageIndex(0)}
-                disabled={!table.getCanPreviousPage()}
-              >
-                <span className="sr-only">Go to first page</span>
-                ⇤
-              </Button>
-              <Button
-                variant="outline"
-                className="h-8 w-8 p-0 border-gray-300"
-                onClick={() => table.previousPage()}
-                disabled={!table.getCanPreviousPage()}
-              >
-                <span className="sr-only">Go to previous page</span>
-                ←
-              </Button>
-              <Button
-                variant="outline"
-                className="h-8 w-8 p-0 border-gray-300"
-                onClick={() => table.nextPage()}
-                disabled={!table.getCanNextPage()}
-              >
-                <span className="sr-only">Go to next page</span>
-                →
-              </Button>
-              <Button
-                variant="outline"
-                className="h-8 w-8 p-0 border-gray-300"
-                onClick={() => table.setPageIndex(table.getPageCount() - 1)}
-                disabled={!table.getCanNextPage()}
-              >
-                <span className="sr-only">Go to last page</span>
-                ⇥
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
+                  {/* Personal Banking Routes */}
+                  <Route path="personal-banking" element={<PersonalBanking />}>
+                    <Route index element={<Individual />} />
+                    <Route path="diaspora" element={<Diaspora />} />
+                    <Route path="priveleged" element={<Privilages />} />
+                    <Route path="private" element={<Private />} />
+                  </Route>
+
+                  {/* Dynamic Product Routes */}
+                  <Route
+                    path="accounts/:accountName"
+                    element={<SingleAccount />}
+                  />
+                  <Route path="loans/:loanName" element={<SingleLoan />} />
+                  <Route
+                    path="insurances/:insuranceName"
+                    element={<SingleInsurance />}
+                  />
+                  <Route
+                    path="way-to-bank/:wayToBankName"
+                    element={<WaytoBank />}
+                  />
+                  <Route
+                    path="compare-account/:compareAccountName"
+                    element={<CompareAccount />}
+                  />
+
+                  {/* About Section Routes */}
+                  <Route path="about" element={<About />}>
+                    <Route index element={<Overview />} />
+                    <Route path="careers" element={<Careers />} />
+                    <Route path="governance" element={<Governance />} />
+                    <Route
+                      path="investor-relations"
+                      element={<InvestorRelations />}
+                    />
+                    <Route path="news" element={<News />} />
+                    <Route path="sustainability" element={<Sustainability />} />
+                    <Route path="tenders" element={<Tenders />} />
+                  </Route>
+
+                  {/* Contact Route */}
+                  <Route path="contact-us" element={<ContactUs />} />
+
+                  {/* Business Banking Routes */}
+                  <Route path="business-banking" element={<BusinessBanking />}>
+                    <Route index element={<MicroEnterprise />} />
+                    <Route path="smes" element={<SMEs />} />
+                    <Route path="commercial" element={<Commercial />} />
+                  </Route>
+
+                  {/* Legal & Compliance Routes */}
+                  <Route path="whistle-blowing" element={<WhistleBlowing />} />
+                  <Route path="website-terms" element={<WebTerms />} />
+                  <Route path="terms-condition" element={<TermsCondition />} />
+                  <Route path="data-privacy" element={<DataPrivacy />} />
+
+                  {/* News Route */}
+                  <Route path="news/:newsName" element={<SingleNews />} />
+
+                  {/* Security Routes */}
+                  <Route path="security-center" element={<SecurityCenter />} />
+                  <Route path="fraud-alert" element={<FraudaAlert />} />
+
+                  {/* Utility Routes */}
+                  <Route
+                    path="currency-convetor"
+                    element={<CurrencyConvetor />}
+                  />
+
+                  {/* Status Routes */}
+                  <Route path="error" element={<Error />} />
+                  <Route
+                    path="under-maintenance"
+                    element={<UnderMaintenance />}
+                  />
+
+                  {/* 404 Route - Must be last */}
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+              </MainLayout>
+            }
+          />
+        </Routes>
+      </Suspense>
+    </BrowserRouter>
   );
 }
 
-export default DataTable;
-```
+export default App;
 
-### 3. `table.ts`
 
-The type definitions remain unchanged, as they are correct and support all required functionality.
-
-<xaiArtifact artifact_id="bdf12e6d-56f5-4638-b21a-5bbcf9d3159a" artifact_version_id="a41edeb2-ac24-4bc5-9ff6-d0a8469c9f59" title="table.ts" contentType="text/typescript">
-```typescript
-import type { HeaderContext } from '@tanstack/react-table';
-import type { ReactNode } from 'react';
-
-export interface TableColumn<T> {
-  id: string;
-  header: string | ((props: HeaderContext<T, unknown>) => ReactNode);
-  accessorKey?: keyof T;
-  cell?: (props: { row: { original: T; getValue: (key: string) => any } }) => ReactNode;
-  enableSorting?: boolean;
-  enableHiding?: boolean;
-  sortingFn?: string;
-  meta?: {
-    align?: 'left' | 'center' | 'right';
-    className?: string;
-  };
-}
-
-export interface TableAction<T> {
-  label: string;
-  onClick: (row: T) => void;
-  icon?: ReactNode;
-  variant?: 'default' | 'destructive';
-  show?: (row: T) => boolean;
-}
-
-export interface DataTableProps<T> {
-  data: T[];
-  columns: TableColumn<T>[];
-  searchableColumns?: (keyof T)[];
-  searchPlaceholder?: string;
-  actions?: TableAction<T>[];
-  enableRowSelection?: boolean;
-  enableColumnVisibility?: boolean;
-  enablePagination?: boolean;
-  pageSize?: number;
-  className?: string;
-  emptyStateMessage?: string;
-  loading?: boolean;
-  onRowSelectionChange?: (selectedRows: T[]) => void;
-}
-```
-
-### 4. `table.tsx`
-
-This file includes the table UI components with `border-gray-300` borders and a header background.
-
-<xaiArtifact artifact_id="7e6c3788-7607-4ae7-9e96-1d491f25f847" artifact_version_id="6ea83c1e-bc4a-40ad-a07c-3cbfdee03c51" title="table.tsx" contentType="text/typescript">
-```tsx
-import * as React from "react"
-import { cn } from "@/lib/utils"
-
-function Table({ className, ...props }: React.ComponentProps<"table">) {
-  return (
-    <div
-      data-slot="table-container"
-      className="relative w-full overflow-x-auto"
-    >
-      <table
-        data-slot="table"
-        className={cn("w-full caption-bottom text-sm border border-gray-300", className)}
-        {...props}
-      />
-    </div>
-  )
-}
-
-function TableHeader({ className, ...props }: React.ComponentProps<"thead">) {
-  return (
-    <thead
-      data-slot="table-header"
-      className={cn("[&_tr]:border-gray-300 bg-gray-100 dark:bg-gray-800", className)}
-      {...props}
-    />
-  )
-}
-
-function TableBody({ className, ...props }: React.ComponentProps<"tbody">) {
-  return (
-    <tbody
-      data-slot="table-body"
-      className={cn("[&_tr:last-child]:border-0", className)}
-      {...props}
-    />
-  )
-}
-
-function TableFooter({ className, ...props }: React.ComponentProps<"tfoot">) {
-  return (
-    <tfoot
-      data-slot="table-footer"
-      className={cn(
-        "bg-muted/50 border-t border-gray-300 font-medium [&>tr]:last:border-b-0",
-        className
-      )}
-      {...props}
-    />
-  )
-}
-
-function TableRow({ className, ...props }: React.ComponentProps<"tr">) {
-  return (
-    <tr
-      data-slot="table-row"
-      className={cn(
-        "hover:bg-muted/50 data-[state=selected]:bg-muted border-b border-gray-300 transition-colors",
-        className
-      )}
-      {...props}
-    />
-  )
-}
-
-function TableHead({ className, ...props }: React.ComponentProps<"th">) {
-  return (
-    <th
-      data-slot="table-head"
-      className={cn(
-        "text-foreground h-10 px-2 text-left align-middle font-medium whitespace-nowrap border-r border-gray-300 [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px] last:border-r-0",
-        className
-      )}
-      {...props}
-    />
-  )
-}
-
-function TableCell({ className, ...props }: React.ComponentProps<"td">) {
-  return (
-    <td
-      data-slot="table-cell"
-      className={cn(
-        "p-2 align-middle whitespace-nowrap border-r border-gray-300 [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px] last:border-r-0",
-        className
-      )}
-      {...props}
-    />
-  )
-}
-
-function TableCaption({
-  className,
-  ...props
-}: React.ComponentProps<"caption">) {
-  return (
-    <caption
-      data-slot="table-caption"
-      className={cn("text-muted-foreground mt-4 text-sm", className)}
-      {...props}
-    />
-  )
-}
-
-export {
-  Table,
-  TableHeader,
-  TableBody,
-  TableFooter,
-  TableRow,
-  TableCell,
-  TableHead,
-  TableCaption,
-}
-```
-
-### Key Features and Changes
-
-1. **Header Background**:
-   - Added `bg-gray-100 dark:bg-gray-800` to `TableHeader` in `table.tsx` and `data-table.tsx` to apply a light gray background in light mode and a dark gray background in dark mode.
-
-2. **Sort Functionality**:
-   - Sorting is implemented in `data-table.tsx` via the `Button` with `ArrowUpDown` in the header. Clicking a header toggles sorting (ascending/descending). The `getSortedRowModel` and `onSortingChange` are correctly set up in `useReactTable`.
-   - All columns in `DashboardTable.tsx` have `enableSorting` set to `true` by default (since `enableSorting` is not explicitly set to `false`).
-
-3. **Borders**:
-   - Applied `border-gray-300` to:
-     - `Table` (outer border).
-     - `TableRow` (bottom border).
-     - `TableHead` and `TableCell` (right border, except for the last cell/head).
-     - `TableHeader` (row border).
-     - Search `Input`, pagination `Button`s, and "View" `DropdownMenuTrigger` in `data-table.tsx`.
-   - Used `last:border-r-0` in `TableHead` and `TableCell` to avoid a right border on the last column.
-
-4. **DashboardTable Usage**:
-   - Improved typing by using `Row<Payment>` instead of `any` in column `cell` definitions.
-   - Added a `Copy` icon to the "Copy payment ID" action.
-   - Integrated `react-hot-toast` for a success notification when copying the payment ID.
-   - Wrapped the table in a `div` with `p-4` for better spacing.
-
-5. **Dependencies**:
-   - Ensure `react-hot-toast` is installed (`npm install react-hot-toast`). If you don’t want to use it, replace the `toast.success` call in `DashboardTable.tsx` with:
-     ```typescript
-     alert("Payment ID copied to clipboard!");
-     ```
-   - Verify that `@tanstack/react-table`, `lucide-react`, and Tailwind CSS are installed and configured.
-
-### Testing Instructions
-- **Sorting**: Click on column headers (e.g., "Status", "Email", "Amount", "Created") to verify sorting toggles between ascending and descending order.
-- **Header Background**: Check that the header has a light gray background (`bg-gray-100`) in light mode and a dark gray background (`bg-gray-800`) in dark mode.
-- **Borders**: Ensure `border-gray-300` appears on the table, rows, and cells (right borders except for the last column).
-- **Actions**: Click "Copy payment ID" to verify the toast notification appears. Test "View details" and "Refund" to ensure they log correctly (or update with actual logic).
-- **Row Selection**: Select rows to verify the `selectedRows` count updates below the table.
-- **Search**: Use the search input to filter by "email" or "status".
-
-Replace the contents of the respective files with the provided code. If you encounter any issues or need further modifications, let me know!
