@@ -13,6 +13,7 @@ type Payment = {
   email: string;
   number?: string;
   activity?: string;
+  description?: string; // Added dynamic description field
   date?: string;
 };
 
@@ -24,6 +25,7 @@ function DashboardTable() {
     {
       id: "m5gr84i9",
       activity: "Insurance Application Submitted",
+      description: "Application for health insurance coverage",
       amount: 316,
       status: "success",
       number: "npx-5566-uiin",
@@ -34,6 +36,7 @@ function DashboardTable() {
       id: "3u1reuv4",
       amount: 242,
       activity: "Insurance Application Submitted",
+      description: "Application for auto insurance coverage",
       status: "success",
       number: "npx-5566-uiin",
       email: "Abe45@example.com",
@@ -43,6 +46,7 @@ function DashboardTable() {
       id: "derv1ws0",
       amount: 837,
       activity: "Insurance Application Submitted",
+      description: "Application for home insurance coverage",
       status: "processing",
       number: "npx-5566-uiin",
       email: "Monserrat44@example.com",
@@ -52,6 +56,7 @@ function DashboardTable() {
       id: "5kma53ae",
       amount: 874,
       activity: "Google",
+      description: "Google service transaction",
       status: "success",
       number: "npx-5566-uiin",
       email: "Silas22@example.com",
@@ -61,6 +66,7 @@ function DashboardTable() {
       id: "bhqecj4p",
       amount: 721,
       activity: "Slack",
+      description: "Slack subscription payment",
       status: "failed",
       number: "npx-5566-uiin",
       email: "carmella@example.com",
@@ -78,11 +84,7 @@ function DashboardTable() {
         <div className="flex flex-col">
           <div className="font-medium">{row.getValue("activity") || "-"}</div>
           <div className="text-sm text-muted-foreground">
-            {row.getValue("activity") === "Google" 
-              ? "Google service transaction"
-              : row.getValue("activity") === "Slack" 
-              ? "Slack subscription payment"
-              : "Application for insurance coverage"}
+            {row.getValue("description") || "No description available"}
           </div>
         </div>
       ),
