@@ -1,216 +1,889 @@
-import DataTable from "@/components/reusable/data-table";
-import { cn } from "@/lib/utils";
-import type { TableAction, TableColumn } from "@/types/table";
-import { useState, useMemo } from "react";
-import toast from "react-hot-toast";
-import { Copy } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-
-type Payment = {
-  id: string;
-  amount: number;
-  status: "pending" | "processing" | "success" | "failed";
-  email: string;
-  number?: string;
-  activity?: string;
-  description?: string;
-  date?: string;
-};
-
-function DashboardTable() {
-  const [selectedRows, setSelectedRows] = useState<Payment[]>([]);
-
-  // Memoize data to prevent unnecessary re-renders
-  const data = useMemo<Payment[]>(
-    () => [
-      {
-        id: "m5gr84i9",
-        activity: "Insurance Application Submitted",
-        description: "Application for health insurance coverage",
-        amount: 316,
-        status: "success",
-        number: "npx-5566-uiin",
-        email: "ken99@example.com",
-        date: "2024-01-15",
-      },
-      {
-        id: "3u1reuv4",
-        amount: 242,
-        activity: "Insurance Application Submitted",
-        description: "Application for auto insurance coverage",
-        status: "success",
-        number: "npx-5566-uiin",
-        email: "Abe45@example.com",
-        date: "2024-01-14",
-      },
-      {
-        id: "derv1ws0",
-        amount: 837,
-        activity: "Insurance Application Submitted",
-        description: "Application for home insurance coverage",
-        status: "processing",
-        number: "npx-5566-uiin",
-        email: "Monserrat44@example.com",
-        date: "2024-01-13",
-      },
-      {
-        id: "5kma53ae",
-        amount: 874,
-        activity: "Google",
-        description: "Google service transaction",
-        status: "success",
-        number: "npx-5566-uiin",
-        email: "Silas22@example.com",
-        date: "2024-01-12",
-      },
-      {
-        id: "bhqecj4p",
-        amount: 721,
-        activity: "Slack",
-        description: "Slack subscription payment",
-        status: "failed",
-        number: "npx-5566-uiin",
-        email: "carmella@example.com",
-        date: "2024-01-11",
-      },
-    ],
-    []
-  );
-
-  // Memoize columns to prevent unnecessary recreation
-  const columns = useMemo<TableColumn<Payment>[]>(
-    () => [
-      {
-        id: "activity",
-        header: "Activity",
-        accessorKey: "activity",
-        cell: ({ row }) => (
-          <div className="flex flex-col">
-            <div className="font-medium">{row.getValue("activity") || "-"}</div>
-            <div className="text-xs text-muted-foreground">
-              {row.original.description || "No description available"}
-            </div>
-          </div>
-        ),
-      },
-      {
-        id: "number",
-        header: "Number",
-        accessorKey: "number",
-        cell: ({ row }: { row: any }) => (
-          <div className="font-medium uppercase">
-            {row.getValue("number") || "-"}
-          </div>
-        ),
-      },
-      {
-        id: "status",
-        header: "Status",
-        accessorKey: "status",
-        cell: ({ row }: { row: any }) => {
-          const status = row.getValue("status") as string;
-          return (
-            <Badge
-              variant={
-                status === "pending"
-                  ? "warning"
-                  : status === "success"
-                  ? "success"
-                  : status === "failed"
-                  ? "danger"
-                  : status === "processing"
-                  ? "processing"
-                  : "default"
-              }
-            >
-              <div
-                className={cn("mr-1 h-2 w-2 rounded-full", {
-                  "bg-yellow-600": status === "pending",
-                  "bg-blue-600": status === "processing",
-                  "bg-green-600": status === "success",
-                  "bg-red-600": status === "failed",
-                })}
-              />
-              {status}
-            </Badge>
-          );
-        },
-      },
-      {
-        id: "date",
-        header: "Date",
-        accessorKey: "date",
-        cell: ({ row }: { row: any }) => (
-          <div className="lowercase font-medium">{row.getValue("date")}</div>
-        ),
-      },
-    ],
-    []
-  );
-
-  // Memoize actions to prevent unnecessary recreation
-  const actions = useMemo<TableAction<Payment>[]>(
-    () => [
-      {
-        label: "Copy payment ID",
-        onClick: (payment) => {
-          navigator.clipboard.writeText(payment.id);
-          toast.success("Payment ID copied to clipboard!");
-        },
-        icon: <Copy className="h-4 w-4" />,
-      },
-      {
-        label: "View details",
-        onClick: (payment) => {
-          console.log("View payment:", payment);
-        },
-      },
-      {
-        label: "Refund",
-        onClick: (payment) => {
-          console.log("Refund payment:", payment);
-        },
-        variant: "destructive",
-        show: (payment) => payment.status === "success",
-      },
-    ],
-    []
-  );
-
-  return (
-    <div className="p-4 space-y-3 border border-gray-300 rounded-lg bg-white">
-      <div>
-        <h2 className="text-lg font-semibold">Recent Activities</h2>
-        <p className="text-sm text-muted-foreground">
-          View your latest account activities and transaction details
-        </p>
-      </div>
-
-      <div>
-        <DataTable
-          data={data}
-          columns={columns}
-          actions={actions}
-          searchableColumns={["email", "status"]}
-          searchPlaceholder="Search payments..."
-          enableRowSelection={true}
-          enableColumnVisibility={true}
-          enablePagination={true}
-          pageSize={10}
-          onRowSelectionChange={setSelectedRows}
-          emptyStateMessage="No payments found."
-          className="border-gray-300"
-        />
-        {selectedRows.length > 0 && (
-          <div className="mt-4 p-4 bg-muted rounded-lg">
-            <p className="text-sm font-medium">
-              Selected {selectedRows.length} payment(s)
-            </p>
-          </div>
-        )}
-      </div>
-    </div>
-  );
-}
-
-export default DashboardTable;
+diff --git a/change.tsx b/change.tsx
+deleted file mode 100644
+index e69de29..0000000
+diff --git a/package-lock.json b/package-lock.json
+index 1cf95fc..4da7946 100644
+--- a/package-lock.json
++++ b/package-lock.json
+@@ -15,6 +15,7 @@
+         "@radix-ui/react-dropdown-menu": "^2.1.15",
+         "@radix-ui/react-label": "^2.1.7",
+         "@radix-ui/react-navigation-menu": "^1.2.13",
++        "@radix-ui/react-popover": "^1.1.14",
+         "@radix-ui/react-select": "^2.2.5",
+         "@radix-ui/react-separator": "^1.1.7",
+         "@radix-ui/react-slider": "^1.3.5",
+@@ -26,12 +27,14 @@
+         "axios": "^1.11.0",
+         "class-variance-authority": "^0.7.1",
+         "clsx": "^2.1.1",
++        "date-fns": "^4.1.0",
+         "embla-carousel-autoplay": "^8.6.0",
+         "embla-carousel-react": "^8.6.0",
+         "formik": "^2.4.6",
+         "framer-motion": "^12.23.5",
+         "lucide-react": "^0.525.0",
+         "react": "19.1.0",
++        "react-day-picker": "^9.8.1",
+         "react-dom": "19.1.0",
+         "react-hot-toast": "^2.5.2",
+         "react-quill-new": "^3.6.0",
+@@ -40,7 +43,7 @@
+         "sonner": "^2.0.6",
+         "tailwind-merge": "^3.3.1",
+         "tailwindcss": "^4.1.11",
+-        "yup": "^1.6.1"
++        "yup": "^1.7.0"
+       },
+       "devDependencies": {
+         "@eslint/js": "^9.30.1",
+@@ -362,6 +365,11 @@
+         "node": ">=6.9.0"
+       }
+     },
++    "node_modules/@date-fns/tz": {
++      "version": "1.3.1",
++      "resolved": "https://registry.npmjs.org/@date-fns/tz/-/tz-1.3.1.tgz",
++      "integrity": "sha512-LnBOyuj+piItX/D5BWBSckBsuZyOt7Jg2obGNiObq7qjl1A2/8F+i4RS8/MmkSdnw6hOe6afrJLCWrUWZw5Mlw=="
++    },
+     "node_modules/@esbuild/aix-ppc64": {
+       "version": "0.25.6",
+       "resolved": "https://registry.npmjs.org/@esbuild/aix-ppc64/-/aix-ppc64-0.25.6.tgz",
+@@ -1498,7 +1506,6 @@
+       "version": "2.1.7",
+       "resolved": "https://registry.npmjs.org/@radix-ui/react-label/-/react-label-2.1.7.tgz",
+       "integrity": "sha512-YT1GqPSL8kJn20djelMX7/cTRp/Y9w5IZHvfxQTVHrOqa2yMl7i/UfMqKRU5V7mEyKTrUVgJXhNQPVCG8PBLoQ==",
+-      "license": "MIT",
+       "dependencies": {
+         "@radix-ui/react-primitive": "2.1.3"
+       },
+@@ -1593,6 +1600,42 @@
+         }
+       }
+     },
++    "node_modules/@radix-ui/react-popover": {
++      "version": "1.1.14",
++      "resolved": "https://registry.npmjs.org/@radix-ui/react-popover/-/react-popover-1.1.14.tgz",
++      "integrity": "sha512-ODz16+1iIbGUfFEfKx2HTPKizg2MN39uIOV8MXeHnmdd3i/N9Wt7vU46wbHsqA0xoaQyXVcs0KIlBdOA2Y95bw==",
++      "dependencies": {
++        "@radix-ui/primitive": "1.1.2",
++        "@radix-ui/react-compose-refs": "1.1.2",
++        "@radix-ui/react-context": "1.1.2",
++        "@radix-ui/react-dismissable-layer": "1.1.10",
++        "@radix-ui/react-focus-guards": "1.1.2",
++        "@radix-ui/react-focus-scope": "1.1.7",
++        "@radix-ui/react-id": "1.1.1",
++        "@radix-ui/react-popper": "1.2.7",
++        "@radix-ui/react-portal": "1.1.9",
++        "@radix-ui/react-presence": "1.1.4",
++        "@radix-ui/react-primitive": "2.1.3",
++        "@radix-ui/react-slot": "1.2.3",
++        "@radix-ui/react-use-controllable-state": "1.2.2",
++        "aria-hidden": "^1.2.4",
++        "react-remove-scroll": "^2.6.3"
++      },
++      "peerDependencies": {
++        "@types/react": "*",
++        "@types/react-dom": "*",
++        "react": "^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc",
++        "react-dom": "^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc"
++      },
++      "peerDependenciesMeta": {
++        "@types/react": {
++          "optional": true
++        },
++        "@types/react-dom": {
++          "optional": true
++        }
++      }
++    },
+     "node_modules/@radix-ui/react-popper": {
+       "version": "1.2.7",
+       "resolved": "https://registry.npmjs.org/@radix-ui/react-popper/-/react-popper-1.2.7.tgz",
+@@ -3365,6 +3408,20 @@
+       "integrity": "sha512-M1uQkMl8rQK/szD0LNhtqxIPLpimGm8sOBwU7lLnCpSbTyY3yeU1Vc7l4KT5zT4s/yOxHH5O7tIuuLOCnLADRw==",
+       "license": "MIT"
+     },
++    "node_modules/date-fns": {
++      "version": "4.1.0",
++      "resolved": "https://registry.npmjs.org/date-fns/-/date-fns-4.1.0.tgz",
++      "integrity": "sha512-Ukq0owbQXxa/U3EGtsdVBkR1w7KOQ5gIBqdH2hkvknzZPYvBxb/aa6E8L7tmjFtkwZBu3UXBbjIgPo/Ez4xaNg==",
++      "funding": {
++        "type": "github",
++        "url": "https://github.com/sponsors/kossnocorp"
++      }
++    },
++    "node_modules/date-fns-jalali": {
++      "version": "4.1.0-0",
++      "resolved": "https://registry.npmjs.org/date-fns-jalali/-/date-fns-jalali-4.1.0-0.tgz",
++      "integrity": "sha512-hTIP/z+t+qKwBDcmmsnmjWTduxCg+5KfdqWQvb2X/8C9+knYY6epN/pfxdDuyVlSVeFz0sM5eEfwIUQ70U4ckg=="
++    },
+     "node_modules/debug": {
+       "version": "4.4.1",
+       "resolved": "https://registry.npmjs.org/debug/-/debug-4.4.1.tgz",
+@@ -5072,6 +5129,26 @@
+         "node": ">=0.10.0"
+       }
+     },
++    "node_modules/react-day-picker": {
++      "version": "9.8.1",
++      "resolved": "https://registry.npmjs.org/react-day-picker/-/react-day-picker-9.8.1.tgz",
++      "integrity": "sha512-kMcLrp3PfN/asVJayVv82IjF3iLOOxuH5TNFWezX6lS/T8iVRFPTETpHl3TUSTH99IDMZLubdNPJr++rQctkEw==",
++      "dependencies": {
++        "@date-fns/tz": "^1.2.0",
++        "date-fns": "^4.1.0",
++        "date-fns-jalali": "^4.1.0-0"
++      },
++      "engines": {
++        "node": ">=18"
++      },
++      "funding": {
++        "type": "individual",
++        "url": "https://github.com/sponsors/gpbl"
++      },
++      "peerDependencies": {
++        "react": ">=16.8.0"
++      }
++    },
+     "node_modules/react-dom": {
+       "version": "19.1.0",
+       "resolved": "https://registry.npmjs.org/react-dom/-/react-dom-19.1.0.tgz",
+@@ -5885,10 +5962,9 @@
+       }
+     },
+     "node_modules/yup": {
+-      "version": "1.6.1",
+-      "resolved": "https://registry.npmjs.org/yup/-/yup-1.6.1.tgz",
+-      "integrity": "sha512-JED8pB50qbA4FOkDol0bYF/p60qSEDQqBD0/qeIrUCG1KbPBIQ776fCUNb9ldbPcSTxA69g/47XTo4TqWiuXOA==",
+-      "license": "MIT",
++      "version": "1.7.0",
++      "resolved": "https://registry.npmjs.org/yup/-/yup-1.7.0.tgz",
++      "integrity": "sha512-VJce62dBd+JQvoc+fCVq+KZfPHr+hXaxCcVgotfwWvlR0Ja3ffYKaJBT8rptPOSKOGJDCUnW2C2JWpud7aRP6Q==",
+       "dependencies": {
+         "property-expr": "^2.0.5",
+         "tiny-case": "^1.0.3",
+diff --git a/package.json b/package.json
+index bf80ef3..9305f2f 100644
+--- a/package.json
++++ b/package.json
+@@ -17,6 +17,7 @@
+     "@radix-ui/react-dropdown-menu": "^2.1.15",
+     "@radix-ui/react-label": "^2.1.7",
+     "@radix-ui/react-navigation-menu": "^1.2.13",
++    "@radix-ui/react-popover": "^1.1.14",
+     "@radix-ui/react-select": "^2.2.5",
+     "@radix-ui/react-separator": "^1.1.7",
+     "@radix-ui/react-slider": "^1.3.5",
+@@ -28,12 +29,14 @@
+     "axios": "^1.11.0",
+     "class-variance-authority": "^0.7.1",
+     "clsx": "^2.1.1",
++    "date-fns": "^4.1.0",
+     "embla-carousel-autoplay": "^8.6.0",
+     "embla-carousel-react": "^8.6.0",
+     "formik": "^2.4.6",
+     "framer-motion": "^12.23.5",
+     "lucide-react": "^0.525.0",
+     "react": "19.1.0",
++    "react-day-picker": "^9.8.1",
+     "react-dom": "19.1.0",
+     "react-hot-toast": "^2.5.2",
+     "react-quill-new": "^3.6.0",
+@@ -42,7 +45,7 @@
+     "sonner": "^2.0.6",
+     "tailwind-merge": "^3.3.1",
+     "tailwindcss": "^4.1.11",
+-    "yup": "^1.6.1"
++    "yup": "^1.7.0"
+   },
+   "devDependencies": {
+     "@eslint/js": "^9.30.1",
+diff --git a/src/App.tsx b/src/App.tsx
+index 7d83710..e7359bd 100644
+--- a/src/App.tsx
++++ b/src/App.tsx
+@@ -81,6 +81,27 @@ const UserDashboard = lazy(
+ );
+ const UserProfile = lazy(() => import("@/Pages/Dashboard/User/Profile"));
+ 
++const UserComplains = lazy(() => import("@/Pages/Dashboard/User/Complains"));
++
++const UserInsurance = lazy(
++  () => import("@/Pages/Dashboard/User/Insurance/Insurance")
++);
++const MyInsuranceApplication = lazy(
++  () => import("@/Pages/Dashboard/User/Insurance/MyApplication")
++);
++const InsuranceApplications = lazy(
++  () => import("@/Pages/Dashboard/User/Insurance/ApplyInsurance")
++);
++const ClaimApplication = lazy(
++  () => import("@/Pages/Dashboard/User/Insurance/Claim")
++);
++const ApplyForInsurance = lazy(
++  () => import("@/Pages/Dashboard/User/Insurance/ApplyForInsurance")
++);
++const InsuranceClaim = lazy(
++  () => import("@/Pages/Dashboard/User/Insurance/InsuranceClaim")
++);
++
+ // Layout Components
+ const MainLayout = ({ children }: { children: React.ReactNode }) => (
+   <>
+@@ -103,6 +124,21 @@ function App() {
+           <Route path="dashboard" element={<UserDashboardLayout />}>
+             <Route index element={<UserDashboard />} />
+             <Route path="profile" element={<UserProfile />} />
++            <Route path="complains" element={<UserComplains />} />
++
++            <Route path="insurance" element={<UserInsurance />}>
++              <Route index element={<InsuranceApplications />} />
++              <Route
++                path="my-application"
++                element={<MyInsuranceApplication />}
++              />
++              <Route path="claim" element={<ClaimApplication />} />
++              <Route
++                path="apply-for-insurance/:insuranceTitle"
++                element={<ApplyForInsurance />}
++              />
++              <Route path="insurance-claim" element={<InsuranceClaim />} />
++            </Route>
+           </Route>
+ 
+           {/* CMS Dashboard Routes - No layout */}
+@@ -117,18 +153,18 @@ function App() {
+           <Route path="not-found" element={<NotFound />} />
+ 
+           {/* Home Route - With layout */}
+-          <Route 
+-            path="/" 
++          <Route
++            path="/"
+             element={
+               <MainLayout>
+                 <Home />
+               </MainLayout>
+-            } 
++            }
+           />
+ 
+           {/* Personal Banking Routes - With layout */}
+-          <Route 
+-            path="personal-banking" 
++          <Route
++            path="personal-banking"
+             element={
+               <MainLayout>
+                 <PersonalBanking />
+@@ -150,13 +186,13 @@ function App() {
+               </MainLayout>
+             }
+           />
+-          <Route 
+-            path="loans/:loanName" 
++          <Route
++            path="loans/:loanName"
+             element={
+               <MainLayout>
+                 <SingleLoan />
+               </MainLayout>
+-            } 
++            }
+           />
+           <Route
+             path="insurances/:insuranceName"
+@@ -184,8 +220,8 @@ function App() {
+           />
+ 
+           {/* About Section Routes - With layout */}
+-          <Route 
+-            path="about" 
++          <Route
++            path="about"
+             element={
+               <MainLayout>
+                 <About />
+@@ -202,18 +238,18 @@ function App() {
+           </Route>
+ 
+           {/* Contact Route - With layout */}
+-          <Route 
+-            path="contact-us" 
++          <Route
++            path="contact-us"
+             element={
+               <MainLayout>
+                 <ContactUs />
+               </MainLayout>
+-            } 
++            }
+           />
+ 
+           {/* Business Banking Routes - With layout */}
+-          <Route 
+-            path="business-banking" 
++          <Route
++            path="business-banking"
+             element={
+               <MainLayout>
+                 <BusinessBanking />
+@@ -226,65 +262,65 @@ function App() {
+           </Route>
+ 
+           {/* Legal & Compliance Routes - With layout */}
+-          <Route 
+-            path="whistle-blowing" 
++          <Route
++            path="whistle-blowing"
+             element={
+               <MainLayout>
+                 <WhistleBlowing />
+               </MainLayout>
+-            } 
++            }
+           />
+-          <Route 
+-            path="website-terms" 
++          <Route
++            path="website-terms"
+             element={
+               <MainLayout>
+                 <WebTerms />
+               </MainLayout>
+-            } 
++            }
+           />
+-          <Route 
+-            path="terms-condition" 
++          <Route
++            path="terms-condition"
+             element={
+               <MainLayout>
+                 <TermsCondition />
+               </MainLayout>
+-            } 
++            }
+           />
+-          <Route 
+-            path="data-privacy" 
++          <Route
++            path="data-privacy"
+             element={
+               <MainLayout>
+                 <DataPrivacy />
+               </MainLayout>
+-            } 
++            }
+           />
+ 
+           {/* News Route - With layout */}
+-          <Route 
+-            path="news/:newsName" 
++          <Route
++            path="news/:newsName"
+             element={
+               <MainLayout>
+                 <SingleNews />
+               </MainLayout>
+-            } 
++            }
+           />
+ 
+           {/* Security Routes - With layout */}
+-          <Route 
+-            path="security-center" 
++          <Route
++            path="security-center"
+             element={
+               <MainLayout>
+                 <SecurityCenter />
+               </MainLayout>
+-            } 
++            }
+           />
+-          <Route 
+-            path="fraud-alert" 
++          <Route
++            path="fraud-alert"
+             element={
+               <MainLayout>
+                 <FraudaAlert />
+               </MainLayout>
+-            } 
++            }
+           />
+ 
+           {/* Utility Routes - With layout */}
+@@ -305,4 +341,4 @@ function App() {
+   );
+ }
+ 
+-export default App;
+\ No newline at end of file
++export default App;
+diff --git a/src/Page-Sections/Landing/AboutPageSection/Parts/News/PressReleaseCard.tsx b/src/Page-Sections/Landing/AboutPageSection/Parts/News/PressReleaseCard.tsx
+index 36b0120..3e93051 100644
+--- a/src/Page-Sections/Landing/AboutPageSection/Parts/News/PressReleaseCard.tsx
++++ b/src/Page-Sections/Landing/AboutPageSection/Parts/News/PressReleaseCard.tsx
+@@ -13,6 +13,7 @@ interface PressReleaseCardProps {
+   rightSide?: boolean;
+   learnMoreLink?: string;
+   compareLink?: string;
++  buttonText?:string
+ }
+ 
+ const PressReleaseCard = ({
+@@ -24,6 +25,7 @@ const PressReleaseCard = ({
+   rightSide = false,
+   learnMoreLink,
+   compareLink,
++  buttonText
+ }: PressReleaseCardProps) => {
+   const navigate = useNavigate();
+ 
+@@ -106,7 +108,7 @@ const PressReleaseCard = ({
+                 navigate(learnMoreLink);
+               }}
+             >
+-              Learn More
++            {buttonText || "Learn More"}
+             </Button>
+           )}
+         </div>
+diff --git a/src/Page-Sections/UserDashboardPageSection/ProfilePageSection.tsx b/src/Page-Sections/UserDashboardPageSection/ProfilePageSection.tsx
+index 8d0d47f..4864a2c 100644
+--- a/src/Page-Sections/UserDashboardPageSection/ProfilePageSection.tsx
++++ b/src/Page-Sections/UserDashboardPageSection/ProfilePageSection.tsx
+@@ -1,85 +1,272 @@
++import Button from "@/components/ui/button";
+ import { CustomInput } from "@/components/ui/CustomInput";
++import { CustomSelect } from "@/components/ui/CustomSelect";
++import DatePicker from "@/components/ui/DatePicker";
+ import PhoneInput from "@/components/ui/PhoneInput";
+ import { useState } from "react";
++import { Formik, Form, type FormikProps } from "formik";
++import * as Yup from "yup";
++
++// Validation schema
++const validationSchema = Yup.object({
++  firstName: Yup.string()
++    .min(2, "First name must be at least 2 characters")
++    .required("First name is required"),
++  lastName: Yup.string()
++    .min(2, "Last name must be at least 2 characters")
++    .required("Last name is required"),
++  phone: Yup.string()
++    .min(10, "Phone number must be at least 10 digits")
++    .required("Phone number is required"),
++  phoneCountry: Yup.string().required("Country is required"),
++  email: Yup.string()
++    .email("Invalid email address")
++    .required("Email is required"),
++  dateOfBirth: Yup.date()
++    .nullable()
++    .transform((value, originalValue) => {
++      return originalValue === "" ? undefined : value;
++    })
++    .required("Date of birth is required"),
++  gender: Yup.string().required("Gender is required"),
++  address: Yup.string().required("Address is required"),
++  occupation: Yup.string().required("Occupation is required"),
++  emergencyContact: Yup.string()
++    .min(10, "Emergency contact must be at least 10 digits")
++    .required("Emergency contact is required"),
++  accountStatus: Yup.string().required("Account status is required"),
++});
++
+ type FormData = {
+   firstName: string;
+   lastName: string;
+   phone: string;
+   phoneCountry: string;
+   email: string;
+-  message: string;
++  dateOfBirth: Date | undefined;
++  gender: string;
++  address: string;
++  occupation: string;
++  emergencyContact: string;
++  accountStatus: string;
+ };
++
+ function ProfilePageSection() {
+-  const [formData, setFormData] = useState<FormData>({
+-    firstName: "",
+-    lastName: "",
+-    phone: "",
+-    phoneCountry: "TZ", // Default to Tanzania
+-    email: "",
+-    message: "",
+-  });
+-  const handlePhoneChange = (phone: string) => {
+-    setFormData((prev) => ({
+-      ...prev,
+-      phone,
+-    }));
++  const [isEditing, setIsEditing] = useState(false);
++
++  // Dummy data
++  const initialValues: FormData = {
++    firstName: "John",
++    lastName: "Doe",
++    phone: "+255123456789",
++    phoneCountry: "TZ",
++    email: "john.doe@example.com",
++    dateOfBirth: new Date("1990-05-15"),
++    gender: "male",
++    address: "123 Uhuru Street, Dar es Salaam",
++    occupation: "Software Developer",
++    emergencyContact: "+255987654321",
++    accountStatus: "Active",
+   };
+ 
+-  const handleCountryChange = (country: string) => {
+-    setFormData((prev) => ({
+-      ...prev,
+-      phoneCountry: country,
+-    }));
++  const [genderOptions] = useState([
++    { label: "Male", value: "male" },
++    { label: "Female", value: "female" },
++    { label: "Other", value: "other" },
++  ]);
++
++  const [statusOptions] = useState([
++    { label: "Active", value: "Active" },
++    { label: "Inactive", value: "Inactive" },
++    { label: "Pending", value: "Pending" },
++  ]);
++
++  const handleSubmit = (values: FormData) => {
++    console.log("Form submitted:", values);
++    setIsEditing(false);
++    // Here you would typically send the data to your API
++  };
++
++  const handleEditToggle = () => {
++    setIsEditing(!isEditing);
+   };
+ 
+   return (
+     <div className="bg-white border-[1px] border-gray-200 rounded-lg">
+-      <div className="border-b border-gray-300 p-4">
+-        <h2 className="text-lg font-semibold">Recent Activities</h2>
+-        <p className="text-sm text-muted-foreground">
+-          Manage your personal information and preferences
+-        </p>
+-      </div>
+-      <div className="p-6 grid  grid-cols-1 md:grid-cols-2 gap-6">
+-        <div className="space-y-4">
+-          <h2 className="text-lg font-semibold text-gray-400">
+-            Basic Information
+-          </h2>
+-
+-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+-            <CustomInput
+-              label="First Name"
+-              placeholder="Enter your first name "
+-            />
+-            <CustomInput label="Last Name" placeholder="Enter your last name" />
+-          </div>
+-
+-          <div>
+-            <PhoneInput
+-              value={formData.phone}
+-              country={formData.phoneCountry}
+-              onPhoneChange={handlePhoneChange}
+-              onCountryChange={handleCountryChange}
+-              label="Phone Number"
+-              required={true}
+-              placeholder="Enter your phone number"
+-            />
+-          </div>
+-
+-          <div className="">
+-            <CustomInput
+-              type="email"
+-              label="Email"
+-              placeholder="Enter your email "
+-            />
+-          </div>
+-          <div>
+-            <CustomInput label="Last Name" placeholder="Enter your last name" />
+-          </div>
++      <div className="border-b border-gray-300 p-4 flex items-center justify-between">
++        <div>
++          <h2 className="text-lg font-semibold">Profile Information</h2>
++          <p className="text-sm text-muted-foreground">
++            Manage your personal information and preferences
++          </p>
++        </div>
++        <div>
++          <Button 
++            variant="primary" 
++            onClick={handleEditToggle}
++            type="button"
++          >
++            {isEditing ? "Cancel" : "Edit Profile"}
++          </Button>
+         </div>
+       </div>
++
++      <Formik
++        initialValues={initialValues}
++        validationSchema={validationSchema}
++        onSubmit={handleSubmit}
++        enableReinitialize
++      >
++        {(formik: FormikProps<FormData>) => (
++          <Form>
++            <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6 space-x-10">
++              <div className="space-y-4">
++                <h2 className="text-lg font-semibold text-gray-400">
++                  Basic Information
++                </h2>
++
++                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
++                  <CustomInput
++                    label="First Name"
++                    placeholder="Enter your first name"
++                    value={formik.values.firstName}
++                    onChange={(e) => formik.setFieldValue("firstName", e.target.value)}
++                    onBlur={formik.handleBlur}
++                    disabled={!isEditing}
++                    error={formik.touched.firstName ? formik.errors.firstName : undefined}
++                    name="firstName"
++                  />
++                  <CustomInput
++                    label="Last Name"
++                    placeholder="Enter your last name"
++                    value={formik.values.lastName}
++                    onChange={(e) => formik.setFieldValue("lastName", e.target.value)}
++                    onBlur={formik.handleBlur}
++                    disabled={!isEditing}
++                    error={formik.touched.lastName ? formik.errors.lastName : undefined}
++                    name="lastName"
++                  />
++                </div>
++
++                <div>
++                  <PhoneInput
++                    value={formik.values.phone}
++                    country={formik.values.phoneCountry}
++                    onPhoneChange={(phone: string) => formik.setFieldValue("phone", phone)}
++                    onCountryChange={(country: string) => formik.setFieldValue("phoneCountry", country)}
++                    label="Phone Number"
++                    required={true}
++                    placeholder="Enter your phone number"
++                    disabled={!isEditing}
++                    error={formik.touched.phone ? formik.errors.phone : undefined}
++                  />
++                </div>
++
++                <div>
++                  <CustomInput
++                    type="email"
++                    label="Email"
++                    placeholder="Enter your email"
++                    value={formik.values.email}
++                    onChange={(e) => formik.setFieldValue("email", e.target.value)}
++                    onBlur={formik.handleBlur}
++                    disabled={!isEditing}
++                    error={formik.touched.email ? formik.errors.email : undefined}
++                    name="email"
++                  />
++                </div>
++
++                <DatePicker
++                  value={formik.values.dateOfBirth}
++                  onChange={(date) => formik.setFieldValue("dateOfBirth", date)}
++                  placeholder="Pick a date"
++                  className="w-full"
++                  label="Date of Birth"
++                  disabled={!isEditing}
++                  error={formik.touched.dateOfBirth ? formik.errors.dateOfBirth : undefined}
++                />
++
++                <div>
++                  <CustomSelect
++                    options={genderOptions}
++                    label="Gender"
++                    value={formik.values.gender}
++                    onValueChange={(value) => formik.setFieldValue("gender", value)}
++                    placeholder="Choose gender"
++                    className="w-full"
++                    disabled={!isEditing}
++                    error={formik.touched.gender ? formik.errors.gender : undefined}
++                  />
++                </div>
++              </div>
++
++              <div className="space-y-4">
++                <h2 className="text-lg font-semibold text-gray-400">
++                  Additional Information
++                </h2>
++                
++                <CustomInput
++                  label="Address"
++                  placeholder="Enter your address"
++                  value={formik.values.address}
++                  onChange={(e) => formik.setFieldValue("address", e.target.value)}
++                  onBlur={formik.handleBlur}
++                  disabled={!isEditing}
++                  error={formik.touched.address ? formik.errors.address : undefined}
++                  name="address"
++                />
++                
++                <CustomInput
++                  label="Occupation"
++                  placeholder="Enter your occupation"
++                  value={formik.values.occupation}
++                  onChange={(e) => formik.setFieldValue("occupation", e.target.value)}
++                  onBlur={formik.handleBlur}
++                  disabled={!isEditing}
++                  error={formik.touched.occupation ? formik.errors.occupation : undefined}
++                  name="occupation"
++                />
++                
++                <CustomInput
++                  label="Emergency Contact"
++                  placeholder="Enter your Emergency Contact"
++                  value={formik.values.emergencyContact}
++                  onChange={(e) => formik.setFieldValue("emergencyContact", e.target.value)}
++                  onBlur={formik.handleBlur}
++                  disabled={!isEditing}
++                  error={formik.touched.emergencyContact ? formik.errors.emergencyContact : undefined}
++                  name="emergencyContact"
++                />
++                
++                <CustomSelect
++                  options={statusOptions}
++                  label="Account Status"
++                  value={formik.values.accountStatus}
++                  onValueChange={(value) => formik.setFieldValue("accountStatus", value)}
++                  placeholder="Select status"
++                  className="w-full"
++                  disabled={!isEditing}
++                  error={formik.touched.accountStatus ? formik.errors.accountStatus : undefined}
++                />
++                
++                <div className="mt-12">
++                  {isEditing && (
++                    <Button 
++                      variant="primary" 
++                      type="submit"
++                      disabled={!formik.isValid}
++                    >
++                      Save Changes
++                    </Button>
++                  )}
++                </div>
++              </div>
++            </div>
++          </Form>
++        )}
++      </Formik>
+     </div>
+   );
+ }
+ 
+-export default ProfilePageSection;
++export default ProfilePageSection;
+\ No newline at end of file
+diff --git a/src/components/ui/CustomSelect.tsx b/src/components/ui/CustomSelect.tsx
+index 5258803..eead06a 100644
+--- a/src/components/ui/CustomSelect.tsx
++++ b/src/components/ui/CustomSelect.tsx
+@@ -31,7 +31,7 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
+   error
+ }) => {
+   return (
+-    <div className={`space-y-2 ${className}`}>
++    <div className={`w-full space-y-2 ${className}`}>
+       {label && (
+         <label className="text-sm font-medium text-foreground block">
+           {label}
+@@ -43,7 +43,7 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
+         onValueChange={onValueChange}
+         disabled={disabled}
+       >
+-        <SelectTrigger className="border-gray-300 focus:border-gray-300 focus:ring-0 focus-visible:ring-0">
++        <SelectTrigger>
+           <SelectValue placeholder={placeholder} />
+         </SelectTrigger>
+         <SelectContent>
+diff --git a/src/components/ui/select.tsx b/src/components/ui/select.tsx
+index 54f15b2..cf83e1f 100644
+--- a/src/components/ui/select.tsx
++++ b/src/components/ui/select.tsx
+@@ -34,7 +34,7 @@ function SelectTrigger({
+       data-slot="select-trigger"
+       data-size={size}
+       className={cn(
+-        "border-input data-[placeholder]:text-muted-foreground [&_svg:not([class*='text-'])]:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:bg-input/30 dark:hover:bg-input/50 flex w-fit items-center justify-between gap-2 rounded-md border bg-transparent px-3 py-2 text-sm whitespace-nowrap shadow-xs transition-[color,box-shadow] outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50 data-[size=default]:h-9 data-[size=sm]:h-8 *:data-[slot=select-value]:line-clamp-1 *:data-[slot=select-value]:flex *:data-[slot=select-value]:items-center *:data-[slot=select-value]:gap-2 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
++        "border-nbc-dark-950 data-[placeholder]:text-muted-foreground [&_svg:not([class*='text-'])]:text-muted-foreground  aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:bg-input/30 dark:hover:bg-input/50 flex w-full items-center justify-between gap-2 rounded-md border bg-transparent px-3 py-2 text-sm whitespace-nowrap shadow-xs transition-[color,box-shadow] outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50 data-[size=default]:h-9 data-[size=sm]:h-8 *:data-[slot=select-value]:line-clamp-1 *:data-[slot=select-value]:flex *:data-[slot=select-value]:items-center *:data-[slot=select-value]:gap-2 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+         className
+       )}
+       {...props}
+diff --git a/src/components/ui/textarea.tsx b/src/components/ui/textarea.tsx
+index 85780de..32082e9 100644
+--- a/src/components/ui/textarea.tsx
++++ b/src/components/ui/textarea.tsx
+@@ -7,7 +7,7 @@ function Textarea({ className, ...props }: React.ComponentProps<"textarea">) {
+     <textarea
+       data-slot="textarea"
+       className={cn(
+-        "border-gray-300 placeholder:text-muted-foreground   aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:bg-input/30 flex field-sizing-content min-h-16 w-full rounded-md border bg-transparent px-3 py-2 text-base shadow-xs transition-[color,box-shadow] outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
++        "border-nbc-dark-950 placeholder:text-muted-foreground   aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:bg-input/30 flex field-sizing-content min-h-16 w-full rounded-md border bg-transparent px-3 py-2 text-base shadow-xs transition-[color,box-shadow] outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
+         className
+       )}
+       {...props}
+diff --git a/src/data/userDashboardData.ts b/src/data/userDashboardData.ts
+index 8996b44..4256640 100644
+--- a/src/data/userDashboardData.ts
++++ b/src/data/userDashboardData.ts
+@@ -13,9 +13,9 @@ export const userDashboardData: NavigationItem[] = [
+     href: "/dashboard/profile",
+   },
+   {
+-    label: "Complaint",
++    label: "Complains",
+     icon: MessagesSquare,
+-    href: "/dashboard/complaint",
++    href: "/dashboard/complains",
+   },
+   {
+     label: "Insurance",
+diff --git a/src/types/tabs.ts b/src/types/tabs.ts
+index 321f057..fd7e8d6 100644
+--- a/src/types/tabs.ts
++++ b/src/types/tabs.ts
+@@ -1,3 +1,4 @@
++
+ import type { Article } from "./article";
+ 
+ export interface SideTabConfig {
+@@ -5,3 +6,22 @@ export interface SideTabConfig {
+   component: React.ComponentType<{ articles: Article[]; loading: boolean }>;
+   filter?: (article: Article) => boolean;
+ }
++
++
++
++export interface Tab {
++  id: string;
++  label: string;
++  content: React.ReactNode;
++}
++
++export interface TabsProps {
++  tabs: Tab[];
++  defaultTab?: string;
++  className?: string;
++}
++
++// export interface TabContent {
++//   tabName: string;
++//   cards: InsuranceCardInterface[];
++// }
