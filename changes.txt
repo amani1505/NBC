@@ -1,889 +1,1345 @@
-diff --git a/change.tsx b/change.tsx
-deleted file mode 100644
-index e69de29..0000000
 diff --git a/package-lock.json b/package-lock.json
-index 1cf95fc..4da7946 100644
+index 4da7946..29de7db 100644
 --- a/package-lock.json
 +++ b/package-lock.json
-@@ -15,6 +15,7 @@
-         "@radix-ui/react-dropdown-menu": "^2.1.15",
-         "@radix-ui/react-label": "^2.1.7",
-         "@radix-ui/react-navigation-menu": "^1.2.13",
-+        "@radix-ui/react-popover": "^1.1.14",
-         "@radix-ui/react-select": "^2.2.5",
-         "@radix-ui/react-separator": "^1.1.7",
-         "@radix-ui/react-slider": "^1.3.5",
-@@ -26,12 +27,14 @@
-         "axios": "^1.11.0",
-         "class-variance-authority": "^0.7.1",
-         "clsx": "^2.1.1",
-+        "date-fns": "^4.1.0",
-         "embla-carousel-autoplay": "^8.6.0",
+@@ -32,6 +32,7 @@
          "embla-carousel-react": "^8.6.0",
          "formik": "^2.4.6",
          "framer-motion": "^12.23.5",
++        "input-otp": "^1.4.2",
          "lucide-react": "^0.525.0",
          "react": "19.1.0",
-+        "react-day-picker": "^9.8.1",
-         "react-dom": "19.1.0",
-         "react-hot-toast": "^2.5.2",
-         "react-quill-new": "^3.6.0",
-@@ -40,7 +43,7 @@
-         "sonner": "^2.0.6",
-         "tailwind-merge": "^3.3.1",
-         "tailwindcss": "^4.1.11",
--        "yup": "^1.6.1"
-+        "yup": "^1.7.0"
-       },
-       "devDependencies": {
-         "@eslint/js": "^9.30.1",
-@@ -362,6 +365,11 @@
-         "node": ">=6.9.0"
+         "react-day-picker": "^9.8.1",
+@@ -4279,6 +4280,15 @@
+         "node": ">=0.8.19"
        }
      },
-+    "node_modules/@date-fns/tz": {
-+      "version": "1.3.1",
-+      "resolved": "https://registry.npmjs.org/@date-fns/tz/-/tz-1.3.1.tgz",
-+      "integrity": "sha512-LnBOyuj+piItX/D5BWBSckBsuZyOt7Jg2obGNiObq7qjl1A2/8F+i4RS8/MmkSdnw6hOe6afrJLCWrUWZw5Mlw=="
-+    },
-     "node_modules/@esbuild/aix-ppc64": {
-       "version": "0.25.6",
-       "resolved": "https://registry.npmjs.org/@esbuild/aix-ppc64/-/aix-ppc64-0.25.6.tgz",
-@@ -1498,7 +1506,6 @@
-       "version": "2.1.7",
-       "resolved": "https://registry.npmjs.org/@radix-ui/react-label/-/react-label-2.1.7.tgz",
-       "integrity": "sha512-YT1GqPSL8kJn20djelMX7/cTRp/Y9w5IZHvfxQTVHrOqa2yMl7i/UfMqKRU5V7mEyKTrUVgJXhNQPVCG8PBLoQ==",
--      "license": "MIT",
-       "dependencies": {
-         "@radix-ui/react-primitive": "2.1.3"
-       },
-@@ -1593,6 +1600,42 @@
-         }
-       }
-     },
-+    "node_modules/@radix-ui/react-popover": {
-+      "version": "1.1.14",
-+      "resolved": "https://registry.npmjs.org/@radix-ui/react-popover/-/react-popover-1.1.14.tgz",
-+      "integrity": "sha512-ODz16+1iIbGUfFEfKx2HTPKizg2MN39uIOV8MXeHnmdd3i/N9Wt7vU46wbHsqA0xoaQyXVcs0KIlBdOA2Y95bw==",
-+      "dependencies": {
-+        "@radix-ui/primitive": "1.1.2",
-+        "@radix-ui/react-compose-refs": "1.1.2",
-+        "@radix-ui/react-context": "1.1.2",
-+        "@radix-ui/react-dismissable-layer": "1.1.10",
-+        "@radix-ui/react-focus-guards": "1.1.2",
-+        "@radix-ui/react-focus-scope": "1.1.7",
-+        "@radix-ui/react-id": "1.1.1",
-+        "@radix-ui/react-popper": "1.2.7",
-+        "@radix-ui/react-portal": "1.1.9",
-+        "@radix-ui/react-presence": "1.1.4",
-+        "@radix-ui/react-primitive": "2.1.3",
-+        "@radix-ui/react-slot": "1.2.3",
-+        "@radix-ui/react-use-controllable-state": "1.2.2",
-+        "aria-hidden": "^1.2.4",
-+        "react-remove-scroll": "^2.6.3"
-+      },
++    "node_modules/input-otp": {
++      "version": "1.4.2",
++      "resolved": "https://registry.npmjs.org/input-otp/-/input-otp-1.4.2.tgz",
++      "integrity": "sha512-l3jWwYNvrEa6NTCt7BECfCm48GvwuZzkoeG3gBL2w4CHeOXW3eKFmf9UNYkNfYc3mxMrthMnxjIE07MT0zLBQA==",
 +      "peerDependencies": {
-+        "@types/react": "*",
-+        "@types/react-dom": "*",
-+        "react": "^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc",
-+        "react-dom": "^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc"
-+      },
-+      "peerDependenciesMeta": {
-+        "@types/react": {
-+          "optional": true
-+        },
-+        "@types/react-dom": {
-+          "optional": true
-+        }
++        "react": "^16.8 || ^17.0 || ^18.0 || ^19.0.0 || ^19.0.0-rc",
++        "react-dom": "^16.8 || ^17.0 || ^18.0 || ^19.0.0 || ^19.0.0-rc"
 +      }
 +    },
-     "node_modules/@radix-ui/react-popper": {
-       "version": "1.2.7",
-       "resolved": "https://registry.npmjs.org/@radix-ui/react-popper/-/react-popper-1.2.7.tgz",
-@@ -3365,6 +3408,20 @@
-       "integrity": "sha512-M1uQkMl8rQK/szD0LNhtqxIPLpimGm8sOBwU7lLnCpSbTyY3yeU1Vc7l4KT5zT4s/yOxHH5O7tIuuLOCnLADRw==",
-       "license": "MIT"
-     },
-+    "node_modules/date-fns": {
-+      "version": "4.1.0",
-+      "resolved": "https://registry.npmjs.org/date-fns/-/date-fns-4.1.0.tgz",
-+      "integrity": "sha512-Ukq0owbQXxa/U3EGtsdVBkR1w7KOQ5gIBqdH2hkvknzZPYvBxb/aa6E8L7tmjFtkwZBu3UXBbjIgPo/Ez4xaNg==",
-+      "funding": {
-+        "type": "github",
-+        "url": "https://github.com/sponsors/kossnocorp"
-+      }
-+    },
-+    "node_modules/date-fns-jalali": {
-+      "version": "4.1.0-0",
-+      "resolved": "https://registry.npmjs.org/date-fns-jalali/-/date-fns-jalali-4.1.0-0.tgz",
-+      "integrity": "sha512-hTIP/z+t+qKwBDcmmsnmjWTduxCg+5KfdqWQvb2X/8C9+knYY6epN/pfxdDuyVlSVeFz0sM5eEfwIUQ70U4ckg=="
-+    },
-     "node_modules/debug": {
-       "version": "4.4.1",
-       "resolved": "https://registry.npmjs.org/debug/-/debug-4.4.1.tgz",
-@@ -5072,6 +5129,26 @@
-         "node": ">=0.10.0"
-       }
-     },
-+    "node_modules/react-day-picker": {
-+      "version": "9.8.1",
-+      "resolved": "https://registry.npmjs.org/react-day-picker/-/react-day-picker-9.8.1.tgz",
-+      "integrity": "sha512-kMcLrp3PfN/asVJayVv82IjF3iLOOxuH5TNFWezX6lS/T8iVRFPTETpHl3TUSTH99IDMZLubdNPJr++rQctkEw==",
-+      "dependencies": {
-+        "@date-fns/tz": "^1.2.0",
-+        "date-fns": "^4.1.0",
-+        "date-fns-jalali": "^4.1.0-0"
-+      },
-+      "engines": {
-+        "node": ">=18"
-+      },
-+      "funding": {
-+        "type": "individual",
-+        "url": "https://github.com/sponsors/gpbl"
-+      },
-+      "peerDependencies": {
-+        "react": ">=16.8.0"
-+      }
-+    },
-     "node_modules/react-dom": {
-       "version": "19.1.0",
-       "resolved": "https://registry.npmjs.org/react-dom/-/react-dom-19.1.0.tgz",
-@@ -5885,10 +5962,9 @@
-       }
-     },
-     "node_modules/yup": {
--      "version": "1.6.1",
--      "resolved": "https://registry.npmjs.org/yup/-/yup-1.6.1.tgz",
--      "integrity": "sha512-JED8pB50qbA4FOkDol0bYF/p60qSEDQqBD0/qeIrUCG1KbPBIQ776fCUNb9ldbPcSTxA69g/47XTo4TqWiuXOA==",
--      "license": "MIT",
-+      "version": "1.7.0",
-+      "resolved": "https://registry.npmjs.org/yup/-/yup-1.7.0.tgz",
-+      "integrity": "sha512-VJce62dBd+JQvoc+fCVq+KZfPHr+hXaxCcVgotfwWvlR0Ja3ffYKaJBT8rptPOSKOGJDCUnW2C2JWpud7aRP6Q==",
-       "dependencies": {
-         "property-expr": "^2.0.5",
-         "tiny-case": "^1.0.3",
+     "node_modules/is-extglob": {
+       "version": "2.1.1",
+       "resolved": "https://registry.npmjs.org/is-extglob/-/is-extglob-2.1.1.tgz",
 diff --git a/package.json b/package.json
-index bf80ef3..9305f2f 100644
+index 9305f2f..0f2c912 100644
 --- a/package.json
 +++ b/package.json
-@@ -17,6 +17,7 @@
-     "@radix-ui/react-dropdown-menu": "^2.1.15",
-     "@radix-ui/react-label": "^2.1.7",
-     "@radix-ui/react-navigation-menu": "^1.2.13",
-+    "@radix-ui/react-popover": "^1.1.14",
-     "@radix-ui/react-select": "^2.2.5",
-     "@radix-ui/react-separator": "^1.1.7",
-     "@radix-ui/react-slider": "^1.3.5",
-@@ -28,12 +29,14 @@
-     "axios": "^1.11.0",
-     "class-variance-authority": "^0.7.1",
-     "clsx": "^2.1.1",
-+    "date-fns": "^4.1.0",
-     "embla-carousel-autoplay": "^8.6.0",
+@@ -34,6 +34,7 @@
      "embla-carousel-react": "^8.6.0",
      "formik": "^2.4.6",
      "framer-motion": "^12.23.5",
++    "input-otp": "^1.4.2",
      "lucide-react": "^0.525.0",
      "react": "19.1.0",
-+    "react-day-picker": "^9.8.1",
-     "react-dom": "19.1.0",
-     "react-hot-toast": "^2.5.2",
-     "react-quill-new": "^3.6.0",
-@@ -42,7 +45,7 @@
-     "sonner": "^2.0.6",
-     "tailwind-merge": "^3.3.1",
-     "tailwindcss": "^4.1.11",
--    "yup": "^1.6.1"
-+    "yup": "^1.7.0"
-   },
-   "devDependencies": {
-     "@eslint/js": "^9.30.1",
+     "react-day-picker": "^9.8.1",
 diff --git a/src/App.tsx b/src/App.tsx
-index 7d83710..e7359bd 100644
+index e7359bd..2a3f0c1 100644
 --- a/src/App.tsx
 +++ b/src/App.tsx
-@@ -81,6 +81,27 @@ const UserDashboard = lazy(
- );
- const UserProfile = lazy(() => import("@/Pages/Dashboard/User/Profile"));
+@@ -1,106 +1,14 @@
+-import { Suspense, lazy } from "react";
++import { Suspense } from "react";
+ import { BrowserRouter, Routes, Route } from "react-router-dom";
+ import Footer from "./components/Home/Footer";
+ import MainNavigation from "./components/Navigation/MainNavigation";
+ import "./App.css";
+-import BusinessBanking from "./Pages/Landing/BusinessBanking/BusinessBanking";
+-import CMSLayout from "./Pages/Dashboard/CMS/CMSLayout";
+-import UserDashboardLayout from "./Pages/Dashboard/User/UserDashboardLayout";
++import { dashboardRoutes } from "./Routes/DashboardRoutes";
++import { cmsRoutes } from "./Routes/CMSRoutes";
++import { landingRoutes } from "./Routes/LandingRoutes";
++import { statusRoutes } from "./Routes/StatusRoutes";
  
-+const UserComplains = lazy(() => import("@/Pages/Dashboard/User/Complains"));
-+
-+const UserInsurance = lazy(
-+  () => import("@/Pages/Dashboard/User/Insurance/Insurance")
-+);
-+const MyInsuranceApplication = lazy(
-+  () => import("@/Pages/Dashboard/User/Insurance/MyApplication")
-+);
-+const InsuranceApplications = lazy(
-+  () => import("@/Pages/Dashboard/User/Insurance/ApplyInsurance")
-+);
-+const ClaimApplication = lazy(
-+  () => import("@/Pages/Dashboard/User/Insurance/Claim")
-+);
-+const ApplyForInsurance = lazy(
-+  () => import("@/Pages/Dashboard/User/Insurance/ApplyForInsurance")
-+);
-+const InsuranceClaim = lazy(
-+  () => import("@/Pages/Dashboard/User/Insurance/InsuranceClaim")
-+);
-+
+-// Lazy Loading Pages
+-const Home = lazy(() => import("./Pages/Landing/Home"));
+-const PersonalBanking = lazy(
+-  () => import("./Pages/Landing/PersonalBaking/PersonalBanking")
+-);
+-const NotFound = lazy(() => import("./Pages/Status/NotFound"));
+-const Error = lazy(() => import("./Pages/Status/Error"));
+-const UnderMaintenance = lazy(() => import("./Pages/Status/UnderMaintenance"));
+-const Diaspora = lazy(() => import("./Pages/Landing/PersonalBaking/Diaspora"));
+-const Individual = lazy(
+-  () => import("./Pages/Landing/PersonalBaking/Individual")
+-);
+-const Private = lazy(() => import("./Pages/Landing/PersonalBaking/Private"));
+-const Privilages = lazy(
+-  () => import("./Pages/Landing/PersonalBaking/Privilages")
+-);
+-const SingleAccount = lazy(() => import("./Pages/Landing/SingleAccount"));
+-const SingleInsurance = lazy(() => import("./Pages/Landing/SingleInsurance"));
+-const SingleLoan = lazy(() => import("./Pages/Landing/SingleLoan"));
+-const WaytoBank = lazy(() => import("./Pages/Landing/WaytoBank"));
+-const CompareAccount = lazy(() => import("./Pages/Landing/CompareAccount"));
+-
+-// ABOUT PAGES
+-const About = lazy(() => import("./Pages/Landing/About/About"));
+-const ContactUs = lazy(() => import("./Pages/Landing/ContactUs"));
+-const Overview = lazy(() => import("./Pages/Landing/About/Overview"));
+-const Careers = lazy(() => import("./Pages/Landing/About/Careers"));
+-const Governance = lazy(() => import("./Pages/Landing/About/Governance"));
+-const InvestorRelations = lazy(
+-  () => import("./Pages/Landing/About/InvestorRelations")
+-);
+-const News = lazy(() => import("./Pages/Landing/About/News"));
+-const Sustainability = lazy(
+-  () => import("./Pages/Landing/About/Sustainability")
+-);
+-const Tenders = lazy(() => import("./Pages/Landing/About/Tenders"));
+-
+-// Business Banking Pages
+-const SMEs = lazy(() => import("./Pages/Landing/BusinessBanking/SMEs"));
+-const MicroEnterprise = lazy(
+-  () => import("./Pages/Landing/BusinessBanking/MicroEnterprise")
+-);
+-const Commercial = lazy(
+-  () => import("./Pages/Landing/BusinessBanking/Commercial")
+-);
+-
+-const WhistleBlowing = lazy(() => import("./Pages/Landing/WhistleBlowing"));
+-const WebTerms = lazy(() => import("./Pages/Landing/WebTerms"));
+-const TermsCondition = lazy(() => import("./Pages/Landing/TermsCondition"));
+-const DataPrivacy = lazy(() => import("./Pages/Landing/DataPrivacy"));
+-
+-const SingleNews = lazy(() => import("./Pages/Landing/SingleNews"));
+-
+-// Security Pages
+-const SecurityCenter = lazy(() => import("./Pages/Landing/SecurityCenter"));
+-const FraudaAlert = lazy(() => import("./Pages/Landing/FraudAlert"));
+-
+-// Currency Converter
+-const CurrencyConvetor = lazy(() => import("./Pages/Landing/CurrencyConvetor"));
+-
+-// CMS DASHBOARD PAGES
+-const CMSDashboard = lazy(
+-  () => import("./Pages/Dashboard/CMS/CMSPages/CMSDashboard")
+-);
+-const CMSSection = lazy(
+-  () => import("./Pages/Dashboard/CMS/CMSPages/Sections")
+-);
+-
+-// DASHBOARD PAGES
+-const UserDashboard = lazy(
+-  () => import("@/Pages/Dashboard/User/UserDashboard")
+-);
+-const UserProfile = lazy(() => import("@/Pages/Dashboard/User/Profile"));
+-
+-const UserComplains = lazy(() => import("@/Pages/Dashboard/User/Complains"));
+-
+-const UserInsurance = lazy(
+-  () => import("@/Pages/Dashboard/User/Insurance/Insurance")
+-);
+-const MyInsuranceApplication = lazy(
+-  () => import("@/Pages/Dashboard/User/Insurance/MyApplication")
+-);
+-const InsuranceApplications = lazy(
+-  () => import("@/Pages/Dashboard/User/Insurance/ApplyInsurance")
+-);
+-const ClaimApplication = lazy(
+-  () => import("@/Pages/Dashboard/User/Insurance/Claim")
+-);
+-const ApplyForInsurance = lazy(
+-  () => import("@/Pages/Dashboard/User/Insurance/ApplyForInsurance")
+-);
+-const InsuranceClaim = lazy(
+-  () => import("@/Pages/Dashboard/User/Insurance/InsuranceClaim")
+-);
++// Import route configurations
+ 
  // Layout Components
  const MainLayout = ({ children }: { children: React.ReactNode }) => (
-   <>
-@@ -103,6 +124,21 @@ function App() {
-           <Route path="dashboard" element={<UserDashboardLayout />}>
-             <Route index element={<UserDashboard />} />
-             <Route path="profile" element={<UserProfile />} />
-+            <Route path="complains" element={<UserComplains />} />
+@@ -120,221 +28,31 @@ function App() {
+     <BrowserRouter>
+       <Suspense fallback={<LoadingFallback />}>
+         <Routes>
+-          {/* USER DASHBOARD - No layout */}
+-          <Route path="dashboard" element={<UserDashboardLayout />}>
+-            <Route index element={<UserDashboard />} />
+-            <Route path="profile" element={<UserProfile />} />
+-            <Route path="complains" element={<UserComplains />} />
+-
+-            <Route path="insurance" element={<UserInsurance />}>
+-              <Route index element={<InsuranceApplications />} />
+-              <Route
+-                path="my-application"
+-                element={<MyInsuranceApplication />}
+-              />
+-              <Route path="claim" element={<ClaimApplication />} />
+-              <Route
+-                path="apply-for-insurance/:insuranceTitle"
+-                element={<ApplyForInsurance />}
+-              />
+-              <Route path="insurance-claim" element={<InsuranceClaim />} />
++          {/* Dashboard Routes */}
++          {dashboardRoutes}
 +
-+            <Route path="insurance" element={<UserInsurance />}>
-+              <Route index element={<InsuranceApplications />} />
-+              <Route
-+                path="my-application"
-+                element={<MyInsuranceApplication />}
-+              />
-+              <Route path="claim" element={<ClaimApplication />} />
-+              <Route
-+                path="apply-for-insurance/:insuranceTitle"
-+                element={<ApplyForInsurance />}
-+              />
-+              <Route path="insurance-claim" element={<InsuranceClaim />} />
-+            </Route>
-           </Route>
- 
-           {/* CMS Dashboard Routes - No layout */}
-@@ -117,18 +153,18 @@ function App() {
-           <Route path="not-found" element={<NotFound />} />
- 
-           {/* Home Route - With layout */}
--          <Route 
--            path="/" 
-+          <Route
-+            path="/"
-             element={
-               <MainLayout>
-                 <Home />
-               </MainLayout>
--            } 
-+            }
-           />
- 
-           {/* Personal Banking Routes - With layout */}
--          <Route 
--            path="personal-banking" 
-+          <Route
-+            path="personal-banking"
-             element={
-               <MainLayout>
-                 <PersonalBanking />
-@@ -150,13 +186,13 @@ function App() {
-               </MainLayout>
-             }
-           />
--          <Route 
--            path="loans/:loanName" 
-+          <Route
-+            path="loans/:loanName"
-             element={
-               <MainLayout>
-                 <SingleLoan />
-               </MainLayout>
--            } 
-+            }
-           />
-           <Route
-             path="insurances/:insuranceName"
-@@ -184,8 +220,8 @@ function App() {
-           />
- 
-           {/* About Section Routes - With layout */}
--          <Route 
--            path="about" 
-+          <Route
-+            path="about"
-             element={
-               <MainLayout>
-                 <About />
-@@ -202,18 +238,18 @@ function App() {
-           </Route>
- 
-           {/* Contact Route - With layout */}
--          <Route 
--            path="contact-us" 
-+          <Route
-+            path="contact-us"
-             element={
-               <MainLayout>
-                 <ContactUs />
-               </MainLayout>
--            } 
-+            }
-           />
- 
-           {/* Business Banking Routes - With layout */}
--          <Route 
--            path="business-banking" 
-+          <Route
-+            path="business-banking"
-             element={
-               <MainLayout>
-                 <BusinessBanking />
-@@ -226,65 +262,65 @@ function App() {
-           </Route>
- 
-           {/* Legal & Compliance Routes - With layout */}
--          <Route 
--            path="whistle-blowing" 
-+          <Route
-+            path="whistle-blowing"
-             element={
-               <MainLayout>
-                 <WhistleBlowing />
-               </MainLayout>
--            } 
-+            }
-           />
--          <Route 
--            path="website-terms" 
-+          <Route
-+            path="website-terms"
-             element={
-               <MainLayout>
-                 <WebTerms />
-               </MainLayout>
--            } 
-+            }
-           />
--          <Route 
--            path="terms-condition" 
-+          <Route
-+            path="terms-condition"
-             element={
-               <MainLayout>
-                 <TermsCondition />
-               </MainLayout>
--            } 
-+            }
-           />
--          <Route 
--            path="data-privacy" 
-+          <Route
-+            path="data-privacy"
-             element={
-               <MainLayout>
-                 <DataPrivacy />
-               </MainLayout>
--            } 
-+            }
-           />
- 
-           {/* News Route - With layout */}
--          <Route 
--            path="news/:newsName" 
-+          <Route
-+            path="news/:newsName"
-             element={
-               <MainLayout>
-                 <SingleNews />
-               </MainLayout>
--            } 
-+            }
-           />
- 
-           {/* Security Routes - With layout */}
--          <Route 
--            path="security-center" 
-+          <Route
-+            path="security-center"
-             element={
-               <MainLayout>
-                 <SecurityCenter />
-               </MainLayout>
--            } 
-+            }
-           />
--          <Route 
--            path="fraud-alert" 
-+          <Route
-+            path="fraud-alert"
-             element={
-               <MainLayout>
-                 <FraudaAlert />
-               </MainLayout>
--            } 
-+            }
-           />
- 
-           {/* Utility Routes - With layout */}
-@@ -305,4 +341,4 @@ function App() {
-   );
- }
- 
--export default App;
-\ No newline at end of file
-+export default App;
-diff --git a/src/Page-Sections/Landing/AboutPageSection/Parts/News/PressReleaseCard.tsx b/src/Page-Sections/Landing/AboutPageSection/Parts/News/PressReleaseCard.tsx
-index 36b0120..3e93051 100644
---- a/src/Page-Sections/Landing/AboutPageSection/Parts/News/PressReleaseCard.tsx
-+++ b/src/Page-Sections/Landing/AboutPageSection/Parts/News/PressReleaseCard.tsx
-@@ -13,6 +13,7 @@ interface PressReleaseCardProps {
-   rightSide?: boolean;
-   learnMoreLink?: string;
-   compareLink?: string;
-+  buttonText?:string
- }
- 
- const PressReleaseCard = ({
-@@ -24,6 +25,7 @@ const PressReleaseCard = ({
-   rightSide = false,
-   learnMoreLink,
-   compareLink,
-+  buttonText
- }: PressReleaseCardProps) => {
-   const navigate = useNavigate();
- 
-@@ -106,7 +108,7 @@ const PressReleaseCard = ({
-                 navigate(learnMoreLink);
-               }}
-             >
--              Learn More
-+            {buttonText || "Learn More"}
-             </Button>
-           )}
-         </div>
-diff --git a/src/Page-Sections/UserDashboardPageSection/ProfilePageSection.tsx b/src/Page-Sections/UserDashboardPageSection/ProfilePageSection.tsx
-index 8d0d47f..4864a2c 100644
---- a/src/Page-Sections/UserDashboardPageSection/ProfilePageSection.tsx
-+++ b/src/Page-Sections/UserDashboardPageSection/ProfilePageSection.tsx
-@@ -1,85 +1,272 @@
-+import Button from "@/components/ui/button";
- import { CustomInput } from "@/components/ui/CustomInput";
-+import { CustomSelect } from "@/components/ui/CustomSelect";
-+import DatePicker from "@/components/ui/DatePicker";
- import PhoneInput from "@/components/ui/PhoneInput";
- import { useState } from "react";
-+import { Formik, Form, type FormikProps } from "formik";
-+import * as Yup from "yup";
++          {/* CMS Routes */}
++          {cmsRoutes}
 +
-+// Validation schema
-+const validationSchema = Yup.object({
-+  firstName: Yup.string()
-+    .min(2, "First name must be at least 2 characters")
-+    .required("First name is required"),
-+  lastName: Yup.string()
-+    .min(2, "Last name must be at least 2 characters")
-+    .required("Last name is required"),
-+  phone: Yup.string()
-+    .min(10, "Phone number must be at least 10 digits")
-+    .required("Phone number is required"),
-+  phoneCountry: Yup.string().required("Country is required"),
-+  email: Yup.string()
-+    .email("Invalid email address")
-+    .required("Email is required"),
-+  dateOfBirth: Yup.date()
-+    .nullable()
-+    .transform((value, originalValue) => {
-+      return originalValue === "" ? undefined : value;
-+    })
-+    .required("Date of birth is required"),
-+  gender: Yup.string().required("Gender is required"),
-+  address: Yup.string().required("Address is required"),
-+  occupation: Yup.string().required("Occupation is required"),
-+  emergencyContact: Yup.string()
-+    .min(10, "Emergency contact must be at least 10 digits")
-+    .required("Emergency contact is required"),
-+  accountStatus: Yup.string().required("Account status is required"),
-+});
++          {/* Status Routes */}
++          {statusRoutes}
 +
- type FormData = {
-   firstName: string;
-   lastName: string;
-   phone: string;
-   phoneCountry: string;
-   email: string;
--  message: string;
-+  dateOfBirth: Date | undefined;
-+  gender: string;
-+  address: string;
-+  occupation: string;
-+  emergencyContact: string;
-+  accountStatus: string;
++          {/* Landing Routes with MainLayout */}
++          {landingRoutes.map((route, index) => (
++            <Route
++              key={index}
++              path={route.path}
++              element={
++                route.withLayout ? (
++                  <MainLayout>{route.element}</MainLayout>
++                ) : (
++                  route.element
++                )
++              }
++            >
++              {route.children}
+             </Route>
+-          </Route>
+-
+-          {/* CMS Dashboard Routes - No layout */}
+-          <Route path="/cms/*" element={<CMSLayout />}>
+-            <Route index element={<CMSDashboard />} />
+-            <Route path="sections" element={<CMSSection />} />
+-          </Route>
+-
+-          {/* Status Pages - Plain pages, no layout */}
+-          <Route path="error" element={<Error />} />
+-          <Route path="under-maintenance" element={<UnderMaintenance />} />
+-          <Route path="not-found" element={<NotFound />} />
+-
+-          {/* Home Route - With layout */}
+-          <Route
+-            path="/"
+-            element={
+-              <MainLayout>
+-                <Home />
+-              </MainLayout>
+-            }
+-          />
+-
+-          {/* Personal Banking Routes - With layout */}
+-          <Route
+-            path="personal-banking"
+-            element={
+-              <MainLayout>
+-                <PersonalBanking />
+-              </MainLayout>
+-            }
+-          >
+-            <Route index element={<Individual />} />
+-            <Route path="diaspora" element={<Diaspora />} />
+-            <Route path="priveleged" element={<Privilages />} />
+-            <Route path="private" element={<Private />} />
+-          </Route>
+-
+-          {/* Dynamic Product Routes - With layout */}
+-          <Route
+-            path="accounts/:accountName"
+-            element={
+-              <MainLayout>
+-                <SingleAccount />
+-              </MainLayout>
+-            }
+-          />
+-          <Route
+-            path="loans/:loanName"
+-            element={
+-              <MainLayout>
+-                <SingleLoan />
+-              </MainLayout>
+-            }
+-          />
+-          <Route
+-            path="insurances/:insuranceName"
+-            element={
+-              <MainLayout>
+-                <SingleInsurance />
+-              </MainLayout>
+-            }
+-          />
+-          <Route
+-            path="way-to-bank/:wayToBankName"
+-            element={
+-              <MainLayout>
+-                <WaytoBank />
+-              </MainLayout>
+-            }
+-          />
+-          <Route
+-            path="compare-account/:compareAccountName"
+-            element={
+-              <MainLayout>
+-                <CompareAccount />
+-              </MainLayout>
+-            }
+-          />
+-
+-          {/* About Section Routes - With layout */}
+-          <Route
+-            path="about"
+-            element={
+-              <MainLayout>
+-                <About />
+-              </MainLayout>
+-            }
+-          >
+-            <Route index element={<Overview />} />
+-            <Route path="careers" element={<Careers />} />
+-            <Route path="governance" element={<Governance />} />
+-            <Route path="investor-relations" element={<InvestorRelations />} />
+-            <Route path="news" element={<News />} />
+-            <Route path="sustainability" element={<Sustainability />} />
+-            <Route path="tenders" element={<Tenders />} />
+-          </Route>
+-
+-          {/* Contact Route - With layout */}
+-          <Route
+-            path="contact-us"
+-            element={
+-              <MainLayout>
+-                <ContactUs />
+-              </MainLayout>
+-            }
+-          />
+-
+-          {/* Business Banking Routes - With layout */}
+-          <Route
+-            path="business-banking"
+-            element={
+-              <MainLayout>
+-                <BusinessBanking />
+-              </MainLayout>
+-            }
+-          >
+-            <Route index element={<MicroEnterprise />} />
+-            <Route path="smes" element={<SMEs />} />
+-            <Route path="commercial" element={<Commercial />} />
+-          </Route>
+-
+-          {/* Legal & Compliance Routes - With layout */}
+-          <Route
+-            path="whistle-blowing"
+-            element={
+-              <MainLayout>
+-                <WhistleBlowing />
+-              </MainLayout>
+-            }
+-          />
+-          <Route
+-            path="website-terms"
+-            element={
+-              <MainLayout>
+-                <WebTerms />
+-              </MainLayout>
+-            }
+-          />
+-          <Route
+-            path="terms-condition"
+-            element={
+-              <MainLayout>
+-                <TermsCondition />
+-              </MainLayout>
+-            }
+-          />
+-          <Route
+-            path="data-privacy"
+-            element={
+-              <MainLayout>
+-                <DataPrivacy />
+-              </MainLayout>
+-            }
+-          />
+-
+-          {/* News Route - With layout */}
+-          <Route
+-            path="news/:newsName"
+-            element={
+-              <MainLayout>
+-                <SingleNews />
+-              </MainLayout>
+-            }
+-          />
+-
+-          {/* Security Routes - With layout */}
+-          <Route
+-            path="security-center"
+-            element={
+-              <MainLayout>
+-                <SecurityCenter />
+-              </MainLayout>
+-            }
+-          />
+-          <Route
+-            path="fraud-alert"
+-            element={
+-              <MainLayout>
+-                <FraudaAlert />
+-              </MainLayout>
+-            }
+-          />
+-
+-          {/* Utility Routes - With layout */}
+-          <Route
+-            path="currency-convetor"
+-            element={
+-              <MainLayout>
+-                <CurrencyConvetor />
+-              </MainLayout>
+-            }
+-          />
+-
+-          {/* Catch-all NotFound route - Plain page, no layout */}
+-          <Route path="*" element={<NotFound />} />
++          ))}
+         </Routes>
+       </Suspense>
+     </BrowserRouter>
+diff --git a/src/Context/ModalContext.tsx b/src/Context/ModalContext.tsx
+index 049d49d..e9d9f79 100644
+--- a/src/Context/ModalContext.tsx
++++ b/src/Context/ModalContext.tsx
+@@ -1,26 +1,30 @@
+ import Modal from '@/components/ui/modal';
+ import React from 'react';
+ 
++export type ModalSize = 'sm' | 'md' | 'lg' | 'xl' | 'full' | 'auto';
++
+ export type ModalContextType = {
+   isOpen: boolean;
+-  openModal: (content: React.ReactNode, title?: string) => void;
++  openModal: (content: React.ReactNode, title?: string, size?: ModalSize) => void;
+   closeModal: () => void;
+   modalTitle: string;
+   modalContent: React.ReactNode;
++  modalSize: ModalSize;
  };
-+
- function ProfilePageSection() {
--  const [formData, setFormData] = useState<FormData>({
--    firstName: "",
--    lastName: "",
--    phone: "",
--    phoneCountry: "TZ", // Default to Tanzania
--    email: "",
--    message: "",
--  });
--  const handlePhoneChange = (phone: string) => {
--    setFormData((prev) => ({
--      ...prev,
--      phone,
--    }));
-+  const [isEditing, setIsEditing] = useState(false);
-+
-+  // Dummy data
-+  const initialValues: FormData = {
-+    firstName: "John",
-+    lastName: "Doe",
-+    phone: "+255123456789",
-+    phoneCountry: "TZ",
-+    email: "john.doe@example.com",
-+    dateOfBirth: new Date("1990-05-15"),
-+    gender: "male",
-+    address: "123 Uhuru Street, Dar es Salaam",
-+    occupation: "Software Developer",
-+    emergencyContact: "+255987654321",
-+    accountStatus: "Active",
-   };
  
--  const handleCountryChange = (country: string) => {
--    setFormData((prev) => ({
--      ...prev,
--      phoneCountry: country,
--    }));
-+  const [genderOptions] = useState([
-+    { label: "Male", value: "male" },
-+    { label: "Female", value: "female" },
-+    { label: "Other", value: "other" },
-+  ]);
-+
-+  const [statusOptions] = useState([
-+    { label: "Active", value: "Active" },
-+    { label: "Inactive", value: "Inactive" },
-+    { label: "Pending", value: "Pending" },
-+  ]);
-+
-+  const handleSubmit = (values: FormData) => {
-+    console.log("Form submitted:", values);
-+    setIsEditing(false);
-+    // Here you would typically send the data to your API
-+  };
-+
-+  const handleEditToggle = () => {
-+    setIsEditing(!isEditing);
-   };
+ const ModalContext = React.createContext<ModalContextType | null>(null);
+ 
+-
+ // Modal Provider Component
+ const ModalProvider = ({ children }: { children: React.ReactNode }) => {
+   const [isOpen, setIsOpen] = React.useState(false);
+   const [modalContent, setModalContent] = React.useState<React.ReactNode>(null);
+   const [modalTitle, setModalTitle] = React.useState('');
++  const [modalSize, setModalSize] = React.useState<ModalSize>('auto');
+ 
+-  const openModal = React.useCallback((content: React.ReactNode, title = '') => {
++  const openModal = React.useCallback((content: React.ReactNode, title = '', size: ModalSize = 'auto') => {
+     setModalContent(content);
+     setModalTitle(title);
++    setModalSize(size);
+     setIsOpen(true);
+   }, []);
+ 
+@@ -29,11 +33,12 @@ const ModalProvider = ({ children }: { children: React.ReactNode }) => {
+     setTimeout(() => {
+       setModalContent(null);
+       setModalTitle('');
++      setModalSize('auto');
+     }, 300); // Wait for animation to complete
+   }, []);
  
    return (
-     <div className="bg-white border-[1px] border-gray-200 rounded-lg">
--      <div className="border-b border-gray-300 p-4">
--        <h2 className="text-lg font-semibold">Recent Activities</h2>
--        <p className="text-sm text-muted-foreground">
--          Manage your personal information and preferences
--        </p>
+-    <ModalContext.Provider value={{ isOpen, openModal, closeModal, modalTitle, modalContent }}>
++    <ModalContext.Provider value={{ isOpen, openModal, closeModal, modalTitle, modalContent, modalSize }}>
+       {children}
+       <Modal />
+     </ModalContext.Provider>
+diff --git a/src/Page-Sections/UserDashboardPageSection/ComplainsPageSection.tsx b/src/Page-Sections/UserDashboardPageSection/ComplainsPageSection.tsx
+deleted file mode 100644
+index 98dceee..0000000
+--- a/src/Page-Sections/UserDashboardPageSection/ComplainsPageSection.tsx
++++ /dev/null
+@@ -1,38 +0,0 @@
+-import Button from "@/components/ui/button";
+-import { useNavigate } from "react-router-dom";
+-import ComplainCard from "./DashboadSections/ComplainsSection/ComplainCard";
+-
+-function ComplainsPageSection() {
+-  const navigate = useNavigate();
+-  return (
+-    <div className="space-y-4">
+-      <div className="flex items-center justify-between">
+-        <div>
+-          <h1 className="text-2xl font-bold">Insurance Services</h1>
+-          <p className="text-muted-foreground text-xs">
+-            Apply for insurance, track applications, and manage claims
+-          </p>
+-        </div>
+-        <div>
+-          <Button
+-            variant="primary"
+-            onClick={() => navigate("/dashboard/insurance/insurance-claim")}
+-          >
+-            File New Complaint
+-          </Button>
+-        </div>
 -      </div>
--      <div className="p-6 grid  grid-cols-1 md:grid-cols-2 gap-6">
--        <div className="space-y-4">
--          <h2 className="text-lg font-semibold text-gray-400">
--            Basic Information
--          </h2>
+-      <ComplainCard
+-        complain={{
+-          id: "12345",
+-          type: "Health",
+-          status: "submitted",
+-          description: "Complaint regarding health insurance claim processing.",
+-          submittedDate: "2023-10-01",
+-        }}
+-      />
+-    </div>
+-  );
+-}
 -
--          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
--            <CustomInput
--              label="First Name"
--              placeholder="Enter your first name "
--            />
--            <CustomInput label="Last Name" placeholder="Enter your last name" />
--          </div>
--
--          <div>
--            <PhoneInput
--              value={formData.phone}
--              country={formData.phoneCountry}
--              onPhoneChange={handlePhoneChange}
--              onCountryChange={handleCountryChange}
--              label="Phone Number"
--              required={true}
--              placeholder="Enter your phone number"
--            />
--          </div>
--
--          <div className="">
--            <CustomInput
--              type="email"
--              label="Email"
--              placeholder="Enter your email "
--            />
--          </div>
--          <div>
--            <CustomInput label="Last Name" placeholder="Enter your last name" />
--          </div>
-+      <div className="border-b border-gray-300 p-4 flex items-center justify-between">
+-export default ComplainsPageSection;
+diff --git a/src/Page-Sections/UserDashboardPageSection/DashboadSections/ComplainsSection/ComplainCard.tsx b/src/Page-Sections/UserDashboardPageSection/DashboadSections/ComplainsSection/ComplainCard.tsx
+index f5764fa..6122622 100644
+--- a/src/Page-Sections/UserDashboardPageSection/DashboadSections/ComplainsSection/ComplainCard.tsx
++++ b/src/Page-Sections/UserDashboardPageSection/DashboadSections/ComplainsSection/ComplainCard.tsx
+@@ -1,70 +1,76 @@
+ import Button from "@/components/ui/button";
+ import { Calendar, Wallet } from "lucide-react";
+ 
++function ComplainCard({
++  complain,
++  viewDetails,
++}: {
++  complain: any;
++  viewDetails: () => void;
++}) {
++  const getStatusColor = (status: string) => {
++    switch (status) {
++      case "paid":
++        return "text-green-600 bg-green-100";
++      case "approved":
++        return "text-blue-600 bg-blue-100";
++      case "investigating":
++        return "text-yellow-600 bg-yellow-100";
++      case "submitted":
++        return "text-purple-600 bg-purple-100";
++      case "rejected":
++        return "text-red-600 bg-red-100";
++      default:
++        return "text-gray-600 bg-gray-100";
++    }
++  };
+ 
+-function ComplainCard({complain}:{complain:any}) {
+-    const getStatusColor = (status: string) => {
+-        switch (status) {
+-          case "paid":
+-            return "text-green-600 bg-green-100";
+-          case "approved":
+-            return "text-blue-600 bg-blue-100";
+-          case "investigating":
+-            return "text-yellow-600 bg-yellow-100";
+-          case "submitted":
+-            return "text-purple-600 bg-purple-100";
+-          case "rejected":
+-            return "text-red-600 bg-red-100";
+-          default:
+-            return "text-gray-600 bg-gray-100";
+-        }
+-      };
+-    
+   return (
+     <div className="bg-white rounded-lg  border border-gray-200 p-4 sm:p-6 hover:shadow-md transition-shadow duration-200 space-y-6">
+-    <div className="flex items-center justify-between ">
+-      <div>
+-        <div className="flex items-center gap-x-4">
+-          <h3 className="text-lg font-semibold text-gray-900 mb-2">
+-            {complain.type} complain
+-          </h3>
+-         
+-          <div
+-            className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(
+-              complain.status
+-            )}`}
+-          >
+-            <span className="ml-1 capitalize">{complain.status}</span>
++      <div className="flex items-center justify-between ">
 +        <div>
-+          <h2 className="text-lg font-semibold">Profile Information</h2>
-+          <p className="text-sm text-muted-foreground">
-+            Manage your personal information and preferences
-+          </p>
++          <div className="flex items-center gap-x-4">
++            <h3 className="text-lg font-semibold text-gray-900 mb-2">
++              {complain.type} complain
++            </h3>
++
++            <div
++              className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(
++                complain.status
++              )}`}
++            >
++              <span className="ml-1 capitalize">{complain.status}</span>
++            </div>
+           </div>
++          <p className="text-gray-400 text-xs">{complain.description}</p>
 +        </div>
 +        <div>
-+          <Button 
-+            variant="primary" 
-+            onClick={handleEditToggle}
-+            type="button"
-+          >
-+            {isEditing ? "Cancel" : "Edit Profile"}
++          <Button variant="outline" onClick={viewDetails}>
++            View Details
 +          </Button>
          </div>
+-        <p className="text-gray-400 text-xs">{complain.description}</p>
        </div>
-+
-+      <Formik
-+        initialValues={initialValues}
-+        validationSchema={validationSchema}
-+        onSubmit={handleSubmit}
-+        enableReinitialize
-+      >
-+        {(formik: FormikProps<FormData>) => (
-+          <Form>
-+            <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6 space-x-10">
-+              <div className="space-y-4">
-+                <h2 className="text-lg font-semibold text-gray-400">
-+                  Basic Information
-+                </h2>
-+
-+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-+                  <CustomInput
-+                    label="First Name"
-+                    placeholder="Enter your first name"
-+                    value={formik.values.firstName}
-+                    onChange={(e) => formik.setFieldValue("firstName", e.target.value)}
-+                    onBlur={formik.handleBlur}
-+                    disabled={!isEditing}
-+                    error={formik.touched.firstName ? formik.errors.firstName : undefined}
-+                    name="firstName"
-+                  />
-+                  <CustomInput
-+                    label="Last Name"
-+                    placeholder="Enter your last name"
-+                    value={formik.values.lastName}
-+                    onChange={(e) => formik.setFieldValue("lastName", e.target.value)}
-+                    onBlur={formik.handleBlur}
-+                    disabled={!isEditing}
-+                    error={formik.touched.lastName ? formik.errors.lastName : undefined}
-+                    name="lastName"
-+                  />
-+                </div>
-+
-+                <div>
-+                  <PhoneInput
-+                    value={formik.values.phone}
-+                    country={formik.values.phoneCountry}
-+                    onPhoneChange={(phone: string) => formik.setFieldValue("phone", phone)}
-+                    onCountryChange={(country: string) => formik.setFieldValue("phoneCountry", country)}
-+                    label="Phone Number"
-+                    required={true}
-+                    placeholder="Enter your phone number"
-+                    disabled={!isEditing}
-+                    error={formik.touched.phone ? formik.errors.phone : undefined}
-+                  />
-+                </div>
-+
-+                <div>
-+                  <CustomInput
-+                    type="email"
-+                    label="Email"
-+                    placeholder="Enter your email"
-+                    value={formik.values.email}
-+                    onChange={(e) => formik.setFieldValue("email", e.target.value)}
-+                    onBlur={formik.handleBlur}
-+                    disabled={!isEditing}
-+                    error={formik.touched.email ? formik.errors.email : undefined}
-+                    name="email"
-+                  />
-+                </div>
-+
-+                <DatePicker
-+                  value={formik.values.dateOfBirth}
-+                  onChange={(date) => formik.setFieldValue("dateOfBirth", date)}
-+                  placeholder="Pick a date"
-+                  className="w-full"
-+                  label="Date of Birth"
-+                  disabled={!isEditing}
-+                  error={formik.touched.dateOfBirth ? formik.errors.dateOfBirth : undefined}
-+                />
-+
-+                <div>
-+                  <CustomSelect
-+                    options={genderOptions}
-+                    label="Gender"
-+                    value={formik.values.gender}
-+                    onValueChange={(value) => formik.setFieldValue("gender", value)}
-+                    placeholder="Choose gender"
-+                    className="w-full"
-+                    disabled={!isEditing}
-+                    error={formik.touched.gender ? formik.errors.gender : undefined}
-+                  />
-+                </div>
-+              </div>
-+
-+              <div className="space-y-4">
-+                <h2 className="text-lg font-semibold text-gray-400">
-+                  Additional Information
-+                </h2>
-+                
-+                <CustomInput
-+                  label="Address"
-+                  placeholder="Enter your address"
-+                  value={formik.values.address}
-+                  onChange={(e) => formik.setFieldValue("address", e.target.value)}
-+                  onBlur={formik.handleBlur}
-+                  disabled={!isEditing}
-+                  error={formik.touched.address ? formik.errors.address : undefined}
-+                  name="address"
-+                />
-+                
-+                <CustomInput
-+                  label="Occupation"
-+                  placeholder="Enter your occupation"
-+                  value={formik.values.occupation}
-+                  onChange={(e) => formik.setFieldValue("occupation", e.target.value)}
-+                  onBlur={formik.handleBlur}
-+                  disabled={!isEditing}
-+                  error={formik.touched.occupation ? formik.errors.occupation : undefined}
-+                  name="occupation"
-+                />
-+                
-+                <CustomInput
-+                  label="Emergency Contact"
-+                  placeholder="Enter your Emergency Contact"
-+                  value={formik.values.emergencyContact}
-+                  onChange={(e) => formik.setFieldValue("emergencyContact", e.target.value)}
-+                  onBlur={formik.handleBlur}
-+                  disabled={!isEditing}
-+                  error={formik.touched.emergencyContact ? formik.errors.emergencyContact : undefined}
-+                  name="emergencyContact"
-+                />
-+                
-+                <CustomSelect
-+                  options={statusOptions}
-+                  label="Account Status"
-+                  value={formik.values.accountStatus}
-+                  onValueChange={(value) => formik.setFieldValue("accountStatus", value)}
-+                  placeholder="Select status"
-+                  className="w-full"
-+                  disabled={!isEditing}
-+                  error={formik.touched.accountStatus ? formik.errors.accountStatus : undefined}
-+                />
-+                
-+                <div className="mt-12">
-+                  {isEditing && (
-+                    <Button 
-+                      variant="primary" 
-+                      type="submit"
-+                      disabled={!formik.isValid}
-+                    >
-+                      Save Changes
-+                    </Button>
-+                  )}
-+                </div>
-+              </div>
-+            </div>
-+          </Form>
-+        )}
-+      </Formik>
+       <div>
+-        <Button variant="outline">View Details</Button>
+-      </div>
+-    </div>
+-    <div>
+-      <div className="flex space-x-5">
+-        <div className="flex font-[700] text-[12px] text-gray-500 gap-1">
+-          <Calendar className="w-4 h-4 mr-1" />
+-          <p className=" ">complain ID:</p>
+-          <p className="">{complain.id}</p>
+-        </div>
+-        <div className="flex font-[700] text-[12px] text-gray-500 gap-1">
+-          <Calendar className="w-4 h-4 mr-1" />
+-          <p className=" "> Submitted:</p>
+-          <p className="">{complain.submittedDate}</p>
+-        </div>
+-        <div className="flex font-[700] text-[12px] text-gray-500 gap-1">
+-          <Wallet className="w-4 h-4 mr-1" />
+-          <p className=" "> Amount:</p>
+-          <p className="">{complain.amount}</p>
++        <div className="flex space-x-5">
++          <div className="flex font-[700] text-[12px] text-gray-500 gap-1">
++            <Calendar className="w-4 h-4 mr-1" />
++            <p className=" ">complain ID:</p>
++            <p className="">{complain.id}</p>
++          </div>
++          <div className="flex font-[700] text-[12px] text-gray-500 gap-1">
++            <Calendar className="w-4 h-4 mr-1" />
++            <p className=" "> Submitted:</p>
++            <p className="">{complain.submittedDate}</p>
++          </div>
++          <div className="flex font-[700] text-[12px] text-gray-500 gap-1">
++            <Wallet className="w-4 h-4 mr-1" />
++            <p className=" "> Amount:</p>
++            <p className="">{complain.amount}</p>
++          </div>
+         </div>
+       </div>
      </div>
-   );
+-  </div>
+-
+-  )
++  );
  }
  
--export default ProfilePageSection;
-+export default ProfilePageSection;
-\ No newline at end of file
-diff --git a/src/components/ui/CustomSelect.tsx b/src/components/ui/CustomSelect.tsx
-index 5258803..eead06a 100644
---- a/src/components/ui/CustomSelect.tsx
-+++ b/src/components/ui/CustomSelect.tsx
-@@ -31,7 +31,7 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
-   error
- }) => {
+-export default ComplainCard
++export default ComplainCard;
+diff --git a/src/Page-Sections/UserDashboardPageSection/DashboadSections/InsuranceSections/ClaimCard.tsx b/src/Page-Sections/UserDashboardPageSection/DashboadSections/InsuranceSections/ClaimCard.tsx
+index df46f45..ece9cb1 100644
+--- a/src/Page-Sections/UserDashboardPageSection/DashboadSections/InsuranceSections/ClaimCard.tsx
++++ b/src/Page-Sections/UserDashboardPageSection/DashboadSections/InsuranceSections/ClaimCard.tsx
+@@ -64,34 +64,7 @@ const ClaimCard: React.FC<{ claim: Claim }> = ({ claim }) => {
+       </div>
+     </div>
+ 
+-    //   <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4 sm:p-6 hover:shadow-md transition-shadow duration-200">
+-    //     <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between mb-4">
+-    //       <div className="flex-1">
+-    //         <h3 className="text-lg font-semibold text-gray-900 mb-1">{claim.type} Claim</h3>
+-    //         <p className="text-sm text-gray-600 mb-2">Claim #{claim.claimNumber}</p>
+-    //         <div className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(claim.status)}`}>
+-    //           <span className="capitalize">{claim.status}</span>
+-    //         </div>
+-    //       </div>
+-    //       <div className="mt-3 sm:mt-0 text-right">
+-    //         <p className="text-sm text-gray-500">Claim Amount</p>
+-    //         <p className="text-lg font-bold text-gray-900">{claim.amount}</p>
+-    //       </div>
+-    //     </div>
+-
+-    //     <p className="text-sm text-gray-600 mb-4">{claim.description}</p>
+-
+-    //     <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between text-sm">
+-    //       <div className="flex items-center text-gray-500 mb-2 sm:mb-0">
+-    //         <Calendar className="w-4 h-4 mr-1" />
+-    //         Submitted: {claim.submittedDate}
+-    //       </div>
+-    //       <button className="inline-flex items-center text-blue-600 hover:text-blue-700 font-medium">
+-    //         <Eye className="w-4 h-4 mr-1" />
+-    //         View Details
+-    //       </button>
+-    //     </div>
+-    //   </div>
++   
+   );
+ };
+ 
+diff --git a/src/Page-Sections/UserDashboardPageSection/DashboadSections/InsuranceSections/Tabs/ClaimsTab.tsx b/src/Page-Sections/UserDashboardPageSection/DashboadSections/InsuranceSections/Tabs/ClaimsTab.tsx
+index efbd2be..b15f7ce 100644
+--- a/src/Page-Sections/UserDashboardPageSection/DashboadSections/InsuranceSections/Tabs/ClaimsTab.tsx
++++ b/src/Page-Sections/UserDashboardPageSection/DashboadSections/InsuranceSections/Tabs/ClaimsTab.tsx
+@@ -36,13 +36,13 @@ const ClaimsTab: React.FC = () => {
+   ];
+ 
    return (
--    <div className={`space-y-2 ${className}`}>
-+    <div className={`w-full space-y-2 ${className}`}>
-       {label && (
-         <label className="text-sm font-medium text-foreground block">
-           {label}
-@@ -43,7 +43,7 @@ export const CustomSelect: React.FC<CustomSelectProps> = ({
-         onValueChange={onValueChange}
-         disabled={disabled}
+-    <div>
++
+       <div className="space-y-4 sm:space-y-6">
+         {claims.map((claim) => (
+           <ClaimCard key={claim.id} claim={claim} />
+         ))}
+       </div>
+-    </div>
++   
+   );
+ };
+ 
+diff --git a/src/Pages/Dashboard/User/Complains.tsx b/src/Pages/Dashboard/User/Complains.tsx
+deleted file mode 100644
+index 18be36f..0000000
+--- a/src/Pages/Dashboard/User/Complains.tsx
++++ /dev/null
+@@ -1,12 +0,0 @@
+-import ComplainsPageSection from "@/Page-Sections/UserDashboardPageSection/ComplainsPageSection"
+-
+-
+-function Complains() {
+-  return (
+-    <>
+-      <ComplainsPageSection />
+-    </>
+-  )
+-}
+-
+-export default Complains
+diff --git a/src/components/cms/Sidebar.tsx b/src/components/cms/Sidebar.tsx
+index e933fa5..fb6f83b 100644
+--- a/src/components/cms/Sidebar.tsx
++++ b/src/components/cms/Sidebar.tsx
+@@ -1,4 +1,4 @@
+-import { useState } from "react";
++import { useEffect, useState } from "react";
+ import { Link, useLocation } from "react-router-dom";
+ import Button from "@/components/ui/button";
+ import { ChevronDown, Plus } from "lucide-react";
+@@ -92,14 +92,62 @@ const Sidebar: React.FC<SidebarProps> = ({
+     );
+   };
+ 
+-  // Fixed isActive function for exact matching
++  // Updated isActive function to handle parent route activation
+   const isActive = (href: string) => {
+-    return location.pathname === href;
++    // Exact match for current path
++    if (location.pathname === href) return true;
++    
++    return false;
++  };
++
++  // Separate function to check if a direct navigation item should be active
++  const isDirectItemActive = (href: string, allNavItems: NavigationItem[]) => {
++    // Exact match first
++    if (location.pathname === href) return true;
++    
++    // For non-root paths, check if current path starts with the href
++    // But only if this href is not a prefix of any other navigation item
++    if (href !== '/' && location.pathname.startsWith(href + '/')) {
++      // Check if any other navigation item has an href that starts with this href
++      // This prevents "/dashboard" from being active when we're on "/dashboard/insurance"
++      const hasLongerMatch = allNavItems.some(item => {
++        if (hasSubItems(item)) {
++          return item.subItems.some(subItem => 
++            subItem.href !== href && 
++            subItem.href.startsWith(href + '/') &&
++            (location.pathname === subItem.href || location.pathname.startsWith(subItem.href + '/'))
++          );
++        } else {
++          return item.href !== href && 
++                 item.href.startsWith(href + '/') &&
++                 (location.pathname === item.href || location.pathname.startsWith(item.href + '/'));
++        }
++      });
++      
++      return !hasLongerMatch;
++    }
++    
++    return false;
+   };
+ 
+   // Helper function to check if any sub-item is active (for parent highlighting)
+   const hasActiveSubItem = (subItems: SubItem[]) => {
+-    return subItems?.some((subItem) => location.pathname === subItem.href);
++    return subItems?.some((subItem) => isActive(subItem.href));
++  };
++
++  // Helper function to check if a parent item should be active based on current route
++  const isParentActive = (item: NavigationItemWithSubItems) => {
++    // Check if any of the sub-items are exactly active or have child routes active
++    return item.subItems.some(subItem => {
++      // Exact match for sub-item
++      if (location.pathname === subItem.href) return true;
++      
++      // Check if current path starts with subItem.href + '/'
++      // This handles child routes of the sub-item
++      if (location.pathname.startsWith(subItem.href + '/')) return true;
++      
++      return false;
++    });
+   };
+ 
+   // Helper function to check if label contains "new"
+@@ -119,6 +167,17 @@ const Sidebar: React.FC<SidebarProps> = ({
+     }
+   };
+ 
++  // Auto-expand parent items that have active children
++  useEffect(() => {
++    navigationData.forEach((item) => {
++      if (hasSubItems(item) && isParentActive(item)) {
++        if (!expandedItems.includes(item.label)) {
++          setExpandedItems(prev => [...prev, item.label]);
++        }
++      }
++    });
++  }, [location.pathname]); // Re-run when route changes
++
+   return (
+     <div className={cn(
+       "h-screen flex flex-col border-r",
+@@ -160,7 +219,7 @@ const Sidebar: React.FC<SidebarProps> = ({
+               <div>
+                 <Button
+                   variant={
+-                    hasActiveSubItem(item.subItems) ? "primary" : "default"
++                    isParentActive(item) || hasActiveSubItem(item.subItems) ? "primary" : "default"
+                   }
+                   icon={item.icon}
+                   className={cn(
+@@ -209,7 +268,7 @@ const Sidebar: React.FC<SidebarProps> = ({
+                 onClick={() => handleNavigationClick(item.href, item)}
+               >
+                 <Button
+-                  variant={isActive(item.href) ? "primary" : "default"}
++                  variant={isDirectItemActive(item.href, navigationData) ? "primary" : "default"}
+                   className={cn(
+                     "w-full justify-start gap-3 h-auto py-3 px-3 transition-all duration-200"
+                   )}
+diff --git a/src/components/ui/CustomInput.tsx b/src/components/ui/CustomInput.tsx
+index 40e0512..b598a1b 100644
+--- a/src/components/ui/CustomInput.tsx
++++ b/src/components/ui/CustomInput.tsx
+@@ -1,6 +1,5 @@
+ import React, { useState, forwardRef } from "react";
+ import { Input } from "@/components/ui/input";
+-import  Button  from "@/components/ui/button";
+ import { Eye, EyeOff } from "lucide-react";
+ 
+ interface CustomInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
+@@ -38,19 +37,17 @@ export const CustomInput = forwardRef<HTMLInputElement, CustomInputProps>(({
+   const renderIcon = () => {
+     if (showPasswordToggle && (type === "password" || inputType === "password" || inputType === "text")) {
+       return (
+-        <Button
++        <button
+           type="button"
+-          variant="ghost"
+-          size="sm"
+-          className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
++          className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground focus:outline-none"
+           onClick={togglePasswordVisibility}
+         >
+           {showPassword ? (
+-            <EyeOff className="h-4 w-4 text-muted-foreground" />
++            <EyeOff className="h-4 w-4" />
+           ) : (
+-            <Eye className="h-4 w-4 text-muted-foreground" />
++            <Eye className="h-4 w-4" />
+           )}
+-        </Button>
++        </button>
+       );
+     }
+ 
+@@ -69,12 +66,12 @@ export const CustomInput = forwardRef<HTMLInputElement, CustomInputProps>(({
+   };
+ 
+   const inputClassName = `
+-    border-nbc-dark-950 
++    border-gray-300 
+     ${icon && iconPosition === "left" ? "pl-10" : ""} 
+     ${(icon && iconPosition === "right") || showPasswordToggle ? "pr-10" : ""} 
+     ${error ? "border-red-500 focus:border-red-500" : ""} 
+     ${className}
+-  `;
++  `.trim();
+ 
+   return (
+     <div className="space-y-2">
+diff --git a/src/components/ui/DatePicker.tsx b/src/components/ui/DatePicker.tsx
+index 418152f..016cdf5 100644
+--- a/src/components/ui/DatePicker.tsx
++++ b/src/components/ui/DatePicker.tsx
+@@ -128,7 +128,7 @@ const DatePicker: React.FC<DatePickerProps> = ({
+           className={`
+           flex items-center justify-between w-full px-3 py-2 text-sm
+           border rounded-lg bg-white transition-colors duration-200
+-          ${error ? 'border-red-500' : 'border-nbc-dark-950'}
++          ${error ? 'border-red-500' : 'border-gray-300'}
+           ${disabled ? 'bg-slate-50 text-slate-500 cursor-not-allowed' : 'hover:border-gray-400'}
+         `}
+         >
+diff --git a/src/components/ui/PhoneInput.tsx b/src/components/ui/PhoneInput.tsx
+index b81a51c..3915f10 100644
+--- a/src/components/ui/PhoneInput.tsx
++++ b/src/components/ui/PhoneInput.tsx
+@@ -78,7 +78,7 @@ function PhoneInput({
+             onClick={() => setIsOpen(!isOpen)}
+             disabled={disabled}
+             className={`
+-              flex items-center gap-2 py-1 px-2 border border-nbc-dark-950 rounded-l-lg bg-gray-50 
++              flex items-center gap-2 py-1 px-2 border border-gray-300 rounded-l-lg bg-gray-50 
+               text-gray-700 focus:outline-none  focus:z-10
+               transition-all duration-200 hover:bg-gray-100 min-w-[100px]
+               ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
+@@ -122,7 +122,7 @@ function PhoneInput({
+           placeholder={placeholder}
+           disabled={disabled}
+           className={`
+-            flex-1 py-1 px-2 border border-l-0 border-nbc-dark-950 rounded-r-lg 
++            flex-1 py-1 px-2 border border-l-0 border-gray-300 rounded-r-lg 
+             transition-all duration-200
+             ${disabled ? 'bg-gray-50 cursor-not-allowed' : ''}
+             ${error ? 'border-red-300' : ''}
+diff --git a/src/components/ui/button.tsx b/src/components/ui/button.tsx
+index d3bdc12..8c936b2 100644
+--- a/src/components/ui/button.tsx
++++ b/src/components/ui/button.tsx
+@@ -50,7 +50,7 @@ const Button = ({
+     primary:
+       "bg-nbc-dark-950 text-white shadow-sm hover:shadow-lg hover:bg-nbc-dark-700 transition-colors duration-300",
+     secondary:
+-      "bg-gray-100 text-gray-900 border border-gray-300 hover:bg-gray-200 hover:text-gray-800 hover:border-gray-400 transition-colors duration-300",
++      "bg-gray-50 text-nbc-dark-950 hover:bg-gray-100 transition-colors duration-300 border border-gray-200",
+     success:
+       "bg-green-600 text-white shadow-sm hover:bg-green-700 hover:shadow-green-200/50 transition-colors duration-300",
+     danger:
+@@ -59,7 +59,7 @@ const Button = ({
+       "bg-yellow-500 text-white shadow-sm hover:bg-yellow-600 hover:shadow-yellow-200/50 transition-colors duration-300",
+     info: "bg-cyan-600 text-white shadow-sm hover:bg-cyan-700 hover:shadow-cyan-200/50 transition-colors duration-300",
+     outline:
+-      "border-2 border-nbc-dark-950 text-nbc-dark-950 bg-transparent group hover:border-nbc-dark-950 transition-colors duration-300",
++      "border border-nbc-dark-950 text-nbc-dark-950 bg-transparent group hover:border-nbc-dark-950 transition-colors duration-300",
+     iconOutline:
+       "border-2 border-nbc-dark-950 text-nbc-dark-950 bg-transparent group hover:border-nbc-dark-950 transition-colors duration-300 rounded-full",
+     iconRounded:
+@@ -70,7 +70,7 @@ const Button = ({
+     gradient:
+       "bg-gradient-to-r from-purple-500 to-pink-600 text-white shadow-sm hover:from-purple-600 hover:to-pink-700 hover:shadow-purple-200/50 transition-all duration-300",
+     default:
+-      "bg-gray-50 text-nbc-dark-950 hover:bg-gray-100 transition-colors duration-300 border border-gray-200",
++      "bg-gray-50 text-nbc-dark-950 hover:bg-gray-100 transition-colors duration-300 ",
+     lightOutline:
+       "border-2 border-white text-white bg-transparent group hover:border-white transition-colors duration-300",
+   };
+diff --git a/src/components/ui/modal.tsx b/src/components/ui/modal.tsx
+index 11e5981..a2c4239 100644
+--- a/src/components/ui/modal.tsx
++++ b/src/components/ui/modal.tsx
+@@ -1,137 +1,154 @@
+ import { ModalContext } from "@/Context/ModalContext";
+ import { useModal } from "@/hooks/useModal";
++import { X } from "lucide-react";
+ import { useContext, useEffect } from "react";
+ 
+-function Modal  () {
+-    const { isOpen, closeModal, modalTitle } = useModal();
+-    const modalContent = useContext(ModalContext)?.modalContent;
+-  
+-    // Prevent background scroll when modal is open
+-    useEffect(() => {
+-      if (isOpen) {
+-        document.body.style.overflow = 'hidden';
+-      } else {
+-        document.body.style.overflow = '';
+-      }
+-      return () => {
+-        document.body.style.overflow = '';
+-      };
+-    }, [isOpen]);
+-  
+-    if (!isOpen && !modalContent) return null;
+-  
+-    return (
++function Modal() {
++  const { isOpen, closeModal, modalTitle } = useModal();
++  const context = useContext(ModalContext);
++  const modalContent = context?.modalContent;
++  const modalSize = context?.modalSize || 'auto';
++
++  // Prevent background scroll when modal is open
++  useEffect(() => {
++    if (isOpen) {
++      document.body.style.overflow = 'hidden';
++    } else {
++      document.body.style.overflow = '';
++    }
++    return () => {
++      document.body.style.overflow = '';
++    };
++  }, [isOpen]);
++
++  if (!isOpen && !modalContent) return null;
++
++  // Define width classes based on size
++  const getWidthClass = (size: string) => {
++    switch (size) {
++      case 'sm':
++        return 'w-full max-w-sm';
++      case 'md':
++        return 'w-full max-w-md';
++      case 'lg':
++        return 'w-full max-w-2xl';
++      case 'xl':
++        return 'w-full max-w-4xl';
++      case 'full':
++        return 'w-full max-w-[95vw]';
++      case 'auto':
++      default:
++        return 'w-auto min-w-[300px] max-w-[90vw]';
++    }
++  };
++
++  return (
++    <div
++      className={`fixed inset-0 z-50 flex items-center justify-center p-2 transition-all duration-500 ${
++        isOpen ? 'opacity-100 visible' : 'opacity-0 invisible'
++      }`}
++      role="dialog"
++      aria-modal="true"
++      aria-labelledby={modalTitle ? "modal-title" : undefined}
++    >
++      {/* Backdrop with blur effect */}
+       <div
+-        className={`fixed inset-0 z-50 flex items-center justify-center p-4 transition-all duration-500 w-full ${
+-          isOpen ? 'opacity-100 visible' : 'opacity-0 invisible'
++        className={`absolute inset-0 bg-black/60 backdrop-blur-sm transition-all duration-500 ${
++          isOpen ? 'opacity-100' : 'opacity-0'
+         }`}
+-        role="dialog"
+-        aria-modal="true"
+-        aria-labelledby={modalTitle ? "modal-title" : undefined}
++        onClick={closeModal}
++      />
++      
++      {/* Modal Content */}
++      <div
++        className={`relative bg-white/95 backdrop-blur-xl rounded-xl shadow-2xl border border-white/20 ${getWidthClass(modalSize)} max-h-[100vh] overflow-hidden transform transition-all duration-500 ease-out ${
++          isOpen 
++            ? 'translate-y-0 scale-100 rotate-0' 
++            : 'translate-y-12 scale-90 rotate-3'
++        }`}
++        style={{
++          animation: isOpen ? 'modalIn 0.5s ease-out' : 'modalOut 0.5s ease-in'
++        }}
++        onClick={(e) => e.stopPropagation()}
        >
--        <SelectTrigger className="border-gray-300 focus:border-gray-300 focus:ring-0 focus-visible:ring-0">
-+        <SelectTrigger>
-           <SelectValue placeholder={placeholder} />
-         </SelectTrigger>
-         <SelectContent>
+-        {/* Backdrop with blur effect */}
+-        <div
+-          className={`absolute inset-0 bg-black/60 backdrop-blur-sm transition-all duration-500 ${
+-            isOpen ? 'opacity-100' : 'opacity-0'
+-          }`}
+-          onClick={closeModal}
+-        />
+-        
+-        {/* Modal Content */}
+-        <div
+-          className={`relative bg-white/95 backdrop-blur-xl rounded-xl shadow-2xl border border-white/20 w-auto  max-h-[100vh] overflow-hidden transform transition-all duration-500 ease-out ${
+-            isOpen 
+-              ? 'translate-y-0 scale-100 rotate-0' 
+-              : 'translate-y-12 scale-90 rotate-3'
+-          }`}
+-          style={{
+-            animation: isOpen ? 'modalIn 0.5s ease-out' : 'modalOut 0.5s ease-in'
+-          }}
+-          onClick={(e) => e.stopPropagation()}
+-        >
+-          {/* Animated gradient border */}
+-       
+-          
+-          {/* Modal Header */}
+-          {
+-            modalTitle && (
+-              <div className="relative flex items-center justify-between p-6 border-b border-gray-200/30 backdrop-blur-sm">
+-              <h2 className="text-lg font-semibold text-gray-900 animate-fadeInUp" id="modal-title">
+-                {modalTitle}
+-              </h2>
+-              <button
+-                onClick={closeModal}
+-                className="text-gray-400 hover:text-gray-600 transition-all duration-300 hover:scale-110 hover:rotate-90 p-2 rounded-full hover:bg-gray-100/50"
+-              >
+-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+-                </svg>
+-              </button>
+-            </div>
+-            )
+-          }
+- 
+-          
+-          {/* Modal Body */}
+-          <div className="relative p-6 overflow-y-auto max-h-[calc(90vh-120px)] animate-fadeInUp bg-white">
+-            {modalContent}
++        {/* Modal Header */}
++        {modalTitle && (
++          <div className="relative flex items-center justify-between p-4 border-b border-gray-200/30 backdrop-blur-sm">
++            <h2 className="text-lg font-semibold text-gray-900 animate-fadeInUp" id="modal-title">
++              {modalTitle}
++            </h2>
++            <button
++              onClick={closeModal}
++              className="text-gray-400 hover:text-gray-600 transition-all duration-300 hover:scale-110 hover:rotate-90 p-2 rounded-full hover:bg-gray-100/50"
++            >
++              {/* <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
++                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
++              </svg> */}
++              <X  className="w-5 h-5"/>
++            </button>
+           </div>
++        )}
++
++        {/* Modal Body */}
++        <div className="relative py-4 px-6 overflow-y-auto max-h-[calc(90vh-120px)] animate-fadeInUp bg-white">
++          {modalContent}
+         </div>
+-        
+-        {/* Custom styles for animations */}
+-        <style>{`
+-          @keyframes modalIn {
+-            0% {
+-              transform: translateY(50px) scale(0.9) rotate(3deg);
+-              opacity: 0;
+-            }
+-            50% {
+-              transform: translateY(-10px) scale(1.02) rotate(-1deg);
+-              opacity: 0.8;
+-            }
+-            100% {
+-              transform: translateY(0) scale(1) rotate(0deg);
+-              opacity: 1;
+-            }
++      </div>
++      
++      {/* Custom styles for animations */}
++      <style>{`
++        @keyframes modalIn {
++          0% {
++            transform: translateY(50px) scale(0.9) rotate(3deg);
++            opacity: 0;
+           }
+-          
+-          @keyframes modalOut {
+-            0% {
+-              transform: translateY(0) scale(1) rotate(0deg);
+-              opacity: 1;
+-            }
+-            100% {
+-              transform: translateY(50px) scale(0.9) rotate(3deg);
+-              opacity: 0;
+-            }
++          50% {
++            transform: translateY(-10px) scale(1.02) rotate(-1deg);
++            opacity: 0.8;
+           }
+-          
+-          @keyframes fadeInUp {
+-            0% {
+-              transform: translateY(20px);
+-              opacity: 0;
+-            }
+-            100% {
+-              transform: translateY(0);
+-              opacity: 1;
+-            }
++          100% {
++            transform: translateY(0) scale(1) rotate(0deg);
++            opacity: 1;
+           }
+-          
+-          .animate-fadeInUp {
+-            animation: fadeInUp 0.6s ease-out 0.2s both;
++        }
++        
++        @keyframes modalOut {
++          0% {
++            transform: translateY(0) scale(1) rotate(0deg);
++            opacity: 1;
+           }
+-          
+-          @keyframes float {
+-            0%, 100% { transform: translateY(0px); }
+-            50% { transform: translateY(-5px); }
++          100% {
++            transform: translateY(50px) scale(0.9) rotate(3deg);
++            opacity: 0;
+           }
+-          
+-          .animate-float {
+-            animation: float 3s ease-in-out infinite;
++        }
++        
++        @keyframes fadeInUp {
++          0% {
++            transform: translateY(20px);
++            opacity: 0;
+           }
+-        `}</style>
+-      </div>
+-    );
+-  };
++          100% {
++            transform: translateY(0);
++            opacity: 1;
++          }
++        }
++        
++        .animate-fadeInUp {
++          animation: fadeInUp 0.6s ease-out 0.2s both;
++        }
++        
++        @keyframes float {
++          0%, 100% { transform: translateY(0px); }
++          50% { transform: translateY(-5px); }
++        }
++        
++        .animate-float {
++          animation: float 3s ease-in-out infinite;
++        }
++      `}</style>
++    </div>
++  );
++}
+ 
+-  export default Modal;
+\ No newline at end of file
++export default Modal;
 diff --git a/src/components/ui/select.tsx b/src/components/ui/select.tsx
-index 54f15b2..cf83e1f 100644
+index cf83e1f..19b8aa2 100644
 --- a/src/components/ui/select.tsx
 +++ b/src/components/ui/select.tsx
 @@ -34,7 +34,7 @@ function SelectTrigger({
        data-slot="select-trigger"
        data-size={size}
        className={cn(
--        "border-input data-[placeholder]:text-muted-foreground [&_svg:not([class*='text-'])]:text-muted-foreground focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:bg-input/30 dark:hover:bg-input/50 flex w-fit items-center justify-between gap-2 rounded-md border bg-transparent px-3 py-2 text-sm whitespace-nowrap shadow-xs transition-[color,box-shadow] outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50 data-[size=default]:h-9 data-[size=sm]:h-8 *:data-[slot=select-value]:line-clamp-1 *:data-[slot=select-value]:flex *:data-[slot=select-value]:items-center *:data-[slot=select-value]:gap-2 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
-+        "border-nbc-dark-950 data-[placeholder]:text-muted-foreground [&_svg:not([class*='text-'])]:text-muted-foreground  aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:bg-input/30 dark:hover:bg-input/50 flex w-full items-center justify-between gap-2 rounded-md border bg-transparent px-3 py-2 text-sm whitespace-nowrap shadow-xs transition-[color,box-shadow] outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50 data-[size=default]:h-9 data-[size=sm]:h-8 *:data-[slot=select-value]:line-clamp-1 *:data-[slot=select-value]:flex *:data-[slot=select-value]:items-center *:data-[slot=select-value]:gap-2 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+-        "border-nbc-dark-950 data-[placeholder]:text-muted-foreground [&_svg:not([class*='text-'])]:text-muted-foreground  aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:bg-input/30 dark:hover:bg-input/50 flex w-full items-center justify-between gap-2 rounded-md border bg-transparent px-3 py-2 text-sm whitespace-nowrap shadow-xs transition-[color,box-shadow] outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50 data-[size=default]:h-9 data-[size=sm]:h-8 *:data-[slot=select-value]:line-clamp-1 *:data-[slot=select-value]:flex *:data-[slot=select-value]:items-center *:data-[slot=select-value]:gap-2 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
++        "border-gray-300 data-[placeholder]:text-muted-foreground [&_svg:not([class*='text-'])]:text-muted-foreground  aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:bg-input/30 dark:hover:bg-input/50 flex w-full items-center justify-between gap-2 rounded-md border bg-transparent px-3 py-2 text-sm whitespace-nowrap shadow-xs transition-[color,box-shadow] outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50 data-[size=default]:h-9 data-[size=sm]:h-8 *:data-[slot=select-value]:line-clamp-1 *:data-[slot=select-value]:flex *:data-[slot=select-value]:items-center *:data-[slot=select-value]:gap-2 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
          className
        )}
        {...props}
 diff --git a/src/components/ui/textarea.tsx b/src/components/ui/textarea.tsx
-index 85780de..32082e9 100644
+index 32082e9..85780de 100644
 --- a/src/components/ui/textarea.tsx
 +++ b/src/components/ui/textarea.tsx
 @@ -7,7 +7,7 @@ function Textarea({ className, ...props }: React.ComponentProps<"textarea">) {
      <textarea
        data-slot="textarea"
        className={cn(
--        "border-gray-300 placeholder:text-muted-foreground   aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:bg-input/30 flex field-sizing-content min-h-16 w-full rounded-md border bg-transparent px-3 py-2 text-base shadow-xs transition-[color,box-shadow] outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
-+        "border-nbc-dark-950 placeholder:text-muted-foreground   aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:bg-input/30 flex field-sizing-content min-h-16 w-full rounded-md border bg-transparent px-3 py-2 text-base shadow-xs transition-[color,box-shadow] outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
+-        "border-nbc-dark-950 placeholder:text-muted-foreground   aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:bg-input/30 flex field-sizing-content min-h-16 w-full rounded-md border bg-transparent px-3 py-2 text-base shadow-xs transition-[color,box-shadow] outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
++        "border-gray-300 placeholder:text-muted-foreground   aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:bg-input/30 flex field-sizing-content min-h-16 w-full rounded-md border bg-transparent px-3 py-2 text-base shadow-xs transition-[color,box-shadow] outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
          className
        )}
        {...props}
-diff --git a/src/data/userDashboardData.ts b/src/data/userDashboardData.ts
-index 8996b44..4256640 100644
---- a/src/data/userDashboardData.ts
-+++ b/src/data/userDashboardData.ts
-@@ -13,9 +13,9 @@ export const userDashboardData: NavigationItem[] = [
-     href: "/dashboard/profile",
-   },
-   {
--    label: "Complaint",
-+    label: "Complains",
-     icon: MessagesSquare,
--    href: "/dashboard/complaint",
-+    href: "/dashboard/complains",
-   },
-   {
-     label: "Insurance",
-diff --git a/src/types/tabs.ts b/src/types/tabs.ts
-index 321f057..fd7e8d6 100644
---- a/src/types/tabs.ts
-+++ b/src/types/tabs.ts
-@@ -1,3 +1,4 @@
-+
- import type { Article } from "./article";
+diff --git a/src/services/Api.service.ts b/src/services/Api.service.ts
+index 5c320b9..7a54f49 100644
+--- a/src/services/Api.service.ts
++++ b/src/services/Api.service.ts
+@@ -1,12 +1,14 @@
+ import type { ApiError, ApiResponse, RequestConfig } from '@/types/api';
++import type { Message } from '@/types/message';
+ import { showConfirmation } from '@/utils/confirmation';
+-import { showError, showSuccess } from '@/utils/toast';
+ import axios, { AxiosError, type AxiosInstance, type AxiosResponse } from 'axios';
  
- export interface SideTabConfig {
-@@ -5,3 +6,22 @@ export interface SideTabConfig {
-   component: React.ComponentType<{ articles: Article[]; loading: boolean }>;
-   filter?: (article: Article) => boolean;
- }
 +
+ export class ApiService {
+   private axiosInstance: AxiosInstance;
+   private readonly PRECONDITION_FAILED = 428;
+   private readonly STATUS_ERROR_THRESHOLD = 300;
++  private messageCallback?: (message: Omit<Message, 'id'>) => void;
+ 
+   constructor(baseURL: string = process.env.NEXT_PUBLIC_API_URL || '/api') {
+     this.axiosInstance = axios.create({
+@@ -20,6 +22,11 @@ export class ApiService {
+     this.setupInterceptors();
+   }
+ 
++  // Set message callback for dynamic message handling
++  setMessageCallback(callback: (message: Omit<Message, 'id'>) => void): void {
++    this.messageCallback = callback;
++  }
 +
-+
-+export interface Tab {
-+  id: string;
-+  label: string;
-+  content: React.ReactNode;
-+}
-+
-+export interface TabsProps {
-+  tabs: Tab[];
-+  defaultTab?: string;
-+  className?: string;
-+}
-+
-+// export interface TabContent {
-+//   tabName: string;
-+//   cards: InsuranceCardInterface[];
-+// }
+   private setupInterceptors(): void {
+     // Request interceptor
+     this.axiosInstance.interceptors.request.use(
+@@ -46,7 +53,6 @@ export class ApiService {
+     // Response interceptor
+     this.axiosInstance.interceptors.response.use(
+       (response: AxiosResponse) => {
+-        // Safe access to metadata with proper null checks
+         const startTime = response.config?.metadata?.startTime;
+         const duration = startTime ? new Date().getTime() - startTime.getTime() : 0;
+         
+@@ -55,7 +61,6 @@ export class ApiService {
+         return response;
+       },
+       (error: AxiosError) => {
+-        // Safe access to metadata with proper null checks
+         const startTime = error.config?.metadata?.startTime;
+         const duration = startTime ? new Date().getTime() - startTime.getTime() : 0;
+         
+@@ -73,8 +78,12 @@ export class ApiService {
+   }
+ 
+   private handleSuccess(message?: string): void {
+-    if (message) {
+-      showSuccess(message);
++    if (message && this.messageCallback) {
++      this.messageCallback({
++        type: 'success',
++        title: 'Success',
++        message,
++      });
+     }
+   }
+ 
+@@ -82,7 +91,15 @@ export class ApiService {
+     if (!error.response) {
+       console.error('Network error or no response received:', error.message);
+       const errorMsg = 'Network error. Please check your connection.';
+-      showError(errorMsg);
++      
++      if (this.messageCallback) {
++        this.messageCallback({
++          type: 'error',
++          title: 'Network Error',
++          message: errorMsg,
++        });
++      }
++      
+       return { error: errorMsg };
+     }
+ 
+@@ -109,7 +126,14 @@ export class ApiService {
+     }
+ 
+     // Show error message
+-    showError(error.response?.data?.errors?.error || errorMsg);
++    if (this.messageCallback) {
++      this.messageCallback({
++        type: 'error',
++        title: 'Error',
++        message: error.response?.data?.errors?.error || errorMsg,
++      });
++    }
++    
+     return { error: errorMsg };
+   }
+ 
