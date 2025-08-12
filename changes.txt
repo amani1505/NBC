@@ -1,19 +1,2035 @@
-  const getTimelogs = useCallback(() => {
-    let queryParams = [
-      `perPage=${pagination.perPage}`,
-      `page=${pagination.page}`,
-      `sortField=${encodeURIComponent(pagination.sortField)}`,
-      `sortDirection=${encodeURIComponent(pagination.sortDirection)}`,
-    ];
-
-    if (typeof filterDate === "string") {
-      queryParams.push(`specificDate=${encodeURIComponent(filterDate)}`);
-    } else if (filterDate.startDate && filterDate.endDate) {
-      queryParams.push(`startDate=${encodeURIComponent(filterDate.startDate)}`);
-      queryParams.push(`endDate=${encodeURIComponent(filterDate.endDate)}`);
-    } else {
-      queryParams.push(`filters=${encodeURIComponent(filterDate?.filter || "")}`);
-    }
-
-    timelogService.getTimelogs(queryParams.join("&"), setTimelogs, setIsLoading, setError);
-  }, [pagination, filterDate]);
+diff --git a/src/App.tsx b/src/App.tsx
+index 0c1281a..e5c34ba 100644
+--- a/src/App.tsx
++++ b/src/App.tsx
+@@ -7,7 +7,6 @@ import cmsRoutes from "./Routes/CMSRoutes";
+ import statusRoutes from "./Routes/StatusRoutes";
+ import landingRoutes from "./Routes/LandingRoutes";
+ import MessageProvider from "@/Context/MessageContext";
+-import CMSAuthProvider from "@/Context/CMs/CMSAuthProvider";
+ import { MessageContainer } from "@/components/ui/Messages/MessageContainer";
+ import { globalMessageService } from "@/services/GlobalMessageService";
+ import { useMessage } from "@/hooks/useMessage";
+@@ -41,41 +40,39 @@ const LoadingFallback = () => (
+ function App() {
+   return (
+     <MessageProvider>
+-      <CMSAuthProvider>
+-        <MessageInitializer />
+-        <BrowserRouter>
+-          <Suspense fallback={<LoadingFallback />}>
+-            <Routes>
+-              {/* Dashboard Routes */}
+-              {dashboardRoutes}
++      <MessageInitializer />
++      <BrowserRouter>
++        <Suspense fallback={<LoadingFallback />}>
++          <Routes>
++            {/* Dashboard Routes */}
++            {dashboardRoutes}
+ 
+-              {/* CMS Routes */}
+-              {cmsRoutes}
++            {/* CMS Routes */}
++            {cmsRoutes}
+ 
+-              {/* Status Routes */}
+-              {statusRoutes}
++            {/* Status Routes */}
++            {statusRoutes}
+ 
+-              {/* Landing Routes with MainLayout */}
+-              {landingRoutes.map((route, index) => (
+-                <Route
+-                  key={index}
+-                  path={route.path}
+-                  element={
+-                    route.withLayout ? (
+-                      <MainLayout>{route.element}</MainLayout>
+-                    ) : (
+-                      route.element
+-                    )
+-                  }
+-                >
+-                  {route.children}
+-                </Route>
+-              ))}
+-            </Routes>
+-          </Suspense>
+-          <MessageContainer />
+-        </BrowserRouter>
+-      </CMSAuthProvider>
++            {/* Landing Routes with MainLayout */}
++            {landingRoutes.map((route, index) => (
++              <Route
++                key={index}
++                path={route.path}
++                element={
++                  route.withLayout ? (
++                    <MainLayout>{route.element}</MainLayout>
++                  ) : (
++                    route.element
++                  )
++                }
++              >
++                {route.children}
++              </Route>
++            ))}
++          </Routes>
++        </Suspense>
++        <MessageContainer />
++      </BrowserRouter>
+     </MessageProvider>
+   );
+ }
+diff --git a/src/Context/CMs/fieldTypes.context.tsx b/src/Context/CMs/fieldTypes.context.tsx
+index 19a7123..54208b8 100644
+--- a/src/Context/CMs/fieldTypes.context.tsx
++++ b/src/Context/CMs/fieldTypes.context.tsx
+@@ -1,13 +1,21 @@
++import type { ApiResponse } from "@/types/api";
+ import { createContext } from "react";
+ 
++export interface FieldType {
++type:string
++}
++
+ interface FieldTypesContextProps {
+-  fieldTypes: any[];
++  fieldTypes: ApiResponse<FieldType[] | undefined>;
+   loading: boolean;
+   findAllFieldTypes: () => void;
+ }
+ 
+ export const fieldTypesContext = createContext<FieldTypesContextProps>({
+-  fieldTypes: [],
++  fieldTypes: {
++    data: [],
++    message: "",
++  },
+   loading: false,
+   findAllFieldTypes: () => {},
+-});
+\ No newline at end of file
++});
+diff --git a/src/Page-Sections/CMSDashboard/BlueprintPageSection.tsx b/src/Page-Sections/CMSDashboard/BlueprintPageSection.tsx
+index 95ec0aa..8a7e2c3 100644
+--- a/src/Page-Sections/CMSDashboard/BlueprintPageSection.tsx
++++ b/src/Page-Sections/CMSDashboard/BlueprintPageSection.tsx
+@@ -1,161 +1,205 @@
+-import { cmsDB } from "@/lib/cmsStore";
+-import { v4 as uuid } from "uuid";
+-import type { Blueprint, FieldDefinition } from "@/lib/cmsTypes";
+-import { useEffect, useState } from "react";
+-import { useSearchParams } from "react-router-dom";
+-import { CustomInput } from "@/components/ui/CustomInput";
+-import Button from "@/components/ui/button";
+-import {
+-  FieldEditor,
+-  FieldTypeCatalog,
+-} from "@/components/cms/FieldTypeCatalog";
+-import { Edit, Trash2 } from "lucide-react";
++// import { cmsDB } from "@/lib/cmsStore";
++// import { v4 as uuid } from "uuid";
++// import type { Blueprint, FieldDefinition } from "@/lib/cmsTypes";
++// import { useEffect, useState } from "react";
++// import { useSearchParams } from "react-router-dom";
++// import { CustomInput } from "@/components/ui/CustomInput";
++// import Button from "@/components/ui/button";
++// import {
++//   FieldEditor,
++//   FieldTypeCatalog,
++// } from "@/components/cms/FieldTypeCatalog";
++// import { Edit, Trash2 } from "lucide-react";
++// import { useBlueprint } from "@/hooks/CMS/useBlueprint";
+ 
+-function BlueprintPageSection() {
+-  const [name, setName] = useState("");
+-  const [fields, setFields] = useState<FieldDefinition[]>([]);
+-  const [existing, setExisting] = useState<Blueprint[]>([]);
+-  const [editingId, setEditingId] = useState<string | null>(null);
+-  const [searchParams] = useSearchParams();
++import { useBlueprint } from "@/hooks/CMS/useBlueprint";
++import { useEffect } from "react";
++import BlueprintCard from "./Parts/BlueprintCard";
++import type { BlueprintContentI } from "@/types/cms/blueprint.interface";
+ 
+-  const load = async () => setExisting(await cmsDB.listBlueprints());
+-  useEffect(() => {
+-    load();
+-  }, []);
+-  useEffect(() => {
+-    const id = searchParams.get("id");
+-    if (!id || existing.length === 0) return;
+-    const match = existing.find((b) => b.id === id);
+-    if (match) {
+-      setEditingId(match.id);
+-      setName(match.name);
+-      setFields(match.fields);
+-    }
+-  }, [searchParams, existing]);
++// function BlueprintPageSection() {
++//   const [name, setName] = useState("");
++//   const [fields, setFields] = useState<FieldDefinition[]>([]);
++//   const [existing, setExisting] = useState<Blueprint[]>([]);
++//   const [editingId, setEditingId] = useState<string | null>(null);
++//   const [searchParams] = useSearchParams();
++
++// const {blueprints,findAllBlueprint } = useBlueprint()
++
++// useEffect(()=>{
++//   findAllBlueprint()
++// },[])
++// console.log("blueprints", blueprints)
++//   const load = async () => setExisting(await cmsDB.listBlueprints());
++//   useEffect(() => {
++//     load();
++//   }, []);
++//   useEffect(() => {
++//     const id = searchParams.get("id");
++//     if (!id || existing.length === 0) return;
++//     const match = existing.find((b) => b.id === id);
++//     if (match) {
++//       setEditingId(match.id);
++//       setName(match.name);
++//       setFields(match.fields);
++//     }
++//   }, [searchParams, existing]);
+ 
+-  const addField = (f: FieldDefinition) => setFields((s) => [...s, f]);
+-  const reorder = (idx: number, dir: -1 | 1) => {
+-    setFields((s) => {
+-      const arr = [...s];
+-      const n = idx + dir;
+-      if (n < 0 || n >= arr.length) return arr;
+-      const [it] = arr.splice(idx, 1);
+-      arr.splice(n, 0, it);
+-      return arr;
+-    });
+-  };
++//   const addField = (f: FieldDefinition) => setFields((s) => [...s, f]);
++//   const reorder = (idx: number, dir: -1 | 1) => {
++//     setFields((s) => {
++//       const arr = [...s];
++//       const n = idx + dir;
++//       if (n < 0 || n >= arr.length) return arr;
++//       const [it] = arr.splice(idx, 1);
++//       arr.splice(n, 0, it);
++//       return arr;
++//     });
++//   };
+ 
+-  const clearForm = () => {
+-    setName("");
+-    setFields([]);
+-    setEditingId(null);
+-  };
++//   const clearForm = () => {
++//     setName("");
++//     setFields([]);
++//     setEditingId(null);
++//   };
+ 
+-  const save = async () => {
+-    const bp: Blueprint = { id: editingId ?? uuid(), name, fields };
+-    await cmsDB.saveBlueprint(bp);
+-    clearForm();
+-    load();
+-  };
++//   const save = async () => {
++//     const bp: Blueprint = { id: editingId ?? uuid(), name, fields };
++//     await cmsDB.saveBlueprint(bp);
++//     clearForm();
++//     load();
++//   };
+ 
+-  const remove = async (id: string) => {
+-    await cmsDB.deleteBlueprint(id);
+-    if (editingId === id) clearForm();
+-    load();
+-  };
++//   const remove = async (id: string) => {
++//     await cmsDB.deleteBlueprint(id);
++//     if (editingId === id) clearForm();
++//     load();
++//   };
++
++//   return (
++//     <div className="space-y-4">
++//     <div>
++//       <h1 className="text-2xl font-bold">Blueprints</h1>
++//       {/* <p className="text-sm text-muted-foreground">
++//         Browse the built-in field types you can use inside your blueprints.
++//       </p> */}
++//     </div>
++//       <div className="grid lg:grid-cols-[1fr_420px] gap-6">
++//         <div className="space-y-4">
++//           {editingId && (
++//             <div className="text-xs text-muted-foreground">
++//               Editing existing blueprint
++//             </div>
++//           )}
++//           <div className="flex items-center gap-3">
++//             <CustomInput
++//               placeholder="Blueprint name"
++//               value={name}
++//               onChange={(e) => setName(e.target.value)}
++//             />
++//             <Button
++//               variant="primary"
++//               onClick={save}
++//               disabled={!name || fields.length === 0}
++//             >
++//               {editingId ? "Update" : "Save"}
++//             </Button>
++//             <Button variant="destructive" onClick={clearForm}>
++//               {editingId ? "Cancel" : "Reset"}
++//             </Button>
++//           </div>
++//           <FieldTypeCatalog onAdd={addField} />
++//           <div className="space-y-3">
++//             {fields.map((f, i) => (
++//               <FieldEditor
++//                 key={f.id}
++//                 value={f}
++//                 onChange={(v) =>
++//                   setFields((s) => s.map((x) => (x.id === v.id ? v : x)))
++//                 }
++//                 onRemove={() =>
++//                   setFields((s) => s.filter((x) => x.id !== f.id))
++//                 }
++//                 onMoveUp={() => reorder(i, -1)}
++//                 onMoveDown={() => reorder(i, 1)}
++//               />
++//             ))}
++//           </div>
++//         </div>
++
++//         <div className="space-y-4">
++//           <h2 className="text-lg font-semibold">Existing Blueprints</h2>
++//           <div className="space-y-3">
++//             {existing.map((bp) => (
++//               <div
++//                 key={bp.id}
++//                 className="p-4 border rounded-md bg-card border-gray-300"
++//               >
++//                 <div className="flex items-center justify-between">
++//                   <div>
++//                     <div className="font-medium">{bp.name}</div>
++//                     <div className="text-xs text-muted-foreground">
++//                       {bp.fields.length} fields
++//                     </div>
++//                   </div>
++//                   <div className="flex items-center gap-2">
++//                     <Button
++//                       variant="iconRounded"
++//                       size="sm"
++//                       onClick={() => {
++//                         setEditingId(bp.id);
++//                         setName(bp.name);
++//                         setFields(bp.fields);
++//                       }}
++//                       icon={Edit}
++//                        className="text-white bg-sky-500 hover:bg-sky-700"
++//                     />
++//                     <Button
++//                       variant="iconRounded"
++//                       size="sm"
++//                       onClick={() => remove(bp.id)}
++//                       icon={Trash2}
++//                       className="text-white bg-red-500 hover:bg-red-700"
++//                     />
++//                   </div>
++//                 </div>
++//               </div>
++//             ))}
++//             {existing.length === 0 && (
++//               <p className="text-sm text-muted-foreground">
++//                 No blueprints yet.
++//               </p>
++//             )}
++//           </div>
++//         </div>
++//       </div>
++//     </div>
++//   );
++// }
++
++// export default BlueprintPageSection;
++
++function BlueprintPageSection() {
++  const { blueprints, findAllBlueprint } = useBlueprint();
++
++  useEffect(() => {
++    findAllBlueprint();
++  }, []);
+ 
+   return (
+     <div className="space-y-4">
+-    <div>
+-      <h1 className="text-2xl font-bold">Blueprints</h1>
+-      {/* <p className="text-sm text-muted-foreground">
+-        Browse the built-in field types you can use inside your blueprints.
+-      </p> */}
+-    </div>
+-      <div className="grid lg:grid-cols-[1fr_420px] gap-6">
+-        <div className="space-y-4">
+-          {editingId && (
+-            <div className="text-xs text-muted-foreground">
+-              Editing existing blueprint
+-            </div>
+-          )}
+-          <div className="flex items-center gap-3">
+-            <CustomInput
+-              placeholder="Blueprint name"
+-              value={name}
+-              onChange={(e) => setName(e.target.value)}
+-            />
+-            <Button
+-              variant="primary"
+-              onClick={save}
+-              disabled={!name || fields.length === 0}
+-            >
+-              {editingId ? "Update" : "Save"}
+-            </Button>
+-            <Button variant="destructive" onClick={clearForm}>
+-              {editingId ? "Cancel" : "Reset"}
+-            </Button>
+-          </div>
+-          <FieldTypeCatalog onAdd={addField} />
+-          <div className="space-y-3">
+-            {fields.map((f, i) => (
+-              <FieldEditor
+-                key={f.id}
+-                value={f}
+-                onChange={(v) =>
+-                  setFields((s) => s.map((x) => (x.id === v.id ? v : x)))
+-                }
+-                onRemove={() =>
+-                  setFields((s) => s.filter((x) => x.id !== f.id))
+-                }
+-                onMoveUp={() => reorder(i, -1)}
+-                onMoveDown={() => reorder(i, 1)}
+-              />
+-            ))}
+-          </div>
+-        </div>
+-
+-        <div className="space-y-4">
+-          <h2 className="text-lg font-semibold">Existing Blueprints</h2>
++      <h1 className="text-2xl font-bold">Blueprint</h1>
++      {/* <div className="grid gap-6 xl:grid-cols-[1fr_minmax(280px,380px)] items-start w-full overflow-hidden"> */}
++      <div>
++        <div className="min-w-0 space-y-6">
++          <h2 className="text-lg font-semibold">You Blueprint</h2>
+           <div className="space-y-3">
+-            {existing.map((bp) => (
+-              <div
+-                key={bp.id}
+-                className="p-4 border rounded-md bg-card border-gray-300"
+-              >
+-                <div className="flex items-center justify-between">
+-                  <div>
+-                    <div className="font-medium">{bp.name}</div>
+-                    <div className="text-xs text-muted-foreground">
+-                      {bp.fields.length} fields
+-                    </div>
+-                  </div>
+-                  <div className="flex items-center gap-2">
+-                    <Button
+-                      variant="iconRounded"
+-                      size="sm"
+-                      onClick={() => {
+-                        setEditingId(bp.id);
+-                        setName(bp.name);
+-                        setFields(bp.fields);
+-                      }}
+-                      icon={Edit}
+-                       className="text-white bg-sky-500 hover:bg-sky-700"
+-                    />
+-                    <Button
+-                      variant="iconRounded"
+-                      size="sm"
+-                      onClick={() => remove(bp.id)}
+-                      icon={Trash2}
+-                      className="text-white bg-red-500 hover:bg-red-700"
+-                    />
+-                  </div>
+-                </div>
+-              </div>
++            {blueprints?.data?.content.map((content: BlueprintContentI) => (
++              <BlueprintCard key={content.reference} content={content} />
+             ))}
+-            {existing.length === 0 && (
++            {blueprints?.data?.content.length === 0 && (
+               <p className="text-sm text-muted-foreground">
+-                No blueprints yet.
++                No collections yet.
+               </p>
+             )}
+           </div>
+diff --git a/src/Page-Sections/CMSDashboard/CollectionsPageSection.tsx b/src/Page-Sections/CMSDashboard/CollectionsPageSection.tsx
+index 318b850..f80f209 100644
+--- a/src/Page-Sections/CMSDashboard/CollectionsPageSection.tsx
++++ b/src/Page-Sections/CMSDashboard/CollectionsPageSection.tsx
+@@ -1,42 +1,60 @@
+ import { useEffect, useState } from "react";
+-import { v4 as uuid } from "uuid";
+-import { cmsDB } from "@/lib/cmsStore";
+-import type { Blueprint, Collection } from "@/lib/cmsTypes";
+ import Button from "@/components/ui/button";
+ import { CustomInput } from "@/components/ui/CustomInput";
+ import CollectionCard from "./Parts/ColectionCard";
+-import { CustomSelect } from "@/components/ui/CustomSelect";
+-import { useNavigate } from "react-router-dom";
++import { useCollection } from "@/hooks/CMS/useCollection";
++import { titleToHandle } from "@/utils/titleToHandle";
++import type { ContentI } from "@/types/cms/collection.interface";
++
++// Skeleton loader component
++function CollectionSkeleton() {
++  return (
++    <div className="p-4 border rounded-md bg-white min-w-0 border-gray-300 animate-pulse space-y-2">
++      <div className="h-4 w-1/3 bg-gray-200 rounded" />
++      <div className="h-3 w-1/4 bg-gray-100 rounded" />
++    </div>
++  );
++}
+ 
+ function CollectionsPageSection() {
+-  const [blueprints, setBlueprints] = useState<Blueprint[]>([]);
+-  const [collections, setCollections] = useState<Collection[]>([]);
+-  const navigate = useNavigate();
++  const {
++    createCollection,
++    createLoading,
++    findAllCollection,
++    collections,
++    loading,
++  } = useCollection();
+ 
+-  const load = async () => {
+-    setBlueprints(await cmsDB.listBlueprints());
+-    setCollections(await cmsDB.listCollections());
+-  };
+   useEffect(() => {
+-    load();
++    findAllCollection();
+   }, []);
+ 
+-  const [newColName, setNewColName] = useState("");
+-  const [blueprintId, setBlueprintId] = useState<string>("");
++  const [title, setTitle] = useState("");
++  const [handle, setHandle] = useState("");
++  const [isHandleManuallyEdited, setIsHandleManuallyEdited] = useState(false);
+ 
+-  const addCollection = async () => {
+-    if (!newColName || !blueprintId) return;
+-    await cmsDB.saveCollection({ id: uuid(), name: newColName, blueprintId });
+-    setNewColName("");
+-    setBlueprintId("");
+-    load();
++  const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
++    const newTitle = e.target.value;
++    setTitle(newTitle);
++
++    // Only auto-generate handle if it hasn't been manually edited
++    if (!isHandleManuallyEdited) {
++      setHandle(titleToHandle(newTitle));
++    }
++  };
++
++  const handleHandleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
++    setHandle(e.target.value);
++    setIsHandleManuallyEdited(true);
+   };
+ 
+-  const handleAddBlueprint = () => {
+-    // Add your blueprint creation logic here
+-    console.log("Add blueprint clicked");
++  const addCollection = async () => {
++    if (!title || !handle || !createCollection) return;
++    await createCollection({ title, handle });
+ 
+-    navigate("/cms/blue-prints");
++    setTitle("");
++    setHandle("");
++    setIsHandleManuallyEdited(false);
+   };
+ 
+   return (
+@@ -46,13 +64,23 @@ function CollectionsPageSection() {
+         <div className="min-w-0 space-y-6">
+           <h2 className="text-lg font-semibold">Your Collections</h2>
+           <div className="space-y-3">
+-            {collections.map((c) => (
+-              <CollectionCard key={c.id} c={c} />
+-            ))}
+-            {collections.length === 0 && (
+-              <p className="text-sm text-muted-foreground">
+-                No collections yet.
+-              </p>
++            {loading ? (
++              <>
++                <CollectionSkeleton />
++                <CollectionSkeleton />
++                <CollectionSkeleton />
++              </>
++            ) : (
++              <>
++                {collections?.data?.content.map((content: ContentI) => (
++                  <CollectionCard key={content.reference} content={content} />
++                ))}
++                {collections?.data?.content.length === 0 && (
++                  <p className="text-sm text-muted-foreground">
++                    No collections yet.
++                  </p>
++                )}
++              </>
+             )}
+           </div>
+         </div>
+@@ -61,35 +89,30 @@ function CollectionsPageSection() {
+           <div className="space-y-3 p-4 border rounded-md bg-card border-gray-300">
+             <div>
+               <CustomInput
+-                label="Name"
+-                value={newColName}
+-                onChange={(e) => setNewColName(e.target.value)}
+-                placeholder="Blog Posts"
++                label="title"
++                value={title}
++                onChange={handleTitleChange}
++                placeholder="New Collection"
+               />
+             </div>
+             <div>
+-              <CustomSelect
+-                options={blueprints.map((bp) => ({
+-                  label: bp.name,
+-                  value: bp.id,
+-                }))}
+-                onValueChange={(value) => setBlueprintId(value)}
+-                label="Blueprint"
+-                value={blueprintId}
+-                placeholder="Choose blueprint"
+-                className="w-full"
+-                showActionButton={true}
+-                actionButtonText="Add Blueprint"
+-                onActionButtonClick={handleAddBlueprint}
++              <CustomInput
++                label="handle"
++                value={handle}
++                onChange={handleHandleChange}
++                placeholder="new_collection"
+               />
+             </div>
+-            <Button
+-              variant="primary"
+-              onClick={addCollection}
+-              disabled={!newColName || !blueprintId}
+-            >
+-              Create
+-            </Button>
++            <div className="flex justify-end">
++              <Button
++                variant="primary"
++                onClick={addCollection}
++                disabled={!title || !handle || createLoading}
++                loading={createLoading}
++              >
++                {createLoading ? "Creating...." : "Create"}
++              </Button>
++            </div>
+           </div>
+         </div>
+       </div>
+diff --git a/src/Page-Sections/CMSDashboard/FieldTypesPageSection.tsx b/src/Page-Sections/CMSDashboard/FieldTypesPageSection.tsx
+index 8167e8f..d7cc347 100644
+--- a/src/Page-Sections/CMSDashboard/FieldTypesPageSection.tsx
++++ b/src/Page-Sections/CMSDashboard/FieldTypesPageSection.tsx
+@@ -1,4 +1,23 @@
++import { useEffect } from "react";
++import { useFieldTypes } from "@/hooks/CMS/useFieldTypes";
++
++// Simple skeleton loader component
++function SkeletonCard() {
++  return (
++    <div className="p-4 rounded-md border bg-card border-gray-200 animate-pulse">
++      <div className="h-4 w-1/2 bg-gray-300 rounded mb-2"></div>
++      {/* <div className="h-3 w-2/3 bg-gray-200 rounded"></div> */}
++    </div>
++  );
++}
++
+ function FieldTypesPageSection() {
++  const { findAllFieldTypes, fieldTypes, loading } = useFieldTypes();
++
++  useEffect(() => {
++    findAllFieldTypes();
++  }, []);
++
+   return (
+     <div className="space-y-4">
+       <div>
+@@ -9,23 +28,20 @@ function FieldTypesPageSection() {
+       </div>
+       <div className="space-y-4">
+         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+-          {[
+-            { name: "Text", desc: "Single-line text" },
+-            { name: "Textarea", desc: "Multi-line content" },
+-            { name: "Number", desc: "Numeric input" },
+-            { name: "Toggle", desc: "Boolean switch" },
+-            { name: "Select", desc: "Options list" },
+-            { name: "Date", desc: "Calendar date" },
+-            { name: "Asset", desc: "File picker" },
+-          ].map((it) => (
+-            <div
+-              key={it.name}
+-              className="p-4 rounded-md border bg-card border-gray-300 hover:bg-gray-100 transition-colors"
+-            >
+-              <div className="font-medium">{it.name}</div>
+-              <div className="text-xs text-muted-foreground">{it.desc}</div>
+-            </div>
+-          ))}
++          {loading
++            ? Array.from({ length: 6 }).map((_, idx) => (
++                <SkeletonCard key={idx} />
++              ))
++            : Array.isArray(fieldTypes?.data) &&
++              fieldTypes.data.map((it) => (
++                <div
++                  key={it?.type}
++                  className="p-4 rounded-md border bg-card border-gray-300 hover:bg-gray-100 transition-colors"
++                >
++                  <div className="font-medium">{it?.type}</div>
++                  {/* <div className="text-xs text-muted-foreground">{it.desc}</div> */}
++                </div>
++              ))}
+         </div>
+       </div>
+     </div>
+diff --git a/src/Page-Sections/CMSDashboard/Parts/ColectionCard.tsx b/src/Page-Sections/CMSDashboard/Parts/ColectionCard.tsx
+index 74da94c..e7c1e11 100644
+--- a/src/Page-Sections/CMSDashboard/Parts/ColectionCard.tsx
++++ b/src/Page-Sections/CMSDashboard/Parts/ColectionCard.tsx
+@@ -1,7 +1,7 @@
+ import { useEffect, useState } from "react";
+ import { v4 as uuid } from "uuid";
+ import { cmsDB } from "@/lib/cmsStore";
+-import type { Blueprint, Collection, Entry } from "@/lib/cmsTypes";
++import type { Blueprint, Entry } from "@/lib/cmsTypes";
+ import Button from "@/components/ui/button";
+ import { FieldRenderer } from "@/components/cms/FieldRenderer";
+ import {
+@@ -11,65 +11,79 @@ import {
+   DialogHeader,
+   DialogTitle,
+ } from "@/components/ui/dialog";
+-import { Label } from "@/components/ui/label";
++import type { ContentI } from "@/types/cms/collection.interface";
++import { useCollection } from "@/hooks/CMS/useCollection";
++import { titleToHandle } from "@/utils/titleToHandle";
+ import { CustomInput } from "@/components/ui/CustomInput";
+-import { CustomSelect } from "@/components/ui/CustomSelect";
+-import { Trash2 } from "lucide-react";
+-import { EntryValueDisplay } from "@/components/cms/EntryValueDisplay";
+ 
+-function CollectionCard({ c }: { c: Collection }) {
++function CollectionCard({ content }: { content: ContentI }) {
+   const [bp, setBp] = useState<Blueprint | null>(null);
+   const [bps, setBps] = useState<Blueprint[]>([]);
+   const [entries, setEntries] = useState<Entry[]>([]);
+   const [values, setValues] = useState<Record<string, any>>({});
+   const [open, setOpen] = useState(false);
+-  const [name, setName] = useState(c.name);
+-  const [bpId, setBpId] = useState(c.blueprintId);
++  const [title, setTitle] = useState(content.title);
++  const [handle, setHandle] = useState(content.handle);
++  const [isHandleManuallyEdited, setIsHandleManuallyEdited] = useState(false);
++  const { updateLoading, updateCollection } = useCollection();
++
+ 
+-  const load = async () => {
+-    const allBps = await cmsDB.listBlueprints();
+-    setBps(allBps);
+-    setBp(allBps.find((b) => b.id === c.blueprintId) || null);
+-    setEntries(await cmsDB.listEntriesByCollection(c.id));
+-  };
+-  useEffect(() => {
+-    load();
+-  }, [c.id]);
+   useEffect(() => {
+-    setName(c.name);
+-    setBpId(c.blueprintId);
+-  }, [c.id, c.name, c.blueprintId]);
++    setTitle(content.title);
++    // setBpId(c.blueprintId);
++  }, [content.reference, content.title]);
+ 
+   const saveEntry = async () => {
+     const now = new Date().toISOString();
+     await cmsDB.saveEntry({
+       id: uuid(),
+-      collectionId: c.id,
++      collectionId: content.reference,
+       values,
+       createdAt: now,
+       updatedAt: now,
+     });
+     setValues({});
+-    load();
++    // load();
+   };
+ 
+-  const removeEntry = async (id: string) => {
+-    await cmsDB.deleteEntry(id);
+-    load();
++  // const removeEntry = async (id: string) => {
++  //   await cmsDB.deleteEntry(id);
++  //   load();
++  // };
++
++  const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
++    const newTitle = e.target.value;
++    setTitle(newTitle);
++
++    // Only auto-generate handle if it hasn't been manually edited
++    if (!isHandleManuallyEdited) {
++      setHandle(titleToHandle(newTitle));
++    }
++  };
++  const handleHandleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
++    setHandle(e.target.value);
++    setIsHandleManuallyEdited(true);
+   };
++
+   const saveCollectionSettings = async () => {
+-    await cmsDB.saveCollection({ ...c, name, blueprintId: bpId });
++    if (!title || !handle) return;
++    if (updateCollection) {
++      await updateCollection(content.reference, {
++        title,
++        handle,
++      });
++    }
+     setOpen(false);
+-    load();
+   };
+ 
+   return (
+     <div className="p-4 border rounded-md bg-white space-y-4 min-w-0 border-gray-300">
+       <div className="flex items-center justify-between">
+         <div>
+-          <div className="font-medium">{c.name}</div>
++          <div className="font-medium">{content.title}</div>
+           <div className="text-xs text-muted-foreground">
+-            {bp?.name || "Unknown"}
++            {/* {bp?.name || "Unknown"} */}
++            {content.handle || "Unknown"}
+           </div>
+         </div>
+         <Button
+@@ -98,7 +112,7 @@ function CollectionCard({ c }: { c: Collection }) {
+         </div>
+       )}
+ 
+-      <div>
++      {/* <div>
+         <h3 className="text-sm font-semibold mb-2">
+           Entries ({entries.length})
+         </h3>
+@@ -121,7 +135,7 @@ function CollectionCard({ c }: { c: Collection }) {
+                     ))
+                     .filter(
+                       (_, index) => index < 3
+-                    ) /* Show only first 3 fields */
++                    ) /* Show only first 3 fields
+                 }
+                 {bp && bp.fields.length > 3 && (
+                   <span className="text-gray-400">...</span>
+@@ -142,7 +156,7 @@ function CollectionCard({ c }: { c: Collection }) {
+             </p>
+           )}
+         </div>
+-      </div>
++      </div> */}
+ 
+       <Dialog open={open} onOpenChange={setOpen}>
+         <DialogContent>
+@@ -151,13 +165,22 @@ function CollectionCard({ c }: { c: Collection }) {
+           </DialogHeader>
+           <div className="space-y-3">
+             <div>
+-              <Label className="text-sm mb-1 block">Name</Label>
+               <CustomInput
+-                value={name}
+-                onChange={(e) => setName(e.target.value)}
++                label="Title"
++                placeholder="Edit Title"
++                value={title}
++                onChange={handleTitleChange}
+               />
+             </div>
+             <div>
++              <CustomInput
++                label="Handle"
++                placeholder="Edit Handle"
++                value={handle}
++                onChange={handleHandleChange}
++              />
++            </div>
++            {/* <div>
+               <Label className="text-sm mb-1 block">Blueprint</Label>
+               <select
+                 className="w-full h-10 rounded-md bg-background border px-3"
+@@ -192,18 +215,19 @@ function CollectionCard({ c }: { c: Collection }) {
+                   Edit this blueprint
+                 </a>
+               </div>
+-            </div>
++            </div> */}
+           </div>
+           <DialogFooter>
+             <Button variant="outline" onClick={() => setOpen(false)}>
+               Cancel
+             </Button>
+             <Button
+-              variant="default"
++              variant="primary"
+               onClick={saveCollectionSettings}
+-              disabled={!name || !bpId}
++              disabled={!title || !handle || updateLoading}
++              loading={updateLoading}
+             >
+-              Save
++              {updateLoading ? "Updating..." : "Update"}
+             </Button>
+           </DialogFooter>
+         </DialogContent>
+diff --git a/src/Pages/Dashboard/CMS/CMSPages/Blueprint.tsx b/src/Pages/Dashboard/CMS/CMSPages/Blueprint.tsx
+index 8ba44ab..971db72 100644
+--- a/src/Pages/Dashboard/CMS/CMSPages/Blueprint.tsx
++++ b/src/Pages/Dashboard/CMS/CMSPages/Blueprint.tsx
+@@ -1,11 +1,12 @@
+-import BlueprintPageSection from "@/Page-Sections/CMSDashboard/BlueprintPageSection"
++import BlueprintPageSection from "@/Page-Sections/CMSDashboard/BlueprintPageSection";
++import { BlueprintProvider } from "@/Providers/blueprints.provider";
+ 
+ function Blueprint() {
+   return (
+-    <>
+-    <BlueprintPageSection />
+-    </>
+-  )
++    <BlueprintProvider>
++      <BlueprintPageSection />
++    </BlueprintProvider>
++  );
+ }
+ 
+-export default Blueprint
++export default Blueprint;
+diff --git a/src/Pages/Dashboard/CMS/CMSPages/CMSLogin.tsx b/src/Pages/Dashboard/CMS/CMSPages/CMSLogin.tsx
+index 6a7f215..f947ed4 100644
+--- a/src/Pages/Dashboard/CMS/CMSPages/CMSLogin.tsx
++++ b/src/Pages/Dashboard/CMS/CMSPages/CMSLogin.tsx
+@@ -1,110 +1,11 @@
+-import { useNavigate } from "react-router-dom";
+-import { Formik, Form } from "formik";
+-import * as Yup from "yup";
+-import Button from "@/components/ui/button";
+-import { CustomInput } from "@/components/ui/CustomInput";
+-import { useCMSAuth } from "@/hooks/CMS/useCMSAuth";
+-
+-const validationSchema = Yup.object({
+-  clientId: Yup.string()
+-    .required("clientId is required")
+-    .min(3, "Username must be at least 3 characters"),
+-  clientSecret: Yup.string()
+-    .required("clientSecret is required")
+-    .min(6, "Password must be at least 6 characters"),
+-});
++import CMSAuthProvider from "@/Context/CMs/CMSAuthProvider";
++import CMSLoginPageSection from "@/Page-Sections/CMSDashboard/CMSLoginPageSection";
+ 
+ const CMSLogin = () => {
+-  const bg = "/images/kiganjani-bg.svg";
+-  const { login } = useCMSAuth();
+-  const navigate = useNavigate();
+-
+-  const handleSubmit = async (values: {
+-    clientId: string;
+-    clientSecret: string;
+-  }) => {
+-    const success = await login(values.clientId, values.clientSecret);
+-    if (success) {
+-      navigate("/cms");
+-    }
+-    // Error handling is done by the API service
+-  };
+-
+   return (
+-    <div
+-      className="h-[51vh] min-h-[100vh] bg-nbc-dark-700 relative flex justify-center items-center"
+-      style={{
+-        backgroundImage: `url(${bg})`,
+-        backgroundSize: "cover",
+-        backgroundPosition: "center",
+-        backgroundRepeat: "no-repeat",
+-      }}
+-    >
+-      <div className="bg-white  space-y-4 flex flex-col items- justify-center py-11 px-11 rounded-lg  w-1/3">
+-        <div className="justify-center items-center flex">
+-          <img src="/images/logo.svg" alt="NBC Logo" width={100} height={100} />
+-        </div>
+-
+-        <h1 className="text-lg font-semibold text-center">NBC CMS Login</h1>
+-        <Formik
+-          initialValues={{ clientId: "", clientSecret: "" }}
+-          validationSchema={validationSchema}
+-          onSubmit={handleSubmit}
+-        >
+-          {({
+-            values,
+-            errors,
+-            touched,
+-            handleChange,
+-            handleBlur,
+-            isSubmitting,
+-          }) => (
+-            <Form className="space-y-4">
+-              <CustomInput
+-                label="Username"
+-                type="text"
+-                placeholder="username"
+-                value={values.clientId}
+-                onChange={handleChange}
+-                onBlur={handleBlur}
+-                name="clientId"
+-                disabled={isSubmitting}
+-                error={
+-                  touched.clientId && errors.clientId
+-                    ? errors.clientId
+-                    : undefined
+-                }
+-              />
+-              <CustomInput
+-                label="Password"
+-                showPasswordToggle={true}
+-                type="password"
+-                placeholder="Password"
+-                value={values.clientSecret}
+-                onChange={handleChange}
+-                onBlur={handleBlur}
+-                name="clientSecret"
+-                disabled={isSubmitting}
+-                error={
+-                  touched.clientSecret && errors.clientSecret
+-                    ? errors.clientSecret
+-                    : undefined
+-                }
+-              />
+-              <Button
+-                type="submit"
+-                variant="primary"
+-                className="w-full"
+-                loading={isSubmitting}
+-                disabled={isSubmitting}
+-              >
+-                {isSubmitting ? "Logging in..." : "Login"}
+-              </Button>
+-            </Form>
+-          )}
+-        </Formik>
+-      </div>
+-    </div>
++    <CMSAuthProvider>
++      <CMSLoginPageSection />
++    </CMSAuthProvider>
+   );
+ };
+ 
+diff --git a/src/Pages/Dashboard/CMS/CMSPages/Collection.tsx b/src/Pages/Dashboard/CMS/CMSPages/Collection.tsx
+index b5e379c..4f93d64 100644
+--- a/src/Pages/Dashboard/CMS/CMSPages/Collection.tsx
++++ b/src/Pages/Dashboard/CMS/CMSPages/Collection.tsx
+@@ -1,10 +1,11 @@
+ import CollectionsPageSection from "@/Page-Sections/CMSDashboard/CollectionsPageSection"
++import { CollectionProvider } from "@/Providers/collection.provider"
+ 
+ function Collection() {
+   return (
+-    <>
++    <CollectionProvider>
+     <CollectionsPageSection />
+-    </>
++    </CollectionProvider>
+   )
+ }
+ 
+diff --git a/src/Pages/Dashboard/CMS/CMSPages/Fieldtypes.tsx b/src/Pages/Dashboard/CMS/CMSPages/Fieldtypes.tsx
+index de8af11..1187c64 100644
+--- a/src/Pages/Dashboard/CMS/CMSPages/Fieldtypes.tsx
++++ b/src/Pages/Dashboard/CMS/CMSPages/Fieldtypes.tsx
+@@ -1,10 +1,11 @@
+ import FieldTypesPageSection from "@/Page-Sections/CMSDashboard/FieldTypesPageSection";
++import FieldTypesProvider from "@/Providers/fieldType.provider";
+ 
+ function Fieldtypes() {
+   return (
+-    <>
++    <FieldTypesProvider>
+       <FieldTypesPageSection />
+-    </>
++    </FieldTypesProvider>
+   );
+ }
+ 
+diff --git a/src/Pages/Dashboard/User/UserDashboardLayout.tsx b/src/Pages/Dashboard/User/UserDashboardLayout.tsx
+index 256321d..49a633f 100644
+--- a/src/Pages/Dashboard/User/UserDashboardLayout.tsx
++++ b/src/Pages/Dashboard/User/UserDashboardLayout.tsx
+@@ -11,7 +11,7 @@ function UserDashboardLayout() {
+           logo: {
+             src: "/images/logo.svg",
+             alt: "NBC Logo",
+-            width: 73,
++            width: 77.5,
+           },
+         }}
+       />
+diff --git a/src/Providers/fieldType.provider.tsx b/src/Providers/fieldType.provider.tsx
+index bbbdd29..685fb0f 100644
+--- a/src/Providers/fieldType.provider.tsx
++++ b/src/Providers/fieldType.provider.tsx
+@@ -1,17 +1,28 @@
+ import { fieldTypesServices } from "@/services/CMS/field-types.service";
+-import { useState } from "react";
+-import { fieldTypesContext } from '../Context/CMs/fieldTypes.context';
+-
++import { useState, useRef } from "react";
++import {
++  fieldTypesContext,
++  type FieldType,
++} from "../Context/CMs/fieldTypes.context";
++import type { ApiResponse } from "@/types/api";
+ 
+ export const FieldTypesProvider: React.FC<{ children: React.ReactNode }> = ({
+   children,
+ }) => {
+-  const [fieldTypes, setFieldTypes] = useState<any[]>([]);
++  const [fieldTypes, setFieldTypes] = useState<
++    ApiResponse<FieldType[] | undefined>
++  >({
++    data: undefined,
++    message: "",
++  });
+   const [loading, setLoading] = useState<boolean>(false);
++  const hasFetched = useRef(false);
+ 
+-  function findAllFieldTypes() {
++  async function findAllFieldTypes() {
++    if (hasFetched.current) return;
+     setLoading(true);
+-    fieldTypesServices.findAll((data: any[]) => {
++    hasFetched.current = true;
++    await fieldTypesServices.findAll((data: ApiResponse<FieldType[]>) => {
+       setFieldTypes(data);
+       setLoading(false);
+     });
+@@ -26,4 +37,4 @@ export const FieldTypesProvider: React.FC<{ children: React.ReactNode }> = ({
+   );
+ };
+ 
+-export default FieldTypesProvider;
+\ No newline at end of file
++export default FieldTypesProvider;
+diff --git a/src/Routes/DashboardRoutes.tsx b/src/Routes/DashboardRoutes.tsx
+index c6f174f..bd34a8a 100644
+--- a/src/Routes/DashboardRoutes.tsx
++++ b/src/Routes/DashboardRoutes.tsx
+@@ -65,6 +65,21 @@ const AllProducts = lazy(
+   () => import("@/Pages/Dashboard/User/MarketPlace/AllProducts")
+ );
+ 
++const SingleMarketPlaceProduct = lazy(
++  () => import("@/Pages/Dashboard/User/MarketPlace/SingleMarketPlaceProduct")
++)
++
++const Cart = lazy(
++  () => import("@/Pages/Dashboard/User/MarketPlace/Cart")
++);
++
++const Checkout = lazy(
++  () => import("@/Pages/Dashboard/User/MarketPlace/Checkout")
++); 
++
++
++
++
+ const dashboardRoutes = (
+   <Route path="dashboard" element={<UserDashboardLayout />}>
+     <Route index element={<UserDashboard />} />
+@@ -100,6 +115,9 @@ const dashboardRoutes = (
+     <Route path="market-place">
+       <Route index element={<MarketPlace />} />
+       <Route path="all-products" element={<AllProducts />} />
++      <Route path="product/:productId" element={<SingleMarketPlaceProduct />} />
++      <Route path="checkout" element={<Checkout />} />
++      <Route path="cart" element={<Cart />} />
+     </Route>
+   </Route>
+ );
+diff --git a/src/components/cms/EntryValueDisplay.tsx b/src/components/cms/EntryValueDisplay.tsx
+index 493795b..21fbf30 100644
+--- a/src/components/cms/EntryValueDisplay.tsx
++++ b/src/components/cms/EntryValueDisplay.tsx
+@@ -1,9 +1,10 @@
++import type { BlueprintFieldTypeI } from "@/types/cms/blueprint.interface";
+ import { AssetDisplay } from "./AssetDisplay";
+ import type { FieldDefinition } from "@/lib/cmsTypes";
+ 
+ interface EntryValueDisplayProps {
+   value: any;
+-  field?: FieldDefinition;
++  field?: BlueprintFieldTypeI | FieldDefinition;
+   className?: string;
+ }
+ 
+diff --git a/src/components/cms/FieldRenderer.tsx b/src/components/cms/FieldRenderer.tsx
+index ceec657..51245bf 100644
+--- a/src/components/cms/FieldRenderer.tsx
++++ b/src/components/cms/FieldRenderer.tsx
+@@ -1,115 +1,222 @@
+-import type { FieldDefinition, FieldOption, FieldType } from "@/lib/cmsTypes";
++import type { FieldDefinition, FieldType } from "@/lib/cmsTypes";
+ import { Textarea } from "@/components/ui/textarea";
+ import { Switch } from "@/components/ui/switch";
+ import { Label } from "@/components/ui/label";
+-import {
+-  Select,
+-  SelectContent,
+-  SelectItem,
+-  SelectTrigger,
+-  SelectValue,
+-} from "@/components/ui/select";
+ import { CustomInput } from "../ui/CustomInput";
+ import { AssetField } from "./AssetField";
++import type { BlueprintFieldTypeI } from "@/types/cms/blueprint.interface";
++import { CustomSelect } from "../ui/CustomSelect";
+ 
+ interface RendererProps {
+-  field: FieldDefinition;
++  field: BlueprintFieldTypeI | FieldDefinition;
+   value: any;
+   onChange: (v: any) => void;
+ }
+ 
++// Helper function to normalize field data
++function normalizeField(field: BlueprintFieldTypeI | FieldDefinition) {
++  // Check if it's a BlueprintFieldType (new API structure)
++  if ("displayName" in field && "config" in field) {
++    const blueprintField = field as BlueprintFieldTypeI;
++    return {
++      id: blueprintField.id,
++      handle: blueprintField.handle,
++      label: blueprintField.displayName,
++      type: blueprintField.config.fieldType as FieldType,
++      required: blueprintField.isRequired,
++      instructions: blueprintField.instructions,
++      options: blueprintField.config.options || [],
++      config: blueprintField.config,
++    };
++  }
++
++  // It's a FieldDefinition (old structure)
++  const oldField = field as FieldDefinition;
++  return {
++    id: oldField.id,
++    handle: oldField.handle,
++    label: oldField.label,
++    type: oldField.type,
++    required: oldField.required,
++    instructions: oldField.instructions,
++    options: oldField.options || [],
++    config: null,
++  };
++}
++
+ export function FieldRenderer({ field, value, onChange }: RendererProps) {
++  const normalizedField = normalizeField(field);
++
+   const common = (
+     <div className="space-y-1">
+-      <Label htmlFor={field.id}>{field.label}</Label>
+-      {field.instructions && (
+-        <p className="text-xs text-muted-foreground">{field.instructions}</p>
++      <Label htmlFor={normalizedField.id}>
++        {normalizedField.label}
++        {normalizedField.required && (
++          <span className="text-red-500 ml-1">*</span>
++        )}
++      </Label>
++      {normalizedField.instructions && (
++        <p className="text-xs text-muted-foreground">
++          {normalizedField.instructions}
++        </p>
+       )}
+     </div>
+   );
+ 
+-  switch (field.type as FieldType) {
+-    case "text":
++  // Get placeholder from config if available
++  const placeholder =
++    normalizedField.config?.placeholder ||
++    `Enter ${normalizedField.label.toLowerCase()}`;
++
++  switch (normalizedField.type) {
++    case "TEXT":
+       return (
+         <div className="space-y-1">
+-          {common}
+           <CustomInput
+-            id={field.id}
++            label={normalizedField.label}
++            description={normalizedField.instructions}
++            required={normalizedField.required}
++            id={normalizedField.id}
++            placeholder={placeholder}
+             value={value ?? ""}
+             onChange={(e) => onChange(e.target.value)}
+           />
+         </div>
+       );
+-    case "textarea":
++
++    case "TEXTAREA":
+       return (
+         <div className="space-y-1">
+           {common}
+           <Textarea
+-            id={field.id}
++            id={normalizedField.id}
++            placeholder={placeholder}
+             value={value ?? ""}
+             onChange={(e) => onChange(e.target.value)}
++            rows={normalizedField.config?.rows || 4}
+           />
+         </div>
+       );
+-    case "number":
++
++    // case "textarea":
++    //   return (
++    //     <div className="space-y-1">
++    //       {common}
++    //       <Textarea
++    //         id={normalizedField.id}
++    //         placeholder={placeholder}
++    //         value={value ?? ""}
++    //         onChange={(e) => onChange(e.target.value)}
++    //       />
++    //     </div>
++    //   );
++
++    case "NUMBER":
+       return (
+         <div className="space-y-1">
+           {common}
+           <CustomInput
+-            id={field.id}
++            id={normalizedField.id}
+             type="number"
++            placeholder={placeholder}
+             value={value ?? ""}
+             onChange={(e) => onChange(Number(e.target.value))}
++            min={normalizedField.config?.min}
++            max={normalizedField.config?.max}
++            step={normalizedField.config?.step}
+           />
+         </div>
+       );
++
++    // case "number":
++    //   return (
++    //     <div className="space-y-1">
++    //       {common}
++    //       <CustomInput
++    //         id={normalizedField.id}
++    //         type="number"
++    //         placeholder={placeholder}
++    //         value={value ?? ""}
++    //         onChange={(e) => onChange(Number(e.target.value))}
++    //       />
++    //     </div>
++    //   );
++
+     case "toggle":
+       return (
+         <div className="flex items-center gap-2">
+           <Switch
+-            id={field.id}
++            id={normalizedField.id}
+             checked={!!value}
+             onCheckedChange={(v: any) => onChange(v)}
+           />
+-          <Label htmlFor={field.id}>{field.label}</Label>
++          <Label htmlFor={normalizedField.id}>{normalizedField.label}</Label>
+         </div>
+       );
+-    case "select":
++
++    case "SELECT":
++      // case "select":
+       return (
+         <div className="space-y-1">
+-          {common}
+-          <Select value={value ?? ""} onValueChange={(v) => onChange(v)}>
+-            <SelectTrigger id={field.id}>
+-              <SelectValue placeholder="Select an option" />
++    
++          <CustomSelect
++            options={normalizedField.options || []}
++            onValueChange={(v) => onChange(v)}
++            label={normalizedField.label}
++            value={value}
++            placeholder={"Select Option"}
++            required={normalizedField.required}
++            className="w-full"
++          />
++
++          {/* <Select value={value ?? ""} onValueChange={(v) => onChange(v)}>
++            <SelectTrigger id={normalizedField.id}>
++              <SelectValue placeholder={placeholder || "Select an option"} />
+             </SelectTrigger>
+             <SelectContent>
+-              {(field.options || []).map((opt: FieldOption) => (
++              {(normalizedField.options || []).map((opt: FieldOption) => (
+                 <SelectItem key={opt.value} value={opt.value}>
+                   {opt.label}
+                 </SelectItem>
+               ))}
+             </SelectContent>
+-          </Select>
++          </Select> */}
+         </div>
+       );
+-    case "date":
++
++    case "DATE":
+       return (
+         <div className="space-y-1">
+           {common}
+           <CustomInput
+-            id={field.id}
++            id={normalizedField.id}
+             type="date"
+             value={value ?? ""}
+             onChange={(e) => onChange(e.target.value)}
+           />
+         </div>
+       );
++
++    case "LINK":
++      return (
++        <div className="space-y-1">
++          {common}
++          <CustomInput
++            id={normalizedField.id}
++            type="url"
++            placeholder="https://example.com"
++            value={value ?? ""}
++            onChange={(e) => onChange(e.target.value)}
++          />
++        </div>
++      );
++
+     case "asset":
+       return (
+         <div className="space-y-1">
+           {common}
+           <AssetField
+-            id={field.id}
++            id={normalizedField.id}
+             value={value}
+             onChange={(file) => onChange(file)}
+             accept="image/*,video/*,audio/*,.pdf,.doc,.docx"
+@@ -117,7 +224,20 @@ export function FieldRenderer({ field, value, onChange }: RendererProps) {
+           />
+         </div>
+       );
++
+     default:
+-      return <div>Unsupported field</div>;
++      return (
++        <div className="space-y-1">
++          {common}
++          <div className="p-3 border border-orange-200 bg-orange-50 rounded-md">
++            <p className="text-sm text-orange-800">
++              <strong>Unsupported field type:</strong> {normalizedField.type}
++            </p>
++            <p className="text-xs text-orange-600 mt-1">
++              This field type is not yet implemented in the renderer.
++            </p>
++          </div>
++        </div>
++      );
+   }
+ }
+diff --git a/src/components/ui/CustomInput.tsx b/src/components/ui/CustomInput.tsx
+index 14f94c1..07cf009 100644
+--- a/src/components/ui/CustomInput.tsx
++++ b/src/components/ui/CustomInput.tsx
+@@ -4,6 +4,7 @@ import { Eye, EyeOff } from "lucide-react";
+ 
+ interface CustomInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
+   label?: string;
++  description?: string;
+   error?: string;
+   icon?: React.ReactNode;
+   iconPosition?: "left" | "right";
+@@ -13,59 +14,73 @@ interface CustomInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
+   helperText?: string;
+ }
+ 
+-export const CustomInput = forwardRef<HTMLInputElement, CustomInputProps>(({
+-  label,
+-  error,
+-  icon,
+-  iconPosition = "right",
+-  onIconClick,
+-  showPasswordToggle = false,
+-  required = false,
+-  helperText,
+-  type,
+-  className = "",
+-  ...props
+-}, ref) => {
+-  const [showPassword, setShowPassword] = useState(false);
+-  const [inputType, setInputType] = useState(type);
++export const CustomInput = forwardRef<HTMLInputElement, CustomInputProps>(
++  (
++    {
++      label,
++      description,
++      error,
++      icon,
++      iconPosition = "right",
++      onIconClick,
++      showPasswordToggle = false,
++      required = false,
++      helperText,
++      type,
++      className = "",
++      ...props
++    },
++    ref
++  ) => {
++    const [showPassword, setShowPassword] = useState(false);
++    const [inputType, setInputType] = useState(type);
+ 
+-  const togglePasswordVisibility = () => {
+-    setShowPassword(!showPassword);
+-    setInputType(showPassword ? "password" : "text");
+-  };
++    const togglePasswordVisibility = () => {
++      setShowPassword(!showPassword);
++      setInputType(showPassword ? "password" : "text");
++    };
+ 
+-  const renderIcon = () => {
+-    if (showPasswordToggle && (type === "password" || inputType === "password" || inputType === "text")) {
+-      return (
+-        <button
+-          type="button"
+-          className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground focus:outline-none"
+-          onClick={togglePasswordVisibility}
+-        >
+-          {showPassword ? (
+-            <EyeOff className="h-4 w-4" />
+-          ) : (
+-            <Eye className="h-4 w-4" />
+-          )}
+-        </button>
+-      );
+-    }
++    const renderIcon = () => {
++      if (
++        showPasswordToggle &&
++        (type === "password" ||
++          inputType === "password" ||
++          inputType === "text")
++      ) {
++        return (
++          <button
++            type="button"
++            className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground focus:outline-none"
++            onClick={togglePasswordVisibility}
++          >
++            {showPassword ? (
++              <EyeOff className="h-4 w-4" />
++            ) : (
++              <Eye className="h-4 w-4" />
++            )}
++          </button>
++        );
++      }
+ 
+-    if (icon) {
+-      return (
+-        <div 
+-          className={`absolute ${iconPosition === "left" ? "left-3" : "right-3"} top-1/2 transform -translate-y-1/2 ${onIconClick ? "cursor-pointer" : ""}`}
+-          onClick={onIconClick}
+-        >
+-          {icon}
+-        </div>
+-      );
+-    }
++      if (icon) {
++        return (
++          <div
++            className={`absolute ${
++              iconPosition === "left" ? "left-3" : "right-3"
++            } top-1/2 transform -translate-y-1/2 ${
++              onIconClick ? "cursor-pointer" : ""
++            }`}
++            onClick={onIconClick}
++          >
++            {icon}
++          </div>
++        );
++      }
+ 
+-    return null;
+-  };
++      return null;
++    };
+ 
+-  const inputClassName = `
++    const inputClassName = `
+     border-gray-300 
+     ${icon && iconPosition === "left" ? "pl-10" : ""} 
+     ${(icon && iconPosition === "right") || showPasswordToggle ? "pr-10" : ""} 
+@@ -73,31 +88,35 @@ export const CustomInput = forwardRef<HTMLInputElement, CustomInputProps>(({
+     ${className}
+   `.trim();
+ 
+-  return (
+-    <div className="space-y-2">
+-      {label && (
+-        <label className="text-sm font-medium text-foreground block capitalize">
+-          {label}
+-          {required && <span className="text-red-500 ml-1">*</span>}
+-        </label>
+-      )}
+-      <div className="relative">
+-        <Input
+-          ref={ref}
+-          type={showPasswordToggle ? inputType : type}
+-          className={inputClassName}
+-          {...props}
+-        />
+-        {renderIcon()}
++    return (
++      <div className="space-y-2">
++        <div>
++          {label && (
++            <label className="text-sm font-medium text-foreground block capitalize">
++              {label}
++              {required && <span className="text-red-500 ml-1">*</span>}
++            </label>
++          )}
++          {description && (
++            <p className="text-xs text-muted-foreground">{description}</p>
++          )}
++        </div>
++        <div className="relative">
++          <Input
++            ref={ref}
++            type={showPasswordToggle ? inputType : type}
++            className={inputClassName}
++            {...props}
++          />
++          {renderIcon()}
++        </div>
++        {error && <p className="text-sm text-red-500">{error}</p>}
++        {helperText && !error && (
++          <p className="text-sm text-muted-foreground">{helperText}</p>
++        )}
+       </div>
+-      {error && (
+-        <p className="text-sm text-red-500">{error}</p>
+-      )}
+-      {helperText && !error && (
+-        <p className="text-sm text-muted-foreground">{helperText}</p>
+-      )}
+-    </div>
+-  );
+-});
++    );
++  }
++);
+ 
+-CustomInput.displayName = "CustomInput";
+\ No newline at end of file
++CustomInput.displayName = "CustomInput";
+diff --git a/src/components/ui/tabs.tsx b/src/components/ui/tabs.tsx
+index 76d0028..d249b38 100644
+--- a/src/components/ui/tabs.tsx
++++ b/src/components/ui/tabs.tsx
+@@ -40,7 +40,7 @@ function TabsTrigger({
+     <TabsPrimitive.Trigger
+       data-slot="tabs-trigger"
+       className={cn(
+-        "data-[state=active]:bg-background dark:data-[state=active]:text-foreground focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:outline-ring dark:data-[state=active]:border-input dark:data-[state=active]:bg-input/30 text-foreground dark:text-muted-foreground inline-flex h-[calc(100%-1px)] flex-1 items-center justify-center gap-1.5 rounded-md border border-transparent px-2 py-1 text-sm font-medium whitespace-nowrap transition-[color,box-shadow] focus-visible:ring-[3px] focus-visible:outline-1 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:shadow-sm [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
++        "data-[state=active]:bg-nbc-dark-950 dark:data-[state=active]:text-nbc-dark-950 focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:outline-ring dark:data-[state=active]:border-nbc-dark-950 dark:data-[state=active]:bg-input/30 text-foreground dark:text-muted-foreground inline-flex h-[calc(100%-1px)] flex-1 items-center justify-center gap-1.5 rounded-md border border-transparent px-2 py-1 text-sm font-medium whitespace-nowrap transition-[color,box-shadow] focus-visible:ring-[3px] focus-visible:outline-1 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:shadow-sm [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+         className
+       )}
+       {...props}
+diff --git a/src/hooks/CMS/useFieldTypes.ts b/src/hooks/CMS/useFieldTypes.ts
+index 2d16545..0d7239a 100644
+--- a/src/hooks/CMS/useFieldTypes.ts
++++ b/src/hooks/CMS/useFieldTypes.ts
+@@ -1,10 +1,10 @@
++import { fieldTypesContext } from "@/Context/CMs/fieldTypes.context";
+ import { useContext } from "react";
+-import { CMSAuthContext } from "@/Context/CMs/CMSAuthProvider";
+ 
+ export const useFieldTypes = () => {
+-  const context = useContext(CMSAuthContext);
++  const context = useContext(fieldTypesContext);
+   if (context === undefined) {
+-    throw new Error("useFieldTypes must be used within a CMSAuthProvider");
++    throw new Error("useFieldTypes must be used within a FieldTypesProvider");
+   }
+   return context;
+ };
+diff --git a/src/index.css b/src/index.css
+index f8bf910..2b03c98 100644
+--- a/src/index.css
++++ b/src/index.css
+@@ -1,4 +1,4 @@
+-@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
++@import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
+ @import "tailwindcss";
+ @import "tw-animate-css";
+ 
+@@ -11,41 +11,40 @@
+   --color-nbc-blue-300: oklch(0.7094 0.3473 256.32);
+   --color-nbc-blue-400: oklch(0.5867 0.4668 265.67);
+   --color-nbc-blue-500: oklch(0.3761 0.4796 273.53);
+-  --color-nbc-blue-600: oklch(0.3468 0.5510 275.69);
+-  --color-nbc-blue-700: oklch(0.3160 0.6134 277.09);
++  --color-nbc-blue-600: oklch(0.3468 0.551 275.69);
++  --color-nbc-blue-700: oklch(0.316 0.6134 277.09);
+   --color-nbc-blue-800: oklch(0.2779 0.6706 278.08);
+   --color-nbc-blue-900: oklch(0.2085 0.5869 279.22);
+   --color-nbc-blue-950: oklch(0.1475 0.5385 279.92);
+ 
+   /* FOR NBC DARK COLOR  */
+-  --color-nbc-dark-50: oklch(0.9612 0.0883 161.34);   
+-  --color-nbc-dark-100: oklch(0.9061 0.1183 160.20);
++  --color-nbc-dark-50: oklch(0.9612 0.0883 161.34);
++  --color-nbc-dark-100: oklch(0.9061 0.1183 160.2);
+ 
+-  --color-nbc-dark-200:oklch(0.0621 0.0824 270.89);  
+-  
+-  --color-nbc-dark-300: oklch(0.7267 0.2107 156.63);  
+-  --color-nbc-dark-400: oklch(0.6324 0.2512 155.86); 
++  --color-nbc-dark-200: oklch(0.0621 0.0824 270.89);
+ 
+-  --color-nbc-dark-500: #111d45;  
+-  --color-nbc-dark-600: oklch(0.2076 0.2917 273.47);  
++  --color-nbc-dark-300: oklch(0.7267 0.2107 156.63);
++  --color-nbc-dark-400: oklch(0.6324 0.2512 155.86);
++
++  --color-nbc-dark-500: #111d45;
++  --color-nbc-dark-600: oklch(0.2076 0.2917 273.47);
+   --color-nbc-dark-700: #172960;
+-  --color-nbc-dark-800: #1a2e6e;  
++  --color-nbc-dark-800: #1a2e6e;
+   --color-nbc-dark-900: #1e347b;
+-    --color-nbc-dark-950: #213a89; 
+-  
+-  
+-  /* SLATE COLOR */
+- --color-slate-950:#DD0A14
++  --color-nbc-dark-950: #213a89;
+ 
++  /* SLATE COLOR */
++  --color-slate-950: #dd0a14;
+ 
+- /* STONE */
+- --color-stone-500:oklch(0.7254 0.1662 248.23);
+-
++  /* STONE */
++  --color-stone-500: oklch(0.7254 0.1662 248.23);
+ 
++  --color-try: #4b5563;
+ 
+- --color-try:#4b5563;
+ 
+ 
++  /* Status color */
++  --color-success:#5cb85c
+ }
+ 
+ :root {
+@@ -93,8 +92,7 @@
+   --sidebar-accent-foreground: oklch(0.205 0 0);
+   --sidebar-border: oklch(0.922 0 0);
+   --sidebar-ring: oklch(0.708 0 0);
+-  --border-primary:#213a89;
+-
++  --border-primary: #213a89;
+ 
+   --promotion: 45 100% 70%;
+   --promotion-foreground: 32 95% 44%;
+@@ -102,20 +100,13 @@
+   --sale-badge: 120 100% 40%;
+   --best-deals-badge: 45 100% 51%;
+   --discount-badge: 220 50% 47%;
+-
+-  
+ }
+ 
+-
+ body {
+   margin: 0;
+- font-family: "Inter", sans-serif;
+-
+-
++  font-family: "Inter", sans-serif;
+ }
+ 
+-
+-
+ @theme inline {
+   --radius-sm: calc(var(--radius) - 4px);
+   --radius-md: calc(var(--radius) - 2px);
+@@ -198,7 +189,9 @@ body {
+ }
+ 
+ /* Remove red border ring on focus for all elements */
+-:focus-visible, .focus-visible, *:focus-visible {
++:focus-visible,
++.focus-visible,
++*:focus-visible {
+   outline: none !important;
+   box-shadow: none !important;
+   border-color: inherit !important;
+@@ -211,10 +204,9 @@ body {
+   border-color: inherit !important;
+ }
+ 
+-
+-.section-title{
+-  @apply text-2xl sm:text-3xl lg:text-4xl font-bold text-center   leading-tight sm:leading-snug lg:leading-normal text-nbc-dark-950
++.section-title {
++  @apply text-2xl sm:text-3xl lg:text-4xl font-bold text-center   leading-tight sm:leading-snug lg:leading-normal text-nbc-dark-950;
+ }
+-.section-subtitle{
++.section-subtitle {
+   @apply text-sm sm:text-base lg:text-lg text-center  mx-auto  leading-relaxed sm:leading-relaxed lg:leading-loose text-[#4B5563]  mb-5;
+-}
+\ No newline at end of file
++}
+diff --git a/src/lib/cmsTypes.ts b/src/lib/cmsTypes.ts
+index 4cd1635..219d146 100644
+--- a/src/lib/cmsTypes.ts
++++ b/src/lib/cmsTypes.ts
+@@ -1,11 +1,13 @@
+ export type FieldType =
+-  | "text"
+-  | "textarea"
+-  | "number"
++  | "TEXT"
++  | "TEXTAREA"
++  | "NUMBER"
+   | "toggle"
+-  | "select"
+-  | "date"
+-  | "asset";
++  | "SELECT"
++  | "DATE"
++  | "asset"
++  |"LINK"
++  ;
+ 
+ export interface FieldOption {
+   label: string;
+diff --git a/src/services/Api.service.ts b/src/services/Api.service.ts
+index 8776a04..3e5b70e 100644
+--- a/src/services/Api.service.ts
++++ b/src/services/Api.service.ts
+@@ -11,8 +11,9 @@ export class ApiService {
+   private axiosInstance: AxiosInstance;
+   private readonly PRECONDITION_FAILED = 428;
+   private readonly STATUS_ERROR_THRESHOLD = 300;
+-  
+-  constructor(baseURL: string) {
++  private loginRoute: string;
++
++  constructor(baseURL: string, loginRoute: string = "/login") {
+     this.axiosInstance = axios.create({
+       baseURL,
+       timeout: 30000,
+@@ -22,13 +23,14 @@ export class ApiService {
+       },
+     });
+ 
++    this.loginRoute = loginRoute;
+     this.setupInterceptors();
+-    
++
+     // Initialize token immediately after setup
+     this.initializeAuthToken();
+-    
++
+     // Make this instance globally available for token sync
+-    if (typeof window !== 'undefined') {
++    if (typeof window !== "undefined") {
+       (window as any).apiService = this;
+     }
+   }
+@@ -38,7 +40,9 @@ export class ApiService {
+     const token = localStorage.getItem("accessToken");
+     if (token) {
+       // Set the authorization header immediately
+-      this.axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${token}`;
++      this.axiosInstance.defaults.headers.common[
++        "Authorization"
++      ] = `Bearer ${token}`;
+     }
+   }
+ 
+@@ -105,8 +109,8 @@ export class ApiService {
+         if (error.response?.status === 401) {
+           localStorage.removeItem("accessToken");
+           // Clear authorization header
+-          delete this.axiosInstance.defaults.headers.common['Authorization'];
+-          window.location.href = "/login";
++          delete this.axiosInstance.defaults.headers.common["Authorization"];
++          window.location.href = this.loginRoute;
+         }
+ 
+         return Promise.reject(error);
+@@ -323,14 +327,16 @@ export class ApiService {
+   setAuthToken(token: string): void {
+     localStorage.setItem("accessToken", token);
+     // Set the authorization header on the axios instance
+-    this.axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${token}`;
++    this.axiosInstance.defaults.headers.common[
++      "Authorization"
++    ] = `Bearer ${token}`;
+   }
+ 
+   // Update clearAuthToken method
+   clearAuthToken(): void {
+     localStorage.removeItem("accessToken");
+     // Remove authorization header
+-    delete this.axiosInstance.defaults.headers.common['Authorization'];
++    delete this.axiosInstance.defaults.headers.common["Authorization"];
+   }
+ 
+   // Get axios instance for advanced usage
+@@ -341,4 +347,5 @@ export class ApiService {
+ 
+ export const apiService = new ApiService(
+   import.meta.env.VITE_API_URL || "/api"
++  // Optionally pass a custom login route here, e.g. "/cms/login"
+ );
+diff --git a/src/services/CMS/cmsAuth.service.ts b/src/services/CMS/cmsAuth.service.ts
+index 1086a2a..05d7ac6 100644
+--- a/src/services/CMS/cmsAuth.service.ts
++++ b/src/services/CMS/cmsAuth.service.ts
+@@ -1,7 +1,4 @@
+-import config from "@/config";
+-import { ApiService } from "../Api.service";
+-
+-const cmsApiService = new ApiService(config.cmsApiBaseUrl);
++import { cmsApiService } from "@/config/cmsApiServiceConfig";
+ 
+ // Initialize token on service creation
+ const initializeToken = () => {
+@@ -28,18 +25,22 @@ export const cmsService = {
+     );
+ 
+     // Store the token if provided
+-    if (response.data?.token || response.data?.access_token || response?.accessToken 
++    if (
++      response.data?.token ||
++      response.data?.access_token ||
++      response?.accessToken
+     ) {
++      const token =
++        response?.accessToken ||
++        response.data.token ||
++        response.data.access_token;
+ 
+-      console.log("Response Data inside if",response?.accessToken )
+-      const token = response?.accessToken || response.data.token || response.data.access_token  ;
+-      console.log("Token received:", token);
+       // Use only one consistent token key
+       localStorage.setItem("accessToken", token);
+       cmsApiService.setAuthToken(token);
+-      
++
+       // Also set token for the main apiService if it exists
+-      if (typeof window !== 'undefined' && (window as any).apiService) {
++      if (typeof window !== "undefined" && (window as any).apiService) {
+         (window as any).apiService.setAuthToken(token);
+       }
+     }
+@@ -58,9 +59,9 @@ export const cmsService = {
+       localStorage.removeItem("accessToken");
+       localStorage.removeItem("cmsAccessToken"); // Clean up old key if exists
+       cmsApiService.clearAuthToken();
+-      
++
+       // Also clear token for the main apiService if it exists
+-      if (typeof window !== 'undefined' && (window as any).apiService) {
++      if (typeof window !== "undefined" && (window as any).apiService) {
+         (window as any).apiService.clearAuthToken();
+       }
+     }
+diff --git a/src/services/CMS/field-types.service.ts b/src/services/CMS/field-types.service.ts
+index 1b62172..f7b7552 100644
+--- a/src/services/CMS/field-types.service.ts
++++ b/src/services/CMS/field-types.service.ts
+@@ -1,12 +1,10 @@
+-import config from "@/config";
+-import { ApiService } from "../Api.service";
++import { cmsApiService } from "@/config/cmsApiServiceConfig";
+ 
+-const cmsApiService = new ApiService(config.cmsApiBaseUrl);
+ 
+ export const fieldTypesServices = {
+   findAll: async (setFieldTypes:any) => {
+     try {
+-      const response = await cmsApiService.get("/field-types");
++      const response = await cmsApiService.get("/cms/field-types");
+       setFieldTypes(response);
+       return response;
+     } catch (error) {
+diff --git a/src/types/pagination.ts b/src/types/pagination.ts
+index de3db86..95b562d 100644
+--- a/src/types/pagination.ts
++++ b/src/types/pagination.ts
+@@ -20,4 +20,12 @@ export interface PaginationProps {
+   
+   export interface PaginationEllipsisProps {
+     className?: string;
++  }
++
++
++  export interface PaginationI {
++    page: number;
++    size: number;
++    totalElements: number;
++    totalPages: number;
+   }
+\ No newline at end of file
