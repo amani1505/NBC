@@ -1,601 +1,930 @@
-I want when I click the add field to open shadcn sheet from the right to the left like the one I provided from the image
-Separate the files to be easy to maintain
-
-Is the sample of categorized field
-
-```
-{"statusCode":600,"statusDescription":"Success","message":"Success","timestamp":"2025-08-13 15:33:14","data":{"categories":{"special":{"categoryName":"special","categoryDescription":"Specialized field types for unique data requirements and formats","fieldTypes":[{"type":"DATE","categories":[{"name":"special","description":"Specialized field types for unique data requirements and formats"}],"selectableInForms":true,"configSections":[{"display":"Appearance","fields":{"mode":{"display":"UI Mode","instructions":"Choose between single date or date range","type":"select","default":"single","required":false,"options":["single","range"],"clearable":false},"inline":{"display":"Inline","instructions":"Show the date picker inline","type":"toggle","default":false,"required":false,"options":[],"clearable":false},"fullWidth":{"display":"Full Width","instructions":"Make the inline picker full width","type":"toggle","default":false,"required":false,"options":[],"clearable":false},"columns":{"display":"Columns","instructions":"Number of columns in the date picker","type":"integer","default":1,"required":false,"options":[],"clearable":false},"rows":{"display":"Rows","instructions":"Number of rows in the date picker","type":"integer","default":1,"required":false,"options":[],"clearable":false}}},{"display":"Time Settings","fields":{"timeEnabled":{"display":"Time Enabled","instructions":"Enable time selection","type":"toggle","default":false,"required":false,"options":[],"clearable":false},"timeSecondsEnabled":{"display":"Show Seconds","instructions":"Show seconds in time picker","type":"toggle","default":false,"required":false,"options":[],"clearable":false}}},{"display":"Boundaries","fields":{"earliestDate":{"display":"Earliest Date","instructions":"The earliest selectable date","type":"date","required":false,"options":[],"clearable":false},"latestDate":{"display":"Latest Date","instructions":"The latest selectable date","type":"date","required":false,"options":[],"clearable":false}}},{"display":"Data Format","fields":{"format":{"display":"Format","instructions":"Custom date format pattern (Java DateTimeFormatter)","type":"text","required":false,"options":[],"clearable":false},"timezone":{"display":"Timezone","instructions":"Timezone for date handling","type":"text","default":"UTC","required":false,"options":[],"clearable":false}}}],"defaultConfig":{"mode":"single","inline":false,"fullWidth":false,"columns":1,"rows":1,"timeEnabled":false,"timeSecondsEnabled":false,"timezone":"UTC"}},{"type":"LINK","categories":[{"name":"special","description":"Specialized field types for unique data requirements and formats"}],"selectableInForms":true,"configSections":[{"display":"Behavior","fields":{"collections":{"display":"Collections","instructions":"Select which collections are available for entry linking. Leave empty to allow all collections.","type":"collections","required":false,"options":[],"clearable":true},"allowUrl":{"display":"Allow URL","instructions":"Allow users to enter custom URLs","type":"toggle","default":true,"required":false,"options":[],"clearable":false},"allowEntry":{"display":"Allow Entry","instructions":"Allow users to select entries from collections","type":"toggle","default":true,"required":false,"options":[],"clearable":false},"allowFirstChild":{"display":"Allow First Child","instructions":"Allow users to select the first child entry (for structured collections)","type":"toggle","default":true,"required":false,"options":[],"clearable":false}}}],"defaultConfig":{}}],"fieldTypeCount":2},"number":{"categoryName":"number","categoryDescription":"Numeric field types for mathematical values and calculations","fieldTypes":[{"type":"NUMBER","categories":[{"name":"number","description":"Numeric field types for mathematical values and calculations"}],"selectableInForms":true,"configSections":[{"display":"Behavior","fields":{"numberType":{"display":"Number Type","instructions":"The type of number to handle","type":"select","default":"decimal","required":false,"options":["integer","decimal"],"clearable":false},"placeholder":{"display":"Placeholder","instructions":"Placeholder text for the input field","type":"text","required":false,"options":[],"clearable":false},"default":{"display":"Default Value","instructions":"The default value for this field","type":"text","required":false,"options":[],"clearable":false},"min":{"display":"Minimum Value","instructions":"The minimum allowed value","type":"text","required":false,"options":[],"clearable":false},"max":{"display":"Maximum Value","instructions":"The maximum allowed value","type":"text","required":false,"options":[],"clearable":false},"step":{"display":"Step","instructions":"The step interval for the input","type":"text","required":false,"options":[],"clearable":false}}},{"display":"Appearance","fields":{"prepend":{"display":"Prepend","instructions":"Text to prepend to the field value","type":"text","required":false,"options":[],"clearable":false},"append":{"display":"Append","instructions":"Text to append to the field value","type":"text","required":false,"options":[],"clearable":false}}},{"display":"Formatting","fields":{"decimalPlaces":{"display":"Decimal Places","instructions":"Number of decimal places to display","type":"integer","required":false,"options":[],"clearable":false},"thousandSeparator":{"display":"Thousand Separator","instructions":"Character to use as thousand separator","type":"text","default":",","required":false,"options":[],"clearable":false},"decimalSeparator":{"display":"Decimal Separator","instructions":"Character to use as decimal separator","type":"text","default":".","required":false,"options":[],"clearable":false}}}],"defaultConfig":{"numberType":"decimal","placeholder":"","prepend":"","append":"","decimalPlaces":2,"thousandSeparator":",","decimalSeparator":"."}}],"fieldTypeCount":1},"controls":{"categoryName":"controls","categoryDescription":"Interactive control field types for user selections and choices","fieldTypes":[{"type":"SELECT","categories":[{"name":"controls","description":"Interactive control field types for user selections and choices"}],"selectableInForms":true,"configSections":[{"display":"Options","fields":{"options":{"display":"Options","instructions":"Define the available options for this select field","type":"array","required":false,"options":[],"clearable":false},"taggable":{"display":"Allow additions","instructions":"Allow users to add new options","type":"toggle","default":false,"required":false,"options":[],"clearable":false},"pushTags":{"display":"Push Tags","instructions":"Push new tags to the global options list","type":"toggle","default":false,"required":false,"options":[],"clearable":false}}},{"display":"Selection","fields":{"placeholder":{"display":"Placeholder","instructions":"Placeholder text when no option is selected","type":"text","default":"","required":false,"options":[],"clearable":false},"multiple":{"display":"Multiple","instructions":"Allow multiple selections","type":"toggle","default":false,"required":false,"options":[],"clearable":false},"maxItems":{"display":"Max Items","instructions":"Maximum number of items that can be selected","type":"integer","required":false,"options":[],"clearable":false},"clearable":{"display":"Clearable","instructions":"Allow clearing the selection","type":"toggle","default":false,"required":false,"options":[],"clearable":false},"searchable":{"display":"Searchable","instructions":"Allow searching through options","type":"toggle","default":true,"required":false,"options":[],"clearable":false}}},{"display":"Data","fields":{"castBooleans":{"display":"Cast Booleans","instructions":"Cast string boolean values to actual booleans","type":"toggle","default":false,"required":false,"options":[],"clearable":false},"default":{"display":"Default Value","instructions":"The default selected value(s)","type":"text","required":false,"options":[],"clearable":false}}}],"defaultConfig":{"options":{},"placeholder":"","multiple":false,"clearable":false,"searchable":true,"taggable":false,"pushTags":false,"castBooleans":false}}],"fieldTypeCount":1},"text":{"categoryName":"text","categoryDescription":"Text-based field types for simple and formatted text input","fieldTypes":[{"type":"TEXT","categories":[{"name":"text","description":"Text-based field types for simple and formatted text input"}],"selectableInForms":true,"configSections":[{"display":"Input Behavior","fields":{"inputType":{"display":"Input Type","instructions":"The type of HTML input to render","type":"select","default":"text","required":false,"options":["color","date","email","hidden","month","number","password","tel","text","time","url","week"],"clearable":false},"placeholder":{"display":"Placeholder","instructions":"Placeholder text for the input field","type":"text","required":false,"options":[],"clearable":false},"default":{"display":"Default Value","instructions":"The default value for this field","type":"text","required":false,"options":[],"clearable":false},"characterLimit":{"display":"Character Limit","instructions":"Maximum number of characters allowed","type":"integer","required":false,"options":[],"clearable":false},"autocomplete":{"display":"Autocomplete","instructions":"HTML autocomplete attribute value","type":"select","required":false,"options":["additional-name","address-level1","address-level2","address-level3","address-level4","address-line1","address-line2","address-line3","bday","bday-day","bday-month","bday-year","cc-additional-name","cc-csc","cc-exp","cc-exp-month","cc-exp-year","cc-family-name","cc-given-name","cc-name","cc-number","cc-type","country","country-name","current-password","email","family-name","given-name","honorific-prefix","honorific-suffix","language","name","new-password","nickname","off","on","organization","organization-title","photo","postal-code","sex","street-address","tel","tel-area-code","tel-country-code","tel-extension","tel-local","tel-local-prefix","tel-local-suffix","tel-national","transaction-amount","transaction-currency","url","username"],"clearable":true}}},{"display":"Appearance","fields":{"prepend":{"display":"Prepend","instructions":"Text to prepend to the field value","type":"text","required":false,"options":[],"clearable":false},"append":{"display":"Append","instructions":"Text to append to the field value","type":"text","required":false,"options":[],"clearable":false}}}],"defaultConfig":{"inputType":"text","placeholder":"","default":"","characterLimit":255,"autoComplete":false,"prepend":"","append":""}},{"type":"TEXTAREA","categories":[{"name":"text","description":"Text-based field types for simple and formatted text input"}],"selectableInForms":true,"configSections":[{"display":"Appearance & Behavior","fields":{"placeholder":{"display":"Placeholder","instructions":"Placeholder text for the textarea field","type":"text","required":false,"options":[],"clearable":false},"characterLimit":{"display":"Character Limit","instructions":"Maximum number of characters allowed","type":"integer","required":false,"options":[],"clearable":false},"default":{"display":"Default Value","instructions":"The default value for this field","type":"textarea","required":false,"options":[],"clearable":false},"rows":{"display":"Rows","instructions":"Number of visible text lines","type":"integer","default":4,"required":false,"options":[],"clearable":false},"cols":{"display":"Columns","instructions":"Width of the textarea in characters","type":"integer","required":false,"options":[],"clearable":false}}}],"defaultConfig":{"placeholder":"","characterLimit":5000,"default":"","rows":4,"cols":50}}],"fieldTypeCount":2}}}}
-
-
- ```
-
-
-Here is the code to be modified
-
-```
-
-import { useEffect, useState } from "react";
-import { v4 as uuid } from "uuid";
-import { cmsDB } from "@/lib/cmsStore";
-import type { Blueprint, Entry } from "@/lib/cmsTypes";
-import Button from "@/components/ui/button";
-import { FieldRenderer } from "@/components/cms/FieldRenderer";
-import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { useCollection } from "@/hooks/CMS/useCollection";
-import { titleToHandle } from "@/utils/titleToHandle";
-import { CustomInput } from "@/components/ui/CustomInput";
-import { Trash2, Plus, Settings, PlusCircle } from "lucide-react";
-import { EntryValueDisplay } from "@/components/cms/EntryValueDisplay";
-import type {
-  BlueprintContentI,
-  BlueprintFieldTypeI,
-  BlueprintSectionI,
-} from "@/types/cms/blueprint.interface";
-
-// Mock field types - adjust based on your actual field types
-const FIELD_TYPES = [
-  { value: "TEXT", label: "Text" },
-  { value: "TEXTAREA", label: "Textarea" },
-  { value: "NUMBER", label: "Number" },
-  { value: "EMAIL", label: "Email" },
-  { value: "URL", label: "URL" },
-  { value: "DATE", label: "Date" },
-  { value: "BOOLEAN", label: "Boolean" },
-  { value: "SELECT", label: "Select" },
-  { value: "MULTISELECT", label: "Multi-select" },
-];
-
-function BlueprintCard({ content }: { content: BlueprintContentI }) {
-  const [bp, setBp] = useState<Blueprint | null>(null);
-  const [bps, setBps] = useState<Blueprint[]>([]);
-  const [entries, setEntries] = useState<Entry[]>([]);
-  const [values, setValues] = useState<Record<string, any>>({});
-  const [open, setOpen] = useState(false);
-  const [addSectionOpen, setAddSectionOpen] = useState(false);
-  const [addFieldOpen, setAddFieldOpen] = useState(false);
-  const [selectedSectionId, setSelectedSectionId] = useState<string | null>(
-    null
-  );
-  const [title, setTitle] = useState(content.title);
-  const [handle, setHandle] = useState(content.handle);
-  const [isHandleManuallyEdited, setIsHandleManuallyEdited] = useState(false);
-  const [localSchema, setLocalSchema] = useState(content.schema);
-
-  // New section form state
-  const [newSectionTitle, setNewSectionTitle] = useState("");
-  const [newSectionDescription, setNewSectionDescription] = useState("");
-
-  // New field form state
-  const [newFieldTitle, setNewFieldTitle] = useState("");
-  const [newFieldType, setNewFieldType] = useState("text");
-  const [newFieldDescription, setNewFieldDescription] = useState("");
-  const [newFieldRequired, setNewFieldRequired] = useState(false);
-  const [newFieldPlaceholder, setNewFieldPlaceholder] = useState("");
-
-  const { updateLoading, updateCollection } = useCollection();
-
-  // Get all fields from all sections
-  const getAllFields = (): BlueprintFieldTypeI[] => {
-    if (!localSchema?.sections) return [];
-
-    return localSchema.sections.reduce((allFields, section) => {
-      return [...allFields, ...(section.fields ?? [])];
-    }, [] as BlueprintFieldTypeI[]);
-  };
-
-  const load = async () => {
-    const allBps = await cmsDB.listBlueprints();
-    setBps(allBps);
-    setBp(allBps.find((b) => b.id === content.reference) || null);
-    setEntries(await cmsDB.listEntriesByCollection(content.reference));
-  };
-
-  useEffect(() => {
-    load();
-  }, [content.reference]);
-
-  useEffect(() => {
-    setTitle(content.title);
-    setLocalSchema(content.schema);
-  }, [content.reference, content.title, content.schema]);
-
-  const saveEntry = async () => {
-    const now = new Date().toISOString();
-    await cmsDB.saveEntry({
-      id: uuid(),
-      collectionId: content.reference,
-      values,
-      createdAt: now,
-      updatedAt: now,
-    });
-    setValues({});
-    load();
-  };
-
-  const removeEntry = async (id: string) => {
-    await cmsDB.deleteEntry(id);
-    load();
-  };
-
-  const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newTitle = e.target.value;
-    setTitle(newTitle);
-
-    // Only auto-generate handle if it hasn't been manually edited
-    if (!isHandleManuallyEdited) {
-      setHandle(titleToHandle(newTitle));
-    }
-  };
-
-  const handleHandleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setHandle(e.target.value);
-    setIsHandleManuallyEdited(true);
-  };
-
-  const saveCollectionSettings = async () => {
-    if (!title || !handle) return;
-    if (updateCollection) {
-      await updateCollection(content.reference, {
-        title,
-        handle,
-      });
-    }
-    setOpen(false);
-  };
-
-  // Add new section
-  const addSection = () => {
-    if (!newSectionTitle.trim()) return;
-
-    const newSection: BlueprintSectionI = {
-      id: "",
-      displayName: newSectionTitle,
-      handle: titleToHandle(newSectionTitle),
-      description: newSectionDescription || "",
-      fields: [],
-    };
-
-    setLocalSchema((prev) => ({
-      ...prev,
-      sections: [...(prev?.sections || []), newSection],
-    }));
-
-    // Reset form
-    setNewSectionTitle("");
-    setNewSectionDescription("");
-    setAddSectionOpen(false);
-  };
-
-  // Remove section
-  const removeSection = (sectionId: string) => {
-    setLocalSchema((prev) => ({
-      ...prev,
-      sections:
-        prev?.sections?.filter((section) => section.id !== sectionId) || [],
-    }));
-  };
-
-  // Add new field to section
-  const addField = () => {
-    if (!newFieldTitle.trim() || !selectedSectionId) return;
-
-    const newField: BlueprintFieldTypeI = {
-      id: "",
-      type: newFieldType as any,
-      displayName: newFieldTitle,
-      handle: titleToHandle(newFieldTitle),
-      description: newFieldDescription || "",
-      isRequired: newFieldRequired,
-      config: { fieldType: newFieldType, type: newFieldType }, // Provide required config properties
-      // placeholder: newFieldPlaceholder || "",
-    };
-
-    setLocalSchema((prev) => ({
-      ...prev,
-      sections:
-        prev?.sections?.map((section) =>
-          section.id === selectedSectionId
-            ? { ...section, fields: [...(section.fields ?? []), newField] }
-            : section
-        ) || [],
-    }));
-
-    // Reset form
-    setNewFieldTitle("");
-    setNewFieldType("text");
-    setNewFieldDescription("");
-    setNewFieldRequired(false);
-    setNewFieldPlaceholder("");
-    setAddFieldOpen(false);
-    setSelectedSectionId(null);
-  };
-
-  // Remove field from section
-  const removeField = (sectionId: string, fieldId: string) => {
-    setLocalSchema((prev) => ({
-      ...prev,
-      sections:
-        prev?.sections?.map((section) =>
-          section.id === sectionId
-            ? {
-                ...section,
-                fields: (section.fields ?? []).filter(
-                  (field) => field.id !== fieldId
-                ),
-              }
-            : section
-        ) || [],
-    }));
-  };
-
-  const allFields = getAllFields();
-
-  return (
-    <div className="p-4 border rounded-md bg-white space-y-4 min-w-0 border-gray-300">
-      {/* Collection Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex-1">
-          <div className="font-medium text-lg">{content.title}</div>
-          <div className="text-xs text-muted-foreground mb-1">
-            Handle: {content.handle || "Unknown"}
-          </div>
-          <div className="flex items-center gap-4 text-xs text-gray-500">
-            <span
-              className={`px-2 py-1 rounded-full text-xs ${
-                content.isActive
-                  ? "bg-green-100 text-green-700"
-                  : "bg-red-100 text-red-700"
-              }`}
-            >
-              {content.isActive ? "Active" : "Inactive"}
-            </span>
-            <span>Version: {localSchema?.version}</span>
-          </div>
-        </div>
-        <Button
-          variant="link"
-          size="sm"
-          onClick={() => setOpen(true)}
-          className="px-0"
-          icon={Settings}
-        >
-          Manage settings
-        </Button>
-      </div>
-
-      {/* Schema Management Section */}
-      <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <div className="text-sm font-medium text-gray-600">
-            Collection Schema
-          </div>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setAddSectionOpen(true)}
-            icon={Plus}
-          >
-            Add Section
-          </Button>
-        </div>
-
-        {/* Render sections and fields */}
-        {localSchema?.sections &&
-          localSchema.sections.map((section) => (
-            <div
-              key={section.id}
-              className="border border-gray-200 rounded-lg p-3 bg-gray-50/50"
-            >
-              <div className="mb-3">
-                <div className="flex items-center justify-between">
-                  <h4 className="text-sm font-semibold text-gray-800">
-                    {section.displayName}
-                  </h4>
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs text-gray-500 bg-white px-2 py-1 rounded">
-                      {section.fields?.length ?? 0} field
-                      {(section.fields?.length ?? 0) !== 1 ? "s" : ""}
-                    </span>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={() => {
-                        setSelectedSectionId(section.id ?? null);
-                        setAddFieldOpen(true);
-                      }}
-                      icon={PlusCircle}
-                    >
-                      Add Field
-                    </Button>
-                    <Button
-                      variant="iconRounded"
-                      size="sm"
-                      onClick={() => section.id && removeSection(section.id)}
-                      className="bg-red-500 hover:bg-red-700 text-white"
-                      icon={Trash2}
-                    />
-                  </div>
-                </div>
-                {section.description && (
-                  <p className="text-xs text-gray-600 mt-1">
-                    {section.description}
-                  </p>
-                )}
-              </div>
-              <div className="space-y-3">
-                {section.fields?.map((field) => (
-                  <div key={field.id} className="flex items-center gap-2">
-                    <div className="flex-1">
-                      <FieldRenderer
-                        field={field}
-                        value={values[field.handle]}
-                        onChange={(v) =>
-                          setValues((s) => ({ ...s, [field.handle]: v }))
-                        }
-                      />
-                    </div>
-                    <Button
-                      variant="iconRounded"
-                      size="sm"
-                      onClick={() => removeField(section.id!, field.id)}
-                      className="bg-red-500 hover:bg-red-700 text-white"
-                      icon={Trash2}
-                    />
-                  </div>
-                ))}
-                {section.fields?.length === 0 && (
-                  <p className="text-xs text-gray-500 italic text-center py-4">
-                    No fields in this section. Click "Add Field" to add one.
-                  </p>
-                )}
-              </div>
-            </div>
-          ))}
-
-        {localSchema?.sections && localSchema.sections.length > 0 && (
-          <Button variant="secondary" onClick={saveEntry} className="w-full">
-            Add Entry
-          </Button>
-        )}
-
-        {(!localSchema?.sections || localSchema.sections.length === 0) && (
-          <div className="text-center py-8 text-gray-500">
-            <p className="text-sm">No sections defined yet.</p>
-            <p className="text-xs">Click "Add Section" to get started.</p>
-          </div>
-        )}
-      </div>
-
-      {/* Entries Section */}
-      <div>
-        <h3 className="text-sm font-semibold mb-2">
-          Entries ({entries.length})
-        </h3>
-        <div className="space-y-2">
-          {entries.map((e) => (
-            <div
-              key={e.id}
-              className="flex items-center justify-between p-3 rounded-md border bg-background/60 border-gray-300"
-            >
-              <div className="text-sm truncate max-w-[70%] flex items-center gap-2">
-                {allFields
-                  .slice(0, 3) // Show only first 3 fields
-                  .map((field) => (
-                    <div key={field.id} className="flex items-center gap-1">
-                      <EntryValueDisplay
-                        value={e.values[field.handle]}
-                        field={field}
-                      />
-                    </div>
-                  ))}
-                {allFields.length > 3 && (
-                  <span className="text-gray-400">...</span>
-                )}
-              </div>
-              <Button
-                variant="iconRounded"
-                size="sm"
-                onClick={() => removeEntry(e.id)}
-                className="bg-red-500 hover:bg-red-700 text-white"
-                icon={Trash2}
-              />
-            </div>
-          ))}
-          {entries.length === 0 && (
-            <p className="text-xs text-muted-foreground">
-              No entries yet.{" "}
-              {allFields.length > 0
-                ? "Add one above."
-                : "Define some fields first."}
-            </p>
-          )}
-        </div>
-      </div>
-
-      {/* Settings Dialog */}
-      <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Collection settings</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-3">
-            <div>
-              <CustomInput
-                label="Title"
-                placeholder="Edit Title"
-                value={title}
-                onChange={handleTitleChange}
-              />
-            </div>
-            <div>
-              <CustomInput
-                label="Handle"
-                placeholder="Edit Handle"
-                value={handle}
-                onChange={handleHandleChange}
-              />
-            </div>
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setOpen(false)}>
-              Cancel
-            </Button>
-            <Button
-              variant="primary"
-              onClick={saveCollectionSettings}
-              disabled={!title || !handle || updateLoading}
-              loading={updateLoading}
-            >
-              {updateLoading ? "Updating..." : "Update"}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      {/* Add Section Dialog */}
-      <Dialog open={addSectionOpen} onOpenChange={setAddSectionOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Add New Section</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-3">
-            <div>
-              <CustomInput
-                label="Section Title"
-                placeholder="Enter section title"
-                value={newSectionTitle}
-                onChange={(e) => setNewSectionTitle(e.target.value)}
-              />
-            </div>
-            <div>
-              <CustomInput
-                label="Description (Optional)"
-                placeholder="Enter section description"
-                value={newSectionDescription}
-                onChange={(e) => setNewSectionDescription(e.target.value)}
-              />
-            </div>
-          </div>
-          <DialogFooter>
-            <Button
-              variant="outline"
-              onClick={() => {
-                setAddSectionOpen(false);
-                setNewSectionTitle("");
-                setNewSectionDescription("");
-              }}
-            >
-              Cancel
-            </Button>
-            <Button
-              variant="primary"
-              onClick={addSection}
-              disabled={!newSectionTitle.trim()}
-            >
-              Add Section
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      {/* Add Field Dialog */}
-      <Dialog open={addFieldOpen} onOpenChange={setAddFieldOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Add New Field</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-3">
-            <div>
-              <CustomInput
-                label="Field Title"
-                placeholder="Enter field title"
-                value={newFieldTitle}
-                onChange={(e) => setNewFieldTitle(e.target.value)}
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Field Type
-              </label>
-              <select
-                value={newFieldType}
-                onChange={(e) => setNewFieldType(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-              >
-                {FIELD_TYPES.map((type) => (
-                  <option key={type.value} value={type.value}>
-                    {type.label}
-                  </option>
-                ))}
-              </select>
-            </div>
-            <div>
-              <CustomInput
-                label="Description (Optional)"
-                placeholder="Enter field description"
-                value={newFieldDescription}
-                onChange={(e) => setNewFieldDescription(e.target.value)}
-              />
-            </div>
-            <div>
-              <CustomInput
-                label="Placeholder (Optional)"
-                placeholder="Enter field placeholder"
-                value={newFieldPlaceholder}
-                onChange={(e) => setNewFieldPlaceholder(e.target.value)}
-              />
-            </div>
-            <div className="flex items-center space-x-2">
-              <input
-                type="checkbox"
-                id="required"
-                checked={newFieldRequired}
-                onChange={(e) => setNewFieldRequired(e.target.checked)}
-                className="rounded border-gray-300 focus:ring-blue-500"
-              />
-              <label htmlFor="required" className="text-sm text-gray-700">
-                Required field
-              </label>
-            </div>
-          </div>
-          <DialogFooter>
-            <Button
-              variant="outline"
-              onClick={() => {
-                setAddFieldOpen(false);
-                setNewFieldTitle("");
-                setNewFieldType("text");
-                setNewFieldDescription("");
-                setNewFieldRequired(false);
-                setNewFieldPlaceholder("");
-                setSelectedSectionId(null);
-              }}
-            >
-              Cancel
-            </Button>
-            <Button
-              variant="primary"
-              onClick={addField}
-              disabled={!newFieldTitle.trim() || !selectedSectionId}
-            >
-              Add Field
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-    </div>
-  );
-}
-
-export default BlueprintCard;
-
-
-
-
-```
+diff --git a/package-lock.json b/package-lock.json
+index b4ec44a..1e84cb3 100644
+--- a/package-lock.json
++++ b/package-lock.json
+@@ -16,6 +16,7 @@
+         "@radix-ui/react-label": "^2.1.7",
+         "@radix-ui/react-navigation-menu": "^1.2.13",
+         "@radix-ui/react-popover": "^1.1.14",
++        "@radix-ui/react-radio-group": "^1.3.7",
+         "@radix-ui/react-select": "^2.2.5",
+         "@radix-ui/react-separator": "^1.1.7",
+         "@radix-ui/react-slider": "^1.3.5",
+@@ -1742,6 +1743,37 @@
+         }
+       }
+     },
++    "node_modules/@radix-ui/react-radio-group": {
++      "version": "1.3.7",
++      "resolved": "https://registry.npmjs.org/@radix-ui/react-radio-group/-/react-radio-group-1.3.7.tgz",
++      "integrity": "sha512-9w5XhD0KPOrm92OTTE0SysH3sYzHsSTHNvZgUBo/VZ80VdYyB5RneDbc0dKpURS24IxkoFRu/hI0i4XyfFwY6g==",
++      "dependencies": {
++        "@radix-ui/primitive": "1.1.2",
++        "@radix-ui/react-compose-refs": "1.1.2",
++        "@radix-ui/react-context": "1.1.2",
++        "@radix-ui/react-direction": "1.1.1",
++        "@radix-ui/react-presence": "1.1.4",
++        "@radix-ui/react-primitive": "2.1.3",
++        "@radix-ui/react-roving-focus": "1.1.10",
++        "@radix-ui/react-use-controllable-state": "1.2.2",
++        "@radix-ui/react-use-previous": "1.1.1",
++        "@radix-ui/react-use-size": "1.1.1"
++      },
++      "peerDependencies": {
++        "@types/react": "*",
++        "@types/react-dom": "*",
++        "react": "^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc",
++        "react-dom": "^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc"
++      },
++      "peerDependenciesMeta": {
++        "@types/react": {
++          "optional": true
++        },
++        "@types/react-dom": {
++          "optional": true
++        }
++      }
++    },
+     "node_modules/@radix-ui/react-roving-focus": {
+       "version": "1.1.10",
+       "resolved": "https://registry.npmjs.org/@radix-ui/react-roving-focus/-/react-roving-focus-1.1.10.tgz",
+diff --git a/package.json b/package.json
+index d939c3c..269f0aa 100644
+--- a/package.json
++++ b/package.json
+@@ -18,6 +18,7 @@
+     "@radix-ui/react-label": "^2.1.7",
+     "@radix-ui/react-navigation-menu": "^1.2.13",
+     "@radix-ui/react-popover": "^1.1.14",
++    "@radix-ui/react-radio-group": "^1.3.7",
+     "@radix-ui/react-select": "^2.2.5",
+     "@radix-ui/react-separator": "^1.1.7",
+     "@radix-ui/react-slider": "^1.3.5",
+diff --git a/src/Context/CMs/blueprint.context.tsx b/src/Context/CMs/blueprint.context.tsx
+index 6eeda67..1cc7efc 100644
+--- a/src/Context/CMs/blueprint.context.tsx
++++ b/src/Context/CMs/blueprint.context.tsx
+@@ -1,12 +1,14 @@
+ import { createContext, type Dispatch, type SetStateAction } from "react";
+ import type { ApiResponse } from "@/types/api";
+-import type { BlueprintI } from "@/types/cms/blueprint.interface";
++import type { BlueprintContentI, BlueprintI } from "@/types/cms/blueprint.interface";
+ import type { PaginationI } from "@/types/pagination";
+ 
+ interface BlueprintContextProps {
+   blueprints: ApiResponse<BlueprintI | undefined>;
++  blueprint: ApiResponse<BlueprintContentI | undefined>;
+   loading: boolean;
+   findAllBlueprint: () => void;
++  findBlueprintById: (id: string) => Promise<any>;
+   findAllBlueprintWithFilters: (filters?: Record<string, any>) => Promise<void>;
+   setPagination: Dispatch<SetStateAction<PaginationI>>;
+   pagination: PaginationI;
+@@ -17,8 +19,13 @@ export const blueprintContext = createContext<BlueprintContextProps>({
+     data: undefined,
+     message: "",
+   },
++  blueprint: {
++    data: undefined,
++    message: "",
++  },
+   loading: false,
+   findAllBlueprint: () => {},
++  findBlueprintById: async () => {},
+   findAllBlueprintWithFilters: async () => {},
+   setPagination: () => {},
+   pagination: {
+diff --git a/src/Context/CMs/collection.context.tsx b/src/Context/CMs/collection.context.tsx
+index ba88ce5..d886fb9 100644
+--- a/src/Context/CMs/collection.context.tsx
++++ b/src/Context/CMs/collection.context.tsx
+@@ -1,19 +1,34 @@
+ import { createContext, type Dispatch, type SetStateAction } from "react";
+ import type { ApiResponse } from "@/types/api";
+ import type { PaginationI } from "@/types/pagination";
+-import type { CollectionI } from "@/types/cms/collection.interface";
++import type { CollectionI, ContentI } from "@/types/cms/collection.interface";
++import type { BlueprintContentI } from "@/types/cms/blueprint.interface";
+ 
+ interface CollectionContextProps {
+   collections: ApiResponse<CollectionI | undefined>;
++  collection: ApiResponse<ContentI | undefined>;
++  collectionBlueprints: ApiResponse<BlueprintContentI | undefined>;
++  collectionEntries: ApiResponse<CollectionI | undefined>;
+   loading: boolean;
+   createLoading?: boolean;
+   updateLoading?: boolean;
+   findAllCollection: () => void;
++  findSingleCollection: (id: string) => Promise<any>;
++  findAllCollectionBlueprints: (collectionId: string) => Promise<any>;
++  findAllCollectionEntries: (collectionId: string) => Promise<any>;
+   createCollection?: (data: { title: string; handle: string }) => Promise<any>;
++  createCollectionEntry: (
++    collectionId: string,
++    data: {
++      blueprintRef: string;
++      data: { [key: string]: any }; // This allows for dynamic keys and values
++    }
++  ) => Promise<any>;
+   updateCollection?: (
+     id: string,
+     data: { title?: string; handle?: string }
+   ) => Promise<any>;
++  deleteCollection?: (id: string) => Promise<any>;
+   setPagination: Dispatch<SetStateAction<PaginationI>>;
+   pagination: PaginationI;
+ }
+@@ -29,12 +44,36 @@ export const collectionContext = createContext<CollectionContextProps>({
+     },
+     message: "",
+   },
++
++  collection: {
++    data: undefined,
++    message: "",
++  },
++  collectionBlueprints: {
++    data: undefined,
++    message: "",
++  },
++  collectionEntries: {
++    data: {
++      content: [],
++      page: 0,
++      size: 10,
++      totalElements: 0,
++      totalPages: 0,
++    },
++    message: "",
++  },
+   loading: false,
+   createLoading: false,
+   updateLoading: false,
+   findAllCollection: () => {},
++  findSingleCollection: async () => {},
++  findAllCollectionBlueprints: async () => {},
++  findAllCollectionEntries: async () => {},
+   createCollection: async () => {},
++  createCollectionEntry: async () => Promise.resolve(),
+   updateCollection: async () => {},
++  deleteCollection: async () => Promise.resolve(),
+   setPagination: () => {},
+   pagination: {
+     page: 0,
+diff --git a/src/Page-Sections/CMSDashboard/CMSLoginPageSection.tsx b/src/Page-Sections/CMSDashboard/CMSLoginPageSection.tsx
+index 07da150..deb9ae8 100644
+--- a/src/Page-Sections/CMSDashboard/CMSLoginPageSection.tsx
++++ b/src/Page-Sections/CMSDashboard/CMSLoginPageSection.tsx
+@@ -8,10 +8,10 @@ import { useCMSAuth } from "@/hooks/CMS/useCMSAuth";
+ 
+ const validationSchema = Yup.object({
+     clientId: Yup.string()
+-      .required("clientId is required")
++      .required("Username is required")
+       .min(3, "Username must be at least 3 characters"),
+     clientSecret: Yup.string()
+-      .required("clientSecret is required")
++      .required("Password is required")
+       .min(6, "Password must be at least 6 characters"),
+   });
+ function CMSLoginPageSection() {
+diff --git a/src/Page-Sections/CMSDashboard/CollectionsPageSection.tsx b/src/Page-Sections/CMSDashboard/CollectionsPageSection.tsx
+index f80f209..fd20331 100644
+--- a/src/Page-Sections/CMSDashboard/CollectionsPageSection.tsx
++++ b/src/Page-Sections/CMSDashboard/CollectionsPageSection.tsx
+@@ -9,9 +9,9 @@ import type { ContentI } from "@/types/cms/collection.interface";
+ // Skeleton loader component
+ function CollectionSkeleton() {
+   return (
+-    <div className="p-4 border rounded-md bg-white min-w-0 border-gray-300 animate-pulse space-y-2">
+-      <div className="h-4 w-1/3 bg-gray-200 rounded" />
+-      <div className="h-3 w-1/4 bg-gray-100 rounded" />
++    <div className="min-w-0 p-4 space-y-2 bg-white border border-gray-300 rounded-md animate-pulse">
++      <div className="w-1/3 h-4 bg-gray-200 rounded" />
++      <div className="w-1/4 h-3 bg-gray-100 rounded" />
+     </div>
+   );
+ }
+@@ -59,7 +59,13 @@ function CollectionsPageSection() {
+ 
+   return (
+     <div className="space-y-4">
+-      <h1 className="text-2xl font-bold">Collections</h1>
++      <div>
++        <h1 className="text-2xl font-bold">Collections</h1>
++        <p className="text-sm text-gray-500">
++          Collections are containers that hold entries that represent
++          articles,blog posts,products,events or any content type
++        </p>
++      </div>
+       <div className="grid gap-6 xl:grid-cols-[1fr_minmax(280px,380px)] items-start w-full overflow-hidden">
+         <div className="min-w-0 space-y-6">
+           <h2 className="text-lg font-semibold">Your Collections</h2>
+@@ -86,7 +92,7 @@ function CollectionsPageSection() {
+         </div>
+         <div className="space-y-4">
+           <h2 className="text-lg font-semibold">New Collection</h2>
+-          <div className="space-y-3 p-4 border rounded-md bg-card border-gray-300">
++          <div className="p-4 space-y-3 border border-gray-300 rounded-md bg-card">
+             <div>
+               <CustomInput
+                 label="title"
+diff --git a/src/Page-Sections/CMSDashboard/Parts/ColectionCard.tsx b/src/Page-Sections/CMSDashboard/Parts/ColectionCard.tsx
+index e7c1e11..d489ea0 100644
+--- a/src/Page-Sections/CMSDashboard/Parts/ColectionCard.tsx
++++ b/src/Page-Sections/CMSDashboard/Parts/ColectionCard.tsx
+@@ -15,6 +15,7 @@ import type { ContentI } from "@/types/cms/collection.interface";
+ import { useCollection } from "@/hooks/CMS/useCollection";
+ import { titleToHandle } from "@/utils/titleToHandle";
+ import { CustomInput } from "@/components/ui/CustomInput";
++import { Link } from "react-router-dom";
+ 
+ function CollectionCard({ content }: { content: ContentI }) {
+   const [bp, setBp] = useState<Blueprint | null>(null);
+@@ -77,14 +78,15 @@ function CollectionCard({ content }: { content: ContentI }) {
+   };
+ 
+   return (
+-    <div className="p-4 border rounded-md bg-white space-y-4 min-w-0 border-gray-300">
++    <div className="min-w-0 p-4 space-y-4 bg-white border border-gray-300 rounded-md">
+       <div className="flex items-center justify-between">
+         <div>
+-          <div className="font-medium">{content.title}</div>
++          <Link to={`${content.reference}`} className="font-medium hover:text-nbc-dark-950">{content.title}</Link>
+           <div className="text-xs text-muted-foreground">
+             {/* {bp?.name || "Unknown"} */}
+             {content.handle || "Unknown"}
+           </div>
++          <p className="text-sm"> Entry Count : {content?.entryCount || 0}</p>
+         </div>
+         <Button
+           variant="link"
+@@ -113,14 +115,14 @@ function CollectionCard({ content }: { content: ContentI }) {
+       )}
+ 
+       {/* <div>
+-        <h3 className="text-sm font-semibold mb-2">
++        <h3 className="mb-2 text-sm font-semibold">
+           Entries ({entries.length})
+         </h3>
+         <div className="space-y-2">
+           {entries.map((e) => (
+             <div
+               key={e.id}
+-              className="flex items-center justify-between p-3 rounded-md border bg-background/60 border-gray-300"
++              className="flex items-center justify-between p-3 border border-gray-300 rounded-md bg-background/60"
+             >
+               <div className="text-sm truncate max-w-[70%] flex items-center gap-2">
+                 {
+@@ -145,7 +147,7 @@ function CollectionCard({ content }: { content: ContentI }) {
+                 variant="iconRounded"
+                 size="sm"
+                 onClick={() => removeEntry(e.id)}
+-                className="bg-red-500 hover:bg-red-700 text-white"
++                className="text-white bg-red-500 hover:bg-red-700"
+                 icon={Trash2}
+               />
+             </div>
+@@ -181,9 +183,9 @@ function CollectionCard({ content }: { content: ContentI }) {
+               />
+             </div>
+             {/* <div>
+-              <Label className="text-sm mb-1 block">Blueprint</Label>
++              <Label className="block mb-1 text-sm">Blueprint</Label>
+               <select
+-                className="w-full h-10 rounded-md bg-background border px-3"
++                className="w-full h-10 px-3 border rounded-md bg-background"
+                 value={bpId}
+                 onChange={(e) => setBpId(e.target.value)}
+               >
+diff --git a/src/Page-Sections/UserDashboardPageSection/MarketPlacePageSection/CartPageSection.tsx b/src/Page-Sections/UserDashboardPageSection/MarketPlacePageSection/CartPageSection.tsx
+index 84516c6..3174e1e 100644
+--- a/src/Page-Sections/UserDashboardPageSection/MarketPlacePageSection/CartPageSection.tsx
++++ b/src/Page-Sections/UserDashboardPageSection/MarketPlacePageSection/CartPageSection.tsx
+@@ -1,11 +1,58 @@
++import AppBreadcrumbs from "@/components/shop/cart/AppBreadcrumbs";
++import { CartTable } from "@/components/shop/cart/CartTable";
++import { CouponCard } from "@/components/shop/cart/CouponCard";
++import { SummaryCard } from "@/components/shop/cart/SummaryCard";
++import Button from "@/components/ui/button";
++import { ArrowLeft } from "lucide-react";
++import { useMemo, useState } from "react";
++import { useNavigate } from "react-router-dom";
++
++export interface CartItemData { id: string; name: string; price: number; image: string; quantity: number; }
++const initialItems: CartItemData[] = [
++  { id: '1', name: 'Purple Wezesha Marathon Jersey', price: 100_000, image: "/images/Makini.png", quantity: 1 },
++  { id: '2', name: 'Wired Over-Ear Gaming Headphones with USB', price: 100_000, image: "/images/Malengo.png", quantity: 3 },
++];
++
+ 
+ function CartPageSection() {
++  const [items, setItems] = useState<CartItemData[]>(initialItems);
++  const navigate = useNavigate();
++
++  const subTotal = useMemo(() => items.reduce((s, i) => s + i.price * i.quantity, 0), [items]);
++
++  const onQuantityChange = (id: string, qty: number) => {
++    setItems((prev) => prev.map((it) => (it.id === id ? { ...it, quantity: qty } : it)));
++  };
++
++  const onRemove = (id: string) => setItems((prev) => prev.filter((it) => it.id !== id));
++
++
+   return (
+-    <div>
+-      
+-      <h1>Shopping Cart</h1>
+-      <p>Your cart is currently empty.</p>
++    <main className="container py-8">
++    <>
++      <title>Shopping Card | Cart</title>
++      <meta name="description" content="Review your Shopping Card items, update quantities, and proceed to checkout." />
++      <link rel="canonical" href="/cart" />
++    </>
++
++    <AppBreadcrumbs items={[{ label: 'Shopping Card' }]} />
++
++    <h1 className="text-2xl font-semibold mb-4">Shopping Card</h1>
++
++    <div className="grid lg:grid-cols-3 gap-6">
++      <div className="lg:col-span-2 space-y-4">
++        <CartTable items={items} onQuantityChange={onQuantityChange} onRemove={onRemove} />
++        <div className="flex items-center justify-between">
++          <Button variant="outline" onClick={() => navigate('/')}> <ArrowLeft /> Return to Shop</Button>
++          <Button variant="outline">Update Cart</Button>
++        </div>
++      </div>
++      <div className="space-y-4">
++        <SummaryCard subTotal={subTotal} discount={12_000} tax={188_000} onCheckout={() => navigate('checkout')} />
++        <CouponCard onApply={() => {}} />
++      </div>
+     </div>
++  </main>
+   )
+ }
+ 
+diff --git a/src/Page-Sections/UserDashboardPageSection/MarketPlacePageSection/CheckoutPageSection.tsx b/src/Page-Sections/UserDashboardPageSection/MarketPlacePageSection/CheckoutPageSection.tsx
+index bd0d508..5fd0978 100644
+--- a/src/Page-Sections/UserDashboardPageSection/MarketPlacePageSection/CheckoutPageSection.tsx
++++ b/src/Page-Sections/UserDashboardPageSection/MarketPlacePageSection/CheckoutPageSection.tsx
+@@ -1,12 +1,55 @@
++import AppBreadcrumbs from "@/components/shop/cart/AppBreadcrumbs";
++import type { CartItemData } from "@/components/shop/cart/CartItem";
++import { BillingForm } from "@/components/shop/checkout/BillingForm";
++import { OrderSummary } from "@/components/shop/checkout/OrderSummary";
++import { PaymentOptions } from "@/components/shop/checkout/PaymentOptions";
++import Button from "@/components/ui/button";
++import { ArrowRight } from "lucide-react";
++import { useMemo, useState } from "react";
++
++const initialItems: CartItemData[] = [
++  { id: '1', name: 'Purple Wezesha Marathon Jersey', price: 100_000, image: "/images/Makini.png", quantity: 1 },
++  { id: '2', name: 'Wired Over-Ear Gaming Headphones with USB', price: 100_000, image: "/images/Malengo.png", quantity: 3 },
++];
+ 
+ function CheckoutPageSection() {
++  const [items] = useState<CartItemData[]>(initialItems);
++  const [payment, setPayment] = useState<string>('card');
++
++  const subTotal = useMemo(() => items.reduce((s, i) => s + i.price * i.quantity, 0), [items]);
++  const discount = 12_000;
++  const tax = 188_000;
++  const total = subTotal - discount + tax;
++
+   return (
+-    <div>
+-      
+-      <h1>Checkout</h1>
+-      <p>Please review your items before proceeding to payment.</p>
+-    </div>
+-  )
++    <main className="container py-8">
++      <>
++        <title>Shopping Card | Checkout</title>
++        <meta name="description" content="Complete your purchase by entering billing information and choosing a payment option." />
++        <link rel="canonical" href="/checkout" />
++      </>
++
++      <AppBreadcrumbs items={[{ label: 'Shopping Card', href: '/dashboard/market-place/cart' }, { label: 'Checkout' }]} />
++
++      <h1 className="text-2xl font-semibold mb-4">Checkout</h1>
++
++      <div className="grid lg:grid-cols-3 gap-6">
++        <div className="lg:col-span-2 space-y-6">
++          <BillingForm />
++          <PaymentOptions value={payment} onChange={setPayment} />
++          <div className="flex justify-end">
++            <Button variant="primary" className="group">
++              Place Order
++              <ArrowRight className="transition-transform group-hover:translate-x-0.5" />
++            </Button>
++          </div>
++        </div>
++        <div>
++          <OrderSummary items={items} subTotal={subTotal} discount={discount} tax={tax} total={total} />
++        </div>
++      </div>
++    </main>
++  );
+ }
+ 
+ export default CheckoutPageSection
+diff --git a/src/Providers/blueprints.provider.tsx b/src/Providers/blueprints.provider.tsx
+index 329a02a..6a8371d 100644
+--- a/src/Providers/blueprints.provider.tsx
++++ b/src/Providers/blueprints.provider.tsx
+@@ -4,9 +4,10 @@ import type { ApiResponse } from "@/types/api";
+ import { blueprintContext } from "../Context/CMs/blueprint.context";
+ import { blueprintsServices } from "@/services/CMS/blueprints.service";
+ import type { PaginationI } from "@/types/pagination";
+-import type { BlueprintI } from "@/types/cms/blueprint.interface";
+-
+-
++import type {
++  BlueprintI,
++  BlueprintContentI,
++} from "@/types/cms/blueprint.interface";
+ 
+ export const BlueprintProvider: React.FC<{ children: React.ReactNode }> = ({
+   children,
+@@ -17,6 +18,12 @@ export const BlueprintProvider: React.FC<{ children: React.ReactNode }> = ({
+     data: undefined,
+     message: "",
+   });
++  const [blueprint, setBlueprint] = useState<
++    ApiResponse<BlueprintContentI | undefined>
++  >({
++    data: undefined,
++    message: "",
++  });
+   const [loading, setLoading] = useState<boolean>(false);
+   const [pagination, setPagination] = useState<PaginationI>({
+     page: 0,
+@@ -40,6 +47,18 @@ export const BlueprintProvider: React.FC<{ children: React.ReactNode }> = ({
+     await blueprintsServices.findAll(setBlueprints, queryString);
+   }
+ 
++  async function findBlueprintById(id: string) {
++    setLoading(true);
++    try {
++      await blueprintsServices.findById(id, setBlueprint);
++    } catch (error) {
++      return error;
++    }
++    finally {
++      setLoading(false);
++    }
++  }
++
+   // Alternative method with more flexibility for filters
+   async function findAllBlueprintWithFilters(filters?: Record<string, any>) {
+     const queryString = new QueryParamsBuilder()
+@@ -56,8 +75,10 @@ export const BlueprintProvider: React.FC<{ children: React.ReactNode }> = ({
+     <blueprintContext.Provider
+       value={{
+         blueprints,
++        blueprint,
+         loading,
+         findAllBlueprint,
++        findBlueprintById,
+         findAllBlueprintWithFilters,
+         setPagination,
+         pagination,
+diff --git a/src/Providers/collection.provider.tsx b/src/Providers/collection.provider.tsx
+index 5c933cb..eabde87 100644
+--- a/src/Providers/collection.provider.tsx
++++ b/src/Providers/collection.provider.tsx
+@@ -5,6 +5,8 @@ import type { PaginationI } from "@/types/pagination";
+ import { collectionServices } from "@/services/CMS/collection.service";
+ import { collectionContext } from "../Context/CMs/collection.context";
+ import type { CollectionI } from "@/types/cms/collection.interface";
++import { blueprintsServices } from "@/services/CMS/blueprints.service";
++import type { BlueprintContentI } from "@/types/cms/blueprint.interface";
+ 
+ export const CollectionProvider: React.FC<{ children: React.ReactNode }> = ({
+   children,
+@@ -15,6 +17,23 @@ export const CollectionProvider: React.FC<{ children: React.ReactNode }> = ({
+     data: undefined,
+     message: "",
+   });
++  const [collection, setCollection] = useState({
++    data: undefined,
++    message: "",
++  });
++  const [collectionBlueprints, setCollectionBlueprints] = useState<
++    ApiResponse<BlueprintContentI | undefined>
++  >({
++    data: undefined,
++    message: "",
++  });
++  const [collectionEntries, setCollectionEntries] = useState<
++    ApiResponse<CollectionI | undefined>
++  >({
++    data: undefined,
++    message: "",
++  });
++
+   const [loading, setLoading] = useState<boolean>(false);
+   const [createLoading, setCreateLoading] = useState<boolean>(false);
+   const [updateLoading, setUpdateLoading] = useState<boolean>(false);
+@@ -38,7 +57,59 @@ export const CollectionProvider: React.FC<{ children: React.ReactNode }> = ({
+     setLoading(true);
+     hasFetched.current = true;
+     await collectionServices.findAll(setCollections, queryString);
+-    setLoading(false)
++    setLoading(false);
++  }
++
++  async function findSingleCollection(id: string) {
++    setLoading(true);
++    try {
++      const response: any = await collectionServices.findById(
++        id,
++        setCollection
++      );
++      return response;
++    } catch (error) {
++      return error;
++    } finally {
++      setLoading(false);
++    }
++  }
++
++  async function findAllCollectionBlueprints(collectionId: string) {
++    setLoading(true);
++    try {
++      const response: any =
++        await blueprintsServices.findAllCollectionBlueprints(
++          setCollectionBlueprints,
++          collectionId
++        );
++      return response;
++    } catch (error) {
++      return error;
++    } finally {
++      setLoading(false);
++    }
++  }
++
++  async function findAllCollectionEntries(collectionId: string) {
++    setLoading(true);
++    try {
++      const queryString = buildPaginationQuery(
++        pagination.page,
++        pagination.size,
++        pagination.totalElements
++      );
++      const response: any = await collectionServices.findAllCollectionEntries(
++        setCollectionEntries,
++        collectionId,
++        queryString
++      );
++      return response;
++    } catch (error) {
++      return error;
++    } finally {
++      setLoading(false);
++    }
+   }
+ 
+   async function createCollection(data: { title: string; handle: string }) {
+@@ -75,6 +146,31 @@ export const CollectionProvider: React.FC<{ children: React.ReactNode }> = ({
+     }
+   }
+ 
++
++
++
++  async function createCollectionEntry(
++    collectionId: string,
++    data: {
++      blueprintRef: string;
++      data: { [key: string]: any }; // This allows for dynamic keys and values
++    }
++  ) {
++    setLoading(true);
++    try {
++      const response: any = await collectionServices.createCollectionEntry(
++        collectionId,
++        data
++      );
++      setLoading(false)
++      return response;
++    } catch (error) {
++      return error;
++    } finally {
++      setLoading(false);
++    }
++  }
++
+   async function updateCollection(
+     id: string,
+     data: { title?: string; handle?: string }
+@@ -127,10 +223,17 @@ export const CollectionProvider: React.FC<{ children: React.ReactNode }> = ({
+     <collectionContext.Provider
+       value={{
+         collections,
++        collection,
++        collectionBlueprints,
++        collectionEntries,
+         loading,
+         createLoading,
+         findAllCollection,
++        findSingleCollection,
++        findAllCollectionBlueprints,
++        findAllCollectionEntries,
+         createCollection,
++        createCollectionEntry,
+         setPagination,
+         updateCollection,
+         updateLoading,
+diff --git a/src/Routes/CMSRoutes.tsx b/src/Routes/CMSRoutes.tsx
+index e10a7bf..af1c408 100644
+--- a/src/Routes/CMSRoutes.tsx
++++ b/src/Routes/CMSRoutes.tsx
+@@ -3,7 +3,6 @@ import { Route } from "react-router-dom";
+ import CMSLayout from "@/Pages/Dashboard/CMS/CMSLayout";
+ import ProtectedCMSRoute from "./ProtectedCMSRoute";
+ 
+-
+ // Lazy Loading CMS Pages
+ const CMSDashboard = lazy(
+   () => import("@/Pages/Dashboard/CMS/CMSPages/CMSDashboard")
+@@ -12,17 +11,23 @@ const CMSSection = lazy(
+   () => import("@/Pages/Dashboard/CMS/CMSPages/Sections")
+ );
+ const CMSLogin = lazy(() => import("@/Pages/Dashboard/CMS/CMSPages/CMSLogin"));
+- 
++
+ const Blueprint = lazy(
+   () => import("@/Pages/Dashboard/CMS/CMSPages/Blueprint")
+ );
+ const Collection = lazy(
+   () => import("@/Pages/Dashboard/CMS/CMSPages/Collection")
+ );
+-const Fieldtypes = lazy(
+-  () => import("@/Pages/Dashboard/CMS/CMSPages/Fieldtypes")     
++const SingleCollection = lazy(
++  () => import("@/Pages/Dashboard/CMS/CMSPages/SingleCollection")
++);
++const CreateEntry = lazy(
++  () => import("@/Pages/Dashboard/CMS/CMSPages/CreateEntry")
+ );
+ 
++const Fieldtypes = lazy(
++  () => import("@/Pages/Dashboard/CMS/CMSPages/Fieldtypes")
++);
+ 
+ const cmsRoutes = (
+   <>
+@@ -37,7 +42,12 @@ const cmsRoutes = (
+     >
+       <Route index element={<CMSDashboard />} />
+       <Route path="blue-prints" element={<Blueprint />} />
+-      <Route path="collections" element={<Collection />} />
++      <Route path="collections">
++        <Route index element={<Collection />} />
++        <Route path=":id" element={<SingleCollection />} />
++        <Route path=":id/create-entry" element={<CreateEntry />} />
++      </Route>
++
+       <Route path="field-types" element={<Fieldtypes />} />
+       <Route path="sections" element={<CMSSection />} />
+     </Route>
+diff --git a/src/Routes/DashboardRoutes.tsx b/src/Routes/DashboardRoutes.tsx
+index bd34a8a..0441283 100644
+--- a/src/Routes/DashboardRoutes.tsx
++++ b/src/Routes/DashboardRoutes.tsx
+@@ -116,7 +116,7 @@ const dashboardRoutes = (
+       <Route index element={<MarketPlace />} />
+       <Route path="all-products" element={<AllProducts />} />
+       <Route path="product/:productId" element={<SingleMarketPlaceProduct />} />
+-      <Route path="checkout" element={<Checkout />} />
++      <Route path="cart/checkout" element={<Checkout />} />
+       <Route path="cart" element={<Cart />} />
+     </Route>
+   </Route>
+diff --git a/src/components/cms/FieldTypeCatalog.tsx b/src/components/cms/FieldTypeCatalog.tsx
+index 3a8e60b..8eccc23 100644
+--- a/src/components/cms/FieldTypeCatalog.tsx
++++ b/src/components/cms/FieldTypeCatalog.tsx
+@@ -7,12 +7,12 @@ import { v4 as uuid } from "uuid";
+ import { CustomInput } from "../ui/CustomInput";
+ 
+ const CATALOG: { type: FieldType; label: string }[] = [
+-  { type: "text", label: "Text" },
+-  { type: "textarea", label: "Textarea" },
+-  { type: "number", label: "Number" },
++  { type: "TEXT", label: "Text" },
++  { type: "TEXTAREA", label: "Textarea" },
++  { type: "NUMBER", label: "Number" },
+   { type: "toggle", label: "Toggle" },
+-  { type: "select", label: "Select" },
+-  { type: "date", label: "Date" },
++  { type: "SELECT", label: "Select" },
++  { type: "DATE", label: "Date" },
+   { type: "asset", label: "Asset" },
+ ];
+ 
+diff --git a/src/data/cmsNavigationData.ts b/src/data/cmsNavigationData.ts
+index cb63a65..1d25714 100644
+--- a/src/data/cmsNavigationData.ts
++++ b/src/data/cmsNavigationData.ts
+@@ -1,5 +1,5 @@
+ import type { NavigationItem } from "@/components/cms/Sidebar";
+-import { Edit, FileText, Globe, LayoutDashboard } from "lucide-react";
++import { Edit, FileText, Globe, LayoutDashboard, Navigation } from "lucide-react";
+ 
+ export const cmsNavigationData: NavigationItem[] = [
+   {
+@@ -26,6 +26,11 @@ export const cmsNavigationData: NavigationItem[] = [
+   //     { label: "Conversions", href: "/analytics/conversions" }
+   //   ]
+   // },
++  {
++    label: "Navigation",
++    icon: Navigation,
++    href: "/cms/navigation",
++  },
+   {
+     label: "Collections",
+     icon: Globe,
+diff --git a/src/services/CMS/blueprints.service.ts b/src/services/CMS/blueprints.service.ts
+index 218b2fa..ec891b1 100644
+--- a/src/services/CMS/blueprints.service.ts
++++ b/src/services/CMS/blueprints.service.ts
+@@ -1,4 +1,3 @@
+-
+ import { cmsApiService } from "@/config/cmsApiServiceConfig";
+ 
+ export const blueprintsServices = {
+@@ -14,4 +13,28 @@ export const blueprintsServices = {
+       return error;
+     }
+   },
+-};
+\ No newline at end of file
++  findById: async (id: string, setBlueprint: any) => {
++    try {
++      const response = await cmsApiService.get(`/cms/blueprints/${id}`);
++      setBlueprint(response);
++      return response;
++    } catch (error) {
++      return error;
++    }
++  },
++
++  findAllCollectionBlueprints: async (
++    setBlueprint: any,
++    collectionId: string
++  ) => {
++    try {
++      const response = await cmsApiService.get(
++        `/cms/collections/${collectionId}/blueprints`
++      );
++      setBlueprint(response);
++      return response;
++    } catch (error) {
++      return error;
++    }
++  },
++};
+diff --git a/src/services/CMS/collection.service.ts b/src/services/CMS/collection.service.ts
+index 5241040..583724e 100644
+--- a/src/services/CMS/collection.service.ts
++++ b/src/services/CMS/collection.service.ts
+@@ -13,6 +13,31 @@ export const collectionServices = {
+       return error;
+     }
+   },
++  findById: async (id: string, setCollection: any) => {
++    try {
++      const response = await cmsApiService.get(`/cms/collections/${id}`);
++      setCollection(response);
++      return response;
++    } catch (error) {
++      return error;
++    }
++  },
++
++  findAllCollectionEntries: async (
++    setCollectionEntries: any,
++    collectionId: string,
++    queryString?: string
++  ) => {
++    try {
++      const response = await cmsApiService.get(
++        `/cms/collections/${collectionId}/entries${queryString || ""}`
++      );
++      setCollectionEntries(response);
++      return response;
++    } catch (error) {
++      return error;
++    }
++  },
+   create: async (data: { title: string; handle: string }) => {
+     try {
+       const response = await cmsApiService.post(`/cms/collections`, data, {
+@@ -23,24 +48,52 @@ export const collectionServices = {
+       return error;
+     }
+   },
++
++  createCollectionEntry: async (
++    collectionId: string,
++    data: {
++      blueprintRef: string;
++      data: {
++        [key: string]: any; // This allows for dynamic keys and values
++      };
++    }
++  ) => {
++    try {
++      const response = await cmsApiService.post(
++        `/cms/collections/${collectionId}/entries`,
++        data,
++        {
++          successMessage: "Collection entry created successfully!",
++        }
++      );
++      return response;
++    } catch (error) {
++      return error;
++    }
++  },
++
+   update: async (id: string, data: { title?: string; handle?: string }) => {
+     try {
+-      const response = await cmsApiService.patch(`/cms/collections/${id}/update`, data, {
+-        successMessage: "Collection updated successfully!",
++      const response = await cmsApiService.patch(
++        `/cms/collections/${id}/update`,
++        data,
++        {
++          successMessage: "Collection updated successfully!",
++        }
++      );
++      return response;
++    } catch (error) {
++      return error;
++    }
++  },
++  delete: async (id: string) => {
++    try {
++      const response = await cmsApiService.delete(`/cms/collections/${id}`, {
++        successMessage: "Collection deleted successfully!",
+       });
+       return response;
+     } catch (error) {
+       return error;
+     }
+   },
+-    delete: async (id: string) => {
+-        try {
+-        const response = await cmsApiService.delete(`/cms/collections/${id}`, {
+-            successMessage: "Collection deleted successfully!",
+-        });
+-        return response;
+-        } catch (error) {
+-        return error;
+-        }
+-    },
+ };
+diff --git a/src/types/cms/blueprint.interface.ts b/src/types/cms/blueprint.interface.ts
+index 550f73d..21e3798 100644
+--- a/src/types/cms/blueprint.interface.ts
++++ b/src/types/cms/blueprint.interface.ts
+@@ -64,10 +64,10 @@ export interface BlueprintContentI {
+ 
+ export interface BlueprintI {
+   content: BlueprintContentI[];
+-  page: number;
+-  size: number;
+-  totalElements: number;
+-  totalPages: number;
++  page?: number;
++  size?: number;
++  totalElements?: number;
++  totalPages?: number;
+ }
+ 
+ 
+diff --git a/src/types/cms/collection.interface.ts b/src/types/cms/collection.interface.ts
+index d034329..70c9e55 100644
+--- a/src/types/cms/collection.interface.ts
++++ b/src/types/cms/collection.interface.ts
+@@ -9,8 +9,8 @@ export interface ContentI {
+ 
+ export interface CollectionI {
+   content: ContentI[];
+-  page: number;
+-  size: number;
+-  totalElements: number;
+-  totalPages: number;
++  page?: number;
++  size?: number;
++  totalElements?: number;
++  totalPages?: number;
+ }
+\ No newline at end of file
