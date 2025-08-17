@@ -1,34 +1,98 @@
 diff --git a/package-lock.json b/package-lock.json
-index b4ec44a..1e84cb3 100644
+index 1e84cb3..6924e3f 100644
 --- a/package-lock.json
 +++ b/package-lock.json
-@@ -16,6 +16,7 @@
+@@ -8,12 +8,15 @@
+       "name": "nbc",
+       "version": "0.0.0",
+       "dependencies": {
++        "@dnd-kit/core": "^6.3.1",
++        "@dnd-kit/sortable": "^10.0.0",
+         "@radix-ui/react-accordion": "^1.2.11",
+         "@radix-ui/react-alert-dialog": "^1.1.14",
+         "@radix-ui/react-checkbox": "^1.3.2",
+         "@radix-ui/react-dialog": "^1.1.14",
+         "@radix-ui/react-dropdown-menu": "^2.1.15",
          "@radix-ui/react-label": "^2.1.7",
++        "@radix-ui/react-menubar": "^1.1.16",
          "@radix-ui/react-navigation-menu": "^1.2.13",
          "@radix-ui/react-popover": "^1.1.14",
-+        "@radix-ui/react-radio-group": "^1.3.7",
-         "@radix-ui/react-select": "^2.2.5",
-         "@radix-ui/react-separator": "^1.1.7",
-         "@radix-ui/react-slider": "^1.3.5",
-@@ -1742,6 +1743,37 @@
+         "@radix-ui/react-radio-group": "^1.3.7",
+@@ -374,6 +377,55 @@
+       "resolved": "https://registry.npmjs.org/@date-fns/tz/-/tz-1.3.1.tgz",
+       "integrity": "sha512-LnBOyuj+piItX/D5BWBSckBsuZyOt7Jg2obGNiObq7qjl1A2/8F+i4RS8/MmkSdnw6hOe6afrJLCWrUWZw5Mlw=="
+     },
++    "node_modules/@dnd-kit/accessibility": {
++      "version": "3.1.1",
++      "resolved": "https://registry.npmjs.org/@dnd-kit/accessibility/-/accessibility-3.1.1.tgz",
++      "integrity": "sha512-2P+YgaXF+gRsIihwwY1gCsQSYnu9Zyj2py8kY5fFvUM1qm2WA2u639R6YNVfU4GWr+ZM5mqEsfHZZLoRONbemw==",
++      "dependencies": {
++        "tslib": "^2.0.0"
++      },
++      "peerDependencies": {
++        "react": ">=16.8.0"
++      }
++    },
++    "node_modules/@dnd-kit/core": {
++      "version": "6.3.1",
++      "resolved": "https://registry.npmjs.org/@dnd-kit/core/-/core-6.3.1.tgz",
++      "integrity": "sha512-xkGBRQQab4RLwgXxoqETICr6S5JlogafbhNsidmrkVv2YRs5MLwpjoF2qpiGjQt8S9AoxtIV603s0GIUpY5eYQ==",
++      "dependencies": {
++        "@dnd-kit/accessibility": "^3.1.1",
++        "@dnd-kit/utilities": "^3.2.2",
++        "tslib": "^2.0.0"
++      },
++      "peerDependencies": {
++        "react": ">=16.8.0",
++        "react-dom": ">=16.8.0"
++      }
++    },
++    "node_modules/@dnd-kit/sortable": {
++      "version": "10.0.0",
++      "resolved": "https://registry.npmjs.org/@dnd-kit/sortable/-/sortable-10.0.0.tgz",
++      "integrity": "sha512-+xqhmIIzvAYMGfBYYnbKuNicfSsk4RksY2XdmJhT+HAC01nix6fHCztU68jooFiMUB01Ky3F0FyOvhG/BZrWkg==",
++      "dependencies": {
++        "@dnd-kit/utilities": "^3.2.2",
++        "tslib": "^2.0.0"
++      },
++      "peerDependencies": {
++        "@dnd-kit/core": "^6.3.0",
++        "react": ">=16.8.0"
++      }
++    },
++    "node_modules/@dnd-kit/utilities": {
++      "version": "3.2.2",
++      "resolved": "https://registry.npmjs.org/@dnd-kit/utilities/-/utilities-3.2.2.tgz",
++      "integrity": "sha512-+MKAJEOfaBe5SmV6t34p80MMKhjvUz0vRrvVJbPT0WElzaOJ/1xs+D+KDv+tD/NE5ujfrChEcshd4fLn0wpiqg==",
++      "dependencies": {
++        "tslib": "^2.0.0"
++      },
++      "peerDependencies": {
++        "react": ">=16.8.0"
++      }
++    },
+     "node_modules/@esbuild/aix-ppc64": {
+       "version": "0.25.6",
+       "resolved": "https://registry.npmjs.org/@esbuild/aix-ppc64/-/aix-ppc64-0.25.6.tgz",
+@@ -1568,6 +1620,205 @@
          }
        }
      },
-+    "node_modules/@radix-ui/react-radio-group": {
-+      "version": "1.3.7",
-+      "resolved": "https://registry.npmjs.org/@radix-ui/react-radio-group/-/react-radio-group-1.3.7.tgz",
-+      "integrity": "sha512-9w5XhD0KPOrm92OTTE0SysH3sYzHsSTHNvZgUBo/VZ80VdYyB5RneDbc0dKpURS24IxkoFRu/hI0i4XyfFwY6g==",
++    "node_modules/@radix-ui/react-menubar": {
++      "version": "1.1.16",
++      "resolved": "https://registry.npmjs.org/@radix-ui/react-menubar/-/react-menubar-1.1.16.tgz",
++      "integrity": "sha512-EB1FktTz5xRRi2Er974AUQZWg2yVBb1yjip38/lgwtCVRd3a+maUoGHN/xs9Yv8SY8QwbSEb+YrxGadVWbEutA==",
 +      "dependencies": {
-+        "@radix-ui/primitive": "1.1.2",
++        "@radix-ui/primitive": "1.1.3",
++        "@radix-ui/react-collection": "1.1.7",
 +        "@radix-ui/react-compose-refs": "1.1.2",
 +        "@radix-ui/react-context": "1.1.2",
 +        "@radix-ui/react-direction": "1.1.1",
-+        "@radix-ui/react-presence": "1.1.4",
++        "@radix-ui/react-id": "1.1.1",
++        "@radix-ui/react-menu": "2.1.16",
 +        "@radix-ui/react-primitive": "2.1.3",
-+        "@radix-ui/react-roving-focus": "1.1.10",
-+        "@radix-ui/react-use-controllable-state": "1.2.2",
-+        "@radix-ui/react-use-previous": "1.1.1",
-+        "@radix-ui/react-use-size": "1.1.1"
++        "@radix-ui/react-roving-focus": "1.1.11",
++        "@radix-ui/react-use-controllable-state": "1.2.2"
 +      },
 +      "peerDependencies": {
 +        "@types/react": "*",
@@ -45,886 +109,237 @@ index b4ec44a..1e84cb3 100644
 +        }
 +      }
 +    },
-     "node_modules/@radix-ui/react-roving-focus": {
-       "version": "1.1.10",
-       "resolved": "https://registry.npmjs.org/@radix-ui/react-roving-focus/-/react-roving-focus-1.1.10.tgz",
++    "node_modules/@radix-ui/react-menubar/node_modules/@radix-ui/primitive": {
++      "version": "1.1.3",
++      "resolved": "https://registry.npmjs.org/@radix-ui/primitive/-/primitive-1.1.3.tgz",
++      "integrity": "sha512-JTF99U/6XIjCBo0wqkU5sK10glYe27MRRsfwoiq5zzOEZLHU3A3KCMa5X/azekYRCJ0HlwI0crAXS/5dEHTzDg=="
++    },
++    "node_modules/@radix-ui/react-menubar/node_modules/@radix-ui/react-dismissable-layer": {
++      "version": "1.1.11",
++      "resolved": "https://registry.npmjs.org/@radix-ui/react-dismissable-layer/-/react-dismissable-layer-1.1.11.tgz",
++      "integrity": "sha512-Nqcp+t5cTB8BinFkZgXiMJniQH0PsUt2k51FUhbdfeKvc4ACcG2uQniY/8+h1Yv6Kza4Q7lD7PQV0z0oicE0Mg==",
++      "dependencies": {
++        "@radix-ui/primitive": "1.1.3",
++        "@radix-ui/react-compose-refs": "1.1.2",
++        "@radix-ui/react-primitive": "2.1.3",
++        "@radix-ui/react-use-callback-ref": "1.1.1",
++        "@radix-ui/react-use-escape-keydown": "1.1.1"
++      },
++      "peerDependencies": {
++        "@types/react": "*",
++        "@types/react-dom": "*",
++        "react": "^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc",
++        "react-dom": "^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc"
++      },
++      "peerDependenciesMeta": {
++        "@types/react": {
++          "optional": true
++        },
++        "@types/react-dom": {
++          "optional": true
++        }
++      }
++    },
++    "node_modules/@radix-ui/react-menubar/node_modules/@radix-ui/react-focus-guards": {
++      "version": "1.1.3",
++      "resolved": "https://registry.npmjs.org/@radix-ui/react-focus-guards/-/react-focus-guards-1.1.3.tgz",
++      "integrity": "sha512-0rFg/Rj2Q62NCm62jZw0QX7a3sz6QCQU0LpZdNrJX8byRGaGVTqbrW9jAoIAHyMQqsNpeZ81YgSizOt5WXq0Pw==",
++      "peerDependencies": {
++        "@types/react": "*",
++        "react": "^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc"
++      },
++      "peerDependenciesMeta": {
++        "@types/react": {
++          "optional": true
++        }
++      }
++    },
++    "node_modules/@radix-ui/react-menubar/node_modules/@radix-ui/react-menu": {
++      "version": "2.1.16",
++      "resolved": "https://registry.npmjs.org/@radix-ui/react-menu/-/react-menu-2.1.16.tgz",
++      "integrity": "sha512-72F2T+PLlphrqLcAotYPp0uJMr5SjP5SL01wfEspJbru5Zs5vQaSHb4VB3ZMJPimgHHCHG7gMOeOB9H3Hdmtxg==",
++      "dependencies": {
++        "@radix-ui/primitive": "1.1.3",
++        "@radix-ui/react-collection": "1.1.7",
++        "@radix-ui/react-compose-refs": "1.1.2",
++        "@radix-ui/react-context": "1.1.2",
++        "@radix-ui/react-direction": "1.1.1",
++        "@radix-ui/react-dismissable-layer": "1.1.11",
++        "@radix-ui/react-focus-guards": "1.1.3",
++        "@radix-ui/react-focus-scope": "1.1.7",
++        "@radix-ui/react-id": "1.1.1",
++        "@radix-ui/react-popper": "1.2.8",
++        "@radix-ui/react-portal": "1.1.9",
++        "@radix-ui/react-presence": "1.1.5",
++        "@radix-ui/react-primitive": "2.1.3",
++        "@radix-ui/react-roving-focus": "1.1.11",
++        "@radix-ui/react-slot": "1.2.3",
++        "@radix-ui/react-use-callback-ref": "1.1.1",
++        "aria-hidden": "^1.2.4",
++        "react-remove-scroll": "^2.6.3"
++      },
++      "peerDependencies": {
++        "@types/react": "*",
++        "@types/react-dom": "*",
++        "react": "^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc",
++        "react-dom": "^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc"
++      },
++      "peerDependenciesMeta": {
++        "@types/react": {
++          "optional": true
++        },
++        "@types/react-dom": {
++          "optional": true
++        }
++      }
++    },
++    "node_modules/@radix-ui/react-menubar/node_modules/@radix-ui/react-popper": {
++      "version": "1.2.8",
++      "resolved": "https://registry.npmjs.org/@radix-ui/react-popper/-/react-popper-1.2.8.tgz",
++      "integrity": "sha512-0NJQ4LFFUuWkE7Oxf0htBKS6zLkkjBH+hM1uk7Ng705ReR8m/uelduy1DBo0PyBXPKVnBA6YBlU94MBGXrSBCw==",
++      "dependencies": {
++        "@floating-ui/react-dom": "^2.0.0",
++        "@radix-ui/react-arrow": "1.1.7",
++        "@radix-ui/react-compose-refs": "1.1.2",
++        "@radix-ui/react-context": "1.1.2",
++        "@radix-ui/react-primitive": "2.1.3",
++        "@radix-ui/react-use-callback-ref": "1.1.1",
++        "@radix-ui/react-use-layout-effect": "1.1.1",
++        "@radix-ui/react-use-rect": "1.1.1",
++        "@radix-ui/react-use-size": "1.1.1",
++        "@radix-ui/rect": "1.1.1"
++      },
++      "peerDependencies": {
++        "@types/react": "*",
++        "@types/react-dom": "*",
++        "react": "^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc",
++        "react-dom": "^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc"
++      },
++      "peerDependenciesMeta": {
++        "@types/react": {
++          "optional": true
++        },
++        "@types/react-dom": {
++          "optional": true
++        }
++      }
++    },
++    "node_modules/@radix-ui/react-menubar/node_modules/@radix-ui/react-presence": {
++      "version": "1.1.5",
++      "resolved": "https://registry.npmjs.org/@radix-ui/react-presence/-/react-presence-1.1.5.tgz",
++      "integrity": "sha512-/jfEwNDdQVBCNvjkGit4h6pMOzq8bHkopq458dPt2lMjx+eBQUohZNG9A7DtO/O5ukSbxuaNGXMjHicgwy6rQQ==",
++      "dependencies": {
++        "@radix-ui/react-compose-refs": "1.1.2",
++        "@radix-ui/react-use-layout-effect": "1.1.1"
++      },
++      "peerDependencies": {
++        "@types/react": "*",
++        "@types/react-dom": "*",
++        "react": "^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc",
++        "react-dom": "^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc"
++      },
++      "peerDependenciesMeta": {
++        "@types/react": {
++          "optional": true
++        },
++        "@types/react-dom": {
++          "optional": true
++        }
++      }
++    },
++    "node_modules/@radix-ui/react-menubar/node_modules/@radix-ui/react-roving-focus": {
++      "version": "1.1.11",
++      "resolved": "https://registry.npmjs.org/@radix-ui/react-roving-focus/-/react-roving-focus-1.1.11.tgz",
++      "integrity": "sha512-7A6S9jSgm/S+7MdtNDSb+IU859vQqJ/QAtcYQcfFC6W8RS4IxIZDldLR0xqCFZ6DCyrQLjLPsxtTNch5jVA4lA==",
++      "dependencies": {
++        "@radix-ui/primitive": "1.1.3",
++        "@radix-ui/react-collection": "1.1.7",
++        "@radix-ui/react-compose-refs": "1.1.2",
++        "@radix-ui/react-context": "1.1.2",
++        "@radix-ui/react-direction": "1.1.1",
++        "@radix-ui/react-id": "1.1.1",
++        "@radix-ui/react-primitive": "2.1.3",
++        "@radix-ui/react-use-callback-ref": "1.1.1",
++        "@radix-ui/react-use-controllable-state": "1.2.2"
++      },
++      "peerDependencies": {
++        "@types/react": "*",
++        "@types/react-dom": "*",
++        "react": "^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc",
++        "react-dom": "^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc"
++      },
++      "peerDependenciesMeta": {
++        "@types/react": {
++          "optional": true
++        },
++        "@types/react-dom": {
++          "optional": true
++        }
++      }
++    },
+     "node_modules/@radix-ui/react-navigation-menu": {
+       "version": "1.2.13",
+       "resolved": "https://registry.npmjs.org/@radix-ui/react-navigation-menu/-/react-navigation-menu-1.2.13.tgz",
 diff --git a/package.json b/package.json
-index d939c3c..269f0aa 100644
+index 269f0aa..3810806 100644
 --- a/package.json
 +++ b/package.json
-@@ -18,6 +18,7 @@
+@@ -10,12 +10,15 @@
+     "preview": "vite preview"
+   },
+   "dependencies": {
++    "@dnd-kit/core": "^6.3.1",
++    "@dnd-kit/sortable": "^10.0.0",
+     "@radix-ui/react-accordion": "^1.2.11",
+     "@radix-ui/react-alert-dialog": "^1.1.14",
+     "@radix-ui/react-checkbox": "^1.3.2",
+     "@radix-ui/react-dialog": "^1.1.14",
+     "@radix-ui/react-dropdown-menu": "^2.1.15",
      "@radix-ui/react-label": "^2.1.7",
++    "@radix-ui/react-menubar": "^1.1.16",
      "@radix-ui/react-navigation-menu": "^1.2.13",
      "@radix-ui/react-popover": "^1.1.14",
-+    "@radix-ui/react-radio-group": "^1.3.7",
-     "@radix-ui/react-select": "^2.2.5",
-     "@radix-ui/react-separator": "^1.1.7",
-     "@radix-ui/react-slider": "^1.3.5",
-diff --git a/src/Context/CMs/blueprint.context.tsx b/src/Context/CMs/blueprint.context.tsx
-index 6eeda67..1cc7efc 100644
---- a/src/Context/CMs/blueprint.context.tsx
-+++ b/src/Context/CMs/blueprint.context.tsx
-@@ -1,12 +1,14 @@
- import { createContext, type Dispatch, type SetStateAction } from "react";
- import type { ApiResponse } from "@/types/api";
--import type { BlueprintI } from "@/types/cms/blueprint.interface";
-+import type { BlueprintContentI, BlueprintI } from "@/types/cms/blueprint.interface";
- import type { PaginationI } from "@/types/pagination";
- 
- interface BlueprintContextProps {
-   blueprints: ApiResponse<BlueprintI | undefined>;
-+  blueprint: ApiResponse<BlueprintContentI | undefined>;
-   loading: boolean;
-   findAllBlueprint: () => void;
-+  findBlueprintById: (id: string) => Promise<any>;
-   findAllBlueprintWithFilters: (filters?: Record<string, any>) => Promise<void>;
-   setPagination: Dispatch<SetStateAction<PaginationI>>;
-   pagination: PaginationI;
-@@ -17,8 +19,13 @@ export const blueprintContext = createContext<BlueprintContextProps>({
-     data: undefined,
-     message: "",
-   },
-+  blueprint: {
-+    data: undefined,
-+    message: "",
-+  },
-   loading: false,
-   findAllBlueprint: () => {},
-+  findBlueprintById: async () => {},
-   findAllBlueprintWithFilters: async () => {},
-   setPagination: () => {},
-   pagination: {
-diff --git a/src/Context/CMs/collection.context.tsx b/src/Context/CMs/collection.context.tsx
-index ba88ce5..d886fb9 100644
---- a/src/Context/CMs/collection.context.tsx
-+++ b/src/Context/CMs/collection.context.tsx
-@@ -1,19 +1,34 @@
- import { createContext, type Dispatch, type SetStateAction } from "react";
- import type { ApiResponse } from "@/types/api";
- import type { PaginationI } from "@/types/pagination";
--import type { CollectionI } from "@/types/cms/collection.interface";
-+import type { CollectionI, ContentI } from "@/types/cms/collection.interface";
-+import type { BlueprintContentI } from "@/types/cms/blueprint.interface";
- 
- interface CollectionContextProps {
-   collections: ApiResponse<CollectionI | undefined>;
-+  collection: ApiResponse<ContentI | undefined>;
-+  collectionBlueprints: ApiResponse<BlueprintContentI | undefined>;
-+  collectionEntries: ApiResponse<CollectionI | undefined>;
-   loading: boolean;
-   createLoading?: boolean;
-   updateLoading?: boolean;
-   findAllCollection: () => void;
-+  findSingleCollection: (id: string) => Promise<any>;
-+  findAllCollectionBlueprints: (collectionId: string) => Promise<any>;
-+  findAllCollectionEntries: (collectionId: string) => Promise<any>;
-   createCollection?: (data: { title: string; handle: string }) => Promise<any>;
-+  createCollectionEntry: (
-+    collectionId: string,
-+    data: {
-+      blueprintRef: string;
-+      data: { [key: string]: any }; // This allows for dynamic keys and values
-+    }
-+  ) => Promise<any>;
-   updateCollection?: (
-     id: string,
-     data: { title?: string; handle?: string }
-   ) => Promise<any>;
-+  deleteCollection?: (id: string) => Promise<any>;
-   setPagination: Dispatch<SetStateAction<PaginationI>>;
-   pagination: PaginationI;
- }
-@@ -29,12 +44,36 @@ export const collectionContext = createContext<CollectionContextProps>({
-     },
-     message: "",
-   },
-+
-+  collection: {
-+    data: undefined,
-+    message: "",
-+  },
-+  collectionBlueprints: {
-+    data: undefined,
-+    message: "",
-+  },
-+  collectionEntries: {
-+    data: {
-+      content: [],
-+      page: 0,
-+      size: 10,
-+      totalElements: 0,
-+      totalPages: 0,
-+    },
-+    message: "",
-+  },
-   loading: false,
-   createLoading: false,
-   updateLoading: false,
-   findAllCollection: () => {},
-+  findSingleCollection: async () => {},
-+  findAllCollectionBlueprints: async () => {},
-+  findAllCollectionEntries: async () => {},
-   createCollection: async () => {},
-+  createCollectionEntry: async () => Promise.resolve(),
-   updateCollection: async () => {},
-+  deleteCollection: async () => Promise.resolve(),
-   setPagination: () => {},
-   pagination: {
-     page: 0,
-diff --git a/src/Page-Sections/CMSDashboard/CMSLoginPageSection.tsx b/src/Page-Sections/CMSDashboard/CMSLoginPageSection.tsx
-index 07da150..deb9ae8 100644
---- a/src/Page-Sections/CMSDashboard/CMSLoginPageSection.tsx
-+++ b/src/Page-Sections/CMSDashboard/CMSLoginPageSection.tsx
-@@ -8,10 +8,10 @@ import { useCMSAuth } from "@/hooks/CMS/useCMSAuth";
- 
- const validationSchema = Yup.object({
-     clientId: Yup.string()
--      .required("clientId is required")
-+      .required("Username is required")
-       .min(3, "Username must be at least 3 characters"),
-     clientSecret: Yup.string()
--      .required("clientSecret is required")
-+      .required("Password is required")
-       .min(6, "Password must be at least 6 characters"),
-   });
- function CMSLoginPageSection() {
-diff --git a/src/Page-Sections/CMSDashboard/CollectionsPageSection.tsx b/src/Page-Sections/CMSDashboard/CollectionsPageSection.tsx
-index f80f209..fd20331 100644
---- a/src/Page-Sections/CMSDashboard/CollectionsPageSection.tsx
-+++ b/src/Page-Sections/CMSDashboard/CollectionsPageSection.tsx
-@@ -9,9 +9,9 @@ import type { ContentI } from "@/types/cms/collection.interface";
- // Skeleton loader component
- function CollectionSkeleton() {
-   return (
--    <div className="p-4 border rounded-md bg-white min-w-0 border-gray-300 animate-pulse space-y-2">
--      <div className="h-4 w-1/3 bg-gray-200 rounded" />
--      <div className="h-3 w-1/4 bg-gray-100 rounded" />
-+    <div className="min-w-0 p-4 space-y-2 bg-white border border-gray-300 rounded-md animate-pulse">
-+      <div className="w-1/3 h-4 bg-gray-200 rounded" />
-+      <div className="w-1/4 h-3 bg-gray-100 rounded" />
-     </div>
-   );
- }
-@@ -59,7 +59,13 @@ function CollectionsPageSection() {
- 
-   return (
-     <div className="space-y-4">
--      <h1 className="text-2xl font-bold">Collections</h1>
-+      <div>
-+        <h1 className="text-2xl font-bold">Collections</h1>
-+        <p className="text-sm text-gray-500">
-+          Collections are containers that hold entries that represent
-+          articles,blog posts,products,events or any content type
-+        </p>
-+      </div>
-       <div className="grid gap-6 xl:grid-cols-[1fr_minmax(280px,380px)] items-start w-full overflow-hidden">
-         <div className="min-w-0 space-y-6">
-           <h2 className="text-lg font-semibold">Your Collections</h2>
-@@ -86,7 +92,7 @@ function CollectionsPageSection() {
-         </div>
-         <div className="space-y-4">
-           <h2 className="text-lg font-semibold">New Collection</h2>
--          <div className="space-y-3 p-4 border rounded-md bg-card border-gray-300">
-+          <div className="p-4 space-y-3 border border-gray-300 rounded-md bg-card">
-             <div>
-               <CustomInput
-                 label="title"
-diff --git a/src/Page-Sections/CMSDashboard/Parts/ColectionCard.tsx b/src/Page-Sections/CMSDashboard/Parts/ColectionCard.tsx
-index e7c1e11..d489ea0 100644
---- a/src/Page-Sections/CMSDashboard/Parts/ColectionCard.tsx
-+++ b/src/Page-Sections/CMSDashboard/Parts/ColectionCard.tsx
-@@ -15,6 +15,7 @@ import type { ContentI } from "@/types/cms/collection.interface";
- import { useCollection } from "@/hooks/CMS/useCollection";
- import { titleToHandle } from "@/utils/titleToHandle";
- import { CustomInput } from "@/components/ui/CustomInput";
-+import { Link } from "react-router-dom";
- 
- function CollectionCard({ content }: { content: ContentI }) {
-   const [bp, setBp] = useState<Blueprint | null>(null);
-@@ -77,14 +78,15 @@ function CollectionCard({ content }: { content: ContentI }) {
-   };
- 
-   return (
--    <div className="p-4 border rounded-md bg-white space-y-4 min-w-0 border-gray-300">
-+    <div className="min-w-0 p-4 space-y-4 bg-white border border-gray-300 rounded-md">
-       <div className="flex items-center justify-between">
-         <div>
--          <div className="font-medium">{content.title}</div>
-+          <Link to={`${content.reference}`} className="font-medium hover:text-nbc-dark-950">{content.title}</Link>
-           <div className="text-xs text-muted-foreground">
-             {/* {bp?.name || "Unknown"} */}
-             {content.handle || "Unknown"}
-           </div>
-+          <p className="text-sm"> Entry Count : {content?.entryCount || 0}</p>
-         </div>
-         <Button
-           variant="link"
-@@ -113,14 +115,14 @@ function CollectionCard({ content }: { content: ContentI }) {
-       )}
- 
-       {/* <div>
--        <h3 className="text-sm font-semibold mb-2">
-+        <h3 className="mb-2 text-sm font-semibold">
-           Entries ({entries.length})
-         </h3>
-         <div className="space-y-2">
-           {entries.map((e) => (
-             <div
-               key={e.id}
--              className="flex items-center justify-between p-3 rounded-md border bg-background/60 border-gray-300"
-+              className="flex items-center justify-between p-3 border border-gray-300 rounded-md bg-background/60"
-             >
-               <div className="text-sm truncate max-w-[70%] flex items-center gap-2">
-                 {
-@@ -145,7 +147,7 @@ function CollectionCard({ content }: { content: ContentI }) {
-                 variant="iconRounded"
-                 size="sm"
-                 onClick={() => removeEntry(e.id)}
--                className="bg-red-500 hover:bg-red-700 text-white"
-+                className="text-white bg-red-500 hover:bg-red-700"
-                 icon={Trash2}
-               />
-             </div>
-@@ -181,9 +183,9 @@ function CollectionCard({ content }: { content: ContentI }) {
-               />
-             </div>
-             {/* <div>
--              <Label className="text-sm mb-1 block">Blueprint</Label>
-+              <Label className="block mb-1 text-sm">Blueprint</Label>
-               <select
--                className="w-full h-10 rounded-md bg-background border px-3"
-+                className="w-full h-10 px-3 border rounded-md bg-background"
-                 value={bpId}
-                 onChange={(e) => setBpId(e.target.value)}
-               >
-diff --git a/src/Page-Sections/UserDashboardPageSection/MarketPlacePageSection/CartPageSection.tsx b/src/Page-Sections/UserDashboardPageSection/MarketPlacePageSection/CartPageSection.tsx
-index 84516c6..3174e1e 100644
---- a/src/Page-Sections/UserDashboardPageSection/MarketPlacePageSection/CartPageSection.tsx
-+++ b/src/Page-Sections/UserDashboardPageSection/MarketPlacePageSection/CartPageSection.tsx
-@@ -1,11 +1,58 @@
-+import AppBreadcrumbs from "@/components/shop/cart/AppBreadcrumbs";
-+import { CartTable } from "@/components/shop/cart/CartTable";
-+import { CouponCard } from "@/components/shop/cart/CouponCard";
-+import { SummaryCard } from "@/components/shop/cart/SummaryCard";
-+import Button from "@/components/ui/button";
-+import { ArrowLeft } from "lucide-react";
-+import { useMemo, useState } from "react";
-+import { useNavigate } from "react-router-dom";
-+
-+export interface CartItemData { id: string; name: string; price: number; image: string; quantity: number; }
-+const initialItems: CartItemData[] = [
-+  { id: '1', name: 'Purple Wezesha Marathon Jersey', price: 100_000, image: "/images/Makini.png", quantity: 1 },
-+  { id: '2', name: 'Wired Over-Ear Gaming Headphones with USB', price: 100_000, image: "/images/Malengo.png", quantity: 3 },
-+];
-+
- 
- function CartPageSection() {
-+  const [items, setItems] = useState<CartItemData[]>(initialItems);
-+  const navigate = useNavigate();
-+
-+  const subTotal = useMemo(() => items.reduce((s, i) => s + i.price * i.quantity, 0), [items]);
-+
-+  const onQuantityChange = (id: string, qty: number) => {
-+    setItems((prev) => prev.map((it) => (it.id === id ? { ...it, quantity: qty } : it)));
-+  };
-+
-+  const onRemove = (id: string) => setItems((prev) => prev.filter((it) => it.id !== id));
-+
-+
-   return (
--    <div>
--      
--      <h1>Shopping Cart</h1>
--      <p>Your cart is currently empty.</p>
-+    <main className="container py-8">
-+    <>
-+      <title>Shopping Card | Cart</title>
-+      <meta name="description" content="Review your Shopping Card items, update quantities, and proceed to checkout." />
-+      <link rel="canonical" href="/cart" />
-+    </>
-+
-+    <AppBreadcrumbs items={[{ label: 'Shopping Card' }]} />
-+
-+    <h1 className="text-2xl font-semibold mb-4">Shopping Card</h1>
-+
-+    <div className="grid lg:grid-cols-3 gap-6">
-+      <div className="lg:col-span-2 space-y-4">
-+        <CartTable items={items} onQuantityChange={onQuantityChange} onRemove={onRemove} />
-+        <div className="flex items-center justify-between">
-+          <Button variant="outline" onClick={() => navigate('/')}> <ArrowLeft /> Return to Shop</Button>
-+          <Button variant="outline">Update Cart</Button>
-+        </div>
-+      </div>
-+      <div className="space-y-4">
-+        <SummaryCard subTotal={subTotal} discount={12_000} tax={188_000} onCheckout={() => navigate('checkout')} />
-+        <CouponCard onApply={() => {}} />
-+      </div>
-     </div>
-+  </main>
-   )
- }
- 
-diff --git a/src/Page-Sections/UserDashboardPageSection/MarketPlacePageSection/CheckoutPageSection.tsx b/src/Page-Sections/UserDashboardPageSection/MarketPlacePageSection/CheckoutPageSection.tsx
-index bd0d508..5fd0978 100644
---- a/src/Page-Sections/UserDashboardPageSection/MarketPlacePageSection/CheckoutPageSection.tsx
-+++ b/src/Page-Sections/UserDashboardPageSection/MarketPlacePageSection/CheckoutPageSection.tsx
-@@ -1,12 +1,55 @@
-+import AppBreadcrumbs from "@/components/shop/cart/AppBreadcrumbs";
-+import type { CartItemData } from "@/components/shop/cart/CartItem";
-+import { BillingForm } from "@/components/shop/checkout/BillingForm";
-+import { OrderSummary } from "@/components/shop/checkout/OrderSummary";
-+import { PaymentOptions } from "@/components/shop/checkout/PaymentOptions";
-+import Button from "@/components/ui/button";
-+import { ArrowRight } from "lucide-react";
-+import { useMemo, useState } from "react";
-+
-+const initialItems: CartItemData[] = [
-+  { id: '1', name: 'Purple Wezesha Marathon Jersey', price: 100_000, image: "/images/Makini.png", quantity: 1 },
-+  { id: '2', name: 'Wired Over-Ear Gaming Headphones with USB', price: 100_000, image: "/images/Malengo.png", quantity: 3 },
-+];
- 
- function CheckoutPageSection() {
-+  const [items] = useState<CartItemData[]>(initialItems);
-+  const [payment, setPayment] = useState<string>('card');
-+
-+  const subTotal = useMemo(() => items.reduce((s, i) => s + i.price * i.quantity, 0), [items]);
-+  const discount = 12_000;
-+  const tax = 188_000;
-+  const total = subTotal - discount + tax;
-+
-   return (
--    <div>
--      
--      <h1>Checkout</h1>
--      <p>Please review your items before proceeding to payment.</p>
--    </div>
--  )
-+    <main className="container py-8">
-+      <>
-+        <title>Shopping Card | Checkout</title>
-+        <meta name="description" content="Complete your purchase by entering billing information and choosing a payment option." />
-+        <link rel="canonical" href="/checkout" />
-+      </>
-+
-+      <AppBreadcrumbs items={[{ label: 'Shopping Card', href: '/dashboard/market-place/cart' }, { label: 'Checkout' }]} />
-+
-+      <h1 className="text-2xl font-semibold mb-4">Checkout</h1>
-+
-+      <div className="grid lg:grid-cols-3 gap-6">
-+        <div className="lg:col-span-2 space-y-6">
-+          <BillingForm />
-+          <PaymentOptions value={payment} onChange={setPayment} />
-+          <div className="flex justify-end">
-+            <Button variant="primary" className="group">
-+              Place Order
-+              <ArrowRight className="transition-transform group-hover:translate-x-0.5" />
-+            </Button>
-+          </div>
-+        </div>
-+        <div>
-+          <OrderSummary items={items} subTotal={subTotal} discount={discount} tax={tax} total={total} />
-+        </div>
-+      </div>
-+    </main>
-+  );
- }
- 
- export default CheckoutPageSection
-diff --git a/src/Providers/blueprints.provider.tsx b/src/Providers/blueprints.provider.tsx
-index 329a02a..6a8371d 100644
---- a/src/Providers/blueprints.provider.tsx
-+++ b/src/Providers/blueprints.provider.tsx
-@@ -4,9 +4,10 @@ import type { ApiResponse } from "@/types/api";
- import { blueprintContext } from "../Context/CMs/blueprint.context";
- import { blueprintsServices } from "@/services/CMS/blueprints.service";
- import type { PaginationI } from "@/types/pagination";
--import type { BlueprintI } from "@/types/cms/blueprint.interface";
--
--
-+import type {
-+  BlueprintI,
-+  BlueprintContentI,
-+} from "@/types/cms/blueprint.interface";
- 
- export const BlueprintProvider: React.FC<{ children: React.ReactNode }> = ({
-   children,
-@@ -17,6 +18,12 @@ export const BlueprintProvider: React.FC<{ children: React.ReactNode }> = ({
-     data: undefined,
-     message: "",
-   });
-+  const [blueprint, setBlueprint] = useState<
-+    ApiResponse<BlueprintContentI | undefined>
-+  >({
-+    data: undefined,
-+    message: "",
-+  });
-   const [loading, setLoading] = useState<boolean>(false);
-   const [pagination, setPagination] = useState<PaginationI>({
-     page: 0,
-@@ -40,6 +47,18 @@ export const BlueprintProvider: React.FC<{ children: React.ReactNode }> = ({
-     await blueprintsServices.findAll(setBlueprints, queryString);
-   }
- 
-+  async function findBlueprintById(id: string) {
-+    setLoading(true);
-+    try {
-+      await blueprintsServices.findById(id, setBlueprint);
-+    } catch (error) {
-+      return error;
-+    }
-+    finally {
-+      setLoading(false);
-+    }
-+  }
-+
-   // Alternative method with more flexibility for filters
-   async function findAllBlueprintWithFilters(filters?: Record<string, any>) {
-     const queryString = new QueryParamsBuilder()
-@@ -56,8 +75,10 @@ export const BlueprintProvider: React.FC<{ children: React.ReactNode }> = ({
-     <blueprintContext.Provider
-       value={{
-         blueprints,
-+        blueprint,
-         loading,
-         findAllBlueprint,
-+        findBlueprintById,
-         findAllBlueprintWithFilters,
-         setPagination,
-         pagination,
-diff --git a/src/Providers/collection.provider.tsx b/src/Providers/collection.provider.tsx
-index 5c933cb..eabde87 100644
---- a/src/Providers/collection.provider.tsx
-+++ b/src/Providers/collection.provider.tsx
-@@ -5,6 +5,8 @@ import type { PaginationI } from "@/types/pagination";
- import { collectionServices } from "@/services/CMS/collection.service";
- import { collectionContext } from "../Context/CMs/collection.context";
- import type { CollectionI } from "@/types/cms/collection.interface";
-+import { blueprintsServices } from "@/services/CMS/blueprints.service";
-+import type { BlueprintContentI } from "@/types/cms/blueprint.interface";
- 
- export const CollectionProvider: React.FC<{ children: React.ReactNode }> = ({
-   children,
-@@ -15,6 +17,23 @@ export const CollectionProvider: React.FC<{ children: React.ReactNode }> = ({
-     data: undefined,
-     message: "",
-   });
-+  const [collection, setCollection] = useState({
-+    data: undefined,
-+    message: "",
-+  });
-+  const [collectionBlueprints, setCollectionBlueprints] = useState<
-+    ApiResponse<BlueprintContentI | undefined>
-+  >({
-+    data: undefined,
-+    message: "",
-+  });
-+  const [collectionEntries, setCollectionEntries] = useState<
-+    ApiResponse<CollectionI | undefined>
-+  >({
-+    data: undefined,
-+    message: "",
-+  });
-+
-   const [loading, setLoading] = useState<boolean>(false);
-   const [createLoading, setCreateLoading] = useState<boolean>(false);
-   const [updateLoading, setUpdateLoading] = useState<boolean>(false);
-@@ -38,7 +57,59 @@ export const CollectionProvider: React.FC<{ children: React.ReactNode }> = ({
-     setLoading(true);
-     hasFetched.current = true;
-     await collectionServices.findAll(setCollections, queryString);
--    setLoading(false)
-+    setLoading(false);
-+  }
-+
-+  async function findSingleCollection(id: string) {
-+    setLoading(true);
-+    try {
-+      const response: any = await collectionServices.findById(
-+        id,
-+        setCollection
-+      );
-+      return response;
-+    } catch (error) {
-+      return error;
-+    } finally {
-+      setLoading(false);
-+    }
-+  }
-+
-+  async function findAllCollectionBlueprints(collectionId: string) {
-+    setLoading(true);
-+    try {
-+      const response: any =
-+        await blueprintsServices.findAllCollectionBlueprints(
-+          setCollectionBlueprints,
-+          collectionId
-+        );
-+      return response;
-+    } catch (error) {
-+      return error;
-+    } finally {
-+      setLoading(false);
-+    }
-+  }
-+
-+  async function findAllCollectionEntries(collectionId: string) {
-+    setLoading(true);
-+    try {
-+      const queryString = buildPaginationQuery(
-+        pagination.page,
-+        pagination.size,
-+        pagination.totalElements
-+      );
-+      const response: any = await collectionServices.findAllCollectionEntries(
-+        setCollectionEntries,
-+        collectionId,
-+        queryString
-+      );
-+      return response;
-+    } catch (error) {
-+      return error;
-+    } finally {
-+      setLoading(false);
-+    }
-   }
- 
-   async function createCollection(data: { title: string; handle: string }) {
-@@ -75,6 +146,31 @@ export const CollectionProvider: React.FC<{ children: React.ReactNode }> = ({
-     }
-   }
- 
-+
-+
-+
-+  async function createCollectionEntry(
-+    collectionId: string,
-+    data: {
-+      blueprintRef: string;
-+      data: { [key: string]: any }; // This allows for dynamic keys and values
-+    }
-+  ) {
-+    setLoading(true);
-+    try {
-+      const response: any = await collectionServices.createCollectionEntry(
-+        collectionId,
-+        data
-+      );
-+      setLoading(false)
-+      return response;
-+    } catch (error) {
-+      return error;
-+    } finally {
-+      setLoading(false);
-+    }
-+  }
-+
-   async function updateCollection(
-     id: string,
-     data: { title?: string; handle?: string }
-@@ -127,10 +223,17 @@ export const CollectionProvider: React.FC<{ children: React.ReactNode }> = ({
-     <collectionContext.Provider
-       value={{
-         collections,
-+        collection,
-+        collectionBlueprints,
-+        collectionEntries,
-         loading,
-         createLoading,
-         findAllCollection,
-+        findSingleCollection,
-+        findAllCollectionBlueprints,
-+        findAllCollectionEntries,
-         createCollection,
-+        createCollectionEntry,
-         setPagination,
-         updateCollection,
-         updateLoading,
+     "@radix-ui/react-radio-group": "^1.3.7",
 diff --git a/src/Routes/CMSRoutes.tsx b/src/Routes/CMSRoutes.tsx
-index e10a7bf..af1c408 100644
+index af1c408..e228903 100644
 --- a/src/Routes/CMSRoutes.tsx
 +++ b/src/Routes/CMSRoutes.tsx
-@@ -3,7 +3,6 @@ import { Route } from "react-router-dom";
- import CMSLayout from "@/Pages/Dashboard/CMS/CMSLayout";
- import ProtectedCMSRoute from "./ProtectedCMSRoute";
- 
--
- // Lazy Loading CMS Pages
- const CMSDashboard = lazy(
-   () => import("@/Pages/Dashboard/CMS/CMSPages/CMSDashboard")
-@@ -12,17 +11,23 @@ const CMSSection = lazy(
-   () => import("@/Pages/Dashboard/CMS/CMSPages/Sections")
+@@ -29,6 +29,13 @@ const Fieldtypes = lazy(
+   () => import("@/Pages/Dashboard/CMS/CMSPages/Fieldtypes")
  );
- const CMSLogin = lazy(() => import("@/Pages/Dashboard/CMS/CMSPages/CMSLogin"));
-- 
+ 
++const Navigation = lazy(
++  () => import("@/Pages/Dashboard/CMS/CMSPages/Navigation")
++);
++const SingleNavigation = lazy(
++  () => import("@/Pages/Dashboard/CMS/CMSPages/SingleNavigation")
++);
 +
- const Blueprint = lazy(
-   () => import("@/Pages/Dashboard/CMS/CMSPages/Blueprint")
- );
- const Collection = lazy(
-   () => import("@/Pages/Dashboard/CMS/CMSPages/Collection")
- );
--const Fieldtypes = lazy(
--  () => import("@/Pages/Dashboard/CMS/CMSPages/Fieldtypes")     
-+const SingleCollection = lazy(
-+  () => import("@/Pages/Dashboard/CMS/CMSPages/SingleCollection")
-+);
-+const CreateEntry = lazy(
-+  () => import("@/Pages/Dashboard/CMS/CMSPages/CreateEntry")
- );
- 
-+const Fieldtypes = lazy(
-+  () => import("@/Pages/Dashboard/CMS/CMSPages/Fieldtypes")
-+);
- 
  const cmsRoutes = (
    <>
-@@ -37,7 +42,12 @@ const cmsRoutes = (
-     >
-       <Route index element={<CMSDashboard />} />
-       <Route path="blue-prints" element={<Blueprint />} />
--      <Route path="collections" element={<Collection />} />
-+      <Route path="collections">
-+        <Route index element={<Collection />} />
-+        <Route path=":id" element={<SingleCollection />} />
-+        <Route path=":id/create-entry" element={<CreateEntry />} />
-+      </Route>
-+
+     <Route path="/cms/login" element={<CMSLogin />} />
+@@ -50,6 +57,10 @@ const cmsRoutes = (
+ 
        <Route path="field-types" element={<Fieldtypes />} />
        <Route path="sections" element={<CMSSection />} />
++      <Route path="navigation">
++        <Route index element={<Navigation />} />
++        <Route path=":id" element={<SingleNavigation />} />
++      </Route>
      </Route>
-diff --git a/src/Routes/DashboardRoutes.tsx b/src/Routes/DashboardRoutes.tsx
-index bd34a8a..0441283 100644
---- a/src/Routes/DashboardRoutes.tsx
-+++ b/src/Routes/DashboardRoutes.tsx
-@@ -116,7 +116,7 @@ const dashboardRoutes = (
-       <Route index element={<MarketPlace />} />
-       <Route path="all-products" element={<AllProducts />} />
-       <Route path="product/:productId" element={<SingleMarketPlaceProduct />} />
--      <Route path="checkout" element={<Checkout />} />
-+      <Route path="cart/checkout" element={<Checkout />} />
-       <Route path="cart" element={<Cart />} />
-     </Route>
-   </Route>
-diff --git a/src/components/cms/FieldTypeCatalog.tsx b/src/components/cms/FieldTypeCatalog.tsx
-index 3a8e60b..8eccc23 100644
---- a/src/components/cms/FieldTypeCatalog.tsx
-+++ b/src/components/cms/FieldTypeCatalog.tsx
-@@ -7,12 +7,12 @@ import { v4 as uuid } from "uuid";
- import { CustomInput } from "../ui/CustomInput";
- 
- const CATALOG: { type: FieldType; label: string }[] = [
--  { type: "text", label: "Text" },
--  { type: "textarea", label: "Textarea" },
--  { type: "number", label: "Number" },
-+  { type: "TEXT", label: "Text" },
-+  { type: "TEXTAREA", label: "Textarea" },
-+  { type: "NUMBER", label: "Number" },
-   { type: "toggle", label: "Toggle" },
--  { type: "select", label: "Select" },
--  { type: "date", label: "Date" },
-+  { type: "SELECT", label: "Select" },
-+  { type: "DATE", label: "Date" },
-   { type: "asset", label: "Asset" },
- ];
- 
-diff --git a/src/data/cmsNavigationData.ts b/src/data/cmsNavigationData.ts
-index cb63a65..1d25714 100644
---- a/src/data/cmsNavigationData.ts
-+++ b/src/data/cmsNavigationData.ts
-@@ -1,5 +1,5 @@
- import type { NavigationItem } from "@/components/cms/Sidebar";
--import { Edit, FileText, Globe, LayoutDashboard } from "lucide-react";
-+import { Edit, FileText, Globe, LayoutDashboard, Navigation } from "lucide-react";
- 
- export const cmsNavigationData: NavigationItem[] = [
-   {
-@@ -26,6 +26,11 @@ export const cmsNavigationData: NavigationItem[] = [
-   //     { label: "Conversions", href: "/analytics/conversions" }
-   //   ]
-   // },
-+  {
-+    label: "Navigation",
-+    icon: Navigation,
-+    href: "/cms/navigation",
-+  },
-   {
-     label: "Collections",
-     icon: Globe,
-diff --git a/src/services/CMS/blueprints.service.ts b/src/services/CMS/blueprints.service.ts
-index 218b2fa..ec891b1 100644
---- a/src/services/CMS/blueprints.service.ts
-+++ b/src/services/CMS/blueprints.service.ts
-@@ -1,4 +1,3 @@
--
- import { cmsApiService } from "@/config/cmsApiServiceConfig";
- 
- export const blueprintsServices = {
-@@ -14,4 +13,28 @@ export const blueprintsServices = {
-       return error;
-     }
-   },
--};
-\ No newline at end of file
-+  findById: async (id: string, setBlueprint: any) => {
-+    try {
-+      const response = await cmsApiService.get(`/cms/blueprints/${id}`);
-+      setBlueprint(response);
-+      return response;
-+    } catch (error) {
-+      return error;
-+    }
-+  },
-+
-+  findAllCollectionBlueprints: async (
-+    setBlueprint: any,
-+    collectionId: string
-+  ) => {
-+    try {
-+      const response = await cmsApiService.get(
-+        `/cms/collections/${collectionId}/blueprints`
-+      );
-+      setBlueprint(response);
-+      return response;
-+    } catch (error) {
-+      return error;
-+    }
-+  },
-+};
-diff --git a/src/services/CMS/collection.service.ts b/src/services/CMS/collection.service.ts
-index 5241040..583724e 100644
---- a/src/services/CMS/collection.service.ts
-+++ b/src/services/CMS/collection.service.ts
-@@ -13,6 +13,31 @@ export const collectionServices = {
-       return error;
-     }
-   },
-+  findById: async (id: string, setCollection: any) => {
-+    try {
-+      const response = await cmsApiService.get(`/cms/collections/${id}`);
-+      setCollection(response);
-+      return response;
-+    } catch (error) {
-+      return error;
-+    }
-+  },
-+
-+  findAllCollectionEntries: async (
-+    setCollectionEntries: any,
-+    collectionId: string,
-+    queryString?: string
-+  ) => {
-+    try {
-+      const response = await cmsApiService.get(
-+        `/cms/collections/${collectionId}/entries${queryString || ""}`
-+      );
-+      setCollectionEntries(response);
-+      return response;
-+    } catch (error) {
-+      return error;
-+    }
-+  },
-   create: async (data: { title: string; handle: string }) => {
-     try {
-       const response = await cmsApiService.post(`/cms/collections`, data, {
-@@ -23,24 +48,52 @@ export const collectionServices = {
-       return error;
-     }
-   },
-+
-+  createCollectionEntry: async (
-+    collectionId: string,
-+    data: {
-+      blueprintRef: string;
-+      data: {
-+        [key: string]: any; // This allows for dynamic keys and values
-+      };
-+    }
-+  ) => {
-+    try {
-+      const response = await cmsApiService.post(
-+        `/cms/collections/${collectionId}/entries`,
-+        data,
-+        {
-+          successMessage: "Collection entry created successfully!",
-+        }
-+      );
-+      return response;
-+    } catch (error) {
-+      return error;
-+    }
-+  },
-+
-   update: async (id: string, data: { title?: string; handle?: string }) => {
-     try {
--      const response = await cmsApiService.patch(`/cms/collections/${id}/update`, data, {
--        successMessage: "Collection updated successfully!",
-+      const response = await cmsApiService.patch(
-+        `/cms/collections/${id}/update`,
-+        data,
-+        {
-+          successMessage: "Collection updated successfully!",
-+        }
-+      );
-+      return response;
-+    } catch (error) {
-+      return error;
-+    }
-+  },
-+  delete: async (id: string) => {
-+    try {
-+      const response = await cmsApiService.delete(`/cms/collections/${id}`, {
-+        successMessage: "Collection deleted successfully!",
-       });
-       return response;
-     } catch (error) {
-       return error;
-     }
-   },
--    delete: async (id: string) => {
--        try {
--        const response = await cmsApiService.delete(`/cms/collections/${id}`, {
--            successMessage: "Collection deleted successfully!",
--        });
--        return response;
--        } catch (error) {
--        return error;
--        }
--    },
- };
-diff --git a/src/types/cms/blueprint.interface.ts b/src/types/cms/blueprint.interface.ts
-index 550f73d..21e3798 100644
---- a/src/types/cms/blueprint.interface.ts
-+++ b/src/types/cms/blueprint.interface.ts
-@@ -64,10 +64,10 @@ export interface BlueprintContentI {
- 
- export interface BlueprintI {
-   content: BlueprintContentI[];
--  page: number;
--  size: number;
--  totalElements: number;
--  totalPages: number;
-+  page?: number;
-+  size?: number;
-+  totalElements?: number;
-+  totalPages?: number;
- }
- 
- 
-diff --git a/src/types/cms/collection.interface.ts b/src/types/cms/collection.interface.ts
-index d034329..70c9e55 100644
---- a/src/types/cms/collection.interface.ts
-+++ b/src/types/cms/collection.interface.ts
-@@ -9,8 +9,8 @@ export interface ContentI {
- 
- export interface CollectionI {
-   content: ContentI[];
--  page: number;
--  size: number;
--  totalElements: number;
--  totalPages: number;
-+  page?: number;
-+  size?: number;
-+  totalElements?: number;
-+  totalPages?: number;
- }
-\ No newline at end of file
+   </>
+ );
+diff --git a/src/components/ui/modal.tsx b/src/components/ui/modal.tsx
+index a2c4239..993ad76 100644
+--- a/src/components/ui/modal.tsx
++++ b/src/components/ui/modal.tsx
+@@ -73,7 +73,7 @@ function Modal() {
+       >
+         {/* Modal Header */}
+         {modalTitle && (
+-          <div className="relative flex items-center justify-between p-4 border-b border-gray-200/30 backdrop-blur-sm">
++          <div className="relative flex items-center justify-between px-4 py-2 border-b border-gray-200/30 backdrop-blur-sm">
+             <h2 className="text-lg font-semibold text-gray-900 animate-fadeInUp" id="modal-title">
+               {modalTitle}
+             </h2>
+
