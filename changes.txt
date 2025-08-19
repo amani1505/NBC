@@ -1,4 +1,3538 @@
-create a modern user interface for the image  make the make the components reusable and each component put them to there own files
-with full fnuctionality like hovering and animation
-don't change the design
+diff --git a/package-lock.json b/package-lock.json
+index 7789bd6..f5e1d0d 100644
+--- a/package-lock.json
++++ b/package-lock.json
+@@ -8,6 +8,8 @@
+       "name": "nbc-event-management",
+       "version": "0.1.0",
+       "dependencies": {
++        "@radix-ui/react-checkbox": "^1.3.3",
++        "@radix-ui/react-label": "^2.1.7",
+         "@radix-ui/react-slot": "^1.2.3",
+         "class-variance-authority": "^0.7.1",
+         "clsx": "^2.1.1",
+@@ -18,6 +20,7 @@
+         "next": "15.4.6",
+         "react": "19.1.0",
+         "react-dom": "19.1.0",
++        "react-hook-form": "^7.62.0",
+         "tailwind-merge": "^3.3.1"
+       },
+       "devDependencies": {
+@@ -913,6 +916,40 @@
+         "node": ">=12.4.0"
+       }
+     },
++    "node_modules/@radix-ui/primitive": {
++      "version": "1.1.3",
++      "resolved": "https://registry.npmjs.org/@radix-ui/primitive/-/primitive-1.1.3.tgz",
++      "integrity": "sha512-JTF99U/6XIjCBo0wqkU5sK10glYe27MRRsfwoiq5zzOEZLHU3A3KCMa5X/azekYRCJ0HlwI0crAXS/5dEHTzDg=="
++    },
++    "node_modules/@radix-ui/react-checkbox": {
++      "version": "1.3.3",
++      "resolved": "https://registry.npmjs.org/@radix-ui/react-checkbox/-/react-checkbox-1.3.3.tgz",
++      "integrity": "sha512-wBbpv+NQftHDdG86Qc0pIyXk5IR3tM8Vd0nWLKDcX8nNn4nXFOFwsKuqw2okA/1D/mpaAkmuyndrPJTYDNZtFw==",
++      "dependencies": {
++        "@radix-ui/primitive": "1.1.3",
++        "@radix-ui/react-compose-refs": "1.1.2",
++        "@radix-ui/react-context": "1.1.2",
++        "@radix-ui/react-presence": "1.1.5",
++        "@radix-ui/react-primitive": "2.1.3",
++        "@radix-ui/react-use-controllable-state": "1.2.2",
++        "@radix-ui/react-use-previous": "1.1.1",
++        "@radix-ui/react-use-size": "1.1.1"
++      },
++      "peerDependencies": {
++        "@types/react": "*",
++        "@types/react-dom": "*",
++        "react": "^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc",
++        "react-dom": "^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc"
++      },
++      "peerDependenciesMeta": {
++        "@types/react": {
++          "optional": true
++        },
++        "@types/react-dom": {
++          "optional": true
++        }
++      }
++    },
+     "node_modules/@radix-ui/react-compose-refs": {
+       "version": "1.1.2",
+       "resolved": "https://registry.npmjs.org/@radix-ui/react-compose-refs/-/react-compose-refs-1.1.2.tgz",
+@@ -927,6 +964,87 @@
+         }
+       }
+     },
++    "node_modules/@radix-ui/react-context": {
++      "version": "1.1.2",
++      "resolved": "https://registry.npmjs.org/@radix-ui/react-context/-/react-context-1.1.2.tgz",
++      "integrity": "sha512-jCi/QKUM2r1Ju5a3J64TH2A5SpKAgh0LpknyqdQ4m6DCV0xJ2HG1xARRwNGPQfi1SLdLWZ1OJz6F4OMBBNiGJA==",
++      "peerDependencies": {
++        "@types/react": "*",
++        "react": "^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc"
++      },
++      "peerDependenciesMeta": {
++        "@types/react": {
++          "optional": true
++        }
++      }
++    },
++    "node_modules/@radix-ui/react-label": {
++      "version": "2.1.7",
++      "resolved": "https://registry.npmjs.org/@radix-ui/react-label/-/react-label-2.1.7.tgz",
++      "integrity": "sha512-YT1GqPSL8kJn20djelMX7/cTRp/Y9w5IZHvfxQTVHrOqa2yMl7i/UfMqKRU5V7mEyKTrUVgJXhNQPVCG8PBLoQ==",
++      "dependencies": {
++        "@radix-ui/react-primitive": "2.1.3"
++      },
++      "peerDependencies": {
++        "@types/react": "*",
++        "@types/react-dom": "*",
++        "react": "^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc",
++        "react-dom": "^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc"
++      },
++      "peerDependenciesMeta": {
++        "@types/react": {
++          "optional": true
++        },
++        "@types/react-dom": {
++          "optional": true
++        }
++      }
++    },
++    "node_modules/@radix-ui/react-presence": {
++      "version": "1.1.5",
++      "resolved": "https://registry.npmjs.org/@radix-ui/react-presence/-/react-presence-1.1.5.tgz",
++      "integrity": "sha512-/jfEwNDdQVBCNvjkGit4h6pMOzq8bHkopq458dPt2lMjx+eBQUohZNG9A7DtO/O5ukSbxuaNGXMjHicgwy6rQQ==",
++      "dependencies": {
++        "@radix-ui/react-compose-refs": "1.1.2",
++        "@radix-ui/react-use-layout-effect": "1.1.1"
++      },
++      "peerDependencies": {
++        "@types/react": "*",
++        "@types/react-dom": "*",
++        "react": "^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc",
++        "react-dom": "^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc"
++      },
++      "peerDependenciesMeta": {
++        "@types/react": {
++          "optional": true
++        },
++        "@types/react-dom": {
++          "optional": true
++        }
++      }
++    },
++    "node_modules/@radix-ui/react-primitive": {
++      "version": "2.1.3",
++      "resolved": "https://registry.npmjs.org/@radix-ui/react-primitive/-/react-primitive-2.1.3.tgz",
++      "integrity": "sha512-m9gTwRkhy2lvCPe6QJp4d3G1TYEUHn/FzJUtq9MjH46an1wJU+GdoGC5VLof8RX8Ft/DlpshApkhswDLZzHIcQ==",
++      "dependencies": {
++        "@radix-ui/react-slot": "1.2.3"
++      },
++      "peerDependencies": {
++        "@types/react": "*",
++        "@types/react-dom": "*",
++        "react": "^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc",
++        "react-dom": "^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc"
++      },
++      "peerDependenciesMeta": {
++        "@types/react": {
++          "optional": true
++        },
++        "@types/react-dom": {
++          "optional": true
++        }
++      }
++    },
+     "node_modules/@radix-ui/react-slot": {
+       "version": "1.2.3",
+       "resolved": "https://registry.npmjs.org/@radix-ui/react-slot/-/react-slot-1.2.3.tgz",
+@@ -944,6 +1062,86 @@
+         }
+       }
+     },
++    "node_modules/@radix-ui/react-use-controllable-state": {
++      "version": "1.2.2",
++      "resolved": "https://registry.npmjs.org/@radix-ui/react-use-controllable-state/-/react-use-controllable-state-1.2.2.tgz",
++      "integrity": "sha512-BjasUjixPFdS+NKkypcyyN5Pmg83Olst0+c6vGov0diwTEo6mgdqVR6hxcEgFuh4QrAs7Rc+9KuGJ9TVCj0Zzg==",
++      "dependencies": {
++        "@radix-ui/react-use-effect-event": "0.0.2",
++        "@radix-ui/react-use-layout-effect": "1.1.1"
++      },
++      "peerDependencies": {
++        "@types/react": "*",
++        "react": "^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc"
++      },
++      "peerDependenciesMeta": {
++        "@types/react": {
++          "optional": true
++        }
++      }
++    },
++    "node_modules/@radix-ui/react-use-effect-event": {
++      "version": "0.0.2",
++      "resolved": "https://registry.npmjs.org/@radix-ui/react-use-effect-event/-/react-use-effect-event-0.0.2.tgz",
++      "integrity": "sha512-Qp8WbZOBe+blgpuUT+lw2xheLP8q0oatc9UpmiemEICxGvFLYmHm9QowVZGHtJlGbS6A6yJ3iViad/2cVjnOiA==",
++      "dependencies": {
++        "@radix-ui/react-use-layout-effect": "1.1.1"
++      },
++      "peerDependencies": {
++        "@types/react": "*",
++        "react": "^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc"
++      },
++      "peerDependenciesMeta": {
++        "@types/react": {
++          "optional": true
++        }
++      }
++    },
++    "node_modules/@radix-ui/react-use-layout-effect": {
++      "version": "1.1.1",
++      "resolved": "https://registry.npmjs.org/@radix-ui/react-use-layout-effect/-/react-use-layout-effect-1.1.1.tgz",
++      "integrity": "sha512-RbJRS4UWQFkzHTTwVymMTUv8EqYhOp8dOOviLj2ugtTiXRaRQS7GLGxZTLL1jWhMeoSCf5zmcZkqTl9IiYfXcQ==",
++      "peerDependencies": {
++        "@types/react": "*",
++        "react": "^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc"
++      },
++      "peerDependenciesMeta": {
++        "@types/react": {
++          "optional": true
++        }
++      }
++    },
++    "node_modules/@radix-ui/react-use-previous": {
++      "version": "1.1.1",
++      "resolved": "https://registry.npmjs.org/@radix-ui/react-use-previous/-/react-use-previous-1.1.1.tgz",
++      "integrity": "sha512-2dHfToCj/pzca2Ck724OZ5L0EVrr3eHRNsG/b3xQJLA2hZpVCS99bLAX+hm1IHXDEnzU6by5z/5MIY794/a8NQ==",
++      "peerDependencies": {
++        "@types/react": "*",
++        "react": "^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc"
++      },
++      "peerDependenciesMeta": {
++        "@types/react": {
++          "optional": true
++        }
++      }
++    },
++    "node_modules/@radix-ui/react-use-size": {
++      "version": "1.1.1",
++      "resolved": "https://registry.npmjs.org/@radix-ui/react-use-size/-/react-use-size-1.1.1.tgz",
++      "integrity": "sha512-ewrXRDTAqAXlkl6t/fkXWNAhFX9I+CkKlw6zjEwk86RSPKwZr3xpBRso655aqYafwtnbpHLj6toFzmd6xdVptQ==",
++      "dependencies": {
++        "@radix-ui/react-use-layout-effect": "1.1.1"
++      },
++      "peerDependencies": {
++        "@types/react": "*",
++        "react": "^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc"
++      },
++      "peerDependenciesMeta": {
++        "@types/react": {
++          "optional": true
++        }
++      }
++    },
+     "node_modules/@rtsao/scc": {
+       "version": "1.1.0",
+       "resolved": "https://registry.npmjs.org/@rtsao/scc/-/scc-1.1.0.tgz",
+@@ -1275,7 +1473,7 @@
+       "version": "19.1.7",
+       "resolved": "https://registry.npmjs.org/@types/react-dom/-/react-dom-19.1.7.tgz",
+       "integrity": "sha512-i5ZzwYpqjmrKenzkoLM2Ibzt6mAsM7pxB6BCIouEVVmgiqaMj1TjaK7hnA36hbW5aZv20kx7Lw6hWzPWg0Rurw==",
+-      "dev": true,
++      "devOptional": true,
+       "peerDependencies": {
+         "@types/react": "^19.0.0"
+       }
+@@ -4893,6 +5091,21 @@
+         "react": "^19.1.0"
+       }
+     },
++    "node_modules/react-hook-form": {
++      "version": "7.62.0",
++      "resolved": "https://registry.npmjs.org/react-hook-form/-/react-hook-form-7.62.0.tgz",
++      "integrity": "sha512-7KWFejc98xqG/F4bAxpL41NB3o1nnvQO1RWZT3TqRZYL8RryQETGfEdVnJN2fy1crCiBLLjkRBVK05j24FxJGA==",
++      "engines": {
++        "node": ">=18.0.0"
++      },
++      "funding": {
++        "type": "opencollective",
++        "url": "https://opencollective.com/react-hook-form"
++      },
++      "peerDependencies": {
++        "react": "^16.8.0 || ^17 || ^18 || ^19"
++      }
++    },
+     "node_modules/react-is": {
+       "version": "16.13.1",
+       "resolved": "https://registry.npmjs.org/react-is/-/react-is-16.13.1.tgz",
+diff --git a/package.json b/package.json
+index c408c8b..23e9837 100644
+--- a/package.json
++++ b/package.json
+@@ -9,6 +9,8 @@
+     "lint": "next lint"
+   },
+   "dependencies": {
++    "@radix-ui/react-checkbox": "^1.3.3",
++    "@radix-ui/react-label": "^2.1.7",
+     "@radix-ui/react-slot": "^1.2.3",
+     "class-variance-authority": "^0.7.1",
+     "clsx": "^2.1.1",
+@@ -19,6 +21,7 @@
+     "next": "15.4.6",
+     "react": "19.1.0",
+     "react-dom": "19.1.0",
++    "react-hook-form": "^7.62.0",
+     "tailwind-merge": "^3.3.1"
+   },
+   "devDependencies": {
+diff --git a/src/app/(Landing)/page.tsx b/src/app/(Landing)/page.tsx
+index 711b459..12f4767 100644
+--- a/src/app/(Landing)/page.tsx
++++ b/src/app/(Landing)/page.tsx
+@@ -1,19 +1,62 @@
+-import HeroSection from "@/components/shared/Hero/HeroSection";
+-import HeroSlider from "@/components/shared/Hero/HeroSlider";
++import HeroSlider, { HeroSliderI } from "@/components/shared/Hero/HeroSlider";
++import { MarathonRegistration } from "@/components/shared/registration/MarathonRegistration";
+ 
+ export default function Home() {
+-  const slides = [
++  const heroSlides: HeroSliderI[] = [
+     {
+-      title: "Welcome to NBC",
++      id: "1",
++      title: "NBC Dodoma",
++      subtitle: "Marathon",
+       description:
+-        "Empower your project with our comprehensive wireframe kits.",
+-      ctaText: "Get Started",
+-      imageUrl: "/images/individual-hero.jpg",
++        "Join thousands of runners in Tanzania's premier marathon event. Experience the thrill of running through the heart of Dodoma.",
++      backgroundImage: "/images/marathon-hero.png",
++      cta1: "Open Account",
++      cta2: "Learn More",
++      thumbnails: [
++        "/images/marathon-hero.png",
++        "/images/marathon-1.jpg",
++        "/images/marathon-2.jpg",
++        "/images/individual-hero.jpg",
++      ],
++    },
++    {
++      id: "2",
++      title: "Register",
++      subtitle: "Today",
++      description:
++        "Secure your spot in the most anticipated marathon of the year. Early bird registration now open with special discounts.",
++      backgroundImage: "/images/marathon-1.jpg",
++      cta1: "Register Now",
++      cta2: "View Packages",
++      thumbnails: [
++        "/images/marathon-1.jpg",
++        "/images/marathon-hero.png",
++        "/images/marathon-2.jpg",
++        "/images/individual-hero.jpg",
++      ],
++    },
++    {
++      id: "3",
++      title: "Start",
++      subtitle: "Training",
++      description:
++        "Get ready for the challenge with our comprehensive training programs designed for all fitness levels.",
++      backgroundImage: "/images/marathon-2.jpg",
++      cta1: "Training Plans",
++      cta2: "Join Community",
++      thumbnails: [
++        "/images/marathon-2.jpg",
++        "/images/marathon-hero.png",
++        "/images/marathon-1.jpg",
++        "/images/individual-hero.jpg",
++      ],
+     },
+   ];
++
+   return (
+     <div>
+-      <HeroSlider />
++      <HeroSlider heroSlides={heroSlides} />
++      <MarathonRegistration />
+     </div>
+   );
+ }
+diff --git a/src/app/globals.css b/src/app/globals.css
+index a8ba7ba..d3c733c 100644
+--- a/src/app/globals.css
++++ b/src/app/globals.css
+@@ -1,8 +1,24 @@
++@import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
++
++
+ @import "tailwindcss";
+ @import "tw-animate-css";
+ 
+ @custom-variant dark (&:is(.dark *));
+ 
++@theme {
++  /* My Primary Colors */
++  --color-primary-500: #111d45;
++  --color-primary-900: #1e347b;
++  --color-primary-950: #213a89;
++
++
++  /* Secondary Color */
++  --color-secondary-950: #dd0a14;
++
++
++}
++
+ @theme inline {
+   --color-background: var(--background);
+   --color-foreground: var(--foreground);
+@@ -52,11 +68,15 @@
+   --primary: oklch(0.275 0.135 261.5); /* Changed to #213A89 */
+   --primary-foreground: oklch(0.985 0.001 106.423);
+   --secondary: oklch(0.97 0.001 106.424);
+-  --secondary-foreground: oklch(0.275 0.135 261.5); /* Updated to match new primary */
++  --secondary-foreground: oklch(
++    0.275 0.135 261.5
++  ); /* Updated to match new primary */
+   --muted: oklch(0.97 0.001 106.424);
+   --muted-foreground: oklch(0.553 0.013 58.071);
+   --accent: oklch(0.97 0.001 106.424);
+-  --accent-foreground: oklch(0.275 0.135 261.5); /* Updated to match new primary */
++  --accent-foreground: oklch(
++    0.275 0.135 261.5
++  ); /* Updated to match new primary */
+   --destructive: oklch(0.577 0.245 27.325);
+   --border: oklch(0.923 0.003 48.717);
+   --input: oklch(0.923 0.003 48.717);
+@@ -68,10 +88,14 @@
+   --chart-5: oklch(0.769 0.188 70.08);
+   --sidebar: oklch(0.985 0.001 106.423);
+   --sidebar-foreground: oklch(0.147 0.004 49.25);
+-  --sidebar-primary: oklch(0.275 0.135 261.5); /* Updated to match new primary */
++  --sidebar-primary: oklch(
++    0.275 0.135 261.5
++  ); /* Updated to match new primary */
+   --sidebar-primary-foreground: oklch(0.985 0.001 106.423);
+   --sidebar-accent: oklch(0.97 0.001 106.424);
+-  --sidebar-accent-foreground: oklch(0.275 0.135 261.5); /* Updated to match new primary */
++  --sidebar-accent-foreground: oklch(
++    0.275 0.135 261.5
++  ); /* Updated to match new primary */
+   --sidebar-border: oklch(0.923 0.003 48.717);
+   --sidebar-ring: oklch(0.709 0.01 56.259);
+   --background: oklch(1 0 0);
+@@ -89,7 +113,9 @@ html {
+   --card-foreground: oklch(0.985 0.001 106.423);
+   --popover: oklch(0.216 0.006 56.043);
+   --popover-foreground: oklch(0.985 0.001 106.423);
+-  --primary: oklch(0.45 0.18 261.5); /* Lighter version of #213A89 for dark mode */
++  --primary: oklch(
++    0.45 0.18 261.5
++  ); /* Lighter version of #213A89 for dark mode */
+   --primary-foreground: oklch(0.985 0.001 106.423);
+   --secondary: oklch(0.268 0.007 34.298);
+   --secondary-foreground: oklch(0.985 0.001 106.423);
+@@ -123,4 +149,4 @@ html {
+   body {
+     @apply bg-background text-foreground;
+   }
+-}
+\ No newline at end of file
++}
+diff --git a/src/app/layout.tsx b/src/app/layout.tsx
+index 61b837c..7c53796 100644
+--- a/src/app/layout.tsx
++++ b/src/app/layout.tsx
+@@ -1,11 +1,8 @@
+ import type { Metadata } from "next";
+-import { Geist, Geist_Mono } from "next/font/google";
++import { Inter } from "next/font/google";
+ import "./globals.css";
+-const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
+-const geistMono = Geist_Mono({
+-  variable: "--font-geist-mono",
+-  subsets: ["latin"],
+-});
++
++const inter = Inter({ variable: "--font-inter", subsets: ["latin"] });
+ 
+ export const metadata: Metadata = {
+   title: {
+@@ -26,9 +23,7 @@ export default function RootLayout({
+         <link rel="icon" href="/images/logo.svg" />
+         <meta name="viewport" content="width=device-width, initial-scale=1" />
+       </head>
+-      <body
+-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+-      >
++      <body className={`${inter.variable} antialiased`}>
+         {children}
+       </body>
+     </html>
+diff --git a/src/components/layout/Footer.tsx b/src/components/layout/Footer.tsx
+index 5cbdd61..120c7dc 100644
+--- a/src/components/layout/Footer.tsx
++++ b/src/components/layout/Footer.tsx
+@@ -1,7 +1,238 @@
+-export default function Footer() {
+-    return (
+-      <footer className="w-full py-6 bg-background border-t text-center text-sm text-muted-foreground">
+-        © {new Date().getFullYear()} NBC Event Management. All rights reserved.
+-      </footer>
+-    );
+-  }
+\ No newline at end of file
++import { Twitter, Facebook, Linkedin } from "lucide-react";
++import Image from "next/image";
++import { Input } from "../ui/input";
++import { Button } from "../ui/button";
++import Link from "next/link";
++
++const footerLinkPaths = {
++  // Banking Solution
++  "Personal Banking": "/personal-banking",
++  "Business Banking": "/business-banking",
++  "Corporate Banking": "/corporate-banking",
++  "LaRiba Banking": "/lariba-banking",
++  // Useful Links
++  "Ways to bank": "/ways-to-bank",
++  "Forms & Tariff Guides": "/forms-tariff-guides",
++  "Whistle Blowing": "/whistle-blowing",
++  "Fraud Alert": "/fraud-alert",
++
++  Calculators: "/calculators",
++  // About US
++  "Investor Relation": "/investor-relation",
++  "Tender & Procurement": "/tender-procurement",
++  "News & Media Centers": "/news-media-centers",
++  "Carries & Vacancies": "/carries-vacancies",
++  Citzenship: "/citizenship",
++  // Help & Support
++  "Contact Us": "/contact-us",
++  "Feedback & Complains": "/feedback-complains",
++  "ATMs & Branches": "/atms-branches",
++  "Security Tips": "/security-center",
++  Cookies: "/cookies",
++  // Micro Sites
++  "NBC League": "/nbc-league",
++  "NBC Marathon": "/nbc-marathon",
++};
++
++function Footer() {
++  const footerSections = [
++    {
++      title: "Banking Solution",
++      items: [
++        "Personal Banking",
++        "Business Banking",
++        "Corporate Banking",
++        "LaRiba Banking",
++      ],
++      hasIcon: false,
++    },
++    {
++      title: "Useful Links",
++      items: [
++        "Ways to bank",
++        "Forms & Tariff Guides",
++        "Whistle Blowing",
++        "Fraud Alert",
++        "Calculators",
++      ],
++      hasIcon: false,
++    },
++    {
++      title: "About US",
++      items: [
++        "Investor Relation",
++        "Tender & Procurement",
++        "News & Media Centers",
++        "Carries & Vacancies",
++        "Citzenship",
++      ],
++      hasIcon: false,
++    },
++    {
++      title: "Help & Support",
++      items: [
++        "Contact Us",
++        "Feedback & Complains",
++        "ATMs & Branches",
++        "Security Tips",
++        "Cookies",
++      ],
++      hasIcon: false,
++    },
++    {
++      title: "Micro Sites",
++      items: ["NBC League", "NBC Marathon"],
++      hasIcon: true,
++    },
++  ];
++
++  return (
++    <div className="bg-primary-500 border-t-[4px] border-secondary-950">
++      <div className="container w-full mx-auto px-4 py-5">
++        {/* Header Section - Logo and Newsletter */}
++        <div className="flex flex-col lg:flex-row lg:justify-between lg:items-center gap-4 mb-6 border-b border-gray-500 py-5">
++          <div className="bg-white rounded-b-[13.58px] rounded-tr-[12.61px] px-2 w-fit">
++            <Image src="/images/logo.svg" alt="NBC Logo" width={80} height={80}/>
++          </div>
++          <div className="flex flex-col sm:flex-row gap-3 lg:justify-end w-full lg:w-auto">
++            <Input
++              placeholder="Enter your email to subscribe to our newsletter"
++              className="!bg-nbc-dark-700 w-full sm:w-80 border border-[#D3D8E7] text-white placeholder:text-[#9CA3AF]"
++            />
++            <Button>Subscribe</Button>
++          </div>
++        </div>
++
++        {/* Links Section */}
++        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5  mb-8 ">
++          {footerSections.map((section, index) => (
++            <div key={index} className="space-y-4">
++              <h5 className="uppercase text-[#81BEDB] font-[700] text-sm">
++                {section.title}
++              </h5>
++              <ul className="text-white space-y-3">
++                {section.items.map((item, itemIndex) => (
++                  <li key={itemIndex} className="text-xs">
++                    <Link
++                      href={
++                        footerLinkPaths[item as keyof typeof footerLinkPaths] ||
++                        "#"
++                      }
++                      className="hover:underline hover:text-[#81BEDB] transition-colors"
++                    >
++                      {item}
++                    </Link>
++                  </li>
++                ))}
++              </ul>
++
++              {/* App Store Downloads - only for Micro Sites section */}
++              {section.hasIcon && (
++                <div className="mt-6">
++                  <h5 className="uppercase text-[#81BEDB] font-[700] text-sm mb-3">
++                    Download Our App
++                  </h5>
++                  <div className="flex flex-col sm:flex-row gap-2">
++                    <div className="flex items-center bg-black text-white rounded-lg px-3 py-2 gap-3">
++                      <Image
++                        src="/images/GooglePlaylogo.svg"
++                        alt="Google Play"
++                        height={24}
++                        width={24}
++                        className="w-6 h-6"
++                      />
++                      <div className="flex flex-col whitespace-nowrap">
++                        <p className="uppercase text-xs pr-1">get it on</p>
++                        <div>
++                          <p className="capitalize font-[600] text-sm">
++                            google play
++                          </p>
++                        </div>
++                      </div>
++                    </div>
++                    <div className="flex items-center bg-black text-white rounded-lg px-3 py-2 gap-3">
++                      <Image
++                        src="/images/Applestore-white.svg"
++                        alt="App Store"
++                        className="w-6 h-6"
++                        height={24}
++                        width={24}
++                      />
++                      <div className="flex  whitespace-nowrap flex-col">
++                        <p className="font-[500] text-xs pr-1">
++                          Download on the
++                        </p>
++                        <p className="capitalize font-[600] text-sm">
++                          App store
++                        </p>
++                      </div>
++                    </div>
++                  </div>
++                </div>
++              )}
++            </div>
++          ))}
++        </div>
++
++        {/* Bottom Section */}
++        <div className="border-t-2 border-gray-500 pt-5">
++          <div className="flex flex-col lg:flex-row lg:justify-between lg:items-center gap-4 text-gray-200 text-xs">
++            {/* Copyright and Legal Links */}
++            <div className="flex flex-col lg:flex-row lg:items-center gap-2 lg:gap-4 flex-1">
++              <p className="whitespace-nowrap">
++                &copy; NBC - {new Date().getFullYear()}
++              </p>
++              <p className="text-xs leading-relaxed lg:max-w-md">
++                National Bank of Commerce Limited (registerd number 32700) is
++                regulated by the Bank of Tanzania
++              </p>
++              <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 text-xs">
++                <Link
++                  href="/data-privacy"
++                  className="hover:text-[#81BEDB] transition-colors"
++                >
++                  Data Privacy Statement
++                </Link>
++                <Link
++                  href="/terms-condition"
++                  className="hover:text-[#81BEDB] transition-colors"
++                >
++                  Terms & Condition
++                </Link>
++                <Link
++                  href="/website-terms"
++                  className="hover:text-[#81BEDB] transition-colors"
++                >
++                  Website Terms of use
++                </Link>
++              </div>
++            </div>
++
++            {/* Social Media Icons */}
++            <div className="flex gap-4 justify-center lg:justify-end">
++              <a href="https://x.com" target="_blank" rel="noopener noreferrer">
++                <Twitter className="text-white h-5 w-5 hover:text-[#81BEDB] transition-colors" />
++              </a>
++              <a
++                href="https://facebook.com"
++                target="_blank"
++                rel="noopener noreferrer"
++              >
++                <Facebook className="text-white h-5 w-5 hover:text-[#81BEDB] transition-colors" />
++              </a>
++              <a
++                href="https://linkedin.com"
++                target="_blank"
++                rel="noopener noreferrer"
++              >
++                <Linkedin className="text-white h-5 w-5 hover:text-[#81BEDB] transition-colors" />
++              </a>
++            </div>
++          </div>
++        </div>
++      </div>
++    </div>
++  );
++}
++
++export default Footer;
+diff --git a/src/components/layout/Navbar.tsx b/src/components/layout/Navbar.tsx
+index 39a02ec..412c566 100644
+--- a/src/components/layout/Navbar.tsx
++++ b/src/components/layout/Navbar.tsx
+@@ -1,41 +1,302 @@
++"use client";
++
++import { useState } from "react";
+ import Image from "next/image";
+ import Link from "next/link";
++import { usePathname } from "next/navigation";
++import { Button } from "../ui/button";
++import {
++  Search,
++  Globe,
++  Menu,
++  X,
++  Home,
++  Calendar,
++  Users,
++  ImageIcon,
++} from "lucide-react";
+ 
+ export default function Navbar() {
++  const [isMenuOpen, setIsMenuOpen] = useState(false);
++  const [isLanguageOpen, setIsLanguageOpen] = useState(false);
++  const [selectedLanguage, setSelectedLanguage] = useState("EN");
++  const [searchQuery, setSearchQuery] = useState("");
++  const pathname = usePathname();
++
++  const languages = [
++    { code: "EN", name: "English" },
++    { code: "ES", name: "Español" },
++    { code: "FR", name: "Français" },
++    { code: "DE", name: "Deutsch" },
++    { code: "AR", name: "العربية" },
++  ];
++
++  const navigationItems = [
++    { href: "/", label: "Home", icon: Home },
++    { href: "/events", label: "Events", icon: Calendar },
++    { href: "/partners", label: "Partners", icon: Users },
++    { href: "/about", label: "Gallery", icon: ImageIcon },
++  ];
++
++  const handleLanguageSelect = (lang: { code: string; name: string }) => {
++    setSelectedLanguage(lang.code);
++    setIsLanguageOpen(false);
++  };
++
++  const handleSearch = (e: React.FormEvent) => {
++    e.preventDefault();
++    // Handle search logic here
++    console.log("Searching for:", searchQuery);
++  };
++
++  const isActive = (href: string) => {
++    if (href === "/") {
++      return pathname === "/";
++    }
++    return pathname.startsWith(href);
++  };
++
+   return (
+-<nav className="sticky top-0 z-50 w-full flex items-center justify-between px-6 py-1 bg-background border-b">
++    <nav className="sticky top-0 z-50 w-full bg-background border-b-2 border-secondary-950">
++      <div className="flex items-center justify-between py-1 px-4 sm:px-6 lg:px-20">
++        {/* Logo and Desktop Navigation */}
++        <div className="flex items-center gap-x-8 lg:gap-x-20 w-full justify-evenly">
++          <div className="transform transition-transform duration-300 hover:scale-110">
++            <Image
++              src="/images/logo.svg"
++              alt="NBC Logo"
++              width={70}
++              height={70}
++            />
++          </div>
+ 
+-      <div className="flex items-center ">
+-        <Image src="/images/logo.svg" alt="NBC Logo" width={70} height={70} />
+-      </div>
+-      <div className="flex gap-6">
+-        <Link href="/" className="hover:underline">
+-          Home
+-        </Link>
+-        <Link href="/events" className="hover:underline">
+-          Events
+-        </Link>
+-        <Link href="/partners" className="hover:underline">
+-          Partners
+-        </Link>
+-        <Link href="/about" className="hover:underline">
+-          About Us
+-        </Link>
++          {/* Desktop Navigation Links */}
++          <div className="hidden md:flex gap-6">
++            {navigationItems.map((item) => {
++              const Icon = item.icon;
++              const active = isActive(item.href);
++
++              return (
++                // <Link
++                //   key={item.href}
++                //   href={item.href}
++                //   className={`relative group py-2 px-3 rounded-lg flex items-center gap-2 transition-all duration-300 transform hover:scale-105 ${
++                //     active
++                //       ? 'text-primary bg-primary/10 shadow-md'
++                //       : 'text-foreground hover:text-primary hover:bg-primary/5'
++                //   }`}
++                // >
++                <Link
++                  key={item.href}
++                  href={item.href}
++                  className={`relative group py-2 px-3 rounded-lg flex items-center gap-2 transition-all duration-300 transform hover:scale-105 ${
++                    active
++                      ? "text-primary  "
++                      : "text-foreground hover:text-primary"
++                  }`}
++                >
++                  {/* <Icon className={`w-4 h-4 transition-all duration-300 ${
++                    active ? 'text-primary' : 'group-hover:text-primary group-hover:rotate-12'
++                  }`} /> */}
++                  <span className="font-medium">{item.label}</span>
++                  <span
++                    className={`absolute left-0 bottom-0 h-0.5 bg-primary transition-all duration-300 ${
++                      active ? "w-full" : "w-0 group-hover:w-full"
++                    }`}
++                  ></span>
++                </Link>
++              );
++            })}
++          </div>
++        </div>
++
++        {/* Desktop Right Side - Search, Language, Login */}
++        <div className="hidden md:flex items-center gap-4 w-full justify-end">
++          {/* Search Input */}
++          <form onSubmit={handleSearch} className="relative group">
++            <div className="relative">
++              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4 transition-all duration-300 group-focus-within:text-primary group-focus-within:scale-110" />
++              <input
++                type="text"
++                placeholder="Search..."
++                value={searchQuery}
++                onChange={(e) => setSearchQuery(e.target.value)}
++                className="pl-10 pr-4 py-2 w-48 lg:w-64 rounded-md border border-input bg-background text-sm transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary hover:border-primary/50 focus:shadow-lg transform focus:scale-105"
++              />
++            </div>
++          </form>
++
++          {/* Language Dropdown */}
++          <div className="relative">
++            <button
++              onClick={() => setIsLanguageOpen(!isLanguageOpen)}
++              className="flex items-center gap-2 px-3 py-2 rounded-md border border-input bg-background transition-all duration-300 hover:border-primary/50 hover:bg-accent transform hover:scale-105 hover:shadow-md"
++            >
++              <Globe
++                className={`w-4 h-4 transition-all duration-300 ${
++                  isLanguageOpen ? "rotate-180 text-primary" : "hover:rotate-12"
++                }`}
++              />
++              <span className="text-sm font-medium">{selectedLanguage}</span>
++            </button>
++
++            {isLanguageOpen && (
++              <div className="absolute right-0 mt-1 w-40 bg-background border border-input rounded-md shadow-lg animate-in slide-in-from-top-2 duration-200 backdrop-blur-sm">
++                {languages.map((lang, index) => (
++                  <button
++                    key={lang.code}
++                    onClick={() => handleLanguageSelect(lang)}
++                    className="w-full text-left px-3 py-2 text-sm hover:bg-accent transition-all duration-200 first:rounded-t-md last:rounded-b-md transform hover:translate-x-1"
++                    style={{
++                      animationDelay: `${index * 50}ms`,
++                    }}
++                  >
++                    <span className="font-medium">{lang.code}</span>
++                    <span className="ml-2 text-muted-foreground">
++                      {lang.name}
++                    </span>
++                  </button>
++                ))}
++              </div>
++            )}
++          </div>
++
++          <Button className="transition-all duration-300 hover:scale-105 hover:shadow-lg transform hover:-translate-y-0.5 active:scale-95">
++            Login
++          </Button>
++        </div>
++
++        {/* Mobile Menu Button */}
++        <button
++          onClick={() => setIsMenuOpen(!isMenuOpen)}
++          className="md:hidden p-2 rounded-md hover:bg-accent transition-all duration-300 transform hover:scale-110 active:scale-95"
++        >
++          <div className="relative w-6 h-6">
++            <Menu
++              className={`absolute inset-0 w-6 h-6 transition-all duration-300 ${
++                isMenuOpen ? "opacity-0 rotate-180" : "opacity-100 rotate-0"
++              }`}
++            />
++            <X
++              className={`absolute inset-0 w-6 h-6 transition-all duration-300 ${
++                isMenuOpen ? "opacity-100 rotate-0" : "opacity-0 -rotate-180"
++              }`}
++            />
++          </div>
++        </button>
+       </div>
++
++      {/* Mobile Menu */}
++      {isMenuOpen && (
++        <div className="md:hidden border-t border-secondary-950 bg-background animate-in slide-in-from-top-2 duration-300">
++          <div className="px-4 py-4 space-y-4">
++            {/* Mobile Search */}
++            <form onSubmit={handleSearch} className="relative group">
++              <div className="relative">
++                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4 transition-all duration-300 group-focus-within:text-primary group-focus-within:scale-110" />
++                <input
++                  type="text"
++                  placeholder="Search..."
++                  value={searchQuery}
++                  onChange={(e) => setSearchQuery(e.target.value)}
++                  className="w-full pl-10 pr-4 py-2 rounded-md border border-input bg-background text-sm transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary focus:shadow-lg transform focus:scale-105"
++                />
++              </div>
++            </form>
++
++            {/* Mobile Navigation Links */}
++            <div className="space-y-2">
++              {navigationItems.map((item, index) => {
++                const Icon = item.icon;
++                const active = isActive(item.href);
++
++                return (
++                  <Link
++                    key={item.href}
++                    href={item.href}
++                    className={`flex items-center gap-3 py-3 px-4 rounded-lg transition-all duration-300 transform hover:translate-x-2 hover:scale-105 ${
++                      active
++                        ? "text-primary bg-primary/10 shadow-md border-l-4 border-primary"
++                        : "text-foreground hover:text-primary hover:bg-primary/5"
++                    }`}
++                    onClick={() => setIsMenuOpen(false)}
++                    style={{
++                      animationDelay: `${index * 100}ms`,
++                    }}
++                  >
++                    <Icon
++                      className={`w-5 h-5 transition-all duration-300 ${
++                        active
++                          ? "text-primary"
++                          : "group-hover:text-primary group-hover:rotate-12"
++                      }`}
++                    />
++                    <span className="font-medium">{item.label}</span>
++                    {active && (
++                      <div className="ml-auto w-2 h-2 bg-primary rounded-full animate-pulse"></div>
++                    )}
++                  </Link>
++                );
++              })}
++            </div>
++
++            {/* Mobile Language Selector */}
++            <div className="border-t border-secondary-950 pt-4">
++              <div className="relative">
++                <button
++                  onClick={() => setIsLanguageOpen(!isLanguageOpen)}
++                  className="flex items-center justify-between w-full px-3 py-2 rounded-md border border-input bg-background transition-all duration-300 hover:border-primary/50 hover:bg-accent transform hover:scale-105"
++                >
++                  <div className="flex items-center gap-2">
++                    <Globe
++                      className={`w-4 h-4 transition-all duration-300 ${
++                        isLanguageOpen
++                          ? "rotate-180 text-primary"
++                          : "hover:rotate-12"
++                      }`}
++                    />
++                    <span className="text-sm font-medium">
++                      {selectedLanguage}
++                    </span>
++                  </div>
++                  <span
++                    className={`text-xs transition-transform duration-300 ${
++                      isLanguageOpen ? "rotate-180" : ""
++                    }`}
++                  >
++                    ▼
++                  </span>
++                </button>
++
++                {isLanguageOpen && (
++                  <div className="mt-1 w-full bg-background border border-input rounded-md shadow-lg animate-in slide-in-from-top-2 duration-200">
++                    {languages.map((lang, index) => (
++                      <button
++                        key={lang.code}
++                        onClick={() => handleLanguageSelect(lang)}
++                        className="w-full text-left px-3 py-2 text-sm hover:bg-accent transition-all duration-200 first:rounded-t-md last:rounded-b-md transform hover:translate-x-1"
++                        style={{
++                          animationDelay: `${index * 50}ms`,
++                        }}
++                      >
++                        <span className="font-medium">{lang.code}</span>
++                        <span className="ml-2 text-muted-foreground">
++                          {lang.name}
++                        </span>
++                      </button>
++                    ))}
++                  </div>
++                )}
++              </div>
++            </div>
++
++            {/* Mobile Login Button */}
++            <Button className="w-full transition-all duration-300 hover:scale-105 hover:shadow-lg transform hover:-translate-y-0.5 active:scale-95">
++              Login
++            </Button>
++          </div>
++        </div>
++      )}
+     </nav>
+   );
+ }
+-
+-// export default function MainContent() {
+-//   return (
+-//     <main className="snap-y snap-mandatory h-screen overflow-y-scroll">
+-//       <section className="snap-start h-screen flex items-center justify-center transition-all duration-700">
+-//         {/* HeroSection */}
+-//       </section>
+-//       <section className="snap-start h-screen flex items-center justify-center transition-all duration-700">
+-//         {/* Other content */}
+-//       </section>
+-//       {/* ...more sections... */}
+-//     </main>
+-//   );
+-// }
+diff --git a/src/components/shared/Hero/HeroSlider.tsx b/src/components/shared/Hero/HeroSlider.tsx
+index 6ecda19..e493e92 100644
+--- a/src/components/shared/Hero/HeroSlider.tsx
++++ b/src/components/shared/Hero/HeroSlider.tsx
+@@ -5,65 +5,27 @@ import { Button } from "../../ui/button";
+ import ImagePreviewModal from "./ImagePreviewModal";
+ import { ChevronDown, ChevronLeft, ChevronRight } from "lucide-react";
+ 
++export type HeroSliderI = {
++  id: string;
++  title: string;
++  subtitle: string;
++  description: string;
++  backgroundImage: string;
++  cta1: string;
++  cta2: string;
++  thumbnails: string[];
++};
++
+ type HeroProps = {
+   height?: string;
+   autoplayInterval?: number;
++  heroSlides: HeroSliderI[];
+ };
+ 
+-const heroSlides = [
+-  {
+-    id: 1,
+-    title: "NBC Dodoma",
+-    subtitle: "Marathon",
+-    description:
+-      "Join thousands of runners in Tanzania's premier marathon event. Experience the thrill of running through the heart of Dodoma.",
+-    backgroundImage: "/images/marathon-hero.png",
+-    cta1: "Open Account",
+-    cta2: "Learn More",
+-    thumbnails: [
+-      "/images/marathon-hero.png",
+-      "/images/marathon-1.jpg",
+-      "/images/marathon-2.jpg",
+-      "/images/individual-hero.jpg",
+-    ],
+-  },
+-  {
+-    id: 2,
+-    title: "Register",
+-    subtitle: "Today",
+-    description:
+-      "Secure your spot in the most anticipated marathon of the year. Early bird registration now open with special discounts.",
+-    backgroundImage: "/images/marathon-1.jpg",
+-    cta1: "Register Now",
+-    cta2: "View Packages",
+-    thumbnails: [
+-      "/images/marathon-1.jpg",
+-      "/images/marathon-hero.png",
+-      "/images/marathon-2.jpg",
+-      "/images/individual-hero.jpg",
+-    ],
+-  },
+-  {
+-    id: 3,
+-    title: "Start",
+-    subtitle: "Training",
+-    description:
+-      "Get ready for the challenge with our comprehensive training programs designed for all fitness levels.",
+-    backgroundImage: "/images/marathon-2.jpg",
+-    cta1: "Training Plans",
+-    cta2: "Join Community",
+-    thumbnails: [
+-      "/images/marathon-2.jpg",
+-      "/images/marathon-hero.png",
+-      "/images/marathon-1.jpg",
+-      "/images/individual-hero.jpg",
+-    ],
+-  },
+-];
+-
+ function HeroSlider({
+-  height = "min-h-[90vh]",
++  height = "min-h-[100vh] sm:min-h-[90vh]",
+   autoplayInterval = 3000,
++  heroSlides
+ }: HeroProps) {
+   const [currentSlide, setCurrentSlide] = useState(0);
+   const [previewOpen, setPreviewOpen] = useState(false);
+@@ -71,7 +33,9 @@ function HeroSlider({
+   const [isTransitioning, setIsTransitioning] = useState(false);
+   const [isAutoplayPaused, setIsAutoplayPaused] = useState(false);
+   const [isMounted, setIsMounted] = useState(false);
+-  const [progressKey, setProgressKey] = useState(0); // Add this to reset animation
++  const [progressKey, setProgressKey] = useState(0);
++  const [touchStart, setTouchStart] = useState<number | null>(null);
++  const [touchEnd, setTouchEnd] = useState<number | null>(null);
+   const intervalRef = useRef<NodeJS.Timeout | null>(null);
+ 
+   // Handle client-side mounting
+@@ -114,6 +78,30 @@ function HeroSlider({
+     }
+   }, [previewOpen]);
+ 
++  // Touch handling for mobile swipe
++  const handleTouchStart = (e: React.TouchEvent) => {
++    setTouchEnd(null);
++    setTouchStart(e.targetTouches[0].clientX);
++  };
++
++  const handleTouchMove = (e: React.TouchEvent) => {
++    setTouchEnd(e.targetTouches[0].clientX);
++  };
++
++  const handleTouchEnd = () => {
++    if (!touchStart || !touchEnd) return;
++    
++    const distance = touchStart - touchEnd;
++    const isLeftSwipe = distance > 50;
++    const isRightSwipe = distance < -50;
++
++    if (isLeftSwipe) {
++      nextSlide();
++    } else if (isRightSwipe) {
++      prevSlide();
++    }
++  };
++
+   const goToSlide = (index: number) => {
+     if (isTransitioning) return;
+     setIsTransitioning(true);
+@@ -183,6 +171,9 @@ function HeroSlider({
+       className={`relative ${height} flex items-center overflow-hidden`}
+       onMouseEnter={handleMouseEnter}
+       onMouseLeave={handleMouseLeave}
++      onTouchStart={handleTouchStart}
++      onTouchMove={handleTouchMove}
++      onTouchEnd={handleTouchEnd}
+     >
+       {/* Sliding Background Images */}
+       <div className="absolute inset-0 z-0">
+@@ -195,7 +186,9 @@ function HeroSlider({
+               key={slide.id}
+               className="min-w-full h-full bg-cover bg-center relative"
+               style={{
+-                backgroundImage: `linear-gradient(to right, rgba(0, 0, 0, 0.9), transparent), url(${slide.backgroundImage})`,
++                backgroundImage: `linear-gradient(to right, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.5) 50%, rgba(0, 0, 0, 0.3) 100%), url(${slide.backgroundImage})`,
++                backgroundPosition: "center center",
++                backgroundSize: "cover",
+               }}
+               aria-label={`Hero Background Image ${index + 1}`}
+               role="img"
+@@ -205,31 +198,29 @@ function HeroSlider({
+         </div>
+       </div>
+ 
+-      {/* Navigation Chevrons */}
++      {/* Navigation Chevrons - Desktop and Tablet */}
+       <button
+         onClick={prevSlide}
+         disabled={isTransitioning}
+-        className="absolute left-4 top-1/2 transform -translate-y-1/2 z-20 bg-black/20 backdrop-blur-sm hover:bg-black/40 text-white p-3 rounded-full transition-all duration-300 hover:scale-110 disabled:opacity-50 disabled:cursor-not-allowed"
++        className="absolute left-2 sm:left-4 top-1/2 transform -translate-y-1/2 z-20 bg-black/20 backdrop-blur-sm hover:bg-black/40 text-white p-2 sm:p-3 rounded-full transition-all duration-300 hover:scale-110 disabled:opacity-50 disabled:cursor-not-allowed hidden sm:flex items-center justify-center"
+         aria-label="Previous slide"
+       >
+-        <ChevronLeft className="w-6 h-6" />
++        <ChevronLeft className="w-4 h-4 sm:w-6 sm:h-6" />
+       </button>
+ 
+       <button
+         onClick={nextSlide}
+         disabled={isTransitioning}
+-        className="absolute right-4 top-1/2 transform -translate-y-1/2 z-20 bg-black/20 backdrop-blur-sm hover:bg-black/40 text-white p-3 rounded-full transition-all duration-300 hover:scale-110 disabled:opacity-50 disabled:cursor-not-allowed"
++        className="absolute right-2 sm:right-4 top-1/2 transform -translate-y-1/2 z-20 bg-black/20 backdrop-blur-sm hover:bg-black/40 text-white p-2 sm:p-3 rounded-full transition-all duration-300 hover:scale-110 disabled:opacity-50 disabled:cursor-not-allowed hidden sm:flex items-center justify-center"
+         aria-label="Next slide"
+       >
+-        <ChevronRight className="w-6 h-6" />
++        <ChevronRight className="w-4 h-4 sm:w-6 sm:h-6" />
+       </button>
+ 
+       {/* Main Content Layout */}
+-      <div
+-        className={`relative z-10 w-full max-w-7xl mx-auto px-4 flex flex-col lg:flex-row items-center justify-between ${height}`}
+-      >
++      <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col lg:flex-row items-center justify-between min-h-full">
+         {/* Left Content - Sliding Text */}
+-        <div className="flex-1 lg:max-w-2xl pt-20 lg:pt-0">
++        <div className="flex-1 lg:max-w-2xl pt-16 sm:pt-20 lg:pt-0 text-center lg:text-left">
+           <div className="relative overflow-hidden">
+             <div
+               className="flex transition-transform duration-500 ease-in-out"
+@@ -237,29 +228,30 @@ function HeroSlider({
+             >
+               {heroSlides.map((slide, index) => (
+                 <div key={slide.id} className="min-w-full animate-fade-in">
+-                  <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold mb-6 text-white leading-tight">
++                  <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl 2xl:text-8xl font-bold mb-4 sm:mb-6 text-white leading-tight">
+                     {slide.title}
+                     <span className="block bg-gradient-accent bg-clip-text text-transparent">
+                       {slide.subtitle}
+                     </span>
+                   </h1>
+ 
+-                  <p className="text-lg md:text-xl text-white/90 mb-8 max-w-xl leading-relaxed">
++                  <p className="text-base sm:text-lg md:text-xl text-white/90 mb-6 sm:mb-8 max-w-sm sm:max-w-md lg:max-w-xl mx-auto lg:mx-0 leading-relaxed">
+                     {slide.description}
+                   </p>
+ 
+-                  <div className="flex flex-col sm:flex-row gap-4">
++                  <div className="flex  xs:flex-row sm:flex-row gap-3 sm:gap-4 justify-center lg:justify-start">
+                     <Button
+-                      variant="outline"
+-                      size="lg"
+-                      className="animate-scale-in animation-delay-300"
++              
++                      size="default"
++                      color="primary"
++                      className="animate-scale-in animation-delay-300 text-sm sm:text-base px-4 sm:px-6 py-2 sm:py-3 w-full xs:w-auto sm:w-auto"
+                     >
+                       {slide.cta1}
+                     </Button>
+                     <Button
+                       variant="outline"
+-                      size="lg"
+-                      className="animate-scale-in animation-delay-500"
++                      size="default"
++                      className="animate-scale-in animation-delay-500 text-sm sm:text-base px-4 sm:px-6 py-2 sm:py-3 w-full xs:w-auto sm:w-auto"
+                     >
+                       {slide.cta2}
+                     </Button>
+@@ -270,8 +262,8 @@ function HeroSlider({
+           </div>
+         </div>
+ 
+-        {/* Right Content - Slide Indicators */}
+-        <div className="hidden lg:flex flex-col justify-center items-center space-y-4">
++        {/* Right Content - Slide Indicators (Desktop only) */}
++        <div className="hidden xl:flex flex-col justify-center items-center space-y-4">
+           {heroSlides.map((_, index) => (
+             <button
+               key={index}
+@@ -282,19 +274,23 @@ function HeroSlider({
+                   ? "bg-white scale-125"
+                   : "bg-white/40 hover:bg-white/60"
+               }`}
++              aria-label={`Go to slide ${index + 1}`}
+             />
+           ))}
+         </div>
+       </div>
+ 
+-      {/* Bottom Thumbnail Images - Dynamic based on current slide */}
+-      <div className="absolute bottom-16 left-1/2 transform -translate-x-1/2 z-10 w-full max-w-md px-4">
+-        <div className="flex justify-center space-x-3">
++      {/* Bottom Thumbnail Images - Responsive */}
++      <div className="absolute bottom-20 sm:bottom-16 left-1/2 transform -translate-x-1/2 z-10 w-full max-w-xs sm:max-w-md lg:max-w-lg px-4">
++        <div className="flex justify-center space-x-2 sm:space-x-3">
++          {/* Show 3 thumbnails on mobile, 4 on larger screens using CSS */}
+           {heroSlides[currentSlide].thumbnails?.map((image, index) => (
+             <button
+               key={index}
+               onClick={() => openPreview(index)}
+-              className="w-16 h-16 md:w-20 md:h-20 rounded-lg overflow-hidden border-2 border-white/20 backdrop-blur-sm hover:border-white/40 transition-all duration-300 hover:scale-110 cursor-pointer"
++              className={`w-12 h-12 sm:w-16 sm:h-16 md:w-20 md:h-20 rounded-lg overflow-hidden border-2 border-white/20 backdrop-blur-sm hover:border-white/40 transition-all duration-300 hover:scale-110 cursor-pointer flex-shrink-0 ${
++                index >= 3 ? 'hidden sm:block' : ''
++              }`}
+             >
+               <Image
+                 src={image}
+@@ -304,60 +300,56 @@ function HeroSlider({
+                 width={160}
+               />
+             </button>
+-          ))}
++          )) || []}
+         </div>
+       </div>
+ 
+-      {/* Scroll Indicator */}
+-      <div className="absolute bottom-4 right-0 sm:right-25 transform -translate-x-1/2 z-10 flex flex-col items-center">
+-        <span className="text-white/70 text-sm mb-1">Scroll</span>
+-        <div className="w-6 h-10 border-2 border-white/30 rounded-full flex justify-center">
+-          <div className="w-1 h-3 bg-white/50 rounded-full mt-2 animate-bounce"></div>
++      {/* Scroll Indicator - Responsive positioning */}
++      <div className="absolute bottom-4 right-4 sm:right-8 lg:right-12 z-10 flex flex-col items-center">
++        <span className="text-white/70 text-xs sm:text-sm mb-1">Scroll</span>
++        <div className="w-5 h-8 sm:w-6 sm:h-10 border-2 border-white/30 rounded-full flex justify-center">
++          <div className="w-1 h-2 sm:h-3 bg-white/50 rounded-full mt-1 sm:mt-2 animate-bounce"></div>
+         </div>
+-        <ChevronDown className="w-4 h-4 text-white/50 animate-bounce mt-1" />
++        <ChevronDown className="w-3 h-3 sm:w-4 sm:h-4 text-white/50 animate-bounce mt-1" />
+       </div>
+ 
+-      {/* Mobile Slide Indicators */}
+-      <div className="absolute bottom-32 left-1/2 transform -translate-x-1/2 lg:hidden">
+-        <div className="flex space-x-2">
++      {/* Mobile/Tablet Slide Indicators */}
++      <div className="absolute bottom-28 sm:bottom-32 xl:bottom-32 left-1/2 transform -translate-x-1/2 xl:hidden">
++        <div className="flex space-x-1.5 sm:space-x-2">
+           {heroSlides.map((_, index) => (
+             <button
+               key={index}
+               onClick={() => goToSlide(index)}
+               disabled={isTransitioning}
+-              className={`w-2 h-2 rounded-full transition-all duration-300 disabled:opacity-50 ${
+-                index === currentSlide ? "bg-white" : "bg-white/40"
++              className={`w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full transition-all duration-300 disabled:opacity-50 ${
++                index === currentSlide ? "bg-white scale-110 sm:scale-125" : "bg-white/40"
+               }`}
++              aria-label={`Go to slide ${index + 1}`}
+             />
+           ))}
+         </div>
+       </div>
+ 
+-      {/* Autoplay Progress Indicator - More visible version */}
++      {/* Top Progress Indicator - More responsive */}
+       {isMounted && !isAutoplayPaused && (
+-        <div className="absolute top-6 left-1/2 transform -translate-x-1/2 z-30">
+-          <div className="w-32 h-1.5 bg-black/30 backdrop-blur-sm rounded-full overflow-hidden border border-white/20">
++        <div className="absolute top-4 sm:top-6 left-1/2 transform -translate-x-1/2 z-30">
++          <div className="w-24 sm:w-32 h-1 sm:h-1.5 bg-black/30 backdrop-blur-sm rounded-full overflow-hidden border border-white/20">
+             <div
+               key={progressKey}
+               className="h-full bg-gradient-to-r from-white/80 to-white rounded-full autoplay-progress-bar"
+             />
+           </div>
+-          {/* <div className="text-center mt-2">
+-            <span className="text-white/60 text-xs font-medium">
+-              {currentSlide + 1} / {heroSlides.length}
+-            </span>
+-          </div> */}
+         </div>
+       )}
+ 
+-      {/* Alternative: Side progress indicators with timing */}
++      {/* Side progress indicators (Large screens only) */}
+       {isMounted && (
+-        <div className="absolute right-6 top-1/2 transform -translate-y-1/2 z-30 hidden lg:block">
+-          <div className="flex flex-col space-y-3">
++        <div className="absolute right-4 lg:right-6 top-1/2 transform -translate-y-1/2 z-30 hidden lg:block">
++          <div className="flex flex-col space-y-2 lg:space-y-3">
+             {heroSlides.map((_, index) => (
+               <div
+                 key={index}
+-                className="relative w-1 h-12 bg-white/20 rounded-full overflow-hidden"
++                className="relative w-1 h-8 lg:h-12 bg-white/20 rounded-full overflow-hidden"
+               >
+                 <div
+                   className={`absolute bottom-0 left-0 right-0 bg-white rounded-full transition-all duration-300 ${
+@@ -381,14 +373,25 @@ function HeroSlider({
+         </div>
+       )}
+ 
+-      {/* Autoplay Progress Indicator - Only render on client */}
+-      {isMounted && !isAutoplayPaused && (
+-        <div className="absolute top-4 left-1/2 transform -translate-x-1/2 z-10">
+-          <div className="w-24 h-1 bg-white/20 rounded-full overflow-hidden">
+-            <div className="h-full bg-white/60 rounded-full autoplay-progress-bar" />
+-          </div>
+-        </div>
+-      )}
++      {/* Mobile Navigation Arrows (Touch-friendly) */}
++      <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 z-20 flex space-x-6 sm:hidden">
++        <button
++          onClick={prevSlide}
++          disabled={isTransitioning}
++          className="bg-black/30 backdrop-blur-sm text-white p-3 rounded-full transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed active:scale-95"
++          aria-label="Previous slide"
++        >
++          <ChevronLeft className="w-5 h-5" />
++        </button>
++        <button
++          onClick={nextSlide}
++          disabled={isTransitioning}
++          className="bg-black/30 backdrop-blur-sm text-white p-3 rounded-full transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed active:scale-95"
++          aria-label="Next slide"
++        >
++          <ChevronRight className="w-5 h-5" />
++        </button>
++      </div>
+ 
+       {/* Image Preview Modal */}
+       <ImagePreviewModal
+@@ -439,9 +442,25 @@ function HeroSlider({
+           }
+         `
+           : ""}
++
++        /* Custom responsive breakpoint for very small screens */
++        @media (max-width: 375px) {
++          .min-w-full h1 {
++            font-size: 2rem !important;
++            line-height: 1.2 !important;
++          }
++        }
++
++        /* Ensure touch targets are accessible */
++        @media (max-width: 640px) {
++          button {
++            min-height: 44px;
++            min-width: 44px;
++          }
++        }
+       `}</style>
+     </section>
+   );
+ }
+ 
+-export default HeroSlider;
++export default HeroSlider;
+\ No newline at end of file
+diff --git a/src/components/ui/button.tsx b/src/components/ui/button.tsx
+index a2df8dc..47a5483 100644
+--- a/src/components/ui/button.tsx
++++ b/src/components/ui/button.tsx
+@@ -1,59 +1,561 @@
++// import * as React from "react"
++// import { Slot } from "@radix-ui/react-slot"
++// import { cva, type VariantProps } from "class-variance-authority"
++
++// import { cn } from "@/lib/utils"
++
++// const buttonVariants = cva(
++//   " cursor-pointer inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive",
++//   {
++//     variants: {
++//       variant: {
++//         default:
++//           "bg-primary text-primary-foreground shadow-xs hover:bg-primary/90",
++//         destructive:
++//           "bg-destructive text-white shadow-xs hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60",
++//         outline:
++//           "border bg-background shadow-xs hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50",
++//         secondary:
++//           "bg-secondary text-secondary-foreground shadow-xs hover:bg-secondary/80",
++//         ghost:
++//           "hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50",
++//         link: "text-primary underline-offset-4 hover:underline",
++//       },
++//       size: {
++//         default: "h-9 px-4 py-2 has-[>svg]:px-3",
++//         sm: "h-8 rounded-md gap-1.5 px-3 has-[>svg]:px-2.5",
++//         lg: "h-10 rounded-md px-6 has-[>svg]:px-4",
++//         icon: "size-9",
++//       },
++//     },
++//     defaultVariants: {
++//       variant: "default",
++//       size: "default",
++//     },
++//   }
++// )
++
++// function Button({
++//   className,
++//   variant,
++//   size,
++//   asChild = false,
++//   ...props
++// }: React.ComponentProps<"button"> &
++//   VariantProps<typeof buttonVariants> & {
++//     asChild?: boolean
++//   }) {
++//   const Comp = asChild ? Slot : "button"
++
++//   return (
++//     <Comp
++//       data-slot="button"
++//       className={cn(buttonVariants({ variant, size, className }))}
++//       {...props}
++//     />
++//   )
++// }
++
++// export { Button, buttonVariants }
++
++
+ import * as React from "react"
+ import { Slot } from "@radix-ui/react-slot"
+ import { cva, type VariantProps } from "class-variance-authority"
+-
+ import { cn } from "@/lib/utils"
+ 
+ const buttonVariants = cva(
+-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive",
++  "cursor-pointer inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive",
+   {
+     variants: {
+       variant: {
+-        default:
+-          "bg-primary text-primary-foreground shadow-xs hover:bg-primary/90",
+-        destructive:
+-          "bg-destructive text-white shadow-xs hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60",
+-        outline:
+-          "border bg-background shadow-xs hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50",
+-        secondary:
+-          "bg-secondary text-secondary-foreground shadow-xs hover:bg-secondary/80",
+-        ghost:
+-          "hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50",
++        // Original variants
++        default: "bg-primary/90 text-primary-foreground shadow-xs hover:bg-primary",
++        destructive: "bg-destructive text-white shadow-xs hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60",
++        outline: "border bg-background shadow-xs hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50",
++        secondary: "bg-secondary text-secondary-foreground shadow-xs hover:bg-secondary/80",
++        ghost: "hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50",
+         link: "text-primary underline-offset-4 hover:underline",
++        
++        // Additional filled variants
++        filled: "shadow-xs",
++        
++        // Additional outline variants
++        "outline-dashed": "border-dashed border-2 bg-background hover:bg-accent hover:text-accent-foreground",
++        "outline-dotted": "border-dotted border-2 bg-background hover:bg-accent hover:text-accent-foreground",
++        
++        // Gradient variants
++        gradient: "bg-gradient-to-r shadow-xs text-white",
++        "gradient-outline": "bg-gradient-to-r p-[1px] [&>span]:bg-background [&>span]:rounded-[inherit] [&>span]:flex [&>span]:items-center [&>span]:justify-center [&>span]:w-full [&>span]:h-full",
++        
++        // Special effects
++        glow: "shadow-lg hover:shadow-xl transition-shadow",
++        glass: "backdrop-blur-sm bg-white/10 border border-white/20 text-white hover:bg-white/20",
+       },
++      
++      color: {
++        default: "",
++        primary: "",
++        secondary: "",
++        success: "",
++        warning: "",
++        danger: "",
++        info: "",
++        neutral: "",
++        purple: "",
++        pink: "",
++        indigo: "",
++        cyan: "",
++        teal: "",
++        lime: "",
++        orange: "",
++        rose: "",
++      },
++      
+       size: {
++        xs: "h-6 px-2 py-1 text-xs gap-1 has-[>svg]:px-1.5",
++        sm: "h-8 px-3 py-1.5 text-xs gap-1.5 has-[>svg]:px-2.5",
+         default: "h-9 px-4 py-2 has-[>svg]:px-3",
+-        sm: "h-8 rounded-md gap-1.5 px-3 has-[>svg]:px-2.5",
+-        lg: "h-10 rounded-md px-6 has-[>svg]:px-4",
++        md: "h-10 px-4 py-2 has-[>svg]:px-3",
++        lg: "h-11 px-6 py-2.5 text-base has-[>svg]:px-4",
++        xl: "h-12 px-8 py-3 text-lg has-[>svg]:px-6",
++        "2xl": "h-14 px-10 py-4 text-xl has-[>svg]:px-8",
+         icon: "size-9",
++        "icon-sm": "size-8",
++        "icon-lg": "size-10",
++        "icon-xl": "size-12",
++      },
++      
++      radius: {
++        none: "rounded-none",
++        sm: "rounded-sm",
++        default: "rounded-md",
++        md: "rounded-md",
++        lg: "rounded-lg",
++        xl: "rounded-xl",
++        "2xl": "rounded-2xl",
++        full: "rounded-full",
++      },
++      
++      width: {
++        auto: "w-auto",
++        full: "w-full",
++        fit: "w-fit",
++        "1/2": "w-1/2",
++        "1/3": "w-1/3",
++        "2/3": "w-2/3",
++        "1/4": "w-1/4",
++        "3/4": "w-3/4",
++      },
++      
++      shadow: {
++        none: "shadow-none",
++        sm: "shadow-sm",
++        default: "shadow",
++        md: "shadow-md",
++        lg: "shadow-lg",
++        xl: "shadow-xl",
++        "2xl": "shadow-2xl",
+       },
+     },
++    
+     defaultVariants: {
+       variant: "default",
+       size: "default",
++      radius: "default",
++      width: "auto",
++      shadow: "default",
++      color: "default",
+     },
++    
++    compoundVariants: [
++      // Filled color variants
++      {
++        variant: ["default", "filled"],
++        color: "primary",
++        class: "bg-primary-900 text-white hover:bg-primary-900 focus-visible:ring-primary-500 dark:focus-visible:ring-blue-400",
++      },
++      {
++        variant: ["default", "filled"],
++        color: "secondary",
++        class: "bg-gray-600 text-white hover:bg-gray-700 focus-visible:ring-gray-200 dark:focus-visible:ring-gray-400",
++      },
++      {
++        variant: ["default", "filled"],
++        color: "success",
++        class: "bg-green-600 text-white hover:bg-green-700 focus-visible:ring-green-200 dark:focus-visible:ring-green-400",
++      },
++      {
++        variant: ["default", "filled"],
++        color: "warning",
++        class: "bg-yellow-600 text-white hover:bg-yellow-700 focus-visible:ring-yellow-200 dark:focus-visible:ring-yellow-400",
++      },
++      {
++        variant: ["default", "filled"],
++        color: "danger",
++        class: "bg-red-600 text-white hover:bg-red-700 focus-visible:ring-red-200 dark:focus-visible:ring-red-400",
++      },
++      {
++        variant: ["default", "filled"],
++        color: "info",
++        class: "bg-sky-600 text-white hover:bg-sky-700 focus-visible:ring-sky-200 dark:focus-visible:ring-sky-400",
++      },
++      {
++        variant: ["default", "filled"],
++        color: "purple",
++        class: "bg-purple-600 text-white hover:bg-purple-700 focus-visible:ring-purple-200 dark:focus-visible:ring-purple-400",
++      },
++      {
++        variant: ["default", "filled"],
++        color: "pink",
++        class: "bg-pink-600 text-white hover:bg-pink-700 focus-visible:ring-pink-200 dark:focus-visible:ring-pink-400",
++      },
++      {
++        variant: ["default", "filled"],
++        color: "indigo",
++        class: "bg-indigo-600 text-white hover:bg-indigo-700 focus-visible:ring-indigo-200 dark:focus-visible:ring-indigo-400",
++      },
++      {
++        variant: ["default", "filled"],
++        color: "cyan",
++        class: "bg-cyan-600 text-white hover:bg-cyan-700 focus-visible:ring-cyan-200 dark:focus-visible:ring-cyan-400",
++      },
++      {
++        variant: ["default", "filled"],
++        color: "teal",
++        class: "bg-teal-600 text-white hover:bg-teal-700 focus-visible:ring-teal-200 dark:focus-visible:ring-teal-400",
++      },
++      {
++        variant: ["default", "filled"],
++        color: "lime",
++        class: "bg-lime-600 text-white hover:bg-lime-700 focus-visible:ring-lime-200 dark:focus-visible:ring-lime-400",
++      },
++      {
++        variant: ["default", "filled"],
++        color: "orange",
++        class: "bg-orange-600 text-white hover:bg-orange-700 focus-visible:ring-orange-200 dark:focus-visible:ring-orange-400",
++      },
++      {
++        variant: ["default", "filled"],
++        color: "rose",
++        class: "bg-rose-600 text-white hover:bg-rose-700 focus-visible:ring-rose-200 dark:focus-visible:ring-rose-400",
++      },
++      
++      // Outline color variants
++      {
++        variant: ["outline", "outline-dashed", "outline-dotted"],
++        color: "primary",
++        class: "border-blue-600 text-blue-600 hover:bg-blue-50 dark:border-blue-400 dark:text-blue-400 dark:hover:bg-blue-950",
++      },
++      {
++        variant: ["outline", "outline-dashed", "outline-dotted"],
++        color: "secondary",
++        class: "border-gray-600 text-gray-600 hover:bg-gray-50 dark:border-gray-400 dark:text-gray-400 dark:hover:bg-gray-950",
++      },
++      {
++        variant: ["outline", "outline-dashed", "outline-dotted"],
++        color: "success",
++        class: "border-green-600 text-green-600 hover:bg-green-50 dark:border-green-400 dark:text-green-400 dark:hover:bg-green-950",
++      },
++      {
++        variant: ["outline", "outline-dashed", "outline-dotted"],
++        color: "warning",
++        class: "border-yellow-600 text-yellow-600 hover:bg-yellow-50 dark:border-yellow-400 dark:text-yellow-400 dark:hover:bg-yellow-950",
++      },
++      {
++        variant: ["outline", "outline-dashed", "outline-dotted"],
++        color: "danger",
++        class: "border-red-600 text-red-600 hover:bg-red-50 dark:border-red-400 dark:text-red-400 dark:hover:bg-red-950",
++      },
++      {
++        variant: ["outline", "outline-dashed", "outline-dotted"],
++        color: "info",
++        class: "border-sky-600 text-sky-600 hover:bg-sky-50 dark:border-sky-400 dark:text-sky-400 dark:hover:bg-sky-950",
++      },
++      {
++        variant: ["outline", "outline-dashed", "outline-dotted"],
++        color: "purple",
++        class: "border-purple-600 text-purple-600 hover:bg-purple-50 dark:border-purple-400 dark:text-purple-400 dark:hover:bg-purple-950",
++      },
++      {
++        variant: ["outline", "outline-dashed", "outline-dotted"],
++        color: "pink",
++        class: "border-pink-600 text-pink-600 hover:bg-pink-50 dark:border-pink-400 dark:text-pink-400 dark:hover:bg-pink-950",
++      },
++      {
++        variant: ["outline", "outline-dashed", "outline-dotted"],
++        color: "indigo",
++        class: "border-indigo-600 text-indigo-600 hover:bg-indigo-50 dark:border-indigo-400 dark:text-indigo-400 dark:hover:bg-indigo-950",
++      },
++      {
++        variant: ["outline", "outline-dashed", "outline-dotted"],
++        color: "cyan",
++        class: "border-cyan-600 text-cyan-600 hover:bg-cyan-50 dark:border-cyan-400 dark:text-cyan-400 dark:hover:bg-cyan-950",
++      },
++      {
++        variant: ["outline", "outline-dashed", "outline-dotted"],
++        color: "teal",
++        class: "border-teal-600 text-teal-600 hover:bg-teal-50 dark:border-teal-400 dark:text-teal-400 dark:hover:bg-teal-950",
++      },
++      {
++        variant: ["outline", "outline-dashed", "outline-dotted"],
++        color: "lime",
++        class: "border-lime-600 text-lime-600 hover:bg-lime-50 dark:border-lime-400 dark:text-lime-400 dark:hover:bg-lime-950",
++      },
++      {
++        variant: ["outline", "outline-dashed", "outline-dotted"],
++        color: "orange",
++        class: "border-orange-600 text-orange-600 hover:bg-orange-50 dark:border-orange-400 dark:text-orange-400 dark:hover:bg-orange-950",
++      },
++      {
++        variant: ["outline", "outline-dashed", "outline-dotted"],
++        color: "rose",
++        class: "border-rose-600 text-rose-600 hover:bg-rose-50 dark:border-rose-400 dark:text-rose-400 dark:hover:bg-rose-950",
++      },
++      
++      // Ghost color variants
++      {
++        variant: "ghost",
++        color: "primary",
++        class: "text-blue-600 hover:bg-blue-50 dark:text-blue-400 dark:hover:bg-blue-950",
++      },
++      {
++        variant: "ghost",
++        color: "secondary",
++        class: "text-gray-600 hover:bg-gray-50 dark:text-gray-400 dark:hover:bg-gray-950",
++      },
++      {
++        variant: "ghost",
++        color: "success",
++        class: "text-green-600 hover:bg-green-50 dark:text-green-400 dark:hover:bg-green-950",
++      },
++      {
++        variant: "ghost",
++        color: "warning",
++        class: "text-yellow-600 hover:bg-yellow-50 dark:text-yellow-400 dark:hover:bg-yellow-950",
++      },
++      {
++        variant: "ghost",
++        color: "danger",
++        class: "text-red-600 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-950",
++      },
++      {
++        variant: "ghost",
++        color: "info",
++        class: "text-sky-600 hover:bg-sky-50 dark:text-sky-400 dark:hover:bg-sky-950",
++      },
++      {
++        variant: "ghost",
++        color: "purple",
++        class: "text-purple-600 hover:bg-purple-50 dark:text-purple-400 dark:hover:bg-purple-950",
++      },
++      {
++        variant: "ghost",
++        color: "pink",
++        class: "text-pink-600 hover:bg-pink-50 dark:text-pink-400 dark:hover:bg-pink-950",
++      },
++      {
++        variant: "ghost",
++        color: "indigo",
++        class: "text-indigo-600 hover:bg-indigo-50 dark:text-indigo-400 dark:hover:bg-indigo-950",
++      },
++      {
++        variant: "ghost",
++        color: "cyan",
++        class: "text-cyan-600 hover:bg-cyan-50 dark:text-cyan-400 dark:hover:bg-cyan-950",
++      },
++      {
++        variant: "ghost",
++        color: "teal",
++        class: "text-teal-600 hover:bg-teal-50 dark:text-teal-400 dark:hover:bg-teal-950",
++      },
++      {
++        variant: "ghost",
++        color: "lime",
++        class: "text-lime-600 hover:bg-lime-50 dark:text-lime-400 dark:hover:bg-lime-950",
++      },
++      {
++        variant: "ghost",
++        color: "orange",
++        class: "text-orange-600 hover:bg-orange-50 dark:text-orange-400 dark:hover:bg-orange-950",
++      },
++      {
++        variant: "ghost",
++        color: "rose",
++        class: "text-rose-600 hover:bg-rose-50 dark:text-rose-400 dark:hover:bg-rose-950",
++      },
++      
++      // Gradient color combinations
++      {
++        variant: "gradient",
++        color: "primary",
++        class: "from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800",
++      },
++      {
++        variant: "gradient",
++        color: "secondary",
++        class: "from-gray-600 to-gray-700 hover:from-gray-700 hover:to-gray-800",
++      },
++      {
++        variant: "gradient",
++        color: "success",
++        class: "from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700",
++      },
++      {
++        variant: "gradient",
++        color: "warning",
++        class: "from-yellow-500 to-orange-500 hover:from-yellow-600 hover:to-orange-600",
++      },
++      {
++        variant: "gradient",
++        color: "danger",
++        class: "from-red-600 to-rose-600 hover:from-red-700 hover:to-rose-700",
++      },
++      {
++        variant: "gradient",
++        color: "info",
++        class: "from-sky-600 to-blue-600 hover:from-sky-700 hover:to-blue-700",
++      },
++      {
++        variant: "gradient",
++        color: "purple",
++        class: "from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700",
++      },
++      {
++        variant: "gradient",
++        color: "pink",
++        class: "from-pink-600 to-rose-600 hover:from-pink-700 hover:to-rose-700",
++      },
++      {
++        variant: "gradient",
++        color: "cyan",
++        class: "from-cyan-600 to-teal-600 hover:from-cyan-700 hover:to-teal-700",
++      },
++      
++      // Glow effects with colors
++      {
++        variant: "glow",
++        color: "primary",
++        class: "bg-blue-600 text-white hover:bg-blue-700 shadow-blue-200 hover:shadow-blue-300 dark:shadow-blue-900/50 dark:hover:shadow-blue-800/50",
++      },
++      {
++        variant: "glow",
++        color: "success",
++        class: "bg-green-600 text-white hover:bg-green-700 shadow-green-200 hover:shadow-green-300 dark:shadow-green-900/50 dark:hover:shadow-green-800/50",
++      },
++      {
++        variant: "glow",
++        color: "danger",
++        class: "bg-red-600 text-white hover:bg-red-700 shadow-red-200 hover:shadow-red-300 dark:shadow-red-900/50 dark:hover:shadow-red-800/50",
++      },
++      {
++        variant: "glow",
++        color: "warning",
++        class: "bg-yellow-600 text-white hover:bg-yellow-700 shadow-yellow-200 hover:shadow-yellow-300 dark:shadow-yellow-900/50 dark:hover:shadow-yellow-800/50",
++      },
++      {
++        variant: "glow",
++        color: "purple",
++        class: "bg-purple-600 text-white hover:bg-purple-700 shadow-purple-200 hover:shadow-purple-300 dark:shadow-purple-900/50 dark:hover:shadow-purple-800/50",
++      },
++      
++      // Special size combinations
++      {
++        size: ["icon", "icon-sm", "icon-lg", "icon-xl"],
++        class: "p-0",
++      },
++    ],
+   }
+ )
+ 
+-function Button({
++export interface ButtonProps 
++  extends Omit<React.ComponentProps<"button">, "color">,
++    VariantProps<typeof buttonVariants> {
++  asChild?: boolean
++  leftIcon?: React.ReactNode
++  rightIcon?: React.ReactNode
++  loading?: boolean
++  loadingText?: string
++}
++
++const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(({
+   className,
+   variant,
+   size,
++  color,
++  radius,
++  width,
++  shadow,
+   asChild = false,
++  leftIcon,
++  rightIcon,
++  loading = false,
++  loadingText,
++  children,
++  disabled,
+   ...props
+-}: React.ComponentProps<"button"> &
+-  VariantProps<typeof buttonVariants> & {
+-    asChild?: boolean
+-  }) {
++}, ref) => {
+   const Comp = asChild ? Slot : "button"
+-
++  
++  const isIconOnly = size?.includes("icon") && !children
++  const content = loading ? (loadingText || children) : children
++  
+   return (
+     <Comp
++      ref={ref}
+       data-slot="button"
+-      className={cn(buttonVariants({ variant, size, className }))}
++      className={cn(
++        buttonVariants({ 
++          variant, 
++          size, 
++          color, 
++          radius, 
++          width, 
++          shadow, 
++          className 
++        })
++      )}
++      disabled={disabled || loading}
+       {...props}
+-    />
++    >
++      {loading && (
++        <svg 
++          className="animate-spin size-4" 
++          xmlns="http://www.w3.org/2000/svg" 
++          fill="none" 
++          viewBox="0 0 24 24"
++        >
++          <circle 
++            className="opacity-25" 
++            cx="12" 
++            cy="12" 
++            r="10" 
++            stroke="currentColor" 
++            strokeWidth="4"
++          />
++          <path 
++            className="opacity-75" 
++            fill="currentColor" 
++            d="m4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
++          />
++        </svg>
++      )}
++      {!loading && leftIcon && (
++        <span className="inline-flex shrink-0">
++          {leftIcon}
++        </span>
++      )}
++      {!isIconOnly && content}
++      {!loading && rightIcon && (
++        <span className="inline-flex shrink-0">
++          {rightIcon}
++        </span>
++      )}
++      {isIconOnly && !loading && (leftIcon || rightIcon || children)}
++    </Comp>
+   )
+-}
++})
++
++Button.displayName = "Button"
+ 
+ export { Button, buttonVariants }
 
+
+and for 
+
+
+diff --git a/package-lock.json b/package-lock.json
+index 6924e3f..ad7e7e4 100644
+--- a/package-lock.json
++++ b/package-lock.json
+@@ -27,7 +27,7 @@
+         "@radix-ui/react-switch": "^1.2.5",
+         "@radix-ui/react-tabs": "^1.1.12",
+         "@radix-ui/react-tooltip": "^1.2.7",
+-        "@tailwindcss/vite": "^4.1.11",
++        "@tailwindcss/vite": "^4.1.12",
+         "@tanstack/react-table": "^8.21.3",
+         "axios": "^1.11.0",
+         "class-variance-authority": "^0.7.1",
+@@ -48,7 +48,7 @@
+         "react-svg": "^16.3.0",
+         "sonner": "^2.0.6",
+         "tailwind-merge": "^3.3.1",
+-        "tailwindcss": "^4.1.11",
++        "tailwindcss": "^4.1.12",
+         "uuid": "^11.1.0",
+         "yup": "^1.7.0"
+       },
+@@ -72,6 +72,7 @@
+       "version": "2.3.0",
+       "resolved": "https://registry.npmjs.org/@ampproject/remapping/-/remapping-2.3.0.tgz",
+       "integrity": "sha512-30iZtAPgz+LTIYoeivqYo853f02jBYSd5uGnGpkFV0M3xOt9aN73erkgYAmZU43x4VfqcnLxW9Kpg3R5LC4YYw==",
++      "dev": true,
+       "license": "Apache-2.0",
+       "dependencies": {
+         "@jridgewell/gen-mapping": "^0.3.5",
+@@ -1104,7 +1105,6 @@
+       "version": "4.0.1",
+       "resolved": "https://registry.npmjs.org/@isaacs/fs-minipass/-/fs-minipass-4.0.1.tgz",
+       "integrity": "sha512-wgm9Ehl2jpeqP3zw/7mo3kRHFp5MEDhqAdwy1fTGkHAwnkGOVsgpvQhL8B5n1qlb01jV3n/bI0ZfZp5lWA1k4w==",
+-      "license": "ISC",
+       "dependencies": {
+         "minipass": "^7.0.4"
+       },
+@@ -1122,6 +1122,15 @@
+         "@jridgewell/trace-mapping": "^0.3.24"
+       }
+     },
++    "node_modules/@jridgewell/remapping": {
++      "version": "2.3.5",
++      "resolved": "https://registry.npmjs.org/@jridgewell/remapping/-/remapping-2.3.5.tgz",
++      "integrity": "sha512-LI9u/+laYG4Ds1TDKSJW2YPrIlcVYOwi2fUC6xB43lueCjgxV4lffOCZCtYFiH6TNOX+tQKXx97T4IKHbhyHEQ==",
++      "dependencies": {
++        "@jridgewell/gen-mapping": "^0.3.5",
++        "@jridgewell/trace-mapping": "^0.3.24"
++      }
++    },
+     "node_modules/@jridgewell/resolve-uri": {
+       "version": "3.1.2",
+       "resolved": "https://registry.npmjs.org/@jridgewell/resolve-uri/-/resolve-uri-3.1.2.tgz",
+@@ -2697,26 +2706,24 @@
+       ]
+     },
+     "node_modules/@tailwindcss/node": {
+-      "version": "4.1.11",
+-      "resolved": "https://registry.npmjs.org/@tailwindcss/node/-/node-4.1.11.tgz",
+-      "integrity": "sha512-yzhzuGRmv5QyU9qLNg4GTlYI6STedBWRE7NjxP45CsFYYq9taI0zJXZBMqIC/c8fViNLhmrbpSFS57EoxUmD6Q==",
+-      "license": "MIT",
++      "version": "4.1.12",
++      "resolved": "https://registry.npmjs.org/@tailwindcss/node/-/node-4.1.12.tgz",
++      "integrity": "sha512-3hm9brwvQkZFe++SBt+oLjo4OLDtkvlE8q2WalaD/7QWaeM7KEJbAiY/LJZUaCs7Xa8aUu4xy3uoyX4q54UVdQ==",
+       "dependencies": {
+-        "@ampproject/remapping": "^2.3.0",
+-        "enhanced-resolve": "^5.18.1",
+-        "jiti": "^2.4.2",
++        "@jridgewell/remapping": "^2.3.4",
++        "enhanced-resolve": "^5.18.3",
++        "jiti": "^2.5.1",
+         "lightningcss": "1.30.1",
+         "magic-string": "^0.30.17",
+         "source-map-js": "^1.2.1",
+-        "tailwindcss": "4.1.11"
++        "tailwindcss": "4.1.12"
+       }
+     },
+     "node_modules/@tailwindcss/oxide": {
+-      "version": "4.1.11",
+-      "resolved": "https://registry.npmjs.org/@tailwindcss/oxide/-/oxide-4.1.11.tgz",
+-      "integrity": "sha512-Q69XzrtAhuyfHo+5/HMgr1lAiPP/G40OMFAnws7xcFEYqcypZmdW8eGXaOUIeOl1dzPJBPENXgbjsOyhg2nkrg==",
++      "version": "4.1.12",
++      "resolved": "https://registry.npmjs.org/@tailwindcss/oxide/-/oxide-4.1.12.tgz",
++      "integrity": "sha512-gM5EoKHW/ukmlEtphNwaGx45fGoEmP10v51t9unv55voWh6WrOL19hfuIdo2FjxIaZzw776/BUQg7Pck++cIVw==",
+       "hasInstallScript": true,
+-      "license": "MIT",
+       "dependencies": {
+         "detect-libc": "^2.0.4",
+         "tar": "^7.4.3"
+@@ -2725,28 +2732,27 @@
+         "node": ">= 10"
+       },
+       "optionalDependencies": {
+-        "@tailwindcss/oxide-android-arm64": "4.1.11",
+-        "@tailwindcss/oxide-darwin-arm64": "4.1.11",
+-        "@tailwindcss/oxide-darwin-x64": "4.1.11",
+-        "@tailwindcss/oxide-freebsd-x64": "4.1.11",
+-        "@tailwindcss/oxide-linux-arm-gnueabihf": "4.1.11",
+-        "@tailwindcss/oxide-linux-arm64-gnu": "4.1.11",
+-        "@tailwindcss/oxide-linux-arm64-musl": "4.1.11",
+-        "@tailwindcss/oxide-linux-x64-gnu": "4.1.11",
+-        "@tailwindcss/oxide-linux-x64-musl": "4.1.11",
+-        "@tailwindcss/oxide-wasm32-wasi": "4.1.11",
+-        "@tailwindcss/oxide-win32-arm64-msvc": "4.1.11",
+-        "@tailwindcss/oxide-win32-x64-msvc": "4.1.11"
++        "@tailwindcss/oxide-android-arm64": "4.1.12",
++        "@tailwindcss/oxide-darwin-arm64": "4.1.12",
++        "@tailwindcss/oxide-darwin-x64": "4.1.12",
++        "@tailwindcss/oxide-freebsd-x64": "4.1.12",
++        "@tailwindcss/oxide-linux-arm-gnueabihf": "4.1.12",
++        "@tailwindcss/oxide-linux-arm64-gnu": "4.1.12",
++        "@tailwindcss/oxide-linux-arm64-musl": "4.1.12",
++        "@tailwindcss/oxide-linux-x64-gnu": "4.1.12",
++        "@tailwindcss/oxide-linux-x64-musl": "4.1.12",
++        "@tailwindcss/oxide-wasm32-wasi": "4.1.12",
++        "@tailwindcss/oxide-win32-arm64-msvc": "4.1.12",
++        "@tailwindcss/oxide-win32-x64-msvc": "4.1.12"
+       }
+     },
+     "node_modules/@tailwindcss/oxide-android-arm64": {
+-      "version": "4.1.11",
+-      "resolved": "https://registry.npmjs.org/@tailwindcss/oxide-android-arm64/-/oxide-android-arm64-4.1.11.tgz",
+-      "integrity": "sha512-3IfFuATVRUMZZprEIx9OGDjG3Ou3jG4xQzNTvjDoKmU9JdmoCohQJ83MYd0GPnQIu89YoJqvMM0G3uqLRFtetg==",
++      "version": "4.1.12",
++      "resolved": "https://registry.npmjs.org/@tailwindcss/oxide-android-arm64/-/oxide-android-arm64-4.1.12.tgz",
++      "integrity": "sha512-oNY5pq+1gc4T6QVTsZKwZaGpBb2N1H1fsc1GD4o7yinFySqIuRZ2E4NvGasWc6PhYJwGK2+5YT1f9Tp80zUQZQ==",
+       "cpu": [
+         "arm64"
+       ],
+-      "license": "MIT",
+       "optional": true,
+       "os": [
+         "android"
+@@ -2756,13 +2762,12 @@
+       }
+     },
+     "node_modules/@tailwindcss/oxide-darwin-arm64": {
+-      "version": "4.1.11",
+-      "resolved": "https://registry.npmjs.org/@tailwindcss/oxide-darwin-arm64/-/oxide-darwin-arm64-4.1.11.tgz",
+-      "integrity": "sha512-ESgStEOEsyg8J5YcMb1xl8WFOXfeBmrhAwGsFxxB2CxY9evy63+AtpbDLAyRkJnxLy2WsD1qF13E97uQyP1lfQ==",
++      "version": "4.1.12",
++      "resolved": "https://registry.npmjs.org/@tailwindcss/oxide-darwin-arm64/-/oxide-darwin-arm64-4.1.12.tgz",
++      "integrity": "sha512-cq1qmq2HEtDV9HvZlTtrj671mCdGB93bVY6J29mwCyaMYCP/JaUBXxrQQQm7Qn33AXXASPUb2HFZlWiiHWFytw==",
+       "cpu": [
+         "arm64"
+       ],
+-      "license": "MIT",
+       "optional": true,
+       "os": [
+         "darwin"
+@@ -2772,13 +2777,12 @@
+       }
+     },
+     "node_modules/@tailwindcss/oxide-darwin-x64": {
+-      "version": "4.1.11",
+-      "resolved": "https://registry.npmjs.org/@tailwindcss/oxide-darwin-x64/-/oxide-darwin-x64-4.1.11.tgz",
+-      "integrity": "sha512-EgnK8kRchgmgzG6jE10UQNaH9Mwi2n+yw1jWmof9Vyg2lpKNX2ioe7CJdf9M5f8V9uaQxInenZkOxnTVL3fhAw==",
++      "version": "4.1.12",
++      "resolved": "https://registry.npmjs.org/@tailwindcss/oxide-darwin-x64/-/oxide-darwin-x64-4.1.12.tgz",
++      "integrity": "sha512-6UCsIeFUcBfpangqlXay9Ffty9XhFH1QuUFn0WV83W8lGdX8cD5/+2ONLluALJD5+yJ7k8mVtwy3zMZmzEfbLg==",
+       "cpu": [
+         "x64"
+       ],
+-      "license": "MIT",
+       "optional": true,
+       "os": [
+         "darwin"
+@@ -2788,13 +2792,12 @@
+       }
+     },
+     "node_modules/@tailwindcss/oxide-freebsd-x64": {
+-      "version": "4.1.11",
+-      "resolved": "https://registry.npmjs.org/@tailwindcss/oxide-freebsd-x64/-/oxide-freebsd-x64-4.1.11.tgz",
+-      "integrity": "sha512-xdqKtbpHs7pQhIKmqVpxStnY1skuNh4CtbcyOHeX1YBE0hArj2romsFGb6yUmzkq/6M24nkxDqU8GYrKrz+UcA==",
++      "version": "4.1.12",
++      "resolved": "https://registry.npmjs.org/@tailwindcss/oxide-freebsd-x64/-/oxide-freebsd-x64-4.1.12.tgz",
++      "integrity": "sha512-JOH/f7j6+nYXIrHobRYCtoArJdMJh5zy5lr0FV0Qu47MID/vqJAY3r/OElPzx1C/wdT1uS7cPq+xdYYelny1ww==",
+       "cpu": [
+         "x64"
+       ],
+-      "license": "MIT",
+       "optional": true,
+       "os": [
+         "freebsd"
+@@ -2804,13 +2807,12 @@
+       }
+     },
+     "node_modules/@tailwindcss/oxide-linux-arm-gnueabihf": {
+-      "version": "4.1.11",
+-      "resolved": "https://registry.npmjs.org/@tailwindcss/oxide-linux-arm-gnueabihf/-/oxide-linux-arm-gnueabihf-4.1.11.tgz",
+-      "integrity": "sha512-ryHQK2eyDYYMwB5wZL46uoxz2zzDZsFBwfjssgB7pzytAeCCa6glsiJGjhTEddq/4OsIjsLNMAiMlHNYnkEEeg==",
++      "version": "4.1.12",
++      "resolved": "https://registry.npmjs.org/@tailwindcss/oxide-linux-arm-gnueabihf/-/oxide-linux-arm-gnueabihf-4.1.12.tgz",
++      "integrity": "sha512-v4Ghvi9AU1SYgGr3/j38PD8PEe6bRfTnNSUE3YCMIRrrNigCFtHZ2TCm8142X8fcSqHBZBceDx+JlFJEfNg5zQ==",
+       "cpu": [
+         "arm"
+       ],
+-      "license": "MIT",
+       "optional": true,
+       "os": [
+         "linux"
+@@ -2820,13 +2822,12 @@
+       }
+     },
+     "node_modules/@tailwindcss/oxide-linux-arm64-gnu": {
+-      "version": "4.1.11",
+-      "resolved": "https://registry.npmjs.org/@tailwindcss/oxide-linux-arm64-gnu/-/oxide-linux-arm64-gnu-4.1.11.tgz",
+-      "integrity": "sha512-mYwqheq4BXF83j/w75ewkPJmPZIqqP1nhoghS9D57CLjsh3Nfq0m4ftTotRYtGnZd3eCztgbSPJ9QhfC91gDZQ==",
++      "version": "4.1.12",
++      "resolved": "https://registry.npmjs.org/@tailwindcss/oxide-linux-arm64-gnu/-/oxide-linux-arm64-gnu-4.1.12.tgz",
++      "integrity": "sha512-YP5s1LmetL9UsvVAKusHSyPlzSRqYyRB0f+Kl/xcYQSPLEw/BvGfxzbH+ihUciePDjiXwHh+p+qbSP3SlJw+6g==",
+       "cpu": [
+         "arm64"
+       ],
+-      "license": "MIT",
+       "optional": true,
+       "os": [
+         "linux"
+@@ -2836,13 +2837,12 @@
+       }
+     },
+     "node_modules/@tailwindcss/oxide-linux-arm64-musl": {
+-      "version": "4.1.11",
+-      "resolved": "https://registry.npmjs.org/@tailwindcss/oxide-linux-arm64-musl/-/oxide-linux-arm64-musl-4.1.11.tgz",
+-      "integrity": "sha512-m/NVRFNGlEHJrNVk3O6I9ggVuNjXHIPoD6bqay/pubtYC9QIdAMpS+cswZQPBLvVvEF6GtSNONbDkZrjWZXYNQ==",
++      "version": "4.1.12",
++      "resolved": "https://registry.npmjs.org/@tailwindcss/oxide-linux-arm64-musl/-/oxide-linux-arm64-musl-4.1.12.tgz",
++      "integrity": "sha512-V8pAM3s8gsrXcCv6kCHSuwyb/gPsd863iT+v1PGXC4fSL/OJqsKhfK//v8P+w9ThKIoqNbEnsZqNy+WDnwQqCA==",
+       "cpu": [
+         "arm64"
+       ],
+-      "license": "MIT",
+       "optional": true,
+       "os": [
+         "linux"
+@@ -2852,13 +2852,12 @@
+       }
+     },
+     "node_modules/@tailwindcss/oxide-linux-x64-gnu": {
+-      "version": "4.1.11",
+-      "resolved": "https://registry.npmjs.org/@tailwindcss/oxide-linux-x64-gnu/-/oxide-linux-x64-gnu-4.1.11.tgz",
+-      "integrity": "sha512-YW6sblI7xukSD2TdbbaeQVDysIm/UPJtObHJHKxDEcW2exAtY47j52f8jZXkqE1krdnkhCMGqP3dbniu1Te2Fg==",
++      "version": "4.1.12",
++      "resolved": "https://registry.npmjs.org/@tailwindcss/oxide-linux-x64-gnu/-/oxide-linux-x64-gnu-4.1.12.tgz",
++      "integrity": "sha512-xYfqYLjvm2UQ3TZggTGrwxjYaLB62b1Wiysw/YE3Yqbh86sOMoTn0feF98PonP7LtjsWOWcXEbGqDL7zv0uW8Q==",
+       "cpu": [
+         "x64"
+       ],
+-      "license": "MIT",
+       "optional": true,
+       "os": [
+         "linux"
+@@ -2868,13 +2867,12 @@
+       }
+     },
+     "node_modules/@tailwindcss/oxide-linux-x64-musl": {
+-      "version": "4.1.11",
+-      "resolved": "https://registry.npmjs.org/@tailwindcss/oxide-linux-x64-musl/-/oxide-linux-x64-musl-4.1.11.tgz",
+-      "integrity": "sha512-e3C/RRhGunWYNC3aSF7exsQkdXzQ/M+aYuZHKnw4U7KQwTJotnWsGOIVih0s2qQzmEzOFIJ3+xt7iq67K/p56Q==",
++      "version": "4.1.12",
++      "resolved": "https://registry.npmjs.org/@tailwindcss/oxide-linux-x64-musl/-/oxide-linux-x64-musl-4.1.12.tgz",
++      "integrity": "sha512-ha0pHPamN+fWZY7GCzz5rKunlv9L5R8kdh+YNvP5awe3LtuXb5nRi/H27GeL2U+TdhDOptU7T6Is7mdwh5Ar3A==",
+       "cpu": [
+         "x64"
+       ],
+-      "license": "MIT",
+       "optional": true,
+       "os": [
+         "linux"
+@@ -2884,9 +2882,9 @@
+       }
+     },
+     "node_modules/@tailwindcss/oxide-wasm32-wasi": {
+-      "version": "4.1.11",
+-      "resolved": "https://registry.npmjs.org/@tailwindcss/oxide-wasm32-wasi/-/oxide-wasm32-wasi-4.1.11.tgz",
+-      "integrity": "sha512-Xo1+/GU0JEN/C/dvcammKHzeM6NqKovG+6921MR6oadee5XPBaKOumrJCXvopJ/Qb5TH7LX/UAywbqrP4lax0g==",
++      "version": "4.1.12",
++      "resolved": "https://registry.npmjs.org/@tailwindcss/oxide-wasm32-wasi/-/oxide-wasm32-wasi-4.1.12.tgz",
++      "integrity": "sha512-4tSyu3dW+ktzdEpuk6g49KdEangu3eCYoqPhWNsZgUhyegEda3M9rG0/j1GV/JjVVsj+lG7jWAyrTlLzd/WEBg==",
+       "bundleDependencies": [
+         "@napi-rs/wasm-runtime",
+         "@emnapi/core",
+@@ -2898,14 +2896,13 @@
+       "cpu": [
+         "wasm32"
+       ],
+-      "license": "MIT",
+       "optional": true,
+       "dependencies": {
+-        "@emnapi/core": "^1.4.3",
+-        "@emnapi/runtime": "^1.4.3",
+-        "@emnapi/wasi-threads": "^1.0.2",
+-        "@napi-rs/wasm-runtime": "^0.2.11",
+-        "@tybys/wasm-util": "^0.9.0",
++        "@emnapi/core": "^1.4.5",
++        "@emnapi/runtime": "^1.4.5",
++        "@emnapi/wasi-threads": "^1.0.4",
++        "@napi-rs/wasm-runtime": "^0.2.12",
++        "@tybys/wasm-util": "^0.10.0",
+         "tslib": "^2.8.0"
+       },
+       "engines": {
+@@ -2913,13 +2910,12 @@
+       }
+     },
+     "node_modules/@tailwindcss/oxide-win32-arm64-msvc": {
+-      "version": "4.1.11",
+-      "resolved": "https://registry.npmjs.org/@tailwindcss/oxide-win32-arm64-msvc/-/oxide-win32-arm64-msvc-4.1.11.tgz",
+-      "integrity": "sha512-UgKYx5PwEKrac3GPNPf6HVMNhUIGuUh4wlDFR2jYYdkX6pL/rn73zTq/4pzUm8fOjAn5L8zDeHp9iXmUGOXZ+w==",
++      "version": "4.1.12",
++      "resolved": "https://registry.npmjs.org/@tailwindcss/oxide-win32-arm64-msvc/-/oxide-win32-arm64-msvc-4.1.12.tgz",
++      "integrity": "sha512-iGLyD/cVP724+FGtMWslhcFyg4xyYyM+5F4hGvKA7eifPkXHRAUDFaimu53fpNg9X8dfP75pXx/zFt/jlNF+lg==",
+       "cpu": [
+         "arm64"
+       ],
+-      "license": "MIT",
+       "optional": true,
+       "os": [
+         "win32"
+@@ -2929,13 +2925,12 @@
+       }
+     },
+     "node_modules/@tailwindcss/oxide-win32-x64-msvc": {
+-      "version": "4.1.11",
+-      "resolved": "https://registry.npmjs.org/@tailwindcss/oxide-win32-x64-msvc/-/oxide-win32-x64-msvc-4.1.11.tgz",
+-      "integrity": "sha512-YfHoggn1j0LK7wR82TOucWc5LDCguHnoS879idHekmmiR7g9HUtMw9MI0NHatS28u/Xlkfi9w5RJWgz2Dl+5Qg==",
++      "version": "4.1.12",
++      "resolved": "https://registry.npmjs.org/@tailwindcss/oxide-win32-x64-msvc/-/oxide-win32-x64-msvc-4.1.12.tgz",
++      "integrity": "sha512-NKIh5rzw6CpEodv/++r0hGLlfgT/gFN+5WNdZtvh6wpU2BpGNgdjvj6H2oFc8nCM839QM1YOhjpgbAONUb4IxA==",
+       "cpu": [
+         "x64"
+       ],
+-      "license": "MIT",
+       "optional": true,
+       "os": [
+         "win32"
+@@ -2945,14 +2940,13 @@
+       }
+     },
+     "node_modules/@tailwindcss/vite": {
+-      "version": "4.1.11",
+-      "resolved": "https://registry.npmjs.org/@tailwindcss/vite/-/vite-4.1.11.tgz",
+-      "integrity": "sha512-RHYhrR3hku0MJFRV+fN2gNbDNEh3dwKvY8XJvTxCSXeMOsCRSr+uKvDWQcbizrHgjML6ZmTE5OwMrl5wKcujCw==",
+-      "license": "MIT",
++      "version": "4.1.12",
++      "resolved": "https://registry.npmjs.org/@tailwindcss/vite/-/vite-4.1.12.tgz",
++      "integrity": "sha512-4pt0AMFDx7gzIrAOIYgYP0KCBuKWqyW8ayrdiLEjoJTT4pKTjrzG/e4uzWtTLDziC+66R9wbUqZBccJalSE5vQ==",
+       "dependencies": {
+-        "@tailwindcss/node": "4.1.11",
+-        "@tailwindcss/oxide": "4.1.11",
+-        "tailwindcss": "4.1.11"
++        "@tailwindcss/node": "4.1.12",
++        "@tailwindcss/oxide": "4.1.12",
++        "tailwindcss": "4.1.12"
+       },
+       "peerDependencies": {
+         "vite": "^5.2.0 || ^6 || ^7"
+@@ -3612,7 +3606,6 @@
+       "version": "3.0.0",
+       "resolved": "https://registry.npmjs.org/chownr/-/chownr-3.0.0.tgz",
+       "integrity": "sha512-+IxzY9BZOQd/XuYPRmrvEVjF/nqj5kgT4kEq7VofrDoM1MxoRjEWkrCC3EtLi59TVawxTAn+orJwFQcrqEN1+g==",
+-      "license": "BlueOak-1.0.0",
+       "engines": {
+         "node": ">=18"
+       }
+@@ -3851,10 +3844,9 @@
+       }
+     },
+     "node_modules/enhanced-resolve": {
+-      "version": "5.18.2",
+-      "resolved": "https://registry.npmjs.org/enhanced-resolve/-/enhanced-resolve-5.18.2.tgz",
+-      "integrity": "sha512-6Jw4sE1maoRJo3q8MsSIn2onJFbLTOjY9hlx4DZXmOKvLRd1Ok2kXmAGXaafL2+ijsJZ1ClYbl/pmqr9+k4iUQ==",
+-      "license": "MIT",
++      "version": "5.18.3",
++      "resolved": "https://registry.npmjs.org/enhanced-resolve/-/enhanced-resolve-5.18.3.tgz",
++      "integrity": "sha512-d4lC8xfavMeBjzGr2vECC3fsGXziXZQyJxD868h2M/mBI3PwAuODxAkLkq5HYuvrPYcUtiLzsTo8U3PgX3Ocww==",
+       "dependencies": {
+         "graceful-fs": "^4.2.4",
+         "tapable": "^2.2.0"
+@@ -4491,8 +4483,7 @@
+     "node_modules/graceful-fs": {
+       "version": "4.2.11",
+       "resolved": "https://registry.npmjs.org/graceful-fs/-/graceful-fs-4.2.11.tgz",
+-      "integrity": "sha512-RbJ5/jmFcNNCcDV5o9eTnBLJ/HszWV0P73bc+Ff4nS/rJj+YaS6IGyiOL0VoBYX+l1Wrl3k63h/KrH+nhJ0XvQ==",
+-      "license": "ISC"
++      "integrity": "sha512-RbJ5/jmFcNNCcDV5o9eTnBLJ/HszWV0P73bc+Ff4nS/rJj+YaS6IGyiOL0VoBYX+l1Wrl3k63h/KrH+nhJ0XvQ=="
+     },
+     "node_modules/graphemer": {
+       "version": "1.4.0",
+@@ -4643,10 +4634,9 @@
+       "license": "ISC"
+     },
+     "node_modules/jiti": {
+-      "version": "2.4.2",
+-      "resolved": "https://registry.npmjs.org/jiti/-/jiti-2.4.2.tgz",
+-      "integrity": "sha512-rg9zJN+G4n2nfJl5MW3BMygZX56zKPNVEYYqq7adpmMh4Jn2QNEwhvQlFy6jPVdcod7txZtKHWnyZiA3a0zP7A==",
+-      "license": "MIT",
++      "version": "2.5.1",
++      "resolved": "https://registry.npmjs.org/jiti/-/jiti-2.5.1.tgz",
++      "integrity": "sha512-twQoecYPiVA5K/h6SxtORw/Bs3ar+mLUtoPSc7iMXzQzK8d7eJ/R09wmTwAjiamETn1cXYPGfNnu7DMoHgu12w==",
+       "bin": {
+         "jiti": "lib/jiti-cli.mjs"
+       }
+@@ -5050,7 +5040,6 @@
+       "version": "0.30.17",
+       "resolved": "https://registry.npmjs.org/magic-string/-/magic-string-0.30.17.tgz",
+       "integrity": "sha512-sNPKHvyjVf7gyjwS4xGTaW/mCnF8wnjtifKBEhxfZ7E/S8tQ0rssrwGNn6q8JH/ohItJfSQp9mBtQYuTlH5QnA==",
+-      "license": "MIT",
+       "dependencies": {
+         "@jridgewell/sourcemap-codec": "^1.5.0"
+       }
+@@ -5123,7 +5112,6 @@
+       "version": "7.1.2",
+       "resolved": "https://registry.npmjs.org/minipass/-/minipass-7.1.2.tgz",
+       "integrity": "sha512-qOOzS1cBTWYF4BH8fVePDBOO9iptMnGUEZwNc/cMWnTV2nVLZ7VoNWEPHkYczZA0pdoA7dl6e7FL659nX9S2aw==",
+-      "license": "ISC",
+       "engines": {
+         "node": ">=16 || 14 >=14.17"
+       }
+@@ -5132,7 +5120,6 @@
+       "version": "3.0.2",
+       "resolved": "https://registry.npmjs.org/minizlib/-/minizlib-3.0.2.tgz",
+       "integrity": "sha512-oG62iEk+CYt5Xj2YqI5Xi9xWUeZhDI8jjQmC5oThVH5JGCTgIjr7ciJDzC7MBzYd//WvR1OTmP5Q38Q8ShQtVA==",
+-      "license": "MIT",
+       "dependencies": {
+         "minipass": "^7.1.2"
+       },
+@@ -5144,7 +5131,6 @@
+       "version": "3.0.1",
+       "resolved": "https://registry.npmjs.org/mkdirp/-/mkdirp-3.0.1.tgz",
+       "integrity": "sha512-+NsyUUAZDmo6YVHzL/stxSu3t9YS1iljliy3BSDrXJ/dkn1KYdmtZODGGjLcc9XLgVVpH4KshHB8XmZgMhaBXg==",
+-      "license": "MIT",
+       "bin": {
+         "mkdirp": "dist/cjs/src/bin.js"
+       },
+@@ -5843,16 +5829,14 @@
+       }
+     },
+     "node_modules/tailwindcss": {
+-      "version": "4.1.11",
+-      "resolved": "https://registry.npmjs.org/tailwindcss/-/tailwindcss-4.1.11.tgz",
+-      "integrity": "sha512-2E9TBm6MDD/xKYe+dvJZAmg3yxIEDNRc0jwlNyDg/4Fil2QcSLjFKGVff0lAf1jjeaArlG/M75Ey/EYr/OJtBA==",
+-      "license": "MIT"
++      "version": "4.1.12",
++      "resolved": "https://registry.npmjs.org/tailwindcss/-/tailwindcss-4.1.12.tgz",
++      "integrity": "sha512-DzFtxOi+7NsFf7DBtI3BJsynR+0Yp6etH+nRPTbpWnS2pZBaSksv/JGctNwSWzbFjp0vxSqknaUylseZqMDGrA=="
+     },
+     "node_modules/tapable": {
+       "version": "2.2.2",
+       "resolved": "https://registry.npmjs.org/tapable/-/tapable-2.2.2.tgz",
+       "integrity": "sha512-Re10+NauLTMCudc7T5WLFLAwDhQ0JWdrMK+9B2M8zR5hRExKmsRDCBA7/aV/pNJFltmBFO5BAMlQFi/vq3nKOg==",
+-      "license": "MIT",
+       "engines": {
+         "node": ">=6"
+       }
+@@ -5861,7 +5845,6 @@
+       "version": "7.4.3",
+       "resolved": "https://registry.npmjs.org/tar/-/tar-7.4.3.tgz",
+       "integrity": "sha512-5S7Va8hKfV7W5U6g3aYxXmlPoZVAwUMy9AOKyF2fVuZa2UD3qZjg578OrLRt8PcNN1PleVaL/5/yYATNL0ICUw==",
+-      "license": "ISC",
+       "dependencies": {
+         "@isaacs/fs-minipass": "^4.0.0",
+         "chownr": "^3.0.0",
+@@ -5878,7 +5861,6 @@
+       "version": "5.0.0",
+       "resolved": "https://registry.npmjs.org/yallist/-/yallist-5.0.0.tgz",
+       "integrity": "sha512-YgvUTfwqyc7UXVMrB+SImsVYSmTS8X/tSrtdNZMImM+n7+QTriRXyXim0mBrTXNeqzVF0KWGgHPeiyViFFrNDw==",
+-      "license": "BlueOak-1.0.0",
+       "engines": {
+         "node": ">=18"
+       }
+diff --git a/package.json b/package.json
+index 3810806..a464dac 100644
+--- a/package.json
++++ b/package.json
+@@ -29,7 +29,7 @@
+     "@radix-ui/react-switch": "^1.2.5",
+     "@radix-ui/react-tabs": "^1.1.12",
+     "@radix-ui/react-tooltip": "^1.2.7",
+-    "@tailwindcss/vite": "^4.1.11",
++    "@tailwindcss/vite": "^4.1.12",
+     "@tanstack/react-table": "^8.21.3",
+     "axios": "^1.11.0",
+     "class-variance-authority": "^0.7.1",
+@@ -50,7 +50,7 @@
+     "react-svg": "^16.3.0",
+     "sonner": "^2.0.6",
+     "tailwind-merge": "^3.3.1",
+-    "tailwindcss": "^4.1.11",
++    "tailwindcss": "^4.1.12",
+     "uuid": "^11.1.0",
+     "yup": "^1.7.0"
+   },
+diff --git a/public/Screenshot 2025-08-14 at 09.49.52.png b/public/Screenshot 2025-08-14 at 09.49.52.png
+deleted file mode 100644
+index 8d942f7..0000000
+Binary files a/public/Screenshot 2025-08-14 at 09.49.52.png and /dev/null differ
+diff --git a/src/Page-Sections/CMSDashboard/NavigationPageSection.tsx b/src/Page-Sections/CMSDashboard/NavigationPageSection.tsx
+index eb38845..06c04a5 100644
+--- a/src/Page-Sections/CMSDashboard/NavigationPageSection.tsx
++++ b/src/Page-Sections/CMSDashboard/NavigationPageSection.tsx
+@@ -4,15 +4,19 @@ import {
+ } from "@/components/reusable/ReusableMenubar";
+ import Button from "@/components/ui/button";
+ import { CustomInput } from "@/components/ui/CustomInput";
++import { useCmsNavigation } from "@/hooks/CMS/useCmsNavigation";
+ import { titleToHandle } from "@/utils/titleToHandle";
+ import { Edit, EllipsisVertical, Trash2 } from "lucide-react";
+-import { useState } from "react";
++import { useEffect, useState } from "react";
++import { Link } from "react-router-dom";
+ 
+ function NavigationPageSection() {
+   const [title, setTitle] = useState("");
+   const [handle, setHandle] = useState("");
+   const [isHandleManuallyEdited, setIsHandleManuallyEdited] = useState(false);
+   const [createLoading] = useState();
++  const { navigations, findAllNavigations } = useCmsNavigation();
++  console.log("Navigations", navigations);
+ 
+   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+     const newTitle = e.target.value;
+@@ -54,6 +58,12 @@ function NavigationPageSection() {
+     // Handle menu item clicks here
+   };
+ 
++  useEffect(() => {
++    findAllNavigations();
++  }, []);
++
++  console.log("Navigations", navigations.data);
++
+   return (
+     <>
+       <div className="space-y-4">
+@@ -67,26 +77,48 @@ function NavigationPageSection() {
+         <div className="grid gap-6 xl:grid-cols-[1fr_minmax(280px,380px)] items-start w-full overflow-hidden">
+           <div className="min-w-0 space-y-6">
+             <div className="space-y-3">
+-              <div className="border border-gray-300 rounded-md p-4 bg-gray-100 flex items-center justify-between">
+-                <p className="text-sm font-bold text-nbc-dark-950">
+-                  Home Naigation
++              {Array.isArray(navigations.data?.content) &&
++              navigations.data.content.length > 0 ? (
++                <div className="">
++                  {navigations.data.content.map((navigation, index) => (
++                    <div
++                      className="border border-gray-300 rounded-md p-4 bg-gray-100 flex items-center justify-between"
++                      key={index}
++                    >
++                      <Link
++                        className="text-sm font-bold text-nbc-dark-950 capitalize"
++                        to={`${navigation.reference}`}
++                      >
++                        {navigation.title}
++                      </Link>
++                      <ReusableMenubar
++                        menu={menuConfig}
++                        onItemClick={handleItemClick}
++                      />
++                    </div>
++                  ))}
++                </div>
++              ) : (
++                <p className="text-sm text-gray-500 h-68 bg-gray-100 rounded-lg flex justify-center items-center flex-col gap-y-2">
++                  <p className="text-lg font-semibold">
++                    {" "}
++                    No navigations found.
++                  </p>
++
++                  <p>Please Add Navigation at the right container</p>
+                 </p>
+-                <ReusableMenubar
+-                  menu={menuConfig}
+-                  onItemClick={handleItemClick}
+-                />
+-              </div>
++              )}
+             </div>
+           </div>
+           <div className="space-y-4">
+-            <h2 className="text-lg font-semibold">New Collection</h2>
++            <h2 className="text-lg font-semibold">New Navigation</h2>
+             <div className="p-4 space-y-3 border border-gray-300 rounded-md bg-card">
+               <div>
+                 <CustomInput
+                   label="title"
+                   value={title}
+                   onChange={handleTitleChange}
+-                  placeholder="New Collection"
++                  placeholder="New Navigation"
+                 />
+               </div>
+               <div>
+@@ -94,7 +126,7 @@ function NavigationPageSection() {
+                   label="handle"
+                   value={handle}
+                   onChange={handleHandleChange}
+-                  placeholder="new_collection"
++                  placeholder="new_navigation"
+                 />
+               </div>
+               <div className="flex justify-end">
+diff --git a/src/Page-Sections/CMSDashboard/Parts/NavItemForm.tsx b/src/Page-Sections/CMSDashboard/Parts/NavItemForm.tsx
+index 6fbe0bd..27f51bc 100644
+--- a/src/Page-Sections/CMSDashboard/Parts/NavItemForm.tsx
++++ b/src/Page-Sections/CMSDashboard/Parts/NavItemForm.tsx
+@@ -1,59 +1,265 @@
++// import Button from "@/components/ui/button";
++// import { CustomInput } from "@/components/ui/CustomInput";
++// import { titleToHandle } from "@/utils/titleToHandle";
++// import { useState } from "react";
++
++// function NavItemForm({ onSave }: { onSave: () => void }) {
++//   const [title, setTitle] = useState("");
++//   const [handle, setHandle] = useState("");
++//   const [isHandleManuallyEdited, setIsHandleManuallyEdited] = useState(false);
++//   const [createLoading] = useState();
++
++//   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
++//     const newTitle = e.target.value;
++//     setTitle(newTitle);
++
++//     // Only auto-generate handle if it hasn't been manually edited
++//     if (!isHandleManuallyEdited) {
++//       setHandle(titleToHandle(newTitle));
++//     }
++//   };
++
++//   const handleHandleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
++//     setHandle(e.target.value);
++//     setIsHandleManuallyEdited(true);
++//   };
++
++//   return (
++//     <div className="space-y-4">
++//       <div>
++//         <CustomInput
++//           label="title"
++//           value={title}
++//           onChange={handleTitleChange}
++//           placeholder="New navigation"
++//         />
++//       </div>
++//       <div>
++//         <CustomInput
++//           label="URL"
++//           value={handle}
++//           onChange={handleHandleChange}
++//           placeholder="new_navigation"
++//         />
++//       </div>
++//       <div className="flex justify-end">
++//         <Button
++//           variant="primary"
++//           onClick={onSave}
++//           disabled={!title || !handle || createLoading}
++//           loading={createLoading}
++//         >
++//           {createLoading ? "Creating...." : "Create"}
++//         </Button>
++//       </div>
++//     </div>
++//   );
++// }
++
++// export default NavItemForm;
++
++
++import { FieldRenderer } from "@/components/cms/FieldRenderer";
+ import Button from "@/components/ui/button";
+-import { CustomInput } from "@/components/ui/CustomInput";
+-import { titleToHandle } from "@/utils/titleToHandle";
+-import { useState } from "react";
+-
+-function NavItemForm({ onSave }: { onSave: () => void }) {
+-  const [title, setTitle] = useState("");
+-  const [handle, setHandle] = useState("");
+-  const [isHandleManuallyEdited, setIsHandleManuallyEdited] = useState(false);
+-  const [createLoading] = useState();
+-
+-  const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+-    const newTitle = e.target.value;
+-    setTitle(newTitle);
+-
+-    // Only auto-generate handle if it hasn't been manually edited
+-    if (!isHandleManuallyEdited) {
+-      setHandle(titleToHandle(newTitle));
++import type { BlueprintFieldTypeI } from "@/types/cms/blueprint.interface";
++import { useState, useEffect } from "react";
++
++interface BlueprintSchema {
++  version: string;
++  sections: Array<{
++    id: string;
++    handle: string;
++    displayName: string;
++    order: number;
++    isCollapsible: boolean;
++    isCollapsed: boolean;
++    fields: BlueprintFieldTypeI[];
++  }>;
++  metadata: Record<string, any>;
++}
++
++interface Blueprint {
++  reference: string;
++  title: string;
++  handle: string;
++  type: string;
++  schema: BlueprintSchema;
++  isActive: boolean;
++  createdAt: string;
++  updatedAt: string;
++}
++
++interface NavItemFormProps {
++  onSave: (data: any) => void;
++  blueprint: Blueprint;
++  loading?: boolean;
++}
++
++function NavItemForm({ onSave, blueprint, loading = false }: NavItemFormProps) {
++  const [formData, setFormData] = useState<Record<string, any>>({});
++  const [createLoading, setCreateLoading] = useState(false);
++  console.log("Blueprint Schema:", blueprint);
++
++  // Initialize form data with empty values for all fields
++  useEffect(() => {
++    if (blueprint && blueprint.schema?.sections) {
++      const initialData: Record<string, any> = {};
++      
++      blueprint.schema.sections.forEach(section => {
++        section.fields?.forEach(field => {
++          // Set initial values based on field type
++          switch (field.config?.fieldType) {
++            case 'TEXT':
++            case 'TEXTAREA':
++            case 'LINK':
++              initialData[field.id] = '';
++              break;
++            case 'NUMBER':
++              initialData[field.id] = null;
++              break;
++            case 'toggle':
++              initialData[field.id] = false;
++              break;
++            case 'SELECT':
++              initialData[field.id] = '';
++              break;
++            case 'DATE':
++              initialData[field.id] = '';
++              break;
++            default:
++              initialData[field.id] = null;
++          }
++        });
++      });
++      
++      setFormData(initialData);
+     }
++  }, [blueprint]);
++
++  const handleFieldChange = (fieldId: string, value: any) => {
++    setFormData(prev => ({
++      ...prev,
++      [fieldId]: value
++    }));
+   };
+ 
+-  const handleHandleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+-    setHandle(e.target.value);
+-    setIsHandleManuallyEdited(true);
++  const validateForm = () => {
++    if (!blueprint?.schema?.sections) return false;
++
++    // Check all required fields are filled
++    for (const section of blueprint.schema.sections) {
++      for (const field of section.fields || []) {
++        if (field.isRequired) {
++          const value = formData[field.id];
++          
++          // Check if required field is empty/null/undefined
++          if (value === null || value === undefined || value === '') {
++            return false;
++          }
++          
++          // For LINK fields, additional validation might be needed
++          if (field.config?.fieldType === 'LINK' && typeof value === 'object') {
++            if (value.type === 'url' && !value.value) return false;
++            if (value.type === 'entry' && !value.entryId) return false;
++          }
++        }
++      }
++    }
++    
++    return true;
+   };
+ 
+-  return (
+-    <div className="space-y-4">
+-      <div>
+-        <CustomInput
+-          label="title"
+-          value={title}
+-          onChange={handleTitleChange}
+-          placeholder="New navigation"
+-        />
++  const handleSubmit = async () => {
++    if (!validateForm() || !blueprint) return;
++
++    setCreateLoading(true);
++    
++    try {
++      // Structure the data according to your blueprint schema
++      const submissionData = {
++        blueprintId: blueprint.reference,
++        fields: formData
++      };
++
++      await onSave(submissionData);
++    } catch (error) {
++      console.error('Error creating navigation item:', error);
++    } finally {
++      setCreateLoading(false);
++    }
++  };
++
++  // Show loading state while blueprint is being fetched
++  if (loading || !blueprint) {
++    return (
++      <div className="space-y-4">
++        <div className="animate-pulse">
++          <div className="h-4 bg-gray-200 rounded w-1/4 mb-2"></div>
++          <div className="h-10 bg-gray-200 rounded"></div>
++        </div>
++        <div className="animate-pulse">
++          <div className="h-4 bg-gray-200 rounded w-1/4 mb-2"></div>
++          <div className="h-10 bg-gray-200 rounded"></div>
++        </div>
+       </div>
+-      <div>
+-        <CustomInput
+-          label="URL"
+-          value={handle}
+-          onChange={handleHandleChange}
+-          placeholder="new_navigation"
+-        />
++    );
++  }
++
++  // Additional safety check for schema
++  if (!blueprint.schema?.sections) {
++    return (
++      <div className="p-4 border border-red-200 bg-red-50 rounded-md">
++        <p className="text-red-800 font-medium">Invalid Blueprint Schema</p>
++        <p className="text-red-600 text-sm mt-1">
++          The blueprint schema is missing or invalid. Please check the blueprint configuration.
++        </p>
+       </div>
+-      <div className="flex justify-end">
++    );
++  }
++
++  return (
++    <div className="space-y-6">
++      {/* Render fields by sections */}
++      {blueprint.schema.sections.map(section => (
++        <div key={section.id} className="space-y-4">
++          {/* Section header if there are multiple sections */}
++          {blueprint.schema.sections.length > 1 && (
++            <div className="border-b pb-2">
++              <h3 className="text-lg font-medium">{section.displayName}</h3>
++            </div>
++          )}
++          
++          {/* Render all fields in this section */}
++          {section.fields
++            .sort((a, b) => (a.order ?? 0) - (b.order ?? 0)) // Sort by order, default to 0 if undefined
++            .map(field => {
++              console.log("Field Types",field)
++              return (
++                <div key={field.id}>
++                  <FieldRenderer
++                    field={field}
++                    value={formData[field.id]}
++                    onChange={(value) => handleFieldChange(field.id, value)}
++                  />
++                </div>
++              );
++            })}
++        </div>
++      ))}
++
++      {/* Submit button */}
++      <div className="flex justify-end pt-4 border-t">
+         <Button
+           variant="primary"
+-          onClick={onSave}
+-          disabled={!title || !handle || createLoading}
++          onClick={handleSubmit}
++          disabled={!validateForm() || createLoading}
+           loading={createLoading}
+         >
+-          {createLoading ? "Creating...." : "Create"}
++          {createLoading ? "Creating..." : "Create Navigation Item"}
+         </Button>
+       </div>
+     </div>
+   );
+ }
+ 
+-export default NavItemForm;
++export default NavItemForm;
+\ No newline at end of file
+diff --git a/src/Pages/Dashboard/CMS/CMSPages/Navigation.tsx b/src/Pages/Dashboard/CMS/CMSPages/Navigation.tsx
+index d7f0f1e..6b4489a 100644
+--- a/src/Pages/Dashboard/CMS/CMSPages/Navigation.tsx
++++ b/src/Pages/Dashboard/CMS/CMSPages/Navigation.tsx
+@@ -1,11 +1,12 @@
+-import NavigationPageSection from "@/Page-Sections/CMSDashboard/NavigationPageSection"
++import NavigationPageSection from "@/Page-Sections/CMSDashboard/NavigationPageSection";
++import { CmsNavigationProvider } from "@/Providers/cmsNavigation.provider";
+ 
+ function Navigation() {
+   return (
+-    <div>
++    <CmsNavigationProvider>
+       <NavigationPageSection />
+-    </div>
+-  )
++    </CmsNavigationProvider>
++  );
+ }
+ 
+-export default Navigation
++export default Navigation;
+diff --git a/src/Pages/Dashboard/CMS/CMSPages/SingleNavigation.tsx b/src/Pages/Dashboard/CMS/CMSPages/SingleNavigation.tsx
+index 459d619..069cfaf 100644
+--- a/src/Pages/Dashboard/CMS/CMSPages/SingleNavigation.tsx
++++ b/src/Pages/Dashboard/CMS/CMSPages/SingleNavigation.tsx
+@@ -1,11 +1,14 @@
+ import ModalProvider from "@/Context/ModalContext";
+ import SingleNavigationPageSection from "@/Page-Sections/CMSDashboard/SingleNavigationPageSection";
++import { CmsNavigationProvider } from "@/Providers/cmsNavigation.provider";
+ 
+ function SingleNavigation() {
+   return (
+-    <ModalProvider>
+-      <SingleNavigationPageSection />
+-    </ModalProvider>
++    <CmsNavigationProvider>
++      <ModalProvider>
++        <SingleNavigationPageSection />
++      </ModalProvider>
++    </CmsNavigationProvider>
+   );
+ }
+ 
+diff --git a/src/components/cms/FieldRenderer.tsx b/src/components/cms/FieldRenderer.tsx
+index 9188cec..eaf145b 100644
+--- a/src/components/cms/FieldRenderer.tsx
++++ b/src/components/cms/FieldRenderer.tsx
+@@ -15,6 +15,7 @@ interface RendererProps {
+ 
+ // Helper function to normalize field data
+ function normalizeField(field: BlueprintFieldTypeI | FieldDefinition) {
++
+   // Check if it's a BlueprintFieldType (new API structure)
+   if ("displayName" in field && "config" in field) {
+     const blueprintField = field as BlueprintFieldTypeI;
+@@ -66,9 +67,9 @@ export function FieldRenderer({ field, value, onChange }: RendererProps) {
+   // Get placeholder from config if available
+   const placeholder =
+     normalizedField.config?.placeholder ||
+-    `Enter ${normalizedField.label.toLowerCase()}`;
++    `Enter ${normalizedField.label?.toLowerCase()}`;
+ 
+-  switch (normalizedField.type) {
++  switch (normalizedField.config?.type) {
+     case "TEXT":
+       return (
+         <div className="space-y-1">
+@@ -224,6 +225,20 @@ export function FieldRenderer({ field, value, onChange }: RendererProps) {
+           />
+         </div>
+       );
++      case "NAVIGATION":
++        return (
++          <div className="space-y-1">
++            <CustomInput
++              label={normalizedField.label}
++              description={normalizedField.instructions}
++              required={normalizedField.required}
++              id={normalizedField.id}
++              placeholder={placeholder}
++              value={value ?? ""}
++              onChange={(e) => onChange(e.target.value)}
++            />
++          </div>
++        );
+ 
+     default:
+       return (
+diff --git a/src/components/cms/NavigationBuilder.tsx.tsx b/src/components/cms/NavigationBuilder.tsx.tsx
+index 67f3549..9a2156a 100644
+--- a/src/components/cms/NavigationBuilder.tsx.tsx
++++ b/src/components/cms/NavigationBuilder.tsx.tsx
+@@ -1,4 +1,4 @@
+-import { useState } from "react";
++import { useEffect, useState } from "react";
+ import {
+   DndContext,
+   closestCenter,
+@@ -23,6 +23,8 @@ import { DragOverlayItem } from "./DragOverlayItem";
+ import { NavigationItem } from "./NavigationItem";
+ import { useModal } from "@/hooks/useModal";
+ import NavItemForm from "@/Page-Sections/CMSDashboard/Parts/NavItemForm";
++import { useParams } from "react-router-dom";
++import { useCmsNavigation } from "@/hooks/CMS/useCmsNavigation";
+ 
+ const initialItems: NavItem[] = [
+   {
+@@ -135,11 +137,15 @@ const initialItems: NavItem[] = [
+ 
+ export const NavigationBuilder = () => {
+   const [items, setItems] = useState<NavItem[]>(initialItems);
++  const { findNavigationById, navigation, findAllNavigationItems,navigationItems,findNavigationBlueprints,navigationBlueprints } = useCmsNavigation();
++
++
+   const [activeId, setActiveId] = useState<string | null>(null);
+   const [hasChanges, setHasChanges] = useState(false);
+   const [allExpanded, setAllExpanded] = useState(true);
+   const [, setDragOverId] = useState<string | null>(null);
+   const { openModal, closeModal } = useModal();
++  const { id } = useParams();
+ 
+   const sensors = useSensors(
+     useSensor(PointerSensor, {
+@@ -264,14 +270,14 @@ export const NavigationBuilder = () => {
+     return false;
+   };
+ 
+-//   const shouldDropAsChild = (
+-//     overItem: NavItem,
+-//     activeItem: NavItem
+-//   ): boolean => {
+-//     // For now, let's make items siblings by default
+-//     // This gives more predictable behavior
+-//     return false;
+-//   };
++  //   const shouldDropAsChild = (
++  //     overItem: NavItem,
++  //     activeItem: NavItem
++  //   ): boolean => {
++  //     // For now, let's make items siblings by default
++  //     // This gives more predictable behavior
++  //     return false;
++  //   };
+ 
+   const findItemWithParent = (
+     items: NavItem[],
+@@ -360,14 +366,10 @@ export const NavigationBuilder = () => {
+ 
+     setItems((prev) => [...prev, newItem]);
+     setHasChanges(true);
+-  
++
+     closeModal();
+   };
+ 
+-
+-
+-
+-
+   const toggleExpanded = (id: string) => {
+     const toggleInItems = (items: NavItem[]): NavItem[] => {
+       return items.map((item) => {
+@@ -383,13 +385,19 @@ export const NavigationBuilder = () => {
+     setItems(toggleInItems(items));
+   };
+ 
+-
+   const handleButtonClick = () => {
+-    openModal(<NavItemForm  onSave={addNewItem}/>, "Nav Item", "lg");
++    if (navigationBlueprints.data) {
++      openModal(
++        <NavItemForm onSave={addNewItem} blueprint={Array.isArray(navigationBlueprints.data) ? navigationBlueprints.data[0] : navigationBlueprints.data} />,
++        "Nav Item",
++        "lg"
++      );
++    } else {
++      // Optionally, show an error or fallback UI
++      console.error("Navigation blueprint data is not available.");
++    }
+   };
+ 
+-
+-
+   const expandAll = () => {
+     const expandItems = (items: NavItem[]): NavItem[] => {
+       return items.map((item) => ({
+@@ -427,9 +435,18 @@ export const NavigationBuilder = () => {
+ 
+   const activeItem = activeId ? findItemDeep(items, activeId) : null;
+ 
++  useEffect(() => {
++    if (id) {
++      findNavigationById(id);
++      findAllNavigationItems(id)
++      findNavigationBlueprints(id);
++    }
++  }, [id]);
++
+   return (
+     <div className="min-h-screen bg-nav-background">
+       <NavigationHeader
++        title={navigation?.data?.title || "Navigation"}
+         hasChanges={hasChanges}
+         onSave={saveChanges}
+         onDiscard={discardChanges}
+@@ -481,9 +498,9 @@ export const NavigationBuilder = () => {
+                 strategy={verticalListSortingStrategy}
+               >
+                 <div className="space-y-2">
+-                  {items.map((item) => (
++                  {navigationItems.data?.content.map((item) => (
+                     <NavigationItem
+-                      key={item.id}
++                      key={item.reference}
+                       item={item}
+                       onToggleExpanded={toggleExpanded}
+                       depth={0}
+diff --git a/src/components/cms/NavigationHeader.tsx b/src/components/cms/NavigationHeader.tsx
+index da8170b..8d48358 100644
+--- a/src/components/cms/NavigationHeader.tsx
++++ b/src/components/cms/NavigationHeader.tsx
+@@ -3,6 +3,7 @@ import Button from "@/components/ui/button";
+ 
+ type NavigationHeaderProps ={
+   hasChanges: boolean;
++  title:string
+   onSave: () => void;
+   onDiscard: () => void;
+   onAddItem: () => void;
+@@ -13,6 +14,7 @@ type NavigationHeaderProps ={
+ 
+ export const NavigationHeader: React.FC<NavigationHeaderProps> = ({
+   hasChanges,
++  title,
+   onSave,
+   onDiscard,
+   onAddItem,
+@@ -22,52 +24,13 @@ export const NavigationHeader: React.FC<NavigationHeaderProps> = ({
+ 
+   return (
+     <header className=" bg-nav-background">
+-      {/* Top bar */}
+-      {/* <div className="flex items-center justify-between px-6 py-3">
+-        {/* <div className="flex items-center gap-4">
+-          <div className="relative flex-1 max-w-md">
+-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-nav-text-muted" />
+-            <Input
+-              placeholder="Search..."
+-              className="pl-10 bg-nav-item border-nav-border text-nav-text placeholder:text-nav-text-muted focus:border-nav-accent focus:ring-nav-accent"
+-            />
+-          </div>
+-        </div> *
+-
+-        <div className="flex items-center gap-2">
+-          <Button
+-            variant="ghost"
+-            size="sm"
+-            className="text-nav-text-muted hover:text-nav-text hover:bg-nav-item-hover"
+-          >
+-            <Settings className="w-4 h-4" />
+-          </Button>
+-          <Button
+-            variant="ghost"
+-            size="sm"
+-            className="text-nav-text-muted hover:text-nav-text hover:bg-nav-item-hover"
+-          >
+-            <Book className="w-4 h-4" />
+-          </Button>
+-          <Button
+-            variant="ghost"
+-            size="sm"
+-            className="text-nav-text-muted hover:text-nav-text hover:bg-nav-item-hover"
+-          >
+-            <Monitor className="w-4 h-4" />
+-          </Button>
+-          <div className="w-8 h-8 rounded-full bg-gradient-primary flex items-center justify-center">
+-            <User className="w-4 h-4 text-white" />
+-          </div>
+-        </div>
+-      </div> */}
+-
++  
+       {/* Navigation header */}
+       <div className="px-6 py-4">
+         <div className="flex items-center justify-between">
+           <div className="flex items-center gap-3">
+             {/* <ChevronDown className="w-4 h-4 text-nav-text-muted" /> */}
+-            <h1 className="text-xl font-semibold text-nbc-dark-950">Navigation title</h1>
++            <h1 className="text-xl font-semibold text-nbc-dark-950">{title}</h1>
+           </div>
+ 
+           <div className="flex items-center gap-3">
+diff --git a/src/components/cms/NavigationItem.tsx b/src/components/cms/NavigationItem.tsx
+index f3bb48a..2b98273 100644
+--- a/src/components/cms/NavigationItem.tsx
++++ b/src/components/cms/NavigationItem.tsx
+@@ -9,10 +9,11 @@ import {
+   Edit,
+   MoreHorizontal,
+ } from "lucide-react";
+-import type { NavigationItem as NavItem } from "@/types/cms/navigation";
++import type { NavigationItemContentI } from "@/types/cms/navigation";
++
+ 
+ interface NavigationItemProps {
+-  item: NavItem;
++  item:NavigationItemContentI ;
+   onToggleExpanded: (id: string) => void;
+   depth: number;
+ }
+@@ -30,7 +31,7 @@ export const NavigationItem: React.FC<NavigationItemProps> = ({
+     transition,
+     isDragging,
+     isOver,
+-  } = useSortable({ id: item.id });
++  } = useSortable({ id: item.reference });
+ 
+   const style = {
+     transform: CSS.Transform.toString(transform),
+@@ -80,7 +81,7 @@ export const NavigationItem: React.FC<NavigationItemProps> = ({
+           <Button
+             variant="ghost"
+             size="sm"
+-            onClick={() => onToggleExpanded(item.id)}
++            onClick={() => onToggleExpanded(item.reference)}
+             className="p-0 w-5 h-5 text-nav-text-muted hover:text-nav-text hover:bg-transparent hover:scale-110 transition-all duration-200"
+           >
+             {isExpanded ? (
+@@ -96,11 +97,11 @@ export const NavigationItem: React.FC<NavigationItemProps> = ({
+         {/* Title */}
+         <div className="flex-1 flex items-center gap-2">
+           <span
+-            className={`text-sm font-medium transition-colors duration-200 ${
++            className={`text-sm font-medium transition-colors duration-200 capitalize ${
+               isDragging ? "text-nbc-dark-950" : "text-nav-text"
+             }`}
+           >
+-            {item.title}
++            {item.data.title}
+           </span>
+           {hasChildren && (
+             <span className="text-xs text-nav-text-muted bg-nav-item-hover px-2 py-1 rounded-full">
+diff --git a/src/lib/cmsTypes.ts b/src/lib/cmsTypes.ts
+index 219d146..699d1e2 100644
+--- a/src/lib/cmsTypes.ts
++++ b/src/lib/cmsTypes.ts
+@@ -7,6 +7,7 @@ export type FieldType =
+   | "DATE"
+   | "asset"
+   |"LINK"
++  |"NAVIGATION"
+   ;
+ 
+ export interface FieldOption {
+@@ -19,6 +20,7 @@ export interface FieldDefinition {
+   handle: string; // machine name
+   label: string;
+   type: FieldType;
++  config?:any
+   required?: boolean;
+   instructions?: string;
+   options?: FieldOption[]; // for select/radio
+diff --git a/src/types/cms/blueprint.interface.ts b/src/types/cms/blueprint.interface.ts
+index 21e3798..75331f3 100644
+--- a/src/types/cms/blueprint.interface.ts
++++ b/src/types/cms/blueprint.interface.ts
+@@ -1,25 +1,24 @@
+-
+ export interface BlueprintFieldConfigI {
+-    fieldType: string;
+-    type: string;
+-    inputType?: string;
+-    placeholder?: string;
+-    characterLimit?: number;
+-    autoComplete?: boolean;
+-    prepend?: string;
+-    append?: string;
+-    // Additional config properties from the API
+-    min?: string | number;
+-    max?: string | number;
+-    step?: string | number;
+-    rows?: number;
+-    cols?: number;
+-    multiple?: boolean;
+-    clearable?: boolean;
+-    searchable?: boolean;
+-    options?: any;
+-    [key: string]: any; // Allow additional config properties
+-  }
++  fieldType: string;
++  type: string;
++  inputType?: string;
++  placeholder?: string;
++  characterLimit?: number;
++  autoComplete?: boolean;
++  prepend?: string;
++  append?: string;
++  // Additional config properties from the API
++  min?: string | number;
++  max?: string | number;
++  step?: string | number;
++  rows?: number;
++  cols?: number;
++  multiple?: boolean;
++  clearable?: boolean;
++  searchable?: boolean;
++  options?: any;
++  [key: string]: any; // Allow additional config properties
++}
+ export interface BlueprintFieldTypeI {
+   id: string;
+   handle: string;
+@@ -29,9 +28,9 @@ export interface BlueprintFieldTypeI {
+   isRequired: boolean;
+   config: BlueprintFieldConfigI;
+   instructions?: string;
+-  options?: any[]; 
+-    label?: string;
+-    type?: string;
++  options?: any[];
++  label?: string;
++  type?: string;
+ }
+ 
+ export interface BlueprintSectionI {
+@@ -52,15 +51,15 @@ export interface BlueprintSchemaI {
+ }
+ 
+ export interface BlueprintContentI {
+-    reference: string;
+-    title: string;
+-    handle: string;
+-    type?: string; // Added since API includes this
+-    schema: BlueprintSchemaI;
+-    isActive: boolean;
+-    createdAt: string;
+-    updatedAt: string;
+-  }
++  reference: string;
++  title: string;
++  handle: string;
++  type?: string; // Added since API includes this
++  schema: BlueprintSchemaI;
++  isActive: boolean;
++  createdAt: string;
++  updatedAt: string;
++}
+ 
+ export interface BlueprintI {
+   content: BlueprintContentI[];
+@@ -70,19 +69,19 @@ export interface BlueprintI {
+   totalPages?: number;
+ }
+ 
+-
+-export type ApiFieldType = 
+-  | "TEXT" 
+-  | "TEXTAREA" 
+-  | "NUMBER" 
+-  | "SELECT" 
+-  | "DATE" 
++export type ApiFieldType =
++  | "TEXT"
++  | "TEXTAREA"
++  | "NUMBER"
++  | "SELECT"
++  | "DATE"
+   | "LINK"
+   | "TOGGLE"
+-  | "ASSET";
++  | "ASSET"
++  | "NAVIGATION";
+ 
+ // Field option interface for select fields
+ export interface FieldOptionI {
+   label: string;
+   value: string;
+-}
+\ No newline at end of file
++}
+diff --git a/src/types/cms/navigation.ts b/src/types/cms/navigation.ts
+index daf24dd..5c6d770 100644
+--- a/src/types/cms/navigation.ts
++++ b/src/types/cms/navigation.ts
+@@ -1,3 +1,5 @@
++import type { BlueprintFieldTypeI } from "./blueprint.interface";
++
+ export type NavigationItem = {
+   id: string;
+   title: string;
+@@ -12,3 +14,62 @@ export type DraggedItem = {
+   title: string;
+   parentId?: string;
+ };
++
++export type NavigationContentI = {
++  description: string;
++  expectRootPage: boolean;
++  handle: string;
++  reference: string;
++  title: string;
++};
++export type NavigationI = {
++  content: NavigationContentI;
++  page: number;
++  size: number;
++  totalElements: number;
++  totalPages: number;
++};
++
++export type NavigationItemContentI = {
++  reference: string;
++  children:[]
++  isExpanded?: boolean;
++  data: {
++    link: string;
++    title: string;
++  };
++};
++
++export type NavigationItemI = {
++  content: NavigationItemContentI[];
++  page: number;
++  size: number;
++  totalElements: number;
++  totalPages: number;
++};
++
++
++export type NavigationBlueprintSchemaI ={
++  version: string;
++  sections: Array<{
++    id: string;
++    handle: string;
++    displayName: string;
++    order: number;
++    isCollapsible: boolean;
++    isCollapsed: boolean;
++    fields: BlueprintFieldTypeI[];
++  }>;
++  metadata: Record<string, any>;
++}
++
++export type NavigationBlueprintI = {
++  reference: string;
++  title: string;
++  handle: string;
++  type: string;
++  schema: NavigationBlueprintSchemaI;
++  isActive: boolean;
++  createdAt: string;
++  updatedAt: string;
++}
+\ No newline at end of file
