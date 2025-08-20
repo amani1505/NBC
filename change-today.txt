@@ -1,0 +1,2668 @@
+diff --git a/src/Context/CMs/cmsNavigation.context.tsx b/src/Context/CMs/cmsNavigation.context.tsx
+index 5178523..e695b97 100644
+--- a/src/Context/CMs/cmsNavigation.context.tsx
++++ b/src/Context/CMs/cmsNavigation.context.tsx
+@@ -30,7 +30,8 @@ type CmsNavigationProps = {
+   }) => Promise<any>;
+   createNavigationItem: (
+     navigationId: string,
+-    data: { title: string; description: string; url?: string }
++    data: { title: string; description: string; url?: string },
++    parentRef?:string
+   ) => Promise<any>;
+   updateNavigation: (
+     id: string,
+diff --git a/src/Context/ModalContext.tsx b/src/Context/ModalContext.tsx
+index 6bb352d..b8113b5 100644
+--- a/src/Context/ModalContext.tsx
++++ b/src/Context/ModalContext.tsx
+@@ -8,8 +8,8 @@ export type ModalContextType = {
+   openModal: (
+     content: React.ReactNode,
+     title?: string,
++    size?: ModalSize,
+     description?: string,
+-    size?: ModalSize
+   ) => void;
+   closeModal: () => void;
+   modalTitle: string;
+@@ -32,8 +32,8 @@ const ModalProvider = ({ children }: { children: React.ReactNode }) => {
+     (
+       content: React.ReactNode,
+       title = "",
++      size: ModalSize = "auto",
+       description = "",
+-      size: ModalSize = "auto"
+     ) => {
+       setModalContent(content);
+       setModalTitle(title);
+diff --git a/src/Page-Sections/CMSDashboard/CMSLoginPageSection.tsx b/src/Page-Sections/CMSDashboard/CMSLoginPageSection.tsx
+index f52c1c0..1f57cd1 100644
+--- a/src/Page-Sections/CMSDashboard/CMSLoginPageSection.tsx
++++ b/src/Page-Sections/CMSDashboard/CMSLoginPageSection.tsx
+@@ -4,110 +4,112 @@ import * as Yup from "yup";
+ import Button from "@/components/ui/button";
+ import { CustomInput } from "@/components/ui/CustomInput";
+ import { useCMSAuth } from "@/hooks/CMS/useCMSAuth";
+-
++import { useEffect } from "react";
+ 
+ const validationSchema = Yup.object({
+-    clientId: Yup.string()
+-      .required("Username is required")
+-      .min(3, "Username must be at least 3 characters"),
+-    clientSecret: Yup.string()
+-      .required("Password is required")
+-      .min(6, "Password must be at least 6 characters"),
+-  });
++  clientId: Yup.string()
++    .required("Username is required")
++    .min(3, "Username must be at least 3 characters"),
++  clientSecret: Yup.string()
++    .required("Password is required")
++    .min(6, "Password must be at least 6 characters"),
++});
++
+ function CMSLoginPageSection() {
+-    const bg = "/images/kiganjani-bg.svg";
+-    const { login } = useCMSAuth();
+-    const navigate = useNavigate();
+-  
+-    const handleSubmit = async (values: {
+-      clientId: string;
+-      clientSecret: string;
+-    }) => {
+-      const success = await login(values.clientId, values.clientSecret);
+-      console.log("Login success:", success);
+-      if (success) {
+-        navigate("/cms");
+-      }
+-      // Error handling is done by the API service
+-    };
+-  
+-    return (
+-      <div
+-        className="h-[51vh] min-h-[100vh] bg-nbc-dark-700 relative flex justify-center items-center"
+-        style={{
+-          backgroundImage: `url(${bg})`,
+-          backgroundSize: "cover",
+-          backgroundPosition: "center",
+-          backgroundRepeat: "no-repeat",
+-        }}
+-      >
+-        <div className="bg-white  space-y-4 flex flex-col items- justify-center py-11 px-11 rounded-lg  w-1/3">
+-          <div className="justify-center items-center flex">
+-            <img src="/images/logo.svg" alt="NBC Logo" width={100} height={100} />
+-          </div>
+-  
+-          <h1 className="text-lg font-semibold text-center">NBC CMS Login</h1>
+-          <Formik
+-            initialValues={{ clientId: "", clientSecret: "" }}
+-            validationSchema={validationSchema}
+-            onSubmit={handleSubmit}
+-          >
+-            {({
+-              values,
+-              errors,
+-              touched,
+-              handleChange,
+-              handleBlur,
+-              isSubmitting,
+-            }) => (
+-              <Form className="space-y-4">
+-                <CustomInput
+-                  label="Username"
+-                  type="text"
+-                  placeholder="username"
+-                  value={values.clientId}
+-                  onChange={handleChange}
+-                  onBlur={handleBlur}
+-                  name="clientId"
+-                  disabled={isSubmitting}
+-                  error={
+-                    touched.clientId && errors.clientId
+-                      ? errors.clientId
+-                      : undefined
+-                  }
+-                />
+-                <CustomInput
+-                  label="Password"
+-                  showPasswordToggle={true}
+-                  type="password"
+-                  placeholder="Password"
+-                  value={values.clientSecret}
+-                  onChange={handleChange}
+-                  onBlur={handleBlur}
+-                  name="clientSecret"
+-                  disabled={isSubmitting}
+-                  error={
+-                    touched.clientSecret && errors.clientSecret
+-                      ? errors.clientSecret
+-                      : undefined
+-                  }
+-                />
+-                <Button
+-                  type="submit"
+-                  variant="primary"
+-                  className="w-full"
+-                  loading={isSubmitting}
+-                  disabled={isSubmitting}
+-                >
+-                  {isSubmitting ? "Logging in..." : "Login"}
+-                </Button>
+-              </Form>
+-            )}
+-          </Formik>
++  const bg = "/images/kiganjani-bg.svg";
++  const { login, isAuthenticated } = useCMSAuth();
++  const navigate = useNavigate();
++
++  useEffect(() => {
++    if (isAuthenticated) {
++      navigate("/cms");
++    }
++  }, [isAuthenticated, navigate]);
++
++  const handleSubmit = async (values: {
++    clientId: string;
++    clientSecret: string;
++  }) => {
++    const success = await login(values.clientId, values.clientSecret);
++    console.log("Login success:", success);
++  };
++
++  return (
++    <div
++      className="h-[51vh] min-h-[100vh] bg-nbc-dark-700 relative flex justify-center items-center"
++      style={{
++        backgroundImage: `url(${bg})`,
++        backgroundSize: "cover",
++        backgroundPosition: "center",
++        backgroundRepeat: "no-repeat",
++      }}
++    >
++      <div className="bg-white  space-y-4 flex flex-col items- justify-center py-11 px-11 rounded-lg  w-1/3">
++        <div className="justify-center items-center flex">
++          <img src="/images/logo.svg" alt="NBC Logo" width={100} height={100} />
+         </div>
++
++        <h1 className="text-lg font-semibold text-center">NBC CMS Login</h1>
++        <Formik
++          initialValues={{ clientId: "", clientSecret: "" }}
++          validationSchema={validationSchema}
++          onSubmit={handleSubmit}
++        >
++          {({
++            values,
++            errors,
++            touched,
++            handleChange,
++            handleBlur,
++            isSubmitting,
++          }) => (
++            <Form className="space-y-4">
++              <CustomInput
++                label="Username"
++                type="text"
++                placeholder="username"
++                value={values.clientId}
++                onChange={handleChange}
++                onBlur={handleBlur}
++                name="clientId"
++                disabled={isSubmitting}
++                error={
++                  touched.clientId && errors.clientId
++                    ? errors.clientId
++                    : undefined
++                }
++              />
++              <CustomInput
++                label="Password"
++                showPasswordToggle={true}
++                type="password"
++                placeholder="Password"
++                value={values.clientSecret}
++                onChange={handleChange}
++                onBlur={handleBlur}
++                name="clientSecret"
++                disabled={isSubmitting}
++                error={
++                  touched.clientSecret && errors.clientSecret
++                    ? errors.clientSecret
++                    : undefined
++                }
++              />
++              <Button
++                type="submit"
++                variant="primary"
++                className="w-full"
++                loading={isSubmitting}
++                disabled={isSubmitting}
++              >
++                {isSubmitting ? "Logging in..." : "Login"}
++              </Button>
++            </Form>
++          )}
++        </Formik>
+       </div>
+-    );
+-  
++    </div>
++  );
+ }
+ 
+-export default CMSLoginPageSection
++export default CMSLoginPageSection;
+diff --git a/src/Page-Sections/CMSDashboard/CollectionsPageSection.tsx b/src/Page-Sections/CMSDashboard/CollectionsPageSection.tsx
+index fd20331..ec1958d 100644
+--- a/src/Page-Sections/CMSDashboard/CollectionsPageSection.tsx
++++ b/src/Page-Sections/CMSDashboard/CollectionsPageSection.tsx
+@@ -68,7 +68,7 @@ function CollectionsPageSection() {
+       </div>
+       <div className="grid gap-6 xl:grid-cols-[1fr_minmax(280px,380px)] items-start w-full overflow-hidden">
+         <div className="min-w-0 space-y-6">
+-          <h2 className="text-lg font-semibold">Your Collections</h2>
++          {/* <h2 className="text-lg font-semibold">Your Collections</h2> */}
+           <div className="space-y-3">
+             {loading ? (
+               <>
+diff --git a/src/Page-Sections/CMSDashboard/NavigationPageSection.tsx b/src/Page-Sections/CMSDashboard/NavigationPageSection.tsx
+index cc1f9b6..c46a215 100644
+--- a/src/Page-Sections/CMSDashboard/NavigationPageSection.tsx
++++ b/src/Page-Sections/CMSDashboard/NavigationPageSection.tsx
+@@ -1,12 +1,9 @@
+-import {
+-  ReusableMenubar,
+-  type Menu,
+-} from "@/components/reusable/ReusableMenubar";
+ import Button from "@/components/ui/button";
+ import { CustomInput } from "@/components/ui/CustomInput";
++import OptionsDropdown from "@/components/ui/OptionsDropdown";
+ import { useCmsNavigation } from "@/hooks/CMS/useCmsNavigation";
+ import { titleToHandle } from "@/utils/titleToHandle";
+-import { Edit, EllipsisVertical, Trash2 } from "lucide-react";
++import { Edit, Trash2 } from "lucide-react";
+ import { useEffect, useState } from "react";
+ import { Link } from "react-router-dom";
+ 
+@@ -45,29 +42,27 @@ function NavigationPageSection() {
+     setIsHandleManuallyEdited(false);
+   };
+ 
+-  // Configuration for the menubar
+-  const menuConfig: Menu =
+-    // Action menu example with ellipsis trigger
++  const navigationOptions = [
+     {
+-      id: "actions",
+-      icon: EllipsisVertical,
+-      items: [
+-        { id: "edit-item", label: "Edit", icon: Edit },
+-
+-        { id: "delete-item", label: "Delete", icon: Trash2 },
+-      ],
+-    };
+-  const handleItemClick = (id: any, item: any) => {
+-    console.log(`Clicked item: ${id}`, item);
+-    // Handle menu item clicks here
+-  };
++      id: "edit",
++      label: "Edit",
++      icon: <Edit className="h-4 w-4" />,
++      onClick: () => {},
++      showSeparator: true,
++    },
++    {
++      id: "delete",
++      label: "Delete",
++      icon: <Trash2 className="h-4 w-4" />,
++      onClick: () => {},
++      destructive: true,
++    },
++  ];
+ 
+   useEffect(() => {
+     findAllNavigations();
+   }, []);
+ 
+-
+-
+   return (
+     <>
+       <div className="space-y-4">
+@@ -98,19 +93,22 @@ function NavigationPageSection() {
+                 <div className="space-y-4">
+                   {navigations.data.content.map((navigation, index) => (
+                     <div
+-                      className="border border-gray-300 rounded-md p-4 bg-gray-100 flex items-center justify-between"
++                      className="border border-gray-300 rounded-md p-4 bg-gray-100 flex items-center justify-between group"
+                       key={index}
+                     >
+                       <Link
+                         className="text-sm font-bold text-nbc-dark-950 capitalize"
+                         to={`${navigation.reference}`}
++                        state={{ title: navigation.title }} 
+                       >
+                         {navigation.title}
+                       </Link>
+-                      <ReusableMenubar
++                      {/* <ReusableMenubar
+                         menu={menuConfig}
+                         onItemClick={handleItemClick}
+-                      />
++                      /> */}
++
++                      <OptionsDropdown options={navigationOptions} />
+                     </div>
+                   ))}
+                 </div>
+diff --git a/src/Page-Sections/CMSDashboard/Parts/ColectionCard.tsx b/src/Page-Sections/CMSDashboard/Parts/ColectionCard.tsx
+index d489ea0..8196fef 100644
+--- a/src/Page-Sections/CMSDashboard/Parts/ColectionCard.tsx
++++ b/src/Page-Sections/CMSDashboard/Parts/ColectionCard.tsx
+@@ -28,7 +28,6 @@ function CollectionCard({ content }: { content: ContentI }) {
+   const [isHandleManuallyEdited, setIsHandleManuallyEdited] = useState(false);
+   const { updateLoading, updateCollection } = useCollection();
+ 
+-
+   useEffect(() => {
+     setTitle(content.title);
+     // setBpId(c.blueprintId);
+@@ -81,7 +80,13 @@ function CollectionCard({ content }: { content: ContentI }) {
+     <div className="min-w-0 p-4 space-y-4 bg-white border border-gray-300 rounded-md">
+       <div className="flex items-center justify-between">
+         <div>
+-          <Link to={`${content.reference}`} className="font-medium hover:text-nbc-dark-950">{content.title}</Link>
++          <Link
++            to={`${content.reference}`}
++            state={{ title: content.title }}
++            className="font-medium hover:text-nbc-dark-950"
++          >
++            {content.title}
++          </Link>
+           <div className="text-xs text-muted-foreground">
+             {/* {bp?.name || "Unknown"} */}
+             {content.handle || "Unknown"}
+diff --git a/src/Page-Sections/CMSDashboard/Parts/NavItemForm.tsx b/src/Page-Sections/CMSDashboard/Parts/NavItemForm.tsx
+index 7342d1b..b335557 100644
+--- a/src/Page-Sections/CMSDashboard/Parts/NavItemForm.tsx
++++ b/src/Page-Sections/CMSDashboard/Parts/NavItemForm.tsx
+@@ -29,7 +29,7 @@ interface Blueprint {
+ }
+ 
+ interface NavItemFormProps {
+-  onSave: (data: any) => void;
++  onSave: (data: any, id?: string) => void;
+   blueprint: Blueprint;
+   loading?: boolean;
+ }
+@@ -42,42 +42,42 @@ function NavItemForm({ onSave, blueprint, loading = false }: NavItemFormProps) {
+   useEffect(() => {
+     if (blueprint && blueprint.schema?.sections) {
+       const initialData: Record<string, any> = {};
+-      
+-      blueprint.schema.sections.forEach(section => {
+-        section.fields?.forEach(field => {
++
++      blueprint.schema.sections.forEach((section) => {
++        section.fields?.forEach((field) => {
+           // Set initial values based on field type
+           switch (field.config?.fieldType) {
+-            case 'TEXT':
+-            case 'TEXTAREA':
+-            case 'LINK':
+-              initialData[field.id] = '';
++            case "TEXT":
++            case "TEXTAREA":
++            case "LINK":
++              initialData[field.id] = "";
+               break;
+-            case 'NUMBER':
++            case "NUMBER":
+               initialData[field.id] = null;
+               break;
+-            case 'toggle':
++            case "toggle":
+               initialData[field.id] = false;
+               break;
+-            case 'SELECT':
+-              initialData[field.id] = '';
++            case "SELECT":
++              initialData[field.id] = "";
+               break;
+-            case 'DATE':
+-              initialData[field.id] = '';
++            case "DATE":
++              initialData[field.id] = "";
+               break;
+             default:
+               initialData[field.id] = null;
+           }
+         });
+       });
+-      
++
+       setFormData(initialData);
+     }
+   }, [blueprint]);
+ 
+   const handleFieldChange = (fieldId: string, value: any) => {
+-    setFormData(prev => ({
++    setFormData((prev) => ({
+       ...prev,
+-      [fieldId]: value
++      [fieldId]: value,
+     }));
+   };
+ 
+@@ -89,21 +89,21 @@ function NavItemForm({ onSave, blueprint, loading = false }: NavItemFormProps) {
+       for (const field of section.fields || []) {
+         if (field.isRequired) {
+           const value = formData[field.id];
+-          
++
+           // Check if required field is empty/null/undefined
+-          if (value === null || value === undefined || value === '') {
++          if (value === null || value === undefined || value === "") {
+             return false;
+           }
+-          
++
+           // For LINK fields, additional validation might be needed
+-          if (field.config?.fieldType === 'LINK' && typeof value === 'object') {
+-            if (value.type === 'url' && !value.value) return false;
+-            if (value.type === 'entry' && !value.entryId) return false;
++          if (field.config?.fieldType === "LINK" && typeof value === "object") {
++            if (value.type === "url" && !value.value) return false;
++            if (value.type === "entry" && !value.entryId) return false;
+           }
+         }
+       }
+     }
+-    
++
+     return true;
+   };
+ 
+@@ -112,9 +112,11 @@ function NavItemForm({ onSave, blueprint, loading = false }: NavItemFormProps) {
+     for (const section of blueprint.schema.sections) {
+       for (const field of section.fields || []) {
+         // Check by handle first, then by field type, then by id
+-        if (field.handle === handleOrType || 
+-            field.config?.fieldType === handleOrType ||
+-            field.id === handleOrType) {
++        if (
++          field.handle === handleOrType ||
++          field.config?.fieldType === handleOrType ||
++          field.id === handleOrType
++        ) {
+           return formData[field.id];
+         }
+       }
+@@ -122,31 +124,34 @@ function NavItemForm({ onSave, blueprint, loading = false }: NavItemFormProps) {
+     return null;
+   };
+ 
+-  const handleSubmit = async () => {
++  const handleSubmit = async (itemId?: string) => {
+     if (!validateForm() || !blueprint) return;
+ 
+     setCreateLoading(true);
+-    
++
+     try {
+       // Transform the data to the desired structure
+       const submissionData = {
+-        title: findFieldValue('title') || findFieldValue('TEXT') || '',
+-        link: findFieldValue('link') || findFieldValue('LINK') || ''
++        title: findFieldValue("title") || findFieldValue("TEXT") || "",
++        link: findFieldValue("link") || findFieldValue("LINK") || "",
+       };
+ 
+       // Handle LINK field objects if they exist
+-      if (typeof submissionData.link === 'object' && submissionData.link !== null) {
++      if (
++        typeof submissionData.link === "object" &&
++        submissionData.link !== null
++      ) {
+         // If it's a link object, extract the appropriate value
+-        if (submissionData.link.type === 'url') {
+-          submissionData.link = submissionData.link.value || '';
+-        } else if (submissionData.link.type === 'entry') {
+-          submissionData.link = submissionData.link.entryId || '';
++        if (submissionData.link.type === "url") {
++          submissionData.link = submissionData.link.value || "";
++        } else if (submissionData.link.type === "entry") {
++          submissionData.link = submissionData.link.entryId || "";
+         }
+       }
+ 
+-      await onSave(submissionData);
++      await onSave(submissionData, itemId ? itemId : "");
+     } catch (error) {
+-      console.error('Error creating navigation item:', error);
++      console.error("Error creating navigation item:", error);
+     } finally {
+       setCreateLoading(false);
+     }
+@@ -174,7 +179,8 @@ function NavItemForm({ onSave, blueprint, loading = false }: NavItemFormProps) {
+       <div className="p-4 border border-red-200 bg-red-50 rounded-md">
+         <p className="text-red-800 font-medium">Invalid Blueprint Schema</p>
+         <p className="text-red-600 text-sm mt-1">
+-          The blueprint schema is missing or invalid. Please check the blueprint configuration.
++          The blueprint schema is missing or invalid. Please check the blueprint
++          configuration.
+         </p>
+       </div>
+     );
+@@ -183,7 +189,7 @@ function NavItemForm({ onSave, blueprint, loading = false }: NavItemFormProps) {
+   return (
+     <div className="space-y-6">
+       {/* Render fields by sections */}
+-      {blueprint.schema.sections.map(section => (
++      {blueprint.schema.sections.map((section) => (
+         <div key={section.id} className="space-y-4">
+           {/* Section header if there are multiple sections */}
+           {blueprint.schema.sections.length > 1 && (
+@@ -191,12 +197,11 @@ function NavItemForm({ onSave, blueprint, loading = false }: NavItemFormProps) {
+               <h3 className="text-lg font-medium">{section.displayName}</h3>
+             </div>
+           )}
+-          
++
+           {/* Render all fields in this section */}
+           {section.fields
+             .sort((a, b) => (a.order ?? 0) - (b.order ?? 0)) // Sort by order, default to 0 if undefined
+-            .map(field => {
+-           
++            .map((field) => {
+               return (
+                 <div key={field.id}>
+                   <FieldRenderer
+@@ -214,7 +219,9 @@ function NavItemForm({ onSave, blueprint, loading = false }: NavItemFormProps) {
+       <div className="flex justify-end pt-4 border-t">
+         <Button
+           variant="primary"
+-          onClick={handleSubmit}
++          onClick={() => {
++            handleSubmit();
++          }}
+           disabled={!validateForm() || createLoading}
+           loading={createLoading}
+         >
+@@ -225,4 +232,4 @@ function NavItemForm({ onSave, blueprint, loading = false }: NavItemFormProps) {
+   );
+ }
+ 
+-export default NavItemForm;
+\ No newline at end of file
++export default NavItemForm;
+diff --git a/src/Page-Sections/CMSDashboard/SingleAssetContainerPageSection.tsx b/src/Page-Sections/CMSDashboard/SingleAssetContainerPageSection.tsx
+index 71ff637..351ba5f 100644
+--- a/src/Page-Sections/CMSDashboard/SingleAssetContainerPageSection.tsx
++++ b/src/Page-Sections/CMSDashboard/SingleAssetContainerPageSection.tsx
+@@ -11,7 +11,6 @@ import { useModal } from "@/hooks/useModal";
+ function SingleAssetContainerPageSection() {
+   const [searchQuery, setSearchQuery] = useState("");
+   const [viewMode, setViewMode] = useState<"grid" | "list">("list");
+-  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+   const [currentFolder, setCurrentFolder] = useState<string | null>(null);
+   const [previewAsset, setPreviewAsset] = useState<any>(null);
+   const fileInputRef = useRef<HTMLInputElement>(null);
+@@ -27,6 +26,7 @@ function SingleAssetContainerPageSection() {
+   };
+ 
+   const handleFileClick = (file: any) => {
++    console.log("File clicked:", file);
+     if (file.type === "folder") {
+       setCurrentFolder(file.id);
+     } else {
+@@ -38,16 +38,27 @@ function SingleAssetContainerPageSection() {
+     openModal(
+       <CreateFolderForm />,
+       "Create Folder",
++      "lg",
+       "Create a new folder to organize your assets",
+-      "lg"
+     );
+   };
++
+   const handlePreviewFile = () => {
++    console.log("Previewing file:", previewAsset);
++    const asset = {
++      id: "whatsapp-image",
++      isImage: true,
++      lastModified: "0 seconds ago",
++      name: "/images/home-hero.jpg",
++      size: "36 KB",
++      type: "file",
++      url: "/images/home-hero.jpg",
++    };
+     openModal(
+-      <AssetPreview asset={previewAsset} />,
+-      previewAsset.title,
+-      previewAsset.size,
+-      "lg"
++      <AssetPreview asset={asset} />,
++      "https://unsplash.com/photos/a-modern-blue-skyscraper-displays-bank-cOlutcMjEd4",
++      "xl",
++      "36 KB",
+     );
+   };
+ 
+diff --git a/src/Page-Sections/CMSDashboard/SingleCollectionPageSection.tsx b/src/Page-Sections/CMSDashboard/SingleCollectionPageSection.tsx
+index e48d7ac..eeb93d1 100644
+--- a/src/Page-Sections/CMSDashboard/SingleCollectionPageSection.tsx
++++ b/src/Page-Sections/CMSDashboard/SingleCollectionPageSection.tsx
+@@ -35,44 +35,33 @@ function SingleCollectionPageSection() {
+ 
+   // Define table actions
+   const tableActions = [
+-    {
+-      label: 'View Entry',
+-      icon: Eye,
+-      onClick: (row: any) => {
+-        console.log('View entry:', row);
+-        // Navigate to view entry
+-        navigate(`/entry/${row.reference}`);
+-      }
+-    },
+-    {
+-      label: 'Edit Entry',
+-      icon: Edit,
+-      onClick: (row: any) => {
+-        console.log('Edit entry:', row);
+-        // Navigate to edit entry
+-        navigate(`/entry/${row.reference}/edit`);
+-      }
+-    },
+-    {
+-      label: 'Delete Entry',
+-      icon: Trash2,
+-      onClick: (row: any) => {
+-        console.log('Delete entry:', row);
+-        // Show delete confirmation
+-        if (window.confirm('Are you sure you want to delete this entry?')) {
+-          // Add delete logic here
+-          alert('Entry would be deleted');
+-        }
+-      },
+-      className: 'text-red-600 hover:text-red-700 hover:bg-red-50'
+-    }
++     {
++         id: "view",
++         label: "View",
++         icon: <Eye className="h-4 w-4" />,
++         onClick: (row:any) => console.log("View:", row),
++       },
++       {
++         id: "edit",
++         label: "Edit",
++         icon: <Edit className="h-4 w-4" />,
++         onClick: (row:any) => console.log("Edit:", row),
++         showSeparator: true,
++       },
++       {
++         id: "delete",
++         label: "Delete",
++         icon: <Trash2 className="h-4 w-4" />,
++         onClick: (row:any) => console.log("Delete:", row),
++         destructive: true,
++       },
+   ];
+ 
+   // Handle row actions (three dots menu) - kept for backward compatibility
+-  const handleRowAction = (row: any) => {
+-    console.log('Row action for:', row);
+-    // This is now handled by individual action items above
+-  };
++  // const handleRowAction = (row: any) => {
++  //   console.log('Row action for:', row);
++  //   // This is now handled by individual action items above
++  // };
+ 
+   function handleNavigation(blueprintReference = null) {
+     if (blueprintReference) {
+diff --git a/src/Page-Sections/CMSDashboard/SingleNavigationPageSection.tsx b/src/Page-Sections/CMSDashboard/SingleNavigationPageSection.tsx
+index 962553e..d4fb510 100644
+--- a/src/Page-Sections/CMSDashboard/SingleNavigationPageSection.tsx
++++ b/src/Page-Sections/CMSDashboard/SingleNavigationPageSection.tsx
+@@ -1,4 +1,4 @@
+-import { NavigationBuilder } from "@/components/cms/NavigationBuilder.tsx";
++import { NavigationBuilder } from "@/components/cms/NavigationBuilder";
+ 
+ function SingleNavigationPageSection() {
+   return (
+diff --git a/src/Providers/cmsNavigation.provider.tsx b/src/Providers/cmsNavigation.provider.tsx
+index 81cf190..5f6117f 100644
+--- a/src/Providers/cmsNavigation.provider.tsx
++++ b/src/Providers/cmsNavigation.provider.tsx
+@@ -106,11 +106,13 @@ export const CmsNavigationProvider: React.FC<{ children: React.ReactNode }> = ({
+ 
+   async function createNavigationItem(
+     navigationId: string,
+-    data: { title: string; description: string }
++    data: { title: string; description: string },
++    parentRef?:string
+   ) {
+     setCreateLoading(true);
+     try {
+-      const response = await NavigationService.createItem(navigationId, data);
++      const response = await NavigationService.createItem(navigationId, data,parentRef);
++      findNavigationById(navigationId)
+       findAllNavigationItems(navigationId);
+       return response;
+     } catch (error) {
+@@ -169,9 +171,10 @@ export const CmsNavigationProvider: React.FC<{ children: React.ReactNode }> = ({
+   }
+ 
+   async function deleteNavigationItem(id: string, navigationId: string) {
+-    setLoading(true);
+     try {
++      setLoading(true)
+       const response = await NavigationService.deleteItem(id, navigationId);
++     
+       findAllNavigationItems(navigationId);
+       return response;
+     } catch (error) {
+diff --git a/src/Routes/LandingRoutes.tsx b/src/Routes/LandingRoutes.tsx
+index 7402e1d..13b19d3 100644
+--- a/src/Routes/LandingRoutes.tsx
++++ b/src/Routes/LandingRoutes.tsx
+@@ -55,6 +55,9 @@ const SecurityCenter = lazy(() => import("@/Pages/Landing/SecurityCenter"));
+ const FraudaAlert = lazy(() => import("@/Pages/Landing/FraudAlert"));
+ const CurrencyConvetor = lazy(() => import("@/Pages/Landing/CurrencyConvetor"));
+ 
++// Locate Us
++const FindBranchAtms = lazy(() => import("@/Pages/Landing/FindBranchAtms"));
++
+ interface RouteConfig {
+   path: string;
+   element: ReactNode;
+@@ -198,6 +201,11 @@ const landingRoutes: RouteConfig[] = [
+     element: <CurrencyConvetor />,
+     withLayout: true,
+   },
++  {
++    path: "find-branches-atm",
++    element: <FindBranchAtms />,
++    withLayout: true,
++  },
+ ];
+ 
+-export default landingRoutes;
+\ No newline at end of file
++export default landingRoutes;
+diff --git a/src/components/cms/Assets/AssetPreview.tsx b/src/components/cms/Assets/AssetPreview.tsx
+index ca5a6f0..825c7ca 100644
+--- a/src/components/cms/Assets/AssetPreview.tsx
++++ b/src/components/cms/Assets/AssetPreview.tsx
+@@ -13,50 +13,84 @@ export const AssetPreview = ({ asset }: AssetPreviewProps) => {
+   const isVideo = asset.name?.match(/\.(mp4|webm|ogg|mov)$/i);
+   const isPdf = asset.name?.match(/\.pdf$/i);
+ 
++  // Get the actual asset URL - adjust these properties based on your asset object structure
++  console.log("Asset",asset.url)
++  const assetUrl = asset.url || asset.src || asset.path || asset.publicUrl;
++  
+   return (
+     <>
+-      {/* <div className="text-text-bright flex items-center justify-between">
+-        <span>{asset.name}</span>
+-        <Button
+-          variant="ghost"
+-          size="sm"
+-          onClick={() => {}}
+-          className="h-6 w-6 p-0"
+-        >
+-          <X className="h-4 w-4" />
+-        </Button>
+-      </div>
+-      <p className="text-text-dim">
+-        {asset.size} • {asset.lastModified}
+-      </p> */}
+-
+-      <div className="flex-1 flex items-center justify-center p-6 bg-muted/30 rounded-lg min-h-[400px]">
+-        {isImage && (
++      <div className="flex-1 flex items-center justify-center  bg-muted/30 rounded-lg min-h-[400px]">
++        {isImage && assetUrl && (
+           <img
+-            src="/placeholder.svg"
++            src={assetUrl}
+             alt={asset.name}
+-            className="max-w-full max-h-full object-contain rounded-lg shadow-lg"
++            className="max-w-full max-h-full object-contain rounded-lg "
++            onError={() => {
++              // Fallback to placeholder if image fails to load
++              console.error('Failed to load image:', assetUrl);
++              // Unable to set fallback src without event, consider handling differently if needed
++            }}
+           />
+         )}
+ 
+-        {isVideo && (
++        {isVideo && assetUrl && (
+           <video
+             controls
+-            className="max-w-full max-h-full object-contain rounded-lg shadow-lg"
++            className="max-w-full max-h-full object-contain rounded-lg"
++            onError={() => {
++              console.error('Failed to load video:', assetUrl);
++            }}
+           >
+-            <source src="/placeholder.mp4" type="video/mp4" />
++            <source src={assetUrl} type="video/mp4" />
+             Your browser does not support the video tag.
+           </video>
+         )}
+ 
+-        {isPdf && (
++        {isPdf && assetUrl && (
++          <div className="flex flex-col items-center space-y-4 text-center">
++            <iframe
++              src={assetUrl}
++              className="w-full h-96 rounded-lg border"
++              title={asset.name}
++              onError={() => {
++                console.error('Failed to load PDF:', assetUrl);
++              }}
++            />
++            <p className="text-text-dim">PDF Preview</p>
++          </div>
++        )}
++
++        {/* Show placeholder when no URL is available */}
++        {!assetUrl && isImage && (
++          <div className="flex flex-col items-center space-y-4 text-center">
++            <div className="w-24 h-24 bg-muted rounded-lg flex items-center justify-center">
++              <span className="text-lg font-semibold text-muted-foreground">
++                IMG
++              </span>
++            </div>
++            <p className="text-text-dim">Image URL not available</p>
++          </div>
++        )}
++
++        {!assetUrl && isVideo && (
++          <div className="flex flex-col items-center space-y-4 text-center">
++            <div className="w-24 h-24 bg-muted rounded-lg flex items-center justify-center">
++              <span className="text-lg font-semibold text-muted-foreground">
++                VID
++              </span>
++            </div>
++            <p className="text-text-dim">Video URL not available</p>
++          </div>
++        )}
++
++        {isPdf && !assetUrl && (
+           <div className="flex flex-col items-center space-y-4 text-center">
+             <div className="w-24 h-24 bg-destructive/10 rounded-lg flex items-center justify-center">
+               <span className="text-2xl font-semibold text-destructive">
+                 PDF
+               </span>
+             </div>
+-            <p className="text-text-dim">PDF preview not available</p>
++            <p className="text-text-dim">PDF URL not available</p>
+           </div>
+         )}
+ 
+@@ -74,7 +108,7 @@ export const AssetPreview = ({ asset }: AssetPreviewProps) => {
+         )}
+       </div>
+ 
+-      <div className="flex items-center justify-between pt-4 border-t border-border">
++      <div className="flex items-center justify-between mt-4 border-t border-border pt-2">
+         <div className="flex items-center space-x-2 text-sm text-text-dim">
+           <span>
+             Type: {asset.name?.split(".").pop()?.toUpperCase() || "Unknown"}
+@@ -84,11 +118,35 @@ export const AssetPreview = ({ asset }: AssetPreviewProps) => {
+         </div>
+ 
+         <div className="flex items-center space-x-2">
+-          <Button variant="outline" size="sm" className="border-border">
++          <Button 
++            variant="outline" 
++            size="sm" 
++            className="border-border"
++            onClick={() => {
++              if (assetUrl) {
++                // Create a download link
++                const link = document.createElement('a');
++                link.href = assetUrl;
++                link.download = asset.name || 'download';
++                link.click();
++              }
++            }}
++            disabled={!assetUrl}
++          >
+             <Download className="mr-2 h-4 w-4" />
+             Download
+           </Button>
+-          <Button variant="outline" size="sm" className="border-border">
++          <Button 
++            variant="outline" 
++            size="sm" 
++            className="border-border"
++            onClick={() => {
++              if (assetUrl) {
++                window.open(assetUrl, '_blank');
++              }
++            }}
++            disabled={!assetUrl}
++          >
+             <ExternalLink className="mr-2 h-4 w-4" />
+             Open
+           </Button>
+@@ -96,4 +154,4 @@ export const AssetPreview = ({ asset }: AssetPreviewProps) => {
+       </div>
+     </>
+   );
+-};
++};
+\ No newline at end of file
+diff --git a/src/components/cms/Assets/FileList.tsx b/src/components/cms/Assets/FileList.tsx
+index 7ef7458..1bc83dc 100644
+--- a/src/components/cms/Assets/FileList.tsx
++++ b/src/components/cms/Assets/FileList.tsx
+@@ -2,24 +2,20 @@ import { useState } from "react";
+ import {
+   Folder,
+   FileImage,
+-  MoreHorizontal,
+   ChevronUp,
+   ChevronDown,
++  Edit,
+ } from "lucide-react";
+-import Button from "@/components/ui/button";
+ import { Checkbox } from "@/components/ui/checkbox";
+ import {
+-  DropdownMenu,
+-  DropdownMenuContent,
+-  DropdownMenuItem,
+-  DropdownMenuSeparator,
+-  DropdownMenuTrigger,
+-} from "@/components/ui/dropdown-menu";
++  OptionsDropdown,
++} from "@/components/ui/OptionsDropdown";
+ interface FileItem {
+   id: string;
+   name: string;
+   type: "folder" | "file";
+   size?: string;
++  url?: string;
+   lastModified: string;
+   isImage?: boolean;
+ }
+@@ -41,6 +37,24 @@ export const FileList = ({
+   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
+   const [selectedFiles, setSelectedFiles] = useState<string[]>([]);
+ 
++  const fileOptions = [
++    {
++      id: "rename",
++      label: "Rename",
++      icon: <Edit className="h-4 w-4" />,
++      onClick: () => {},
++      showSeparator: true,
++    },
++    {
++      id: "rename",
++      label: "Rename",
++      icon: <Edit className="h-4 w-4" />,
++      onClick: () => {},
++      showSeparator: true,
++    },
++
++  ];
++
+   // Show different files based on current folder
+   const getAllFiles = (): FileItem[] => {
+     if (currentFolder === "new-folder") {
+@@ -71,7 +85,8 @@ export const FileList = ({
+       },
+       {
+         id: "whatsapp-image",
+-        name: "https://unsplash.com/photos/a-modern-blue-skyscraper-displays-bank-cOlutcMjEd4",
++        name: "/images/home-hero.jpg",
++        url: "/images/home-hero.jpg",
+         type: "file",
+         size: "36 KB",
+         lastModified: "0 seconds ago",
+@@ -188,7 +203,7 @@ export const FileList = ({
+             </div>
+ 
+             <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+-              <DropdownMenu>
++              {/* <DropdownMenu>
+                 <DropdownMenuTrigger asChild>
+                   <Button
+                     variant="ghost"
+@@ -249,7 +264,8 @@ export const FileList = ({
+                     Delete
+                   </DropdownMenuItem>
+                 </DropdownMenuContent>
+-              </DropdownMenu>
++              </DropdownMenu> */}
++              <OptionsDropdown options={fileOptions}  />
+             </div>
+           </div>
+         ))}
+@@ -334,66 +350,7 @@ export const FileList = ({
+             </div>
+ 
+             <div className="col-span-1 flex items-center justify-end">
+-              <DropdownMenu>
+-                <DropdownMenuTrigger asChild>
+-                  <Button
+-                    variant="ghost"
+-                    size="sm"
+-                    className="opacity-0 group-hover:opacity-100 transition-opacity h-8 w-8 p-0"
+-                    onClick={(e) => e.stopPropagation()}
+-                  >
+-                    <MoreHorizontal className="h-4 w-4" />
+-                  </Button>
+-                </DropdownMenuTrigger>
+-                <DropdownMenuContent
+-                  align="end"
+-                  className="z-50 bg-popover text-popover-foreground border border-border shadow-lg"
+-                >
+-                  {file.type === "folder" ? (
+-                    <DropdownMenuItem
+-                      onClick={(e) => {
+-                        e.stopPropagation();
+-                        onFileClick?.(file);
+-                      }}
+-                    >
+-                      Open
+-                    </DropdownMenuItem>
+-                  ) : (
+-                    <>
+-                      <DropdownMenuItem
+-                        onClick={(e) => {
+-                          e.stopPropagation();
+-                          onFileClick?.(file);
+-                        }}
+-                      >
+-                        Preview
+-                      </DropdownMenuItem>
+-                      <DropdownMenuItem
+-                        onClick={(e) => {
+-                          e.stopPropagation();
+-                        }}
+-                      >
+-                        Download
+-                      </DropdownMenuItem>
+-                    </>
+-                  )}
+-                  <DropdownMenuSeparator />
+-                  <DropdownMenuItem
+-                    onClick={(e) => {
+-                      e.stopPropagation();
+-                    }}
+-                  >
+-                    Rename
+-                  </DropdownMenuItem>
+-                  <DropdownMenuItem
+-                    onClick={(e) => {
+-                      e.stopPropagation();
+-                    }}
+-                  >
+-                    Delete
+-                  </DropdownMenuItem>
+-                </DropdownMenuContent>
+-              </DropdownMenu>
++              <OptionsDropdown options={fileOptions} />
+             </div>
+           </div>
+         ))}
+diff --git a/src/components/cms/NavigationBuilder.tsx.tsx b/src/components/cms/NavigationBuilder.tsx.tsx
+deleted file mode 100644
+index 1b9aff9..0000000
+--- a/src/components/cms/NavigationBuilder.tsx.tsx
++++ /dev/null
+@@ -1,326 +0,0 @@
+-import { useEffect, useState, useMemo, useCallback } from "react";
+-import {
+-  DndContext,
+-  closestCenter,
+-  KeyboardSensor,
+-  PointerSensor,
+-  useSensor,
+-  useSensors,
+-  DragOverlay,
+-  type DragStartEvent,
+-  type DragEndEvent,
+-} from "@dnd-kit/core";
+-import {
+-  SortableContext,
+-  sortableKeyboardCoordinates,
+-  verticalListSortingStrategy,
+-} from "@dnd-kit/sortable";
+-import { restrictToVerticalAxis } from "@dnd-kit/modifiers";
+-import type { NavigationItemContentI } from "@/types/cms/navigation";
+-import { NavigationHeader } from "./NavigationHeader";
+-import { DragOverlayItem } from "./DragOverlayItem";
+-import { NavigationItem } from "./NavigationItem";
+-import { useModal } from "@/hooks/useModal";
+-import NavItemForm from "@/Page-Sections/CMSDashboard/Parts/NavItemForm";
+-import { useParams } from "react-router-dom";
+-import { useCmsNavigation } from "@/hooks/CMS/useCmsNavigation";
+-
+-export const NavigationBuilder = () => {
+-  const {
+-    findNavigationById,
+-    navigation,
+-    findAllNavigationItems,
+-    navigationItems,
+-    setNavigationItems,
+-    findNavigationBlueprints,
+-    navigationBlueprints,
+-    createNavigationItem,
+-    createLoading,
+-  } = useCmsNavigation();
+-
+-  const [activeId, setActiveId] = useState<string | null>(null);
+-  const [hasChanges, setHasChanges] = useState(false);
+-  const [allExpanded, setAllExpanded] = useState(true);
+-  const { openModal, closeModal } = useModal();
+-  const { id } = useParams();
+-
+-  // Simplified sensors - remove excessive constraints
+-  const sensors = useSensors(
+-    useSensor(PointerSensor, {
+-      activationConstraint: {
+-        distance: 8,
+-      },
+-    }),
+-    useSensor(KeyboardSensor, {
+-      coordinateGetter: sortableKeyboardCoordinates,
+-    })
+-  );
+-
+-  // Simplified item lookup without frozen objects
+-  const itemMaps = useMemo(() => {
+-    const itemMap = new Map<string, NavigationItemContentI>();
+-    const parentMap = new Map<string, NavigationItemContentI | null>();
+-
+-    if (!navigationItems.data?.content) return { itemMap, parentMap };
+-
+-    const buildMaps = (
+-      items: NavigationItemContentI[],
+-      parent: NavigationItemContentI | null = null
+-    ) => {
+-      items.forEach((item) => {
+-        itemMap.set(item.reference, item); // Remove Object.freeze
+-        parentMap.set(item.reference, parent);
+-
+-        if (item.children?.length) {
+-          buildMaps(item.children, item);
+-        }
+-      });
+-    };
+-
+-    buildMaps(navigationItems.data.content);
+-    return { itemMap, parentMap };
+-  }, [navigationItems.data?.content]);
+-
+-  // Simplified ID collection
+-  const allIds = useMemo(() => {
+-    if (!navigationItems.data?.content) return [];
+-
+-    const collectIds = (items: NavigationItemContentI[]): string[] => {
+-      const ids: string[] = [];
+-      for (const item of items) {
+-        ids.push(item.reference);
+-        if (item.children?.length) {
+-          ids.push(...collectIds(item.children));
+-        }
+-      }
+-      return ids;
+-    };
+-
+-    return collectIds(navigationItems.data.content);
+-  }, [navigationItems.data?.content]);
+-
+-  // Simplified drag handlers
+-  const handleDragStart = useCallback((event: DragStartEvent) => {
+-    setActiveId(event.active.id.toString());
+-  }, []);
+-
+-  const handleDragEnd = useCallback(
+-    (event: DragEndEvent) => {
+-      const { active, over } = event;
+-      setActiveId(null);
+-
+-      if (!over || active.id === over.id || !navigationItems.data?.content) {
+-        return;
+-      }
+-
+-      // Simple move logic without complex optimization
+-      const activeId = active.id.toString();
+-      const overId = over.id.toString();
+-
+-      // Implement basic move logic here
+-      // For now, just log to prevent the complex tree operations
+-      console.log("Move:", activeId, "to", overId);
+-    },
+-    [navigationItems.data?.content]
+-  );
+-
+-  // Simplified toggle
+-  const toggleExpanded = useCallback(
+-    (itemId: string) => {
+-      setNavigationItems((prev: typeof navigationItems) => {
+-        if (!prev.data?.content) return prev;
+-
+-        interface UpdateItemsFn {
+-          (items: NavigationItemContentI[]): NavigationItemContentI[];
+-        }
+-
+-        const updateItems: UpdateItemsFn = (
+-          items: NavigationItemContentI[]
+-        ): NavigationItemContentI[] => {
+-          return items.map(
+-            (item: NavigationItemContentI): NavigationItemContentI => {
+-              if (item.reference === itemId) {
+-                return { ...item, isExpanded: !item.isExpanded };
+-              }
+-              if (item.children?.length) {
+-                return { ...item, children: updateItems(item.children) };
+-              }
+-              return item;
+-            }
+-          );
+-        };
+-
+-        interface PrevType {
+-          data?: {
+-            content?: NavigationItemContentI[];
+-            [key: string]: any;
+-          };
+-          [key: string]: any;
+-        }
+-
+-        return {
+-          ...prev,
+-          data: {
+-            ...prev.data,
+-            content: updateItems(prev.data.content!),
+-          },
+-        } as PrevType;
+-      });
+-    },
+-    [setNavigationItems]
+-  );
+-
+-  // Simplified add item
+-  const addNewItem = useCallback(
+-    async (navItem: { title: string; description: string }) => {
+-      if (!id) return;
+-
+-      try {
+-        await createNavigationItem(id, navItem);
+-        closeModal();
+-      } catch (error) {
+-        console.error("Failed to create navigation item:", error);
+-      }
+-    },
+-    [id, createNavigationItem, closeModal]
+-  );
+-
+-  const handleButtonClick = useCallback(() => {
+-    if (!navigationBlueprints.data) return;
+-
+-    openModal(
+-      <NavItemForm
+-        onSave={addNewItem}
+-        loading={createLoading}
+-        blueprint={
+-          Array.isArray(navigationBlueprints.data)
+-            ? navigationBlueprints.data[0]
+-            : navigationBlueprints.data
+-        }
+-      />,
+-      "Nav Item",
+-      "lg"
+-    );
+-  }, [navigationBlueprints.data, openModal, addNewItem, createLoading]);
+-
+-  // Simplified expand/collapse
+-  const expandAll = useCallback(() => {
+-    if (!navigationItems.data?.content) return;
+-
+-    const expandItems = (
+-      items: NavigationItemContentI[]
+-    ): NavigationItemContentI[] => {
+-      return items.map((item) => ({
+-        ...item,
+-        isExpanded: true,
+-        children: item.children?.length
+-          ? expandItems(item.children)
+-          : item.children,
+-      }));
+-    };
+-
+-    setNavigationItems((prev: typeof navigationItems) => ({
+-      ...prev,
+-      data: { ...prev.data!, content: expandItems(prev.data!.content!) },
+-    }));
+-    setAllExpanded(true);
+-  }, [navigationItems.data?.content, setNavigationItems]);
+-
+-  const collapseAll = useCallback(() => {
+-    if (!navigationItems.data?.content) return;
+-
+-    const collapseItems = (
+-      items: NavigationItemContentI[]
+-    ): NavigationItemContentI[] => {
+-      return items.map((item) => ({
+-        ...item,
+-        isExpanded: false,
+-        children: item.children?.length
+-          ? collapseItems(item.children)
+-          : item.children,
+-      }));
+-    };
+-
+-    setNavigationItems((prev: typeof navigationItems) => ({
+-      ...prev,
+-      data: { ...prev.data!, content: collapseItems(prev.data!.content!) },
+-    }));
+-    setAllExpanded(false);
+-  }, [navigationItems.data?.content, setNavigationItems]);
+-
+-  const saveChanges = useCallback(async () => {
+-    if (!id) return;
+-    setHasChanges(false);
+-    await findAllNavigationItems(id);
+-  }, [id, findAllNavigationItems]);
+-
+-  const discardChanges = useCallback(async () => {
+-    if (!id) return;
+-    await findAllNavigationItems(id);
+-    setHasChanges(false);
+-  }, [id, findAllNavigationItems]);
+-
+-  const activeItem = useMemo(() => {
+-    return activeId ? itemMaps.itemMap.get(activeId) || null : null;
+-  }, [activeId, itemMaps.itemMap]);
+-
+-  // Simplified data fetching
+-  useEffect(() => {
+-    if (!id) return;
+-
+-    Promise.all([
+-      findNavigationById(id),
+-      findAllNavigationItems(id),
+-      findNavigationBlueprints(id),
+-    ]).catch(console.error);
+-  }, [id]);
+-
+-  return (
+-    <div className="min-h-screen bg-nav-background">
+-      <NavigationHeader
+-        title={navigation?.data?.title || "Navigation"}
+-        hasChanges={hasChanges}
+-        onSave={saveChanges}
+-        onDiscard={discardChanges}
+-        onAddItem={handleButtonClick}
+-        onExpandAll={expandAll}
+-        onCollapseAll={collapseAll}
+-        allExpanded={allExpanded}
+-      />
+-
+-      <div className="mx-auto p-6">
+-        <div className="bg-nav-item rounded-lg shadow-nav border border-gray-300 overflow-hidden">
+-          <DndContext
+-            sensors={sensors}
+-            collisionDetection={closestCenter}
+-            onDragStart={handleDragStart}
+-            onDragEnd={handleDragEnd}
+-            modifiers={[restrictToVerticalAxis]}
+-          >
+-            <div className="p-4">
+-              <SortableContext
+-                items={allIds}
+-                strategy={verticalListSortingStrategy}
+-              >
+-                <div className="space-y-2">
+-                  {navigationItems.data?.content?.map((item) => (
+-                    <NavigationItem
+-                      key={item.reference}
+-                      item={item}
+-                      onToggleExpanded={toggleExpanded}
+-                      depth={0}
+-                    />
+-                  ))}
+-                </div>
+-              </SortableContext>
+-            </div>
+-
+-            <DragOverlay>
+-              {activeItem && <DragOverlayItem item={activeItem} />}
+-            </DragOverlay>
+-          </DndContext>
+-        </div>
+-      </div>
+-    </div>
+-  );
+-};
+diff --git a/src/components/cms/NavigationItem.tsx b/src/components/cms/NavigationItem.tsx
+index c2aac06..ff8f014 100644
+--- a/src/components/cms/NavigationItem.tsx
++++ b/src/components/cms/NavigationItem.tsx
+@@ -7,151 +7,186 @@ import {
+   ChevronDown,
+   ChevronRight,
+   Edit,
+-  MoreHorizontal,
++  Trash2,
++  PlusCircle,
+ } from "lucide-react";
+ import type { NavigationItemContentI } from "@/types/cms/navigation";
++import OptionsDropdown from "../ui/OptionsDropdown";
+ 
+ interface NavigationItemProps {
+   item: NavigationItemContentI;
+   onToggleExpanded: (id: string) => void;
++  onDeleteItem: (id: string) => void;
++  handleNavItemButtonClick: (id: string) => void;
+   depth: number;
+ }
+ 
+-export const NavigationItem: React.FC<NavigationItemProps> = memo(({
+-  item,
+-  onToggleExpanded,
+-  depth,
+-}) => {
+-  const {
+-    attributes,
+-    listeners,
+-    setNodeRef,
+-    transform,
+-    transition,
+-    isDragging,
+-    isOver,
+-  } = useSortable({ id: item.reference });
++export const NavigationItem: React.FC<NavigationItemProps> = memo(
++  ({
++    item,
++    onToggleExpanded,
++    depth,
++    onDeleteItem,
++    handleNavItemButtonClick,
++  }) => {
++    const {
++      attributes,
++      listeners,
++      setNodeRef,
++      transform,
++      transition,
++      isDragging,
++      isOver,
++    } = useSortable({ id: item.reference });
+ 
+-  const style = {
+-    transform: CSS.Transform.toString(transform),
+-    transition,
+-  };
++    const style = {
++      transform: CSS.Transform.toString(transform),
++      transition,
++    };
+ 
+-  const hasChildren = item.children && item.children.length > 0;
+-  const isExpanded = item.isExpanded && hasChildren;
++    const hasChildren = item.children && item.children.length > 0;
++    const isExpanded = item.isExpanded === true;
+ 
+-  return (
+-    <div
+-      ref={setNodeRef}
+-      style={style}
+-      className={`group animate-fade-in relative  ${
+-        isDragging ? "opacity-30 z-50" : ""
+-      } ${isOver ? "ring-2 ring-blue-300 ring-opacity-50" : ""}`}
+-    >
+-      {/* Drop zone indicator - subtle */}
+-      {isOver && (
+-        <div className="absolute inset-0 border-2 border-dashed border-nbc-dark-950 rounded-lg pointer-events-none opacity-50" />
+-      )}
++    const navigationItemOptions = [
++      {
++        id: "edit",
++        label: "Edit Nav Item",
++        icon: <Edit className="h-4 w-4" />,
++        onClick: () => {},
++      },
++      {
++        id: "add",
++        label: "Add Child nav Item",
++        icon: <PlusCircle className="h-4 w-4" />,
++        onClick: (id: string) => {
++          handleNavItemButtonClick(id);
++        },
++        showSeparator: true,
++      },
++      {
++        id: "remove",
++        label: "Remove",
++        icon: <Trash2 className="h-4 w-4" />,
++        onClick: (id: string) => {
++          onDeleteItem(id);
++        },
++        destructive: true,
++      },
++    ];
+ 
+-      {/* Main item */}
++    return (
+       <div
+-        className={`flex items-center gap-2 py-3 px-3 rounded-lg transition-all duration-200 relative z-10 ${
+-          isDragging
+-            ? "bg-nbc-dark-950 shadow-lg border-2 border-nbc-dark-800 scale-105"
+-            : "bg-nav-item hover:bg-nav-item-hover hover:shadow-md"
+-        }`}
+-        style={{ marginLeft: `${depth * 24}px` }}
++        ref={setNodeRef}
++        style={style}
++        className={`group animate-fade-in relative w-full ${
++          isDragging ? "opacity-30 z-50" : ""
++        } ${isOver ? "ring-2 ring-blue-300 ring-opacity-50" : ""}`}
+       >
+-        {/* Drag handle */}
++        {/* Drop zone indicator */}
++        {isOver && (
++          <div className="absolute inset-0 border-2 border-dashed border-nbc-dark-950 rounded-lg pointer-events-none opacity-50" />
++        )}
++
++        {/* Main item */}
+         <div
+-          className={`flex items-center justify-center w-5 h-5 cursor-grab active:cursor-grabbing transition-all duration-200 ${
++          className={`flex items-center gap-2 py-3 px-3 rounded-lg transition-all duration-200 relative z-10 border border-gray-300 min-w-0 ${
+             isDragging
+-              ? "text-nbc-dark-800 scale-110"
+-              : "text-nav-text-muted hover:text-nbc-dark-950 hover:scale-110"
++              ? "bg-nbc-dark-950 shadow-lg border-2 border-nbc-dark-800 scale-105"
++              : "bg-nav-item hover:bg-nav-item-hover hover:shadow-md"
+           }`}
+-          {...attributes}
+-          {...listeners}
++          style={{ 
++            paddingLeft: `${12 + depth * 20}px`, // Reduced indentation from 24px to 20px
++            width: `calc(100% - ${depth * 20}px)` // Ensure full width accounting for indentation
++          }}
+         >
+-          <GripVertical className="w-4 h-4" />
+-        </div>
+-
+-        {/* Expand/collapse button */}
+-        {hasChildren ? (
+-          <Button
+-            variant="ghost"
+-            size="sm"
+-            onClick={() => onToggleExpanded(item.reference)}
+-            className="p-0 w-5 h-5 text-nav-text-muted hover:text-nav-text hover:bg-transparent hover:scale-110 transition-all duration-200"
+-          >
+-            {isExpanded ? (
+-              <ChevronDown className="w-4 h-4" />
+-            ) : (
+-              <ChevronRight className="w-4 h-4" />
+-            )}
+-          </Button>
+-        ) : (
+-          <div className="w-5 h-5" />
+-        )}
+-
+-        {/* Title */}
+-        <div className="flex-1 flex items-center gap-2">
+-          <span
+-            className={`text-sm font-medium transition-colors duration-200 capitalize ${
+-              isDragging ? "text-nbc-dark-950" : "text-nav-text"
++          {/* Drag handle */}
++          <div
++            className={`flex items-center justify-center w-5 h-5 cursor-grab active:cursor-grabbing transition-all duration-200 flex-shrink-0 ${
++              isDragging
++                ? "text-nbc-dark-800 scale-110"
++                : "text-nav-text-muted hover:text-nbc-dark-950 hover:scale-110"
+             }`}
++            {...attributes}
++            {...listeners}
+           >
+-            {item.data.title}
+-          </span>
+-          {hasChildren && (
+-            <span className="text-xs text-nav-text-muted bg-nav-item-hover px-2 py-1 rounded-full">
+-              {item.children?.length}
+-            </span>
++            <GripVertical className="w-4 h-4" />
++          </div>
++
++          {/* Expand/collapse button - only show if has children */}
++          {hasChildren ? (
++            <Button
++              variant="ghost"
++              size="sm"
++              onClick={() => onToggleExpanded(item.reference)}
++              className="p-0 w-5 h-5 text-nav-text-muted hover:text-nav-text hover:bg-transparent hover:scale-110 transition-all duration-200 flex-shrink-0"
++            >
++              {isExpanded ? (
++                <ChevronDown className="w-4 h-4" />
++              ) : (
++                <ChevronRight className="w-4 h-4" />
++              )}
++            </Button>
++          ) : (
++            <div className="w-5 h-5 flex-shrink-0" />
+           )}
+-        </div>
+ 
+-        {/* Actions */}
+-        <div
+-          className={`flex items-center gap-1 transition-all duration-200 ${
+-            isDragging ? "opacity-100" : "opacity-0 group-hover:opacity-100"
+-          }`}
+-        >
+-          <Button
+-            variant="ghost"
+-            size="sm"
+-            className="p-0 w-7 h-7 text-nav-text-muted hover:text-nav-text hover:bg-nav-item-active hover:scale-110 transition-all duration-200"
+-          >
+-            <Edit className="w-3 h-3" />
+-          </Button>
+-          <Button
+-            variant="ghost"
+-            size="sm"
+-            className="p-0 w-7 h-7 text-nav-text-muted hover:text-nav-text hover:bg-nav-item-active hover:scale-110 transition-all duration-200"
++          {/* Title */}
++          <div className="flex-1 flex items-center gap-2 min-w-0">
++            <span
++              className={`text-sm font-medium transition-colors duration-200 capitalize truncate ${
++                isDragging ? "text-nbc-dark-950" : "text-nav-text"
++              }`}
++            >
++              {item.data.title}
++            </span>
++            {hasChildren && (
++              <span className="text-xs text-nav-text-muted bg-nav-item-hover px-2 py-1 rounded-full flex-shrink-0">
++                {item.children?.length}
++              </span>
++            )}
++          </div>
++
++          {/* Actions */}
++          <div
++            className={`flex items-center gap-1 transition-all duration-200 flex-shrink-0 ${
++              isDragging ? "opacity-100" : "opacity-0 group-hover:opacity-100"
++            }`}
+           >
+-            <MoreHorizontal className="w-3 h-3" />
+-          </Button>
++            <OptionsDropdown options={navigationItemOptions} />
++          </div>
+         </div>
+-      </div>
+ 
+-      {/* Drag indicator line */}
+-      {isDragging && (
+-        <div className="absolute left-0 top-0 w-1 h-full bg-gradient-to-b from-nbc-dark-950 to-nbc-dark-800 rounded-full animate-pulse" />
+-      )}
++        {/* Drag indicator line */}
++        {isDragging && (
++          <div className="absolute left-0 top-0 w-1 h-full bg-gradient-to-b from-nbc-dark-950 to-nbc-dark-800 rounded-full animate-pulse" />
++        )}
+ 
+-      {/* Children */}
+-      {isExpanded && item.children && (
+-        <div className="ml-6 space-y-1 animate-accordion-down border-l-2 border-gray-300 pl-2">
+-          {item.children.map((child: NavigationItemContentI) => (
+-            <NavigationItem
+-              key={child.reference}
+-              item={child}
+-              onToggleExpanded={onToggleExpanded}
+-              depth={depth + 1}
+-            />
+-          ))}
+-        </div>
+-      )}
+-    </div>
+-  );
+-});
++        {/* Children - only render if expanded and has children */}
++        {isExpanded && hasChildren && (
++          <div className="w-full">
++            {/* Connecting line for visual hierarchy */}
++            <div 
++              className="relative border-l-2 border-gray-300"
++              style={{ marginLeft: `${20 + depth * 20}px` }}
++            >
++              <div className="pl-4 pt-2 space-y-2">
++                {item.children!.map((child: NavigationItemContentI) => (
++                  <NavigationItem
++                    key={child.reference}
++                    item={child}
++                    onToggleExpanded={onToggleExpanded}
++                    depth={depth + 1}
++                    onDeleteItem={onDeleteItem}
++                    handleNavItemButtonClick={handleNavItemButtonClick}
++                  />
++                ))}
++              </div>
++            </div>
++          </div>
++        )}
++      </div>
++    );
++  }
++);
+ 
+-NavigationItem.displayName = 'NavigationItem';
+\ No newline at end of file
++NavigationItem.displayName = "NavigationItem";
+\ No newline at end of file
+diff --git a/src/components/reusable/CustomDataTable.tsx b/src/components/reusable/CustomDataTable.tsx
+index 344ba68..bcdff52 100644
+--- a/src/components/reusable/CustomDataTable.tsx
++++ b/src/components/reusable/CustomDataTable.tsx
+@@ -1,6 +1,18 @@
+ // components/ui/DataTable.tsx
+-import React, { useState, useEffect, useRef } from 'react';
+-import { ArrowUpDown, MoreVertical, Search, ChevronLeft, ChevronRight, Edit, Trash2, Eye } from 'lucide-react';
++import React, { useState, useEffect } from "react";
++import {
++  ArrowUpDown,
++  MoreVertical,
++  Search,
++  ChevronLeft,
++  ChevronRight,
++  Edit,
++  Trash2,
++  Eye,
++} from "lucide-react";
++import TableSkeleton from "../loader/TableSkeleton";
++import OptionsDropdown, { type DropdownOption } from "../ui/OptionsDropdown";
++import { Checkbox } from "../ui/checkbox";
+ 
+ interface TableHeader {
+   key: string;
+@@ -8,18 +20,11 @@ interface TableHeader {
+   sortable: boolean;
+ }
+ 
+-interface ActionItem {
+-  label: string;
+-  icon?: React.ComponentType<{ className?: string }>;
+-  onClick: (row: any) => void;
+-  className?: string;
+-}
+-
+ interface DataTableProps {
+   data: any[];
+   loading?: boolean;
+   onRowSelect?: (selectedRows: Set<string>) => void;
+-  actions?: ActionItem[];
++  actions?: DropdownOption[];
+   className?: string;
+   searchable?: boolean;
+   paginated?: boolean;
+@@ -27,107 +32,6 @@ interface DataTableProps {
+ }
+ 
+ // Action Menu Component
+-const ActionMenu: React.FC<{ row: any; actions: ActionItem[] }> = ({ row, actions }) => {
+-  const [isOpen, setIsOpen] = useState(false);
+-  const menuRef = useRef<HTMLDivElement>(null);
+-
+-  useEffect(() => {
+-    const handleClickOutside = (event: MouseEvent) => {
+-      if (menuRef.current && !menuRef.current.contains(event.target as Node)) {
+-        setIsOpen(false);
+-      }
+-    };
+-
+-    document.addEventListener('mousedown', handleClickOutside);
+-    return () => document.removeEventListener('mousedown', handleClickOutside);
+-  }, []);
+-
+-  const handleActionClick = (action: ActionItem, e: React.MouseEvent) => {
+-    e.stopPropagation();
+-    action.onClick(row);
+-    setIsOpen(false);
+-  };
+-
+-  return (
+-    <div className="relative" ref={menuRef}>
+-      <button
+-        onClick={(e) => {
+-          e.stopPropagation();
+-          setIsOpen(!isOpen);
+-        }}
+-        className="p-1 text-gray-400 rounded hover:text-gray-600 hover:bg-gray-100"
+-      >
+-        <MoreVertical className="w-4 h-4" />
+-      </button>
+-
+-      {isOpen && (
+-        <div className="absolute right-0 w-48 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-[99999999]">
+-          {actions.map((action, index) => {
+-            const IconComponent = action.icon;
+-            return (
+-              <button
+-                key={index}
+-                onClick={(e) => handleActionClick(action, e)}
+-                className={`w-full px-4 py-2 text-left text-sm transition-colors hover:bg-gray-50 flex items-center gap-2 ${
+-                  action.className || ''
+-                } ${index === 0 ? 'rounded-t-lg' : ''} ${
+-                  index === actions.length - 1 ? 'rounded-b-lg' : 'border-b border-gray-100'
+-                }`}
+-              >
+-                {IconComponent && <IconComponent className="w-4 h-4" />}
+-                {action.label}
+-              </button>
+-            );
+-          })}
+-        </div>
+-      )}
+-    </div>
+-  );
+-};
+-const TableSkeleton: React.FC<{ rows?: number; cols?: number }> = ({ rows = 5, cols = 4 }) => (
+-  <div className="overflow-hidden bg-white border border-gray-200 shadow-sm rounded-xl">
+-    <div className="overflow-x-auto">
+-      <table className="min-w-full divide-y divide-gray-200">
+-        <thead className="bg-gray-50">
+-          <tr>
+-            <th className="w-12 px-6 py-4 text-left">
+-              <div className="w-4 h-4 bg-gray-200 rounded animate-pulse"></div>
+-            </th>
+-            {Array.from({ length: cols }, (_, i) => (
+-              <th key={i} className="px-6 py-4 text-left">
+-                <div className="w-20 h-4 bg-gray-200 rounded animate-pulse"></div>
+-              </th>
+-            ))}
+-            <th className="w-12 px-6 py-4 text-right">
+-              <div className="w-4 h-4 bg-gray-200 rounded animate-pulse"></div>
+-            </th>
+-          </tr>
+-        </thead>
+-        <tbody className="bg-white divide-y divide-gray-200">
+-          {Array.from({ length: rows }, (_, i) => (
+-            <tr key={i}>
+-              <td className="px-6 py-4 whitespace-nowrap">
+-                <div className="w-4 h-4 bg-gray-200 rounded animate-pulse"></div>
+-              </td>
+-              {Array.from({ length: cols }, (_, j) => (
+-                <td key={j} className="px-6 py-4 whitespace-nowrap">
+-                  <div className="h-4 bg-gray-200 rounded animate-pulse" style={{ width: `${Math.random() * 40 + 60}%` }}></div>
+-                </td>
+-              ))}
+-              <td className="px-6 py-4 text-right whitespace-nowrap">
+-                <div className="w-4 h-4 bg-gray-200 rounded animate-pulse"></div>
+-              </td>
+-            </tr>
+-          ))}
+-        </tbody>
+-      </table>
+-    </div>
+-    <div className="flex items-center justify-between px-6 py-3 border-t border-gray-200 bg-gray-50">
+-      <div className="w-32 h-4 bg-gray-200 rounded animate-pulse"></div>
+-      <div className="w-24 h-4 bg-gray-200 rounded animate-pulse"></div>
+-    </div>
+-  </div>
+-);
+ 
+ const CustomDataTable: React.FC<DataTableProps> = ({
+   data = [],
+@@ -135,30 +39,37 @@ const CustomDataTable: React.FC<DataTableProps> = ({
+   onRowSelect,
+   actions = [
+     {
+-      label: 'View',
+-      icon: Eye,
+-      onClick: (row) => console.log('View:', row)
++      id: "view",
++      label: "View",
++      icon: <Eye className="h-4 w-4" />,
++      onClick: (row) => console.log("View:", row),
+     },
+     {
+-      label: 'Edit',
+-      icon: Edit,
+-      onClick: (row) => console.log('Edit:', row)
++      id: "edit",
++      label: "Edit",
++      icon: <Edit className="h-4 w-4" />,
++      onClick: (row) => console.log("Edit:", row),
++      showSeparator: true,
+     },
+     {
+-      label: 'Delete',
+-      icon: Trash2,
+-      onClick: (row) => console.log('Delete:', row),
+-      className: 'text-red-600 hover:text-red-700 hover:bg-red-50'
+-    }
++      id: "delete",
++      label: "Delete",
++      icon: <Trash2 className="h-4 w-4" />,
++      onClick: (row) => console.log("Delete:", row),
++      destructive: true,
++    },
+   ],
+-  className = '',
++  className = "",
+   searchable = true,
+   paginated = true,
+-  pageSize = 10
++  pageSize = 10,
+ }) => {
+   const [selectedRows, setSelectedRows] = useState<Set<string>>(new Set());
+-  const [sortConfig, setSortConfig] = useState<{key: string, direction: 'asc' | 'desc'} | null>(null);
+-  const [searchTerm, setSearchTerm] = useState('');
++  const [sortConfig, setSortConfig] = useState<{
++    key: string;
++    direction: "asc" | "desc";
++  } | null>(null);
++  const [searchTerm, setSearchTerm] = useState("");
+   const [currentPage, setCurrentPage] = useState(1);
+ 
+   // Generate table headers dynamically from data keys (excluding reference)
+@@ -167,25 +78,29 @@ const CustomDataTable: React.FC<DataTableProps> = ({
+ 
+     const firstEntry = data[0];
+     const headers: TableHeader[] = [];
+-    
++
+     // Add data object keys
+     if (firstEntry.data) {
+-      Object.keys(firstEntry.data).forEach(key => {
++      Object.keys(firstEntry.data).forEach((key) => {
+         headers.push({
+           key: `data.${key}`,
+-          label: key.charAt(0).toUpperCase() + key.slice(1).replace(/([A-Z])/g, ' $1'),
+-          sortable: true
++          label:
++            key.charAt(0).toUpperCase() +
++            key.slice(1).replace(/([A-Z])/g, " $1"),
++          sortable: true,
+         });
+       });
+     }
+-    
++
+     // Add other direct properties (excluding data object and reference)
+-    Object.keys(firstEntry).forEach(key => {
+-      if (key !== 'data' && key !== 'reference') {
++    Object.keys(firstEntry).forEach((key) => {
++      if (key !== "data" && key !== "reference" && key !== "locale" && key !== "availableLocales") {
+         headers.push({
+           key: key,
+-          label: key.charAt(0).toUpperCase() + key.slice(1).replace(/([A-Z])/g, ' $1'),
+-          sortable: true
++          label:
++            key.charAt(0).toUpperCase() +
++            key.slice(1).replace(/([A-Z])/g, " $1"),
++          sortable: true,
+         });
+       }
+     });
+@@ -195,14 +110,18 @@ const CustomDataTable: React.FC<DataTableProps> = ({
+ 
+   // Get nested value from object using dot notation
+   const getNestedValue = (obj: any, path: string) => {
+-    return path.split('.').reduce((current, key) => current?.[key], obj);
++    return path.split(".").reduce((current, key) => current?.[key], obj);
+   };
+ 
+   // Handle sorting
+   const handleSort = (key: string) => {
+-    let direction: 'asc' | 'desc' = 'asc';
+-    if (sortConfig && sortConfig.key === key && sortConfig.direction === 'asc') {
+-      direction = 'desc';
++    let direction: "asc" | "desc" = "asc";
++    if (
++      sortConfig &&
++      sortConfig.key === key &&
++      sortConfig.direction === "asc"
++    ) {
++      direction = "desc";
+     }
+     setSortConfig({ key, direction });
+   };
+@@ -210,8 +129,8 @@ const CustomDataTable: React.FC<DataTableProps> = ({
+   // Filter data based on search term
+   const getFilteredData = () => {
+     if (!searchTerm) return data;
+-    
+-    return data.filter(item => {
++
++    return data.filter((item) => {
+       const searchableText = JSON.stringify(item).toLowerCase();
+       return searchableText.includes(searchTerm.toLowerCase());
+     });
+@@ -220,18 +139,18 @@ const CustomDataTable: React.FC<DataTableProps> = ({
+   // Sort filtered data
+   const getSortedData = () => {
+     const filteredData = getFilteredData();
+-    
++
+     if (!sortConfig) return filteredData;
+-    
++
+     return [...filteredData].sort((a, b) => {
+       const aValue = getNestedValue(a, sortConfig.key);
+       const bValue = getNestedValue(b, sortConfig.key);
+-      
++
+       if (aValue < bValue) {
+-        return sortConfig.direction === 'asc' ? -1 : 1;
++        return sortConfig.direction === "asc" ? -1 : 1;
+       }
+       if (aValue > bValue) {
+-        return sortConfig.direction === 'asc' ? 1 : -1;
++        return sortConfig.direction === "asc" ? 1 : -1;
+       }
+       return 0;
+     });
+@@ -240,9 +159,9 @@ const CustomDataTable: React.FC<DataTableProps> = ({
+   // Get paginated data
+   const getPaginatedData = () => {
+     const sortedData = getSortedData();
+-    
++
+     if (!paginated) return sortedData;
+-    
++
+     const startIndex = (currentPage - 1) * pageSize;
+     const endIndex = startIndex + pageSize;
+     return sortedData.slice(startIndex, endIndex);
+@@ -262,9 +181,12 @@ const CustomDataTable: React.FC<DataTableProps> = ({
+ 
+   const handleSelectAll = () => {
+     const currentData = getPaginatedData();
+-    const currentReferences = currentData.map(item => item.reference);
+-    
+-    if (selectedRows.size === currentReferences.length && currentReferences.every(ref => selectedRows.has(ref))) {
++    const currentReferences = currentData.map((item) => item.reference);
++
++    if (
++      selectedRows.size === currentReferences.length &&
++      currentReferences.every((ref) => selectedRows.has(ref))
++    ) {
+       setSelectedRows(new Set());
+       onRowSelect?.(new Set());
+     } else {
+@@ -283,10 +205,12 @@ const CustomDataTable: React.FC<DataTableProps> = ({
+   const paginatedData = getPaginatedData();
+   const filteredData = getFilteredData();
+   const totalPages = Math.ceil(filteredData.length / pageSize);
+-  
+-  const currentPageReferences = paginatedData.map(item => item.reference);
+-  const isAllSelected = currentPageReferences.length > 0 && currentPageReferences.every(ref => selectedRows.has(ref));
+-  const isIndeterminate = currentPageReferences.some(ref => selectedRows.has(ref)) && !isAllSelected;
++
++  const currentPageReferences = paginatedData.map((item) => item.reference);
++  const isAllSelected =
++    currentPageReferences.length > 0 &&
++    currentPageReferences.every((ref) => selectedRows.has(ref));
++
+ 
+   if (loading) {
+     return <TableSkeleton rows={pageSize} cols={tableHeaders.length || 4} />;
+@@ -303,7 +227,7 @@ const CustomDataTable: React.FC<DataTableProps> = ({
+             placeholder="Search entries..."
+             value={searchTerm}
+             onChange={(e) => setSearchTerm(e.target.value)}
+-            className="w-full py-2 pl-10 pr-4 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
++            className="w-full py-2 pl-10 pr-4 border border-gray-300 rounded-lg outline-none focus:ring-2 focus:ring-nbc-dark-950 focus:border-nbc-dark-950"
+           />
+         </div>
+       )}
+@@ -315,14 +239,18 @@ const CustomDataTable: React.FC<DataTableProps> = ({
+             <thead className="bg-gray-50">
+               <tr>
+                 <th className="w-12 px-6 py-4 text-left">
+-                  <input
++                  {/* <input
+                     type="checkbox"
+                     checked={isAllSelected}
+                     ref={(el) => {
+                       if (el) el.indeterminate = isIndeterminate;
+                     }}
+                     onChange={handleSelectAll}
+-                    className="w-4 h-4 text-blue-600 bg-white border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
++                    className="w-4 h-4 text-nbc-dark-950 bg-white border-gray-300 rounded focus:ring-nbc-dark-950 focus:ring-2"
++                  /> */}
++                  <Checkbox
++                    checked={isAllSelected}
++                    onCheckedChange={handleSelectAll}
+                   />
+                 </th>
+                 {tableHeaders.map((header) => (
+@@ -337,8 +265,8 @@ const CustomDataTable: React.FC<DataTableProps> = ({
+                         <ArrowUpDown className="w-4 h-4 text-gray-400" />
+                       )}
+                       {sortConfig?.key === header.key && (
+-                        <span className="text-blue-600">
+-                          {sortConfig.direction === 'asc' ? '↑' : '↓'}
++                        <span className="text-nbc-dark-950">
++                          {sortConfig.direction === "asc" ? "↑" : "↓"}
+                         </span>
+                       )}
+                     </div>
+@@ -352,53 +280,73 @@ const CustomDataTable: React.FC<DataTableProps> = ({
+             <tbody className="bg-white divide-y divide-gray-200">
+               {paginatedData.length === 0 ? (
+                 <tr>
+-                  <td colSpan={tableHeaders.length + 2} className="px-6 py-12 text-center text-gray-500">
+-                    {searchTerm ? 'No entries found matching your search.' : 'No entries available.'}
++                  <td
++                    colSpan={tableHeaders.length + 2}
++                    className="px-6 py-12 text-center text-gray-500"
++                  >
++                    {searchTerm
++                      ? "No entries found matching your search."
++                      : "No entries available."}
+                   </td>
+                 </tr>
+               ) : (
+                 paginatedData.map((entry) => (
+                   <tr
+                     key={entry.reference}
+-                    className={`hover:bg-gray-50 transition-colors ${
+-                      selectedRows.has(entry.reference) ? 'bg-blue-50' : ''
++                    className={`hover:bg-gray-50 transition-colors group ${
++                      selectedRows.has(entry.reference) ? "bg-blue-50" : ""
+                     }`}
+                   >
+                     <td className="px-6 py-4 whitespace-nowrap">
+-                      <input
++                      {/* <input
+                         type="checkbox"
+                         checked={selectedRows.has(entry.reference)}
+                         onChange={() => handleSelectRow(entry.reference)}
+                         className="w-4 h-4 text-blue-600 bg-white border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
++                      /> */}
++
++                      <Checkbox
++                        checked={selectedRows.has(entry.reference)}
++                        onCheckedChange={() => handleSelectRow(entry.reference)}
+                       />
+                     </td>
+                     {tableHeaders.map((header) => (
+-                      <td key={header.key} className="px-6 py-4 text-sm text-gray-900 whitespace-nowrap">
++                      <td
++                        key={header.key}
++                        className="px-6 py-4 text-sm text-gray-900 whitespace-nowrap"
++                      >
+                         <div className="flex items-center">
+-                          {header.key === 'status' ? (
+-                            <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+-                              getNestedValue(entry, header.key) === 'PUBLISHED'
+-                                ? 'bg-green-100 text-green-800'
+-                                : 'bg-yellow-100 text-yellow-800'
+-                            }`}>
++                          {header.key === "status" ? (
++                            <span
++                              className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
++                                getNestedValue(entry, header.key) ===
++                                "PUBLISHED"
++                                  ? "bg-green-100 text-green-800"
++                                  : "bg-yellow-100 text-yellow-800"
++                              }`}
++                            >
+                               {getNestedValue(entry, header.key)}
+                             </span>
+-                          ) : header.key === 'publishedAt' ? (
++                          ) : header.key === "publishedAt" ? (
+                             <span className="text-gray-600">
+-                              {getNestedValue(entry, header.key) ? 
+-                                new Date(getNestedValue(entry, header.key)).toLocaleDateString() 
+-                                : '-'}
++                              {getNestedValue(entry, header.key)
++                                ? new Date(
++                                    getNestedValue(entry, header.key)
++                                  ).toLocaleDateString()
++                                : "-"}
+                             </span>
+                           ) : (
+                             <span className="font-medium">
+-                              {getNestedValue(entry, header.key) || '-'}
++                              {getNestedValue(entry, header.key) || "-"}
+                             </span>
+                           )}
+                         </div>
+                       </td>
+                     ))}
+                     <td className="px-6 py-4 text-sm font-medium text-right whitespace-nowrap">
+-                      <ActionMenu row={entry} actions={actions} />
++                      {/* <ActionMenu row={entry} actions={actions} /> */}
++
++                      <OptionsDropdown options={actions} />
+                     </td>
+                   </tr>
+                 ))
+@@ -406,20 +354,21 @@ const CustomDataTable: React.FC<DataTableProps> = ({
+             </tbody>
+           </table>
+         </div>
+-        
++
+         {/* Table Footer */}
+         <div className="flex items-center justify-between px-6 py-3 border-t border-gray-200 bg-gray-50">
+           <div className="flex items-center text-sm text-gray-700">
+             {selectedRows.size > 0 && (
+-              <span className="mr-4">
+-                {selectedRows.size} selected
+-              </span>
++              <span className="mr-4">{selectedRows.size} selected</span>
+             )}
+             <span>
+-              {searchTerm ? `${filteredData.length} of ${data.length}` : `${data.length}`} entries
++              {searchTerm
++                ? `${filteredData.length} of ${data.length}`
++                : `${data.length}`}{" "}
++              entries
+             </span>
+           </div>
+-          
++
+           {paginated && totalPages > 1 && (
+             <div className="flex items-center gap-2">
+               <span className="text-sm text-gray-700">
+@@ -427,14 +376,16 @@ const CustomDataTable: React.FC<DataTableProps> = ({
+               </span>
+               <div className="flex items-center gap-1">
+                 <button
+-                  onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
++                  onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                   disabled={currentPage === 1}
+                   className="p-1 text-gray-400 rounded hover:text-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                 >
+                   <ChevronLeft className="w-4 h-4" />
+                 </button>
+                 <button
+-                  onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
++                  onClick={() =>
++                    setCurrentPage((p) => Math.min(totalPages, p + 1))
++                  }
+                   disabled={currentPage === totalPages}
+                   className="p-1 text-gray-400 rounded hover:text-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                 >
+@@ -449,4 +400,4 @@ const CustomDataTable: React.FC<DataTableProps> = ({
+   );
+ };
+ 
+-export default CustomDataTable;
+\ No newline at end of file
++export default CustomDataTable;
+diff --git a/src/components/reusable/data-table.tsx b/src/components/reusable/data-table.tsx
+index 5e10347..c91ff10 100644
+--- a/src/components/reusable/data-table.tsx
++++ b/src/components/reusable/data-table.tsx
+@@ -35,6 +35,15 @@ import {
+ import { cn } from "@/lib/utils";
+ import type { DataTableProps } from "@/types/table";
+ 
++// Extended props interface
++interface EnhancedDataTableProps<T> extends DataTableProps<T> {
++  // Display mode: 'checkbox' for checkboxes, 'serial' for S/N numbers
++  displayMode?: 'checkbox' | 'serial';
++  // Table header styling
++  headerBgColor?: string;
++  headerTextColor?: string;
++  headerClassName?: string;
++}
+ 
+ // Loading skeleton component
+ const TableSkeleton = ({ columns }: { columns: number }) => (
+@@ -64,7 +73,12 @@ function DataTable<T extends Record<string, any>>({
+   emptyStateMessage = "No results found.",
+   loading = false,
+   onRowSelectionChange,
+-}: DataTableProps<T>) {
++  // New props
++  displayMode = 'checkbox',
++  headerBgColor = 'bg-gray-200',
++  headerTextColor = 'text-white',
++  headerClassName = '',
++}: EnhancedDataTableProps<T>) {
+   const [sorting, setSorting] = useState<SortingState>([]);
+   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
+@@ -74,8 +88,8 @@ function DataTable<T extends Record<string, any>>({
+   const tableColumns = useMemo<ColumnDef<T>[]>(() => {
+     const cols: ColumnDef<T>[] = [];
+ 
+-    // Add selection column if enabled
+-    if (enableRowSelection) {
++    // Add selection or serial number column based on displayMode
++    if (enableRowSelection && displayMode === 'checkbox') {
+       cols.push({
+         id: "select",
+         header: ({ table }) => (
+@@ -103,6 +117,28 @@ function DataTable<T extends Record<string, any>>({
+         enableHiding: false,
+         size: 40,
+       });
++    } else if (displayMode === 'serial') {
++      // Add S/N column
++      cols.push({
++        id: "serial",
++        header: "S/N",
++        cell: ({ row, table }) => {
++          const currentPageIndex = table.getState().pagination.pageIndex;
++          const currentPageSize = table.getState().pagination.pageSize;
++          const serialNumber = enablePagination 
++            ? currentPageIndex * currentPageSize + row.index + 1
++            : row.index + 1;
++          
++          return (
++            <div className="text-center font-medium text-muted-foreground">
++              {serialNumber}
++            </div>
++          );
++        },
++        enableSorting: false,
++        enableHiding: false,
++        size: 50,
++      });
+     }
+ 
+     // Add data columns
+@@ -164,6 +200,7 @@ function DataTable<T extends Record<string, any>>({
+     if (actions.length > 0) {
+       cols.push({
+         id: "actions",
++        header: "Actions",
+         enableHiding: false,
+         enableSorting: false,
+         cell: ({ row }) => {
+@@ -201,12 +238,12 @@ function DataTable<T extends Record<string, any>>({
+             </DropdownMenu>
+           );
+         },
+-        size: 40,
++        size: 80,
+       });
+     }
+ 
+     return cols;
+-  }, [columns, actions, enableRowSelection]);
++  }, [columns, actions, enableRowSelection, displayMode, enablePagination]);
+ 
+   const table = useReactTable({
+     data,
+@@ -221,7 +258,7 @@ function DataTable<T extends Record<string, any>>({
+     getFilteredRowModel: getFilteredRowModel(),
+     onColumnVisibilityChange: setColumnVisibility,
+     onRowSelectionChange: setRowSelection,
+-    onGlobalFilterChange: setGlobalFilter || (() => {}), // Fix: Provide fallback
++    onGlobalFilterChange: setGlobalFilter || (() => {}),
+     globalFilterFn: "includesString",
+     initialState: {
+       pagination: {
+@@ -239,24 +276,76 @@ function DataTable<T extends Record<string, any>>({
+ 
+   // Handle row selection change callback
+   React.useEffect(() => {
+-    if (onRowSelectionChange && enableRowSelection) {
++    if (onRowSelectionChange && enableRowSelection && displayMode === 'checkbox') {
+       const selectedRows = table
+         .getFilteredSelectedRowModel()
+         .rows.map((row) => row.original);
+       onRowSelectionChange(selectedRows);
+     }
+-  }, [rowSelection, onRowSelectionChange, table, enableRowSelection]);
++  }, [rowSelection, onRowSelectionChange, table, enableRowSelection, displayMode]);
++
++  // Generate header style for TableHeader
++  const headerStyle = useMemo(() => {
++    const style: React.CSSProperties = {};
++    
++    // Handle custom background color (could be CSS class or hex/rgb value)
++    if (headerBgColor.startsWith('#') || headerBgColor.startsWith('rgb')) {
++      style.backgroundColor = headerBgColor;
++    }
++    
++    return style;
++  }, [headerBgColor]);
++
++  // Generate header className for TableHeader
++  const headerClassNames = useMemo(() => {
++    const classes = ['capitalize'];
++    
++    // Add background color class if it's a CSS class
++    if (!headerBgColor.startsWith('#') && !headerBgColor.startsWith('rgb')) {
++      classes.push(headerBgColor);
++    }
++    
++    // Add custom header className
++    if (headerClassName) {
++      classes.push(headerClassName);
++    }
++    
++    return cn(...classes);
++  }, [headerBgColor, headerClassName]);
+ 
++  // Generate header cell style for TableHead
++  const headerCellStyle = useMemo(() => {
++    const style: React.CSSProperties = {};
++    
++    // Handle custom text color (could be CSS class or hex/rgb value)
++    if (headerTextColor.startsWith('#') || headerTextColor.startsWith('rgb')) {
++      style.color = headerTextColor;
++    }
++    
++    return style;
++  }, [headerTextColor]);
+ 
++  // Generate header cell className for TableHead
++  const headerCellClassNames = useMemo(() => {
++    const classes = ['border-gray-300'];
++    
++    // Add text color class if it's a CSS class
++    if (!headerTextColor.startsWith('#') && !headerTextColor.startsWith('rgb')) {
++      classes.push(headerTextColor);
++    }
++    
++    return cn(...classes);
++  }, [headerTextColor]);
+ 
+   return (
+     <div className={cn("w-full space-y-4", className)}>
+-
+-
+       {/* Table */}
+       <div className="">
+         <Table>
+-          <TableHeader className="bg-gray-200 ">
++          <TableHeader 
++            className={headerClassNames}
++            style={headerStyle}
++          >
+             {table.getHeaderGroups().map((headerGroup) => (
+               <TableRow key={headerGroup.id} className="border-gray-300">
+                 {headerGroup.headers.map((header) => (
+@@ -265,8 +354,9 @@ function DataTable<T extends Record<string, any>>({
+                     style={{
+                       width:
+                         header.getSize() !== 150 ? header.getSize() : undefined,
++                      ...headerCellStyle, // Apply text color styling here
+                     }}
+-                    className="border-gray-300"
++                    className={headerCellClassNames} // Apply text color class here
+                   >
+                     {header.isPlaceholder
+                       ? null
+@@ -307,7 +397,7 @@ function DataTable<T extends Record<string, any>>({
+                 >
+                   <div className="flex flex-col items-center justify-center space-y-2 text-muted-foreground">
+                     <div className="text-sm">{emptyStateMessage}</div>
+-                    {globalFilter && setGlobalFilter && ( // Fix: Check if function exists
++                    {globalFilter && setGlobalFilter && (
+                       <Button
+                         variant="link"
+                         size="sm"
+@@ -329,12 +419,18 @@ function DataTable<T extends Record<string, any>>({
+       {enablePagination && (
+         <div className="flex items-center justify-between">
+           <div className="flex-1 text-sm text-muted-foreground">
+-            {enableRowSelection && (
++            {enableRowSelection && displayMode === 'checkbox' && (
+               <>
+                 {table.getFilteredSelectedRowModel().rows.length} of{" "}
+                 {table.getFilteredRowModel().rows.length} row(s) selected.
+               </>
+             )}
++            {displayMode === 'serial' && (
++              <>
++                Showing {table.getRowModel().rows.length} of{" "}
++                {table.getFilteredRowModel().rows.length} row(s).
++              </>
++            )}
+           </div>
+           <div className="flex items-center space-x-6 lg:space-x-8">
+             <div className="flex items-center space-x-2">
+@@ -372,7 +468,7 @@ function DataTable<T extends Record<string, any>>({
+                 onClick={() => table.previousPage()}
+                 disabled={!table.getCanPreviousPage()}
+               >
+-                <span className="sr-only">Go to previous page</span>→
++                <span className="sr-only">Go to previous page</span>←
+               </Button>
+               <Button
+                 variant="outline"
+diff --git a/src/components/ui/dropdown-menu.tsx b/src/components/ui/dropdown-menu.tsx
+index 21f2a78..ddd845c 100644
+--- a/src/components/ui/dropdown-menu.tsx
++++ b/src/components/ui/dropdown-menu.tsx
+@@ -45,7 +45,7 @@ const DropdownMenuSubContent = React.forwardRef<
+   <DropdownMenuPrimitive.SubContent
+     ref={ref}
+     className={cn(
+-      "z-50 min-w-[12rem] overflow-hidden rounded-xl bg-white p-2 text-gray-900 shadow-2xl shadow-black/20 ring-1 ring-black/5 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 dark:bg-white dark:text-gray-900 dark:ring-black/5",
++      "z-50 min-w-[12rem] overflow-hidden rounded-xl bg-white p-2 text-gray-900 shadow-2xl shadow-black/20 ring-1 ring-gray-300 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 dark:bg-white dark:text-gray-900 dark:ring-gray-300",
+       className
+     )}
+     {...props}
+@@ -63,7 +63,7 @@ const DropdownMenuContent = React.forwardRef<
+       ref={ref}
+       sideOffset={sideOffset}
+       className={cn(
+-        "z-50 min-w-[12rem] overflow-hidden rounded-xl bg-white p-2 text-gray-900 shadow shadow-black/20 ring-1 ring-black/5 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 dark:bg-white dark:text-gray-900 dark:ring-black/5",
++        "z-50 min-w-[12rem] overflow-hidden rounded-xl bg-white p-2 text-gray-900 !shadow shadow-black/20 ring-1 ring-gray-300 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[side=bottom]:slide-in-from-top-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 ",
+         className
+       )}
+       {...props}
+diff --git a/src/components/ui/modal.tsx b/src/components/ui/modal.tsx
+index 14a1739..dfce796 100644
+--- a/src/components/ui/modal.tsx
++++ b/src/components/ui/modal.tsx
+@@ -73,9 +73,9 @@ function Modal() {
+       >
+         {/* Modal Header */}
+         {modalTitle && (
+-          <div className="relative flex items-center justify-between px-5 py-3 border-b border-gray-200/30 backdrop-blur-sm">
++          <div className="relative flex items-center justify-between px-5 py-3 border-b border-gray-200/30 backdrop-blur-sm gap-x-2">
+            <div className="">
+-           <h2 className="text-lg font-semibold text-gray-900 animate-fadeInUp" id="modal-title">
++           <h2 className="text-lg font-semibold text-gray-900 animate-fadeInUp line-clamp-1" id="modal-title">
+               {modalTitle}
+             </h2>
+             <p className="text-sm text-gray-400">{modalDescription}</p>
+diff --git a/src/services/CMS/Navigation.service.ts b/src/services/CMS/Navigation.service.ts
+index 61e8fcb..cfb9574 100644
+--- a/src/services/CMS/Navigation.service.ts
++++ b/src/services/CMS/Navigation.service.ts
+@@ -77,12 +77,15 @@ export const NavigationService = {
+       title: string;
+       description: string;
+       url?: string;
+-    }
++    },
++    parentRef?: string
+   ) => {
+     try {
+       const response = await cmsApiService.post(
+         `/cms/navigations/${navigationId}/nav-items`,
+         {
++          locale: "en",
++          parentRef: parentRef ? parentRef : "",
+           data: data,
+         },
+         {
+@@ -141,6 +144,7 @@ export const NavigationService = {
+         `/cms/navigations/${navigationId}/nav-items/${id}`,
+         {
+           successMessage: "Navigation item deleted successfully!",
++          confirmationMessage: "Are You Sure you want delete this Nav Item?",
+         }
+       );
+       return response;
+diff --git a/src/services/CMS/collection.service.ts b/src/services/CMS/collection.service.ts
+index 583724e..44fa9f2 100644
+--- a/src/services/CMS/collection.service.ts
++++ b/src/services/CMS/collection.service.ts
+@@ -53,6 +53,7 @@ export const collectionServices = {
+     collectionId: string,
+     data: {
+       blueprintRef: string;
++
+       data: {
+         [key: string]: any; // This allows for dynamic keys and values
+       };
+@@ -61,7 +62,11 @@ export const collectionServices = {
+     try {
+       const response = await cmsApiService.post(
+         `/cms/collections/${collectionId}/entries`,
+-        data,
++        {
++          ...data,
++          locale: "en",
++        },
++
+         {
+           successMessage: "Collection entry created successfully!",
+         }
+diff --git a/src/types/cms/navigation.ts b/src/types/cms/navigation.ts
+index ba57220..8a5a430 100644
+--- a/src/types/cms/navigation.ts
++++ b/src/types/cms/navigation.ts
+@@ -21,6 +21,7 @@ export type NavigationContentI = {
+   handle: string;
+   reference: string;
+   title: string;
++  items:NavigationItemContentI[]
+ };
+ 
+ export type NavigationI = {
+@@ -35,6 +36,7 @@ export type NavigationItemContentI = {
+   reference: string;
+   children?: NavigationItemContentI[]; // Changed from [] to NavigationItemContentI[]
+   isExpanded?: boolean;
++  items: NavigationItemContentI[];
+   data: {
+     link: string;
+     title: string;
+diff --git a/src/utils/confirmation.tsx b/src/utils/confirmation.tsx
+index 3732c3f..48e89d8 100644
+--- a/src/utils/confirmation.tsx
++++ b/src/utils/confirmation.tsx
+@@ -104,7 +104,7 @@ export const showConfirmation = (
+               {/* Title */}
+               <h2
+                 id="dialog-title"
+-                className="text-2xl font-bold text-nbc-dark-950  text-center mb-4"
++                className="text-xl font-semibold text-nbc-dark-950  text-center mb-4"
+               >
+                 {title}
+               </h2>
+@@ -112,7 +112,7 @@ export const showConfirmation = (
+               {/* Description */}
+               <p
+                 id="dialog-description"
+-                className="text-gray-600 text-center text-lg mb-8 leading-relaxed"
++                className="text-gray-600 text-center text-sm mb-8 leading-relaxed"
+               >
+                 {description}
+               </p>
