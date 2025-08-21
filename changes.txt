@@ -1,1997 +1,878 @@
 diff --git a/package-lock.json b/package-lock.json
-index ad7e7e4..87899bc 100644
+index 87899bc..373332e 100644
 --- a/package-lock.json
 +++ b/package-lock.json
-@@ -9,6 +9,7 @@
-       "version": "0.0.0",
-       "dependencies": {
-         "@dnd-kit/core": "^6.3.1",
-+        "@dnd-kit/modifiers": "^9.0.0",
-         "@dnd-kit/sortable": "^10.0.0",
-         "@radix-ui/react-accordion": "^1.2.11",
-         "@radix-ui/react-alert-dialog": "^1.1.14",
-@@ -403,6 +404,19 @@
-         "react-dom": ">=16.8.0"
+@@ -21,6 +21,7 @@
+         "@radix-ui/react-navigation-menu": "^1.2.13",
+         "@radix-ui/react-popover": "^1.1.14",
+         "@radix-ui/react-radio-group": "^1.3.7",
++        "@radix-ui/react-scroll-area": "^1.2.10",
+         "@radix-ui/react-select": "^2.2.5",
+         "@radix-ui/react-separator": "^1.1.7",
+         "@radix-ui/react-slider": "^1.3.5",
+@@ -2079,6 +2080,64 @@
+         }
        }
      },
-+    "node_modules/@dnd-kit/modifiers": {
-+      "version": "9.0.0",
-+      "resolved": "https://registry.npmjs.org/@dnd-kit/modifiers/-/modifiers-9.0.0.tgz",
-+      "integrity": "sha512-ybiLc66qRGuZoC20wdSSG6pDXFikui/dCNGthxv4Ndy8ylErY0N3KVxY2bgo7AWwIbxDmXDg3ylAFmnrjcbVvw==",
++    "node_modules/@radix-ui/react-scroll-area": {
++      "version": "1.2.10",
++      "resolved": "https://registry.npmjs.org/@radix-ui/react-scroll-area/-/react-scroll-area-1.2.10.tgz",
++      "integrity": "sha512-tAXIa1g3sM5CGpVT0uIbUx/U3Gs5N8T52IICuCtObaos1S8fzsrPXG5WObkQN3S6NVl6wKgPhAIiBGbWnvc97A==",
 +      "dependencies": {
-+        "@dnd-kit/utilities": "^3.2.2",
-+        "tslib": "^2.0.0"
++        "@radix-ui/number": "1.1.1",
++        "@radix-ui/primitive": "1.1.3",
++        "@radix-ui/react-compose-refs": "1.1.2",
++        "@radix-ui/react-context": "1.1.2",
++        "@radix-ui/react-direction": "1.1.1",
++        "@radix-ui/react-presence": "1.1.5",
++        "@radix-ui/react-primitive": "2.1.3",
++        "@radix-ui/react-use-callback-ref": "1.1.1",
++        "@radix-ui/react-use-layout-effect": "1.1.1"
 +      },
 +      "peerDependencies": {
-+        "@dnd-kit/core": "^6.3.0",
-+        "react": ">=16.8.0"
++        "@types/react": "*",
++        "@types/react-dom": "*",
++        "react": "^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc",
++        "react-dom": "^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc"
++      },
++      "peerDependenciesMeta": {
++        "@types/react": {
++          "optional": true
++        },
++        "@types/react-dom": {
++          "optional": true
++        }
 +      }
 +    },
-     "node_modules/@dnd-kit/sortable": {
-       "version": "10.0.0",
-       "resolved": "https://registry.npmjs.org/@dnd-kit/sortable/-/sortable-10.0.0.tgz",
++    "node_modules/@radix-ui/react-scroll-area/node_modules/@radix-ui/primitive": {
++      "version": "1.1.3",
++      "resolved": "https://registry.npmjs.org/@radix-ui/primitive/-/primitive-1.1.3.tgz",
++      "integrity": "sha512-JTF99U/6XIjCBo0wqkU5sK10glYe27MRRsfwoiq5zzOEZLHU3A3KCMa5X/azekYRCJ0HlwI0crAXS/5dEHTzDg=="
++    },
++    "node_modules/@radix-ui/react-scroll-area/node_modules/@radix-ui/react-presence": {
++      "version": "1.1.5",
++      "resolved": "https://registry.npmjs.org/@radix-ui/react-presence/-/react-presence-1.1.5.tgz",
++      "integrity": "sha512-/jfEwNDdQVBCNvjkGit4h6pMOzq8bHkopq458dPt2lMjx+eBQUohZNG9A7DtO/O5ukSbxuaNGXMjHicgwy6rQQ==",
++      "dependencies": {
++        "@radix-ui/react-compose-refs": "1.1.2",
++        "@radix-ui/react-use-layout-effect": "1.1.1"
++      },
++      "peerDependencies": {
++        "@types/react": "*",
++        "@types/react-dom": "*",
++        "react": "^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc",
++        "react-dom": "^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc"
++      },
++      "peerDependenciesMeta": {
++        "@types/react": {
++          "optional": true
++        },
++        "@types/react-dom": {
++          "optional": true
++        }
++      }
++    },
+     "node_modules/@radix-ui/react-select": {
+       "version": "2.2.5",
+       "resolved": "https://registry.npmjs.org/@radix-ui/react-select/-/react-select-2.2.5.tgz",
 diff --git a/package.json b/package.json
-index a464dac..7bdbaab 100644
+index 7bdbaab..0bda844 100644
 --- a/package.json
 +++ b/package.json
-@@ -11,6 +11,7 @@
-   },
-   "dependencies": {
-     "@dnd-kit/core": "^6.3.1",
-+    "@dnd-kit/modifiers": "^9.0.0",
-     "@dnd-kit/sortable": "^10.0.0",
-     "@radix-ui/react-accordion": "^1.2.11",
-     "@radix-ui/react-alert-dialog": "^1.1.14",
-diff --git a/src/Context/CMs/cmsNavigation.context.tsx b/src/Context/CMs/cmsNavigation.context.tsx
-index 2390cf4..5178523 100644
---- a/src/Context/CMs/cmsNavigation.context.tsx
-+++ b/src/Context/CMs/cmsNavigation.context.tsx
-@@ -13,7 +13,9 @@ type CmsNavigationProps = {
-   navigationItem: ApiResponse<any | undefined>;
-   navigation: ApiResponse<NavigationContentI | undefined>;
-   navigationBlueprints: ApiResponse<NavigationBlueprintI | undefined>;
-+  createLoading:boolean;
-   loading: boolean;
-+  setNavigationItems:any
-   findAllNavigations: () => void;
-   findNavigationById: (id: string) => Promise<any>;
-   findAllNavigationItems: (navigationId: string) => Promise<any>;
-@@ -28,7 +30,7 @@ type CmsNavigationProps = {
-   }) => Promise<any>;
-   createNavigationItem: (
-     navigationId: string,
--    data: { title: string; description: string; url: string }
-+    data: { title: string; description: string; url?: string }
-   ) => Promise<any>;
-   updateNavigation: (
-     id: string,
-@@ -37,7 +39,7 @@ type CmsNavigationProps = {
-   updateNavigationItem: (
-     id: string,
-     navigationId: string,
--    data: { title: string; description: string; url?: string }
-+    data: { title?: string; description?: string; url?: string }
-   ) => Promise<any>;
-   deleteNavigation: (id: string) => Promise<any>;
-   deleteNavigationItem: (id: string, navigationId: string) => Promise<any>;
-@@ -64,7 +66,9 @@ export const cmsNavigationContext = createContext<CmsNavigationProps>({
-     data: undefined,
-     message: "",
-   },
-+  createLoading:false,
-   loading: false,
-+  setNavigationItems: () => {},
-   findAllNavigations: () => {},
-   findNavigationById: async () => undefined,
-   findAllNavigationItems: async () => undefined,
-diff --git a/src/Context/ModalContext.tsx b/src/Context/ModalContext.tsx
-index e9d9f79..6bb352d 100644
---- a/src/Context/ModalContext.tsx
-+++ b/src/Context/ModalContext.tsx
-@@ -1,13 +1,19 @@
--import Modal from '@/components/ui/modal';
--import React from 'react';
-+import Modal from "@/components/ui/modal";
-+import React from "react";
- 
--export type ModalSize = 'sm' | 'md' | 'lg' | 'xl' | 'full' | 'auto';
-+export type ModalSize = "sm" | "md" | "lg" | "xl" | "full" | "auto";
- 
- export type ModalContextType = {
-   isOpen: boolean;
--  openModal: (content: React.ReactNode, title?: string, size?: ModalSize) => void;
-+  openModal: (
-+    content: React.ReactNode,
-+    title?: string,
-+    description?: string,
-+    size?: ModalSize
-+  ) => void;
-   closeModal: () => void;
-   modalTitle: string;
-+  modalDescription?: string;
-   modalContent: React.ReactNode;
-   modalSize: ModalSize;
- };
-@@ -18,27 +24,48 @@ const ModalContext = React.createContext<ModalContextType | null>(null);
- const ModalProvider = ({ children }: { children: React.ReactNode }) => {
-   const [isOpen, setIsOpen] = React.useState(false);
-   const [modalContent, setModalContent] = React.useState<React.ReactNode>(null);
--  const [modalTitle, setModalTitle] = React.useState('');
--  const [modalSize, setModalSize] = React.useState<ModalSize>('auto');
+@@ -23,6 +23,7 @@
+     "@radix-ui/react-navigation-menu": "^1.2.13",
+     "@radix-ui/react-popover": "^1.1.14",
+     "@radix-ui/react-radio-group": "^1.3.7",
++    "@radix-ui/react-scroll-area": "^1.2.10",
+     "@radix-ui/react-select": "^2.2.5",
+     "@radix-ui/react-separator": "^1.1.7",
+     "@radix-ui/react-slider": "^1.3.5",
+diff --git a/src/Page-Sections/CMSDashboard/BlueprintPageSection.tsx b/src/Page-Sections/CMSDashboard/BlueprintPageSection.tsx
+index 4bcd3af..0443b72 100644
+--- a/src/Page-Sections/CMSDashboard/BlueprintPageSection.tsx
++++ b/src/Page-Sections/CMSDashboard/BlueprintPageSection.tsx
+@@ -1,37 +1,193 @@
+ import { useBlueprint } from "@/hooks/CMS/useBlueprint";
+ import { useEffect } from "react";
+-import BlueprintCard from "./Parts/BlueprintCard";
+ import type { BlueprintContentI } from "@/types/cms/blueprint.interface";
 -
--  const openModal = React.useCallback((content: React.ReactNode, title = '', size: ModalSize = 'auto') => {
--    setModalContent(content);
--    setModalTitle(title);
--    setModalSize(size);
--    setIsOpen(true);
--  }, []);
-+  const [modalTitle, setModalTitle] = React.useState("");
-+  const [modalDescription, setModalDescription] = React.useState<string>("");
-+  const [modalSize, setModalSize] = React.useState<ModalSize>("auto");
-+
-+  const openModal = React.useCallback(
-+    (
-+      content: React.ReactNode,
-+      title = "",
-+      description = "",
-+      size: ModalSize = "auto"
-+    ) => {
-+      setModalContent(content);
-+      setModalTitle(title);
-+      setModalDescription(description);
-+      setModalSize(size);
-+      setIsOpen(true);
-+    },
-+    []
-+  );
++import {
++  Combine,
++  FileText,
++  Database,
++  Settings,
++  Layout,
++  Code,
++  Image,
++  Video,
++  Music,
++  Archive,
++  FolderSymlink,
++  Folder,
++} from "lucide-react";
++import { Link } from "react-router-dom";
++import BlueprintPageSkeletonLoader from "@/components/loader/BlueprintPageSkeletonLoader";
  
-   const closeModal = React.useCallback(() => {
-     setIsOpen(false);
-     setTimeout(() => {
-       setModalContent(null);
--      setModalTitle('');
--      setModalSize('auto');
-+      setModalTitle("");
-+      setModalDescription("");
-+      setModalSize("auto");
-     }, 300); // Wait for animation to complete
-   }, []);
+ function BlueprintPageSection() {
+-  const { blueprints, findAllBlueprint } = useBlueprint();
+- 
+-
++  const { blueprints, findAllBlueprint, loading } = useBlueprint();
  
-   return (
--    <ModalContext.Provider value={{ isOpen, openModal, closeModal, modalTitle, modalContent, modalSize }}>
-+    <ModalContext.Provider
-+      value={{
-+        isOpen,
-+        openModal,
-+        closeModal,
-+        modalTitle,
-+        modalContent,
-+        modalSize,
-+        modalDescription,
-+      }}
-+    >
-       {children}
-       <Modal />
-     </ModalContext.Provider>
-@@ -46,4 +73,4 @@ const ModalProvider = ({ children }: { children: React.ReactNode }) => {
- };
- 
- export { ModalContext };
--export default ModalProvider;
-\ No newline at end of file
-+export default ModalProvider;
-diff --git a/src/Page-Sections/CMSDashboard/NavigationPageSection.tsx b/src/Page-Sections/CMSDashboard/NavigationPageSection.tsx
-index 06c04a5..cc1f9b6 100644
---- a/src/Page-Sections/CMSDashboard/NavigationPageSection.tsx
-+++ b/src/Page-Sections/CMSDashboard/NavigationPageSection.tsx
-@@ -14,9 +14,13 @@ function NavigationPageSection() {
-   const [title, setTitle] = useState("");
-   const [handle, setHandle] = useState("");
-   const [isHandleManuallyEdited, setIsHandleManuallyEdited] = useState(false);
--  const [createLoading] = useState();
--  const { navigations, findAllNavigations } = useCmsNavigation();
--  console.log("Navigations", navigations);
-+  const {
-+    navigations,
-+    findAllNavigations,
-+    createLoading,
-+    createNavigation,
-+    loading,
-+  } = useCmsNavigation();
- 
-   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-     const newTitle = e.target.value;
-@@ -34,11 +38,11 @@ function NavigationPageSection() {
-   };
- 
-   const addNavigation = async () => {
--    // if (!title || !handle || !createCollection) return;
--    // await createCollection({ title, handle });
--    // setTitle("");
--    // setHandle("");
--    // setIsHandleManuallyEdited(false);
-+    if (!title || !handle || !createNavigation) return;
-+    await createNavigation({ title, description: handle });
-+    setTitle("");
-+    setHandle("");
-+    setIsHandleManuallyEdited(false);
-   };
- 
-   // Configuration for the menubar
-@@ -62,7 +66,7 @@ function NavigationPageSection() {
-     findAllNavigations();
-   }, []);
- 
--  console.log("Navigations", navigations.data);
-+
- 
-   return (
-     <>
-@@ -77,9 +81,21 @@ function NavigationPageSection() {
-         <div className="grid gap-6 xl:grid-cols-[1fr_minmax(280px,380px)] items-start w-full overflow-hidden">
-           <div className="min-w-0 space-y-6">
-             <div className="space-y-3">
--              {Array.isArray(navigations.data?.content) &&
--              navigations.data.content.length > 0 ? (
--                <div className="">
-+              {loading ? (
-+                <div className="space-y-4">
-+                  {[...Array(3)].map((_, idx) => (
-+                    <div
-+                      key={idx}
-+                      className="border border-gray-300 rounded-md p-4 bg-gray-100 flex items-center justify-between animate-pulse"
-+                    >
-+                      <div className="h-4 w-32 bg-gray-300 rounded"></div>
-+                      <div className="h-8 w-8 bg-gray-300 rounded-full"></div>
-+                    </div>
-+                  ))}
-+                </div>
-+              ) : Array.isArray(navigations.data?.content) &&
-+                navigations.data.content.length > 0 ? (
-+                <div className="space-y-4">
-                   {navigations.data.content.map((navigation, index) => (
-                     <div
-                       className="border border-gray-300 rounded-md p-4 bg-gray-100 flex items-center justify-between"
-@@ -99,14 +115,10 @@ function NavigationPageSection() {
-                   ))}
-                 </div>
-               ) : (
--                <p className="text-sm text-gray-500 h-68 bg-gray-100 rounded-lg flex justify-center items-center flex-col gap-y-2">
--                  <p className="text-lg font-semibold">
--                    {" "}
--                    No navigations found.
--                  </p>
--
-+                <div className="text-sm text-gray-500 h-68 bg-gray-100 rounded-lg flex justify-center items-center flex-col gap-y-2">
-+                  <p className="text-lg font-semibold">No navigations found.</p>
-                   <p>Please Add Navigation at the right container</p>
--                </p>
-+                </div>
-               )}
-             </div>
-           </div>
-diff --git a/src/Page-Sections/CMSDashboard/Parts/NavItemForm.tsx b/src/Page-Sections/CMSDashboard/Parts/NavItemForm.tsx
-index 27f51bc..7342d1b 100644
---- a/src/Page-Sections/CMSDashboard/Parts/NavItemForm.tsx
-+++ b/src/Page-Sections/CMSDashboard/Parts/NavItemForm.tsx
-@@ -1,64 +1,3 @@
--// import Button from "@/components/ui/button";
--// import { CustomInput } from "@/components/ui/CustomInput";
--// import { titleToHandle } from "@/utils/titleToHandle";
--// import { useState } from "react";
--
--// function NavItemForm({ onSave }: { onSave: () => void }) {
--//   const [title, setTitle] = useState("");
--//   const [handle, setHandle] = useState("");
--//   const [isHandleManuallyEdited, setIsHandleManuallyEdited] = useState(false);
--//   const [createLoading] = useState();
--
--//   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
--//     const newTitle = e.target.value;
--//     setTitle(newTitle);
--
--//     // Only auto-generate handle if it hasn't been manually edited
--//     if (!isHandleManuallyEdited) {
--//       setHandle(titleToHandle(newTitle));
--//     }
--//   };
--
--//   const handleHandleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
--//     setHandle(e.target.value);
--//     setIsHandleManuallyEdited(true);
--//   };
--
--//   return (
--//     <div className="space-y-4">
--//       <div>
--//         <CustomInput
--//           label="title"
--//           value={title}
--//           onChange={handleTitleChange}
--//           placeholder="New navigation"
--//         />
--//       </div>
--//       <div>
--//         <CustomInput
--//           label="URL"
--//           value={handle}
--//           onChange={handleHandleChange}
--//           placeholder="new_navigation"
--//         />
--//       </div>
--//       <div className="flex justify-end">
--//         <Button
--//           variant="primary"
--//           onClick={onSave}
--//           disabled={!title || !handle || createLoading}
--//           loading={createLoading}
--//         >
--//           {createLoading ? "Creating...." : "Create"}
--//         </Button>
--//       </div>
--//     </div>
--//   );
--// }
--
--// export default NavItemForm;
--
--
- import { FieldRenderer } from "@/components/cms/FieldRenderer";
- import Button from "@/components/ui/button";
- import type { BlueprintFieldTypeI } from "@/types/cms/blueprint.interface";
-@@ -98,7 +37,6 @@ interface NavItemFormProps {
- function NavItemForm({ onSave, blueprint, loading = false }: NavItemFormProps) {
-   const [formData, setFormData] = useState<Record<string, any>>({});
-   const [createLoading, setCreateLoading] = useState(false);
--  console.log("Blueprint Schema:", blueprint);
- 
-   // Initialize form data with empty values for all fields
    useEffect(() => {
-@@ -169,18 +107,43 @@ function NavItemForm({ onSave, blueprint, loading = false }: NavItemFormProps) {
-     return true;
-   };
+     findAllBlueprint();
+   }, []);
  
-+  // Helper function to find field by handle or type
-+  const findFieldValue = (handleOrType: string): any => {
-+    for (const section of blueprint.schema.sections) {
-+      for (const field of section.fields || []) {
-+        // Check by handle first, then by field type, then by id
-+        if (field.handle === handleOrType || 
-+            field.config?.fieldType === handleOrType ||
-+            field.id === handleOrType) {
-+          return formData[field.id];
-+        }
-+      }
-+    }
-+    return null;
-+  };
++  // Function to get icon and formatted title based on type
++  const getTypeDetails = (type: string) => {
++    const normalizedType = type.toLowerCase();
 +
-   const handleSubmit = async () => {
-     if (!validateForm() || !blueprint) return;
- 
-     setCreateLoading(true);
-     
-     try {
--      // Structure the data according to your blueprint schema
-+      // Transform the data to the desired structure
-       const submissionData = {
--        blueprintId: blueprint.reference,
--        fields: formData
-+        title: findFieldValue('title') || findFieldValue('TEXT') || '',
-+        link: findFieldValue('link') || findFieldValue('LINK') || ''
-       };
- 
-+      // Handle LINK field objects if they exist
-+      if (typeof submissionData.link === 'object' && submissionData.link !== null) {
-+        // If it's a link object, extract the appropriate value
-+        if (submissionData.link.type === 'url') {
-+          submissionData.link = submissionData.link.value || '';
-+        } else if (submissionData.link.type === 'entry') {
-+          submissionData.link = submissionData.link.entryId || '';
-+        }
-+      }
-+
-       await onSave(submissionData);
-     } catch (error) {
-       console.error('Error creating navigation item:', error);
-@@ -233,7 +196,7 @@ function NavItemForm({ onSave, blueprint, loading = false }: NavItemFormProps) {
-           {section.fields
-             .sort((a, b) => (a.order ?? 0) - (b.order ?? 0)) // Sort by order, default to 0 if undefined
-             .map(field => {
--              console.log("Field Types",field)
-+           
-               return (
-                 <div key={field.id}>
-                   <FieldRenderer
-diff --git a/src/Pages/Dashboard/CMS/CMSLayout.tsx b/src/Pages/Dashboard/CMS/CMSLayout.tsx
-index ae35877..5236fda 100644
---- a/src/Pages/Dashboard/CMS/CMSLayout.tsx
-+++ b/src/Pages/Dashboard/CMS/CMSLayout.tsx
-@@ -1,4 +1,6 @@
- import Sidebar from "@/components/cms/Sidebar";
-+import CustomBreadcrumb from "@/components/reusable/CustomBreadcrumb";
-+
- import { cmsNavigationData } from "@/data/cmsNavigationData";
- import { Outlet } from "react-router-dom";
- 
-@@ -7,7 +9,7 @@ function CMSLayout() {
-     <div className="flex h-screen bg-background">
-       <Sidebar
-         navigationData={cmsNavigationData}
--        width="w-70"
-+        width="w-64" // This will be overridden by the responsive behavior
-         header={{
-           logo: {
-             src: "/images/logo.svg",
-@@ -21,9 +23,29 @@ function CMSLayout() {
-           text: "CMS Dashboard v1.0",
-         }}
-       />
-+
-+      {/* Main Content Area */}
-       <main className="flex-1 overflow-auto">
--        <div className="p-6">
--          <Outlet />
-+        {/* Content Container with responsive padding */}
-+        <div className="p-4 sm:p-6 lg:p-8">
-+          {/* Add top margin on mobile to account for menu button */}
-+          <div className="lg:mt-0 mt-12">
-+            {/* Breadcrumb Navigation */}
-+            <CustomBreadcrumb
-+              rootLink= {"/cms"}
-+              customSegmentLabels={{
-+                cms: "CMS",
-+                users: "Users",
-+                content: "Content",
-+                media: "Media",
-+                settings: "Settings",
-+                analytics: "Analytics",
-+                reports: "Reports",
-+              
-+              }}
-+            />
-+            <Outlet />
-+          </div>
-         </div>
-       </main>
-     </div>
-diff --git a/src/Providers/cmsNavigation.provider.tsx b/src/Providers/cmsNavigation.provider.tsx
-index 152caf3..81cf190 100644
---- a/src/Providers/cmsNavigation.provider.tsx
-+++ b/src/Providers/cmsNavigation.provider.tsx
-@@ -3,10 +3,12 @@ import { cmsNavigationContext } from "../Context/CMs/cmsNavigation.context";
- import { useState } from "react";
- import { NavigationService } from "@/services/CMS/Navigation.service";
- import type { NavigationBlueprintI, NavigationContentI, NavigationI, NavigationItemI } from "@/types/cms/navigation";
-+
- export const CmsNavigationProvider: React.FC<{ children: React.ReactNode }> = ({
-   children,
- }) => {
-   const [loading, setLoading] = useState<boolean>(false);
-+  const [createLoading, setCreateLoading] = useState<boolean>(false);
-   const [navigations, setNavigations] = useState<ApiResponse<NavigationI | undefined>>({
-     data: undefined,
-     message: "",
-@@ -48,7 +50,6 @@ export const CmsNavigationProvider: React.FC<{ children: React.ReactNode }> = ({
-     setLoading(true);
-     try {
-       const response = await NavigationService.findOne(id, setNavigation);
--
-       return response;
-     } catch (error) {
-       return error;
-@@ -56,6 +57,7 @@ export const CmsNavigationProvider: React.FC<{ children: React.ReactNode }> = ({
-       setLoading(false);
-     }
-   }
-+
-   async function findAllNavigationItems(navigationId: string) {
-     setLoading(true);
-     try {
-@@ -71,8 +73,7 @@ export const CmsNavigationProvider: React.FC<{ children: React.ReactNode }> = ({
-     }
-   }
- 
--
--async function findNavigationBlueprints(navigationId: string) {
-+  async function findNavigationBlueprints(navigationId: string) {
-     setLoading(true);
-     try {
-       const response = await NavigationService.findBlueprint(
-@@ -87,20 +88,19 @@ async function findNavigationBlueprints(navigationId: string) {
-     }
-   }
- 
--
--
-   async function createNavigation(data: {
-     title: string;
-     description: string;
-   }) {
--    setLoading(true);
-+    setCreateLoading(true);
-     try {
-       const response = await NavigationService.create(data);
-+      findAllNavigations();
-       return response;
-     } catch (error) {
-       return error;
-     } finally {
--      setLoading(false);
-+      setCreateLoading(false);
-     }
-   }
- 
-@@ -108,14 +108,15 @@ async function findNavigationBlueprints(navigationId: string) {
-     navigationId: string,
-     data: { title: string; description: string }
-   ) {
--    setLoading(true);
-+    setCreateLoading(true);
-     try {
-       const response = await NavigationService.createItem(navigationId, data);
-+      findAllNavigationItems(navigationId);
-       return response;
-     } catch (error) {
-       return error;
-     } finally {
--      setLoading(false);
-+      setCreateLoading(false);
-     }
-   }
- 
-@@ -137,7 +138,7 @@ async function findNavigationBlueprints(navigationId: string) {
-   async function updateNavigationItem(
-     id: string,
-     navigationId: string,
--    data: { title: string; description: string; url?: string }
-+    data: { title?: string; description?: string; url?: string }
-   ) {
-     setLoading(true);
-     try {
-@@ -146,6 +147,7 @@ async function findNavigationBlueprints(navigationId: string) {
-         navigationId,
-         data
-       );
-+      findAllNavigationItems(navigationId);
-       return response;
-     } catch (error) {
-       return error;
-@@ -170,6 +172,7 @@ async function findNavigationBlueprints(navigationId: string) {
-     setLoading(true);
-     try {
-       const response = await NavigationService.deleteItem(id, navigationId);
-+      findAllNavigationItems(navigationId);
-       return response;
-     } catch (error) {
-       return error;
-@@ -197,12 +200,14 @@ async function findNavigationBlueprints(navigationId: string) {
-   return (
-     <cmsNavigationContext.Provider
-       value={{
-+        createLoading,
-         loading,
-         navigations,
-         navigationItems,
-         navigationItem,
-         navigation,
-         navigationBlueprints,
-+        setNavigationItems, // Add this setter to allow direct updates
-         findAllNavigations,
-         findNavigationById,
-         findAllNavigationItems,
-@@ -219,4 +224,4 @@ async function findNavigationBlueprints(navigationId: string) {
-       {children}
-     </cmsNavigationContext.Provider>
-   );
--};
-+};
-\ No newline at end of file
-diff --git a/src/Routes/CMSRoutes.tsx b/src/Routes/CMSRoutes.tsx
-index e228903..d2d13dd 100644
---- a/src/Routes/CMSRoutes.tsx
-+++ b/src/Routes/CMSRoutes.tsx
-@@ -36,6 +36,15 @@ const SingleNavigation = lazy(
-   () => import("@/Pages/Dashboard/CMS/CMSPages/SingleNavigation")
- );
- 
-+//Assets Pages
-+const Assets = lazy(() => import("@/Pages/Dashboard/CMS/CMSPages/Assets"));
-+const CreateAssetContainer = lazy(
-+  () => import("@/Pages/Dashboard/CMS/CMSPages/CreateAssetContainer")
-+);
-+const SingleAssetContainer = lazy(
-+  () => import("@/Pages/Dashboard/CMS/CMSPages/SingleAssetContainer")
-+);
-+
- const cmsRoutes = (
-   <>
-     <Route path="/cms/login" element={<CMSLogin />} />
-@@ -61,6 +70,12 @@ const cmsRoutes = (
-         <Route index element={<Navigation />} />
-         <Route path=":id" element={<SingleNavigation />} />
-       </Route>
-+
-+      <Route path="assets">
-+        <Route index element={<Assets />} />
-+        <Route path="create" element={<CreateAssetContainer />} />
-+        <Route path=":id" element={<SingleAssetContainer />} />
-+      </Route>
-     </Route>
-   </>
- );
-diff --git a/src/components/cms/DragOverlayItem.tsx b/src/components/cms/DragOverlayItem.tsx
-index bcd6788..3c0c426 100644
---- a/src/components/cms/DragOverlayItem.tsx
-+++ b/src/components/cms/DragOverlayItem.tsx
-@@ -1,17 +1,16 @@
- import React from "react";
--
- import { GripVertical, ChevronDown } from "lucide-react";
--import type { NavigationItem } from "@/types/cms/navigation";
-+import type { NavigationItemContentI } from "@/types/cms/navigation";
- 
- interface DragOverlayItemProps {
--  item: NavigationItem;
-+  item: NavigationItemContentI;
- }
- 
- export const DragOverlayItem: React.FC<DragOverlayItemProps> = ({ item }) => {
-   return (
-     <div className="flex items-center gap-2 py-3 px-4 rounded-lg bg-white shadow-2xl border-2 border-blue-200 animate-pulse transform rotate-2 scale-105 backdrop-blur-sm">
-       {/* Drag handle */}
--      <div className="flex items-center justify-center w-4 h-4 text-blue-500">
-+      <div className="flex items-center justify-center w-4 h-4 text-nbc-dark-950">
-         <GripVertical className="w-4 h-4" />
-       </div>
- 
-@@ -23,10 +22,10 @@ export const DragOverlayItem: React.FC<DragOverlayItemProps> = ({ item }) => {
-       </div>
- 
-       {/* Title */}
--      <span className="text-gray-800 text-sm font-semibold">{item.title}</span>
-+      <span className="text-gray-800 text-sm font-semibold">{item.data.title}</span>
- 
-       {/* Visual indicator */}
--      <div className="ml-2 w-2 h-2 bg-blue-500 rounded-full animate-ping"></div>
-+      <div className="ml-2 w-2 h-2 bg-nbc-dark-950 rounded-full animate-ping"></div>
-     </div>
-   );
--};
-+};
-\ No newline at end of file
-diff --git a/src/components/cms/NavigationBuilder.tsx.tsx b/src/components/cms/NavigationBuilder.tsx.tsx
-index 9a2156a..1b9aff9 100644
---- a/src/components/cms/NavigationBuilder.tsx.tsx
-+++ b/src/components/cms/NavigationBuilder.tsx.tsx
-@@ -1,4 +1,4 @@
--import { useEffect, useState } from "react";
-+import { useEffect, useState, useMemo, useCallback } from "react";
- import {
-   DndContext,
-   closestCenter,
-@@ -8,7 +8,6 @@ import {
-   useSensors,
-   DragOverlay,
-   type DragStartEvent,
--  type DragOverEvent,
-   type DragEndEvent,
- } from "@dnd-kit/core";
- import {
-@@ -16,8 +15,8 @@ import {
-   sortableKeyboardCoordinates,
-   verticalListSortingStrategy,
- } from "@dnd-kit/sortable";
--import Button from "@/components/ui/button";
--import type { NavigationItem as NavItem } from "@/types/cms/navigation";
-+import { restrictToVerticalAxis } from "@dnd-kit/modifiers";
-+import type { NavigationItemContentI } from "@/types/cms/navigation";
- import { NavigationHeader } from "./NavigationHeader";
- import { DragOverlayItem } from "./DragOverlayItem";
- import { NavigationItem } from "./NavigationItem";
-@@ -26,127 +25,26 @@ import NavItemForm from "@/Page-Sections/CMSDashboard/Parts/NavItemForm";
- import { useParams } from "react-router-dom";
- import { useCmsNavigation } from "@/hooks/CMS/useCmsNavigation";
- 
--const initialItems: NavItem[] = [
--  {
--    id: "1",
--    title: "Home",
--    url: "/",
--    isExpanded: true,
--    children: [
--      {
--        id: "2",
--        title: "About Us",
--        url: "/about",
--        parentId: "1",
--        isExpanded: true,
--        children: [
--          {
--            id: "3",
--            title: "Our Team",
--            url: "/about/team",
--            parentId: "2",
--          },
--          {
--            id: "4",
--            title: "Our Story",
--            url: "/about/story",
--            parentId: "2",
--          },
--        ],
--      },
--      {
--        id: "5",
--        title: "Contact",
--        url: "/contact",
--        parentId: "1",
--      },
--    ],
--  },
--  {
--    id: "6",
--    title: "Products",
--    url: "/products",
--    isExpanded: true,
--    children: [
--      {
--        id: "7",
--        title: "Software",
--        url: "/products/software",
--        parentId: "6",
--        isExpanded: true,
--        children: [
--          {
--            id: "8",
--            title: "Web Apps",
--            url: "/products/software/web",
--            parentId: "7",
--          },
--          {
--            id: "9",
--            title: "Mobile Apps",
--            url: "/products/software/mobile",
--            parentId: "7",
--          },
--        ],
--      },
--      {
--        id: "10",
--        title: "Services",
--        url: "/products/services",
--        parentId: "6",
--        children: [
--          {
--            id: "11",
--            title: "Consulting",
--            url: "/products/services/consulting",
--            parentId: "10",
--          },
--        ],
--      },
--    ],
--  },
--  {
--    id: "12",
--    title: "Blog",
--    url: "/blog",
--    isExpanded: true,
--    children: [
--      {
--        id: "13",
--        title: "Tech News",
--        url: "/blog/tech",
--        parentId: "12",
--      },
--      {
--        id: "14",
--        title: "Tutorials",
--        url: "/blog/tutorials",
--        parentId: "12",
--        children: [
--          {
--            id: "15",
--            title: "React Guide",
--            url: "/blog/tutorials/react",
--            parentId: "14",
--          },
--        ],
--      },
--    ],
--  },
--];
--
- export const NavigationBuilder = () => {
--  const [items, setItems] = useState<NavItem[]>(initialItems);
--  const { findNavigationById, navigation, findAllNavigationItems,navigationItems,findNavigationBlueprints,navigationBlueprints } = useCmsNavigation();
--
-+  const {
-+    findNavigationById,
-+    navigation,
-+    findAllNavigationItems,
-+    navigationItems,
-+    setNavigationItems,
-+    findNavigationBlueprints,
-+    navigationBlueprints,
-+    createNavigationItem,
-+    createLoading,
-+  } = useCmsNavigation();
- 
-   const [activeId, setActiveId] = useState<string | null>(null);
-   const [hasChanges, setHasChanges] = useState(false);
-   const [allExpanded, setAllExpanded] = useState(true);
--  const [, setDragOverId] = useState<string | null>(null);
-   const { openModal, closeModal } = useModal();
-   const { id } = useParams();
- 
-+  // Simplified sensors - remove excessive constraints
-   const sensors = useSensors(
-     useSensor(PointerSensor, {
-       activationConstraint: {
-@@ -158,289 +56,223 @@ export const NavigationBuilder = () => {
-     })
-   );
- 
--  const findItemDeep = (items: NavItem[], id: string): NavItem | null => {
--    for (const item of items) {
--      if (item.id === id) return item;
--      if (item.children) {
--        const found = findItemDeep(item.children, id);
--        if (found) return found;
--      }
--    }
--    return null;
--  };
-+  // Simplified item lookup without frozen objects
-+  const itemMaps = useMemo(() => {
-+    const itemMap = new Map<string, NavigationItemContentI>();
-+    const parentMap = new Map<string, NavigationItemContentI | null>();
- 
--  const getAllIds = (items: NavItem[]): string[] => {
--    const ids: string[] = [];
--    const traverse = (items: NavItem[]) => {
-+    if (!navigationItems.data?.content) return { itemMap, parentMap };
-+
-+    const buildMaps = (
-+      items: NavigationItemContentI[],
-+      parent: NavigationItemContentI | null = null
-+    ) => {
-       items.forEach((item) => {
--        ids.push(item.id);
--        if (item.children) traverse(item.children);
-+        itemMap.set(item.reference, item); // Remove Object.freeze
-+        parentMap.set(item.reference, parent);
-+
-+        if (item.children?.length) {
-+          buildMaps(item.children, item);
-+        }
-       });
-     };
--    traverse(items);
--    return ids;
--  };
- 
--  const handleDragStart = (event: DragStartEvent) => {
--    setActiveId(event.active.id.toString());
--  };
--
--  const handleDragOver = (event: DragOverEvent) => {
--    const { over } = event;
--    setDragOverId(over ? over.id.toString() : null);
--  };
--
--  const handleDragEnd = (event: DragEndEvent) => {
--    const { active, over } = event;
--    setActiveId(null);
--    setDragOverId(null);
--
--    if (!over || active.id === over.id) return;
--
--    const activeId = active.id.toString();
--    const overId = over.id.toString();
--
--    setItems((currentItems) => {
--      const newItems = moveItem(currentItems, activeId, overId);
--      setHasChanges(true);
--      return newItems;
--    });
--  };
--
--  const moveItem = (
--    items: NavItem[],
--    activeId: string,
--    overId: string
--  ): NavItem[] => {
--    // Find the active item
--    const activeItem = findItemDeep(items, activeId);
--    const overItem = findItemDeep(items, overId);
--
--    if (!activeItem || !overItem) return items;
--
--    // Prevent dropping an item into its own descendant
--    if (isDescendant(activeItem, overId)) return items;
--
--    // Remove active item from its current location
--    const itemsWithoutActive = removeItemFromTree(items, activeId);
--
--    // Find where the over item is located
--    const { parent: overParent } = findItemWithParent(
--      itemsWithoutActive,
--      overId
--    );
-+    buildMaps(navigationItems.data.content);
-+    return { itemMap, parentMap };
-+  }, [navigationItems.data?.content]);
- 
--    // Clean the active item and update parentId to match the over item's parent
--    const cleanedActiveItem: NavItem = {
--      ...activeItem,
--      parentId: overParent?.id,
--    };
-+  // Simplified ID collection
-+  const allIds = useMemo(() => {
-+    if (!navigationItems.data?.content) return [];
- 
--    // Insert the item as a sibling after the over item
--    if (overParent) {
--      // Insert into parent's children array
--      return insertItemAtPosition(
--        itemsWithoutActive,
--        cleanedActiveItem,
--        overParent.id,
--        (overParent.children?.findIndex((child) => child.id === overId) ?? 0) +
--          1
--      );
--    } else {
--      // Insert at root level
--      const overIndex = itemsWithoutActive.findIndex(
--        (item) => item.id === overId
--      );
--      return insertItemAtPosition(
--        itemsWithoutActive,
--        cleanedActiveItem,
--        undefined,
--        overIndex + 1
--      );
--    }
--  };
--
--  const isDescendant = (parentItem: NavItem, targetId: string): boolean => {
--    if (!parentItem.children) return false;
--
--    for (const child of parentItem.children) {
--      if (child.id === targetId) return true;
--      if (isDescendant(child, targetId)) return true;
--    }
--    return false;
--  };
--
--  //   const shouldDropAsChild = (
--  //     overItem: NavItem,
--  //     activeItem: NavItem
--  //   ): boolean => {
--  //     // For now, let's make items siblings by default
--  //     // This gives more predictable behavior
--  //     return false;
--  //   };
--
--  const findItemWithParent = (
--    items: NavItem[],
--    targetId: string,
--    parent?: NavItem
--  ): { item: NavItem | null; parent: NavItem | null; path: NavItem[] } => {
--    for (const item of items) {
--      if (item.id === targetId) {
--        return { item, parent: parent || null, path: parent ? [parent] : [] };
--      }
--      if (item.children) {
--        const result = findItemWithParent(item.children, targetId, item);
--        if (result.item) {
--          return {
--            ...result,
--            path: parent ? [parent, ...result.path] : result.path,
--          };
-+    const collectIds = (items: NavigationItemContentI[]): string[] => {
-+      const ids: string[] = [];
-+      for (const item of items) {
-+        ids.push(item.reference);
-+        if (item.children?.length) {
-+          ids.push(...collectIds(item.children));
-         }
-       }
--    }
--    return { item: null, parent: null, path: [] };
--  };
--
--  const removeItemFromTree = (
--    items: NavItem[],
--    targetId: string
--  ): NavItem[] => {
--    return items.reduce((acc: NavItem[], item) => {
--      if (item.id === targetId) {
--        return acc; // Skip this item
--      }
-+      return ids;
-+    };
- 
--      const newItem = { ...item };
--      if (newItem.children) {
--        newItem.children = removeItemFromTree(newItem.children, targetId);
--      }
-+    return collectIds(navigationItems.data.content);
-+  }, [navigationItems.data?.content]);
- 
--      return [...acc, newItem];
--    }, []);
--  };
--
--  const insertItemAtPosition = (
--    items: NavItem[],
--    itemToInsert: NavItem,
--    parentId?: string,
--    index: number = 0
--  ): NavItem[] => {
--    if (!parentId) {
--      // Insert at root level
--      const newItems = [...items];
--      newItems.splice(index, 0, itemToInsert);
--      return newItems;
--    }
--
--    // Insert into specific parent's children
--    return items.map((item) => {
--      if (item.id === parentId) {
--        const children = item.children || [];
--        const newChildren = [...children];
--        newChildren.splice(index, 0, itemToInsert);
--        return { ...item, children: newChildren };
--      }
-+  // Simplified drag handlers
-+  const handleDragStart = useCallback((event: DragStartEvent) => {
-+    setActiveId(event.active.id.toString());
-+  }, []);
- 
--      if (item.children) {
--        return {
--          ...item,
--          children: insertItemAtPosition(
--            item.children,
--            itemToInsert,
--            parentId,
--            index
--          ),
--        };
--      }
-+  const handleDragEnd = useCallback(
-+    (event: DragEndEvent) => {
-+      const { active, over } = event;
-+      setActiveId(null);
- 
--      return item;
--    });
--  };
-+      if (!over || active.id === over.id || !navigationItems.data?.content) {
-+        return;
-+      }
- 
--  const addNewItem = () => {
--    const newItem: NavItem = {
--      id: `item-${Date.now()}`,
--      title: "New Nav Item",
--      url: "/new-nav-item",
--    };
-+      // Simple move logic without complex optimization
-+      const activeId = active.id.toString();
-+      const overId = over.id.toString();
- 
--    setItems((prev) => [...prev, newItem]);
--    setHasChanges(true);
-+      // Implement basic move logic here
-+      // For now, just log to prevent the complex tree operations
-+      console.log("Move:", activeId, "to", overId);
-+    },
-+    [navigationItems.data?.content]
-+  );
- 
--    closeModal();
--  };
-+  // Simplified toggle
-+  const toggleExpanded = useCallback(
-+    (itemId: string) => {
-+      setNavigationItems((prev: typeof navigationItems) => {
-+        if (!prev.data?.content) return prev;
- 
--  const toggleExpanded = (id: string) => {
--    const toggleInItems = (items: NavItem[]): NavItem[] => {
--      return items.map((item) => {
--        if (item.id === id) {
--          return { ...item, isExpanded: !item.isExpanded };
-+        interface UpdateItemsFn {
-+          (items: NavigationItemContentI[]): NavigationItemContentI[];
-         }
--        if (item.children) {
--          return { ...item, children: toggleInItems(item.children) };
-+
-+        const updateItems: UpdateItemsFn = (
-+          items: NavigationItemContentI[]
-+        ): NavigationItemContentI[] => {
-+          return items.map(
-+            (item: NavigationItemContentI): NavigationItemContentI => {
-+              if (item.reference === itemId) {
-+                return { ...item, isExpanded: !item.isExpanded };
-+              }
-+              if (item.children?.length) {
-+                return { ...item, children: updateItems(item.children) };
-+              }
-+              return item;
-+            }
-+          );
-+        };
-+
-+        interface PrevType {
-+          data?: {
-+            content?: NavigationItemContentI[];
-+            [key: string]: any;
-+          };
-+          [key: string]: any;
-         }
--        return item;
-+
++    switch (normalizedType) {
++      case "document":
++      case "doc":
 +        return {
-+          ...prev,
-+          data: {
-+            ...prev.data,
-+            content: updateItems(prev.data.content!),
-+          },
-+        } as PrevType;
-       });
--    };
--    setItems(toggleInItems(items));
--  };
--
--  const handleButtonClick = () => {
--    if (navigationBlueprints.data) {
--      openModal(
--        <NavItemForm onSave={addNewItem} blueprint={Array.isArray(navigationBlueprints.data) ? navigationBlueprints.data[0] : navigationBlueprints.data} />,
--        "Nav Item",
--        "lg"
--      );
--    } else {
--      // Optionally, show an error or fallback UI
--      console.error("Navigation blueprint data is not available.");
--    }
--  };
--
--  const expandAll = () => {
--    const expandItems = (items: NavItem[]): NavItem[] => {
-+    },
-+    [setNavigationItems]
-+  );
++          icon: FileText,
++          title: "Document Collection",
++          displayType: normalizedType,
++        };
++      case "database":
++      case "data":
++        return {
++          icon: Database,
++          title: "Database Collection",
++          displayType: normalizedType,
++        };
++      case "component":
++      case "ui":
++        return {
++          icon: Layout,
++          title: "Component Library",
++          displayType: normalizedType,
++        };
++      case "code":
++      case "script":
++        return {
++          icon: Code,
++          title: "Code Repository",
++          displayType: normalizedType,
++        };
++      case "image":
++      case "photo":
++        return {
++          icon: Image,
++          title: "Image Gallery",
++          displayType: normalizedType,
++        };
++      case "video":
++      case "media":
++        return {
++          icon: Video,
++          title: "Video Collection",
++          displayType: normalizedType,
++        };
++      case "audio":
++      case "music":
++        return {
++          icon: Music,
++          title: "Audio Library",
++          displayType: normalizedType,
++        };
++      case "archive":
++      case "backup":
++        return {
++          icon: Archive,
++          title: "Archive Collection",
++          displayType: normalizedType,
++        };
++      case "settings":
++      case "config":
++        return {
++          icon: Settings,
++          title: "Configuration",
++          displayType: normalizedType,
++        };
++      case "navigation":
++      case "navigate":
++        return {
++          icon: FolderSymlink,
++          title: "Navigation",
++          displayType: normalizedType,
++        };
++      case "collection":
++      case "pages":
++        return {
++          icon: Combine,
++          title: "Collection",
++          displayType: normalizedType,
++        };
++      default:
++        return {
++          icon: Folder,
++          title: "General Collection",
++          displayType: type,
++        };
++    }
++  };
 +
-+  // Simplified add item
-+  const addNewItem = useCallback(
-+    async (navItem: { title: string; description: string }) => {
-+      if (!id) return;
-+
-+      try {
-+        await createNavigationItem(id, navItem);
-+        closeModal();
-+      } catch (error) {
-+        console.error("Failed to create navigation item:", error);
++  // Group blueprints by type
++  const groupedBlueprints =
++    blueprints?.data?.content.reduce((acc, content: BlueprintContentI) => {
++      const type = content.type ?? "general";
++      if (!acc[type]) {
++        acc[type] = [];
 +      }
-+    },
-+    [id, createNavigationItem, closeModal]
-+  );
++      acc[type].push(content);
++      return acc;
++    }, {} as Record<string, BlueprintContentI[]>) || {};
 +
-+  const handleButtonClick = useCallback(() => {
-+    if (!navigationBlueprints.data) return;
-+
-+    openModal(
-+      <NavItemForm
-+        onSave={addNewItem}
-+        loading={createLoading}
-+        blueprint={
-+          Array.isArray(navigationBlueprints.data)
-+            ? navigationBlueprints.data[0]
-+            : navigationBlueprints.data
-+        }
-+      />,
-+      "Nav Item",
-+      "lg"
-+    );
-+  }, [navigationBlueprints.data, openModal, addNewItem, createLoading]);
-+
-+  // Simplified expand/collapse
-+  const expandAll = useCallback(() => {
-+    if (!navigationItems.data?.content) return;
-+
-+    const expandItems = (
-+      items: NavigationItemContentI[]
-+    ): NavigationItemContentI[] => {
-       return items.map((item) => ({
-         ...item,
-         isExpanded: true,
--        children: item.children ? expandItems(item.children) : undefined,
-+        children: item.children?.length
-+          ? expandItems(item.children)
-+          : item.children,
-       }));
-     };
--    setItems(expandItems(items));
-+
-+    setNavigationItems((prev: typeof navigationItems) => ({
-+      ...prev,
-+      data: { ...prev.data!, content: expandItems(prev.data!.content!) },
-+    }));
-     setAllExpanded(true);
--  };
-+  }, [navigationItems.data?.content, setNavigationItems]);
- 
--  const collapseAll = () => {
--    const collapseItems = (items: NavItem[]): NavItem[] => {
-+  const collapseAll = useCallback(() => {
-+    if (!navigationItems.data?.content) return;
-+
-+    const collapseItems = (
-+      items: NavigationItemContentI[]
-+    ): NavigationItemContentI[] => {
-       return items.map((item) => ({
-         ...item,
-         isExpanded: false,
--        children: item.children ? collapseItems(item.children) : undefined,
-+        children: item.children?.length
-+          ? collapseItems(item.children)
-+          : item.children,
-       }));
-     };
--    setItems(collapseItems(items));
-+
-+    setNavigationItems((prev: typeof navigationItems) => ({
-+      ...prev,
-+      data: { ...prev.data!, content: collapseItems(prev.data!.content!) },
-+    }));
-     setAllExpanded(false);
--  };
-+  }, [navigationItems.data?.content, setNavigationItems]);
- 
--  const saveChanges = () => {
--    // Here you would save to your backend
--    console.log("Saving navigation structure:", items);
-+  const saveChanges = useCallback(async () => {
-+    if (!id) return;
-     setHasChanges(false);
--  };
-+    await findAllNavigationItems(id);
-+  }, [id, findAllNavigationItems]);
- 
--  const discardChanges = () => {
--    setItems(initialItems);
-+  const discardChanges = useCallback(async () => {
-+    if (!id) return;
-+    await findAllNavigationItems(id);
-     setHasChanges(false);
--  };
-+  }, [id, findAllNavigationItems]);
- 
--  const activeItem = activeId ? findItemDeep(items, activeId) : null;
-+  const activeItem = useMemo(() => {
-+    return activeId ? itemMaps.itemMap.get(activeId) || null : null;
-+  }, [activeId, itemMaps.itemMap]);
- 
-+  // Simplified data fetching
-   useEffect(() => {
--    if (id) {
--      findNavigationById(id);
--      findAllNavigationItems(id)
--      findNavigationBlueprints(id);
--    }
-+    if (!id) return;
-+
-+    Promise.all([
-+      findNavigationById(id),
-+      findAllNavigationItems(id),
-+      findNavigationBlueprints(id),
-+    ]).catch(console.error);
-   }, [id]);
- 
    return (
-@@ -456,49 +288,22 @@ export const NavigationBuilder = () => {
-         allExpanded={allExpanded}
-       />
- 
--      <div className=" mx-auto p-6">
-+      <div className="mx-auto p-6">
-         <div className="bg-nav-item rounded-lg shadow-nav border border-gray-300 overflow-hidden">
--          <div className="p-4 border-b border-gray-300">
--            <div className="flex items-center justify-between">
--              <div className="flex items-center gap-2">
--                {/* <ChevronUp className="w-4 h-4 text-nav-text-muted" />
--                <span className="text-sm text-nav-text-muted">Navigation</span> */}
--                {activeId && (
--                  <div className="flex items-center gap-2 ml-4">
--                    <div className="w-2 h-2 bg-nbc-dark-950 rounded-full animate-pulse"></div>
--                    <span className="text-xs text-nbc-dark-800 font-medium">
--                      Dragging...
--                    </span>
--                  </div>
--                )}
--              </div>
--              <div className="flex items-center gap-2">
--                <Button
--                  variant="link"
--                  size="sm"
--                  onClick={allExpanded ? collapseAll : expandAll}
--                  className="text-xs text-nav-accent hover:text-nav-accent hover:bg-nav-item-hover"
--                >
--                  {allExpanded ? "Collapse All" : "Expand All"}
--                </Button>
--              </div>
--            </div>
--          </div>
--
-           <DndContext
-             sensors={sensors}
-             collisionDetection={closestCenter}
-             onDragStart={handleDragStart}
--            onDragOver={handleDragOver}
-             onDragEnd={handleDragEnd}
-+            modifiers={[restrictToVerticalAxis]}
-           >
-             <div className="p-4">
-               <SortableContext
--                items={getAllIds(items)}
-+                items={allIds}
-                 strategy={verticalListSortingStrategy}
-               >
-                 <div className="space-y-2">
--                  {navigationItems.data?.content.map((item) => (
-+                  {navigationItems.data?.content?.map((item) => (
-                     <NavigationItem
-                       key={item.reference}
-                       item={item}
-@@ -510,12 +315,7 @@ export const NavigationBuilder = () => {
-               </SortableContext>
-             </div>
- 
--            <DragOverlay
--              dropAnimation={{
--                duration: 300,
--                easing: "cubic-bezier(0.18, 0.67, 0.6, 1.22)",
--              }}
--            >
-+            <DragOverlay>
-               {activeItem && <DragOverlayItem item={activeItem} />}
-             </DragOverlay>
-           </DndContext>
-diff --git a/src/components/cms/NavigationItem.tsx b/src/components/cms/NavigationItem.tsx
-index 2b98273..c2aac06 100644
---- a/src/components/cms/NavigationItem.tsx
-+++ b/src/components/cms/NavigationItem.tsx
-@@ -1,4 +1,4 @@
--import React from "react";
-+import React, { memo } from "react";
- import { useSortable } from "@dnd-kit/sortable";
- import { CSS } from "@dnd-kit/utilities";
- import Button from "@/components/ui/button";
-@@ -11,14 +11,13 @@ import {
- } from "lucide-react";
- import type { NavigationItemContentI } from "@/types/cms/navigation";
- 
--
- interface NavigationItemProps {
--  item:NavigationItemContentI ;
-+  item: NavigationItemContentI;
-   onToggleExpanded: (id: string) => void;
-   depth: number;
- }
- 
--export const NavigationItem: React.FC<NavigationItemProps> = ({
-+export const NavigationItem: React.FC<NavigationItemProps> = memo(({
-   item,
-   onToggleExpanded,
-   depth,
-@@ -141,9 +140,9 @@ export const NavigationItem: React.FC<NavigationItemProps> = ({
-       {/* Children */}
-       {isExpanded && item.children && (
-         <div className="ml-6 space-y-1 animate-accordion-down border-l-2 border-gray-300 pl-2">
--          {item.children.map((child: any) => (
-+          {item.children.map((child: NavigationItemContentI) => (
-             <NavigationItem
--              key={child.id}
-+              key={child.reference}
-               item={child}
-               onToggleExpanded={onToggleExpanded}
-               depth={depth + 1}
-@@ -153,4 +152,6 @@ export const NavigationItem: React.FC<NavigationItemProps> = ({
-       )}
+-    <div className="space-y-4">
+-      <h1 className="text-2xl font-bold">Blueprint</h1>
+-      {/* <div className="grid gap-6 xl:grid-cols-[1fr_minmax(280px,380px)] items-start w-full overflow-hidden"> */}
+-      <div>
+-        <div className="min-w-0 space-y-6">
+-          <h2 className="text-lg font-semibold">You Blueprint</h2>
+-          <div className="space-y-3">
+-            {blueprints?.data?.content.map((content: BlueprintContentI) => (
+-              <BlueprintCard key={content.reference} content={content} />
+-            ))}
+-            {blueprints?.data?.content.length === 0 && (
+-              <p className="text-sm text-muted-foreground">
+-                No collections yet.
+-              </p>
+-            )}
++    <div className="space-y-4 max-w-7xl mx-auto">
++      {loading ? (
++        <BlueprintPageSkeletonLoader />
++      ) : (
++        <>
++          <h1 className="text-2xl font-bold">Blueprint</h1>
++          <div>
++            <div className="min-w-0 space-y-6">
++              <h2 className="text-lg font-semibold">Your Blueprints</h2>
++
++              <div className="space-y-6">
++                {Object.entries(groupedBlueprints).map(
++                  ([type, blueprintsOfType]) => {
++                    const { icon: IconComponent, displayType } =
++                      getTypeDetails(type);
++
++                    return (
++                      <div key={type} className="space-y-3">
++                        <h1 className="font-semibold capitalize flex items-center gap-2">
++                          {displayType}
++                        </h1>
++
++                        <div className="space-y-2 border border-gray-300 rounded-lg ">
++                          {blueprintsOfType.map(
++                            (content: BlueprintContentI) => (
++                              <div
++                                key={content.reference}
++                                className=" text-gray-500 border-b last:border-0 border-gray-400"
++                              >
++                                <div className="flex items-center gap-2 p-4 justify-between">
++                                  <div className="flex items-center gap-2">
++                                    <IconComponent className="h-5 w-5" />
++                                    <Link
++                                      to={`${content.reference}`}
++                                      state={{ title: content.title }}
++                                      className="hover:text-nbc-dark-950 transition-colors hover:font-[500] capitalize"
++                                    >
++                                      {content.title}
++                                    </Link>
++                                  </div>
++                                </div>
++                              </div>
++                            )
++                          )}
++                        </div>
++                      </div>
++                    );
++                  }
++                )}
++
++                {Object.keys(groupedBlueprints).length === 0 && (
++                  <p className="text-sm text-muted-foreground">
++                    No collections yet.
++                  </p>
++                )}
++              </div>
++            </div>
+           </div>
+-        </div>
+-      </div>
++        </>
++      )}
      </div>
    );
--};
-+});
-+
-+NavigationItem.displayName = 'NavigationItem';
-\ No newline at end of file
-diff --git a/src/components/cms/Sidebar.tsx b/src/components/cms/Sidebar.tsx
-index fb6f83b..7dfc2f8 100644
---- a/src/components/cms/Sidebar.tsx
-+++ b/src/components/cms/Sidebar.tsx
-@@ -1,7 +1,13 @@
- import { useEffect, useState } from "react";
- import { Link, useLocation } from "react-router-dom";
- import Button from "@/components/ui/button";
--import { ChevronDown, Plus } from "lucide-react";
-+import { 
-+  Tooltip,
-+  TooltipContent,
-+  TooltipProvider,
-+  TooltipTrigger,
-+} from "@/components/ui/tooltip";
-+import { ChevronDown, Plus, Menu, X } from "lucide-react";
- import { cn } from "@/lib/utils";
+ }
+diff --git a/src/Page-Sections/CMSDashboard/Parts/BlueprintCard.tsx b/src/Page-Sections/CMSDashboard/Parts/BlueprintCard.tsx
+index 77de624..af903e1 100644
+--- a/src/Page-Sections/CMSDashboard/Parts/BlueprintCard.tsx
++++ b/src/Page-Sections/CMSDashboard/Parts/BlueprintCard.tsx
+@@ -283,6 +283,7 @@ function BlueprintCard({ content }: { content: BlueprintContentI }) {
+                       <FieldRenderer
+                         field={field}
+                         value={values[field.handle]}
++                        disable={true}
+                         onChange={(v) =>
+                           setValues((s) => ({ ...s, [field.handle]: v }))
+                         }
+@@ -309,7 +310,7 @@ function BlueprintCard({ content }: { content: BlueprintContentI }) {
+             </div>
+           ))}
  
- // Define proper types for navigation items
-@@ -46,9 +52,9 @@ interface SidebarProps {
-   navigationData: NavigationItem[];
-   header: SidebarHeader;
-   footer?: SidebarFooter;
--  width?: string; // e.g., "w-64", "w-72"
-+  width?: string;
-   className?: string;
--  expandedByDefault?: string[]; // Items to expand by default
-+  expandedByDefault?: string[];
-   onNavigate?: (href: string, item: NavigationItem | SubItem) => void;
-   theme?: {
-     background?: string;
-@@ -72,6 +78,8 @@ const Sidebar: React.FC<SidebarProps> = ({
- }) => {
-   const location = useLocation();
-   const [expandedItems, setExpandedItems] = useState<string[]>(expandedByDefault);
-+  const [isCollapsed, setIsCollapsed] = useState(false);
-+  const [isMobileOpen, setIsMobileOpen] = useState(false);
+-        {localSchema?.sections && localSchema.sections.length > 0 && (
++        {/* {localSchema?.sections && localSchema.sections.length > 0 && (
+           <Button
+             onClick={saveEntry}
+             className="w-full"
+@@ -318,7 +319,7 @@ function BlueprintCard({ content }: { content: BlueprintContentI }) {
+           >
+             Add Entry
+           </Button>
+-        )}
++        )} */}
  
-   // Default theme values
-   const defaultTheme = {
-@@ -92,24 +100,50 @@ const Sidebar: React.FC<SidebarProps> = ({
-     );
-   };
- 
-+  const toggleCollapsed = () => {
-+    setIsCollapsed(!isCollapsed);
-+    // Close all expanded items when collapsing
-+    if (!isCollapsed) {
-+      setExpandedItems([]);
-+    }
-+  };
-+
-+  const toggleMobileMenu = () => {
-+    setIsMobileOpen(!isMobileOpen);
-+  };
-+
-+  const closeMobileMenu = () => {
-+    setIsMobileOpen(false);
-+  };
-+
-+  // Check if screen size changes to handle responsive behavior
-+  useEffect(() => {
-+    const handleResize = () => {
-+      if (window.innerWidth >= 1024) { // lg breakpoint
-+        setIsMobileOpen(false);
-+      }
-+      if (window.innerWidth < 1024) {
-+        setIsCollapsed(false);
-+      }
-+    };
-+
-+    window.addEventListener('resize', handleResize);
-+    handleResize(); // Check initial size
-+
-+    return () => window.removeEventListener('resize', handleResize);
-+  }, []);
-+
-   // Updated isActive function to handle parent route activation
-   const isActive = (href: string) => {
--    // Exact match for current path
-     if (location.pathname === href) return true;
--    
-     return false;
-   };
- 
-   // Separate function to check if a direct navigation item should be active
-   const isDirectItemActive = (href: string, allNavItems: NavigationItem[]) => {
--    // Exact match first
-     if (location.pathname === href) return true;
-     
--    // For non-root paths, check if current path starts with the href
--    // But only if this href is not a prefix of any other navigation item
-     if (href !== '/' && location.pathname.startsWith(href + '/')) {
--      // Check if any other navigation item has an href that starts with this href
--      // This prevents "/dashboard" from being active when we're on "/dashboard/insurance"
-       const hasLongerMatch = allNavItems.some(item => {
-         if (hasSubItems(item)) {
-           return item.subItems.some(subItem => 
-@@ -137,15 +171,9 @@ const Sidebar: React.FC<SidebarProps> = ({
- 
-   // Helper function to check if a parent item should be active based on current route
-   const isParentActive = (item: NavigationItemWithSubItems) => {
--    // Check if any of the sub-items are exactly active or have child routes active
-     return item.subItems.some(subItem => {
--      // Exact match for sub-item
-       if (location.pathname === subItem.href) return true;
--      
--      // Check if current path starts with subItem.href + '/'
--      // This handles child routes of the sub-item
-       if (location.pathname.startsWith(subItem.href + '/')) return true;
--      
-       return false;
-     });
-   };
-@@ -162,6 +190,7 @@ const Sidebar: React.FC<SidebarProps> = ({
- 
-   // Handle navigation click
-   const handleNavigationClick = (href: string, item: NavigationItem | SubItem) => {
-+    closeMobileMenu(); // Close mobile menu on navigation
-     if (onNavigate) {
-       onNavigate(href, item);
-     }
-@@ -169,128 +198,222 @@ const Sidebar: React.FC<SidebarProps> = ({
- 
-   // Auto-expand parent items that have active children
-   useEffect(() => {
--    navigationData.forEach((item) => {
--      if (hasSubItems(item) && isParentActive(item)) {
--        if (!expandedItems.includes(item.label)) {
--          setExpandedItems(prev => [...prev, item.label]);
-+    if (!isCollapsed) {
-+      navigationData.forEach((item) => {
-+        if (hasSubItems(item) && isParentActive(item)) {
-+          if (!expandedItems.includes(item.label)) {
-+            setExpandedItems(prev => [...prev, item.label]);
-+          }
-         }
-+      });
-+    }
-+  }, [location.pathname, isCollapsed]);
-+
-+  // Render navigation item with tooltip for collapsed state
-+  const renderNavigationItem = (item: NavigationItem) => {
-+    if (hasSubItems(item)) {
-+      const isItemActive = isParentActive(item) || hasActiveSubItem(item.subItems);
-+      
-+      if (isCollapsed) {
-+        return (
-+          <TooltipProvider key={item.label}>
-+            <Tooltip>
-+              <TooltipTrigger asChild>
-+                <Button
-+                  variant={isItemActive ? "primary" : "default"}
-+                  className="w-full justify-center h-12 px-3"
-+                  onClick={() => {
-+                    setIsCollapsed(false);
-+                    toggleExpanded(item.label);
-+                  }}
-+                >
-+                  <item.icon className="w-5 h-5" />
-+                </Button>
-+              </TooltipTrigger>
-+              <TooltipContent side="right" className="font-medium">
-+                {item.label}
-+              </TooltipContent>
-+            </Tooltip>
-+          </TooltipProvider>
-+        );
-       }
--    });
--  }, [location.pathname]); // Re-run when route changes
- 
--  return (
--    <div className={cn(
--      "h-screen flex flex-col border-r",
--      width,
--      defaultTheme.background,
--      defaultTheme.border,
--      defaultTheme.shadow,
--      className
--    )}>
--      {/* Header */}
--      <div className={cn("py-1 border-b px-6", defaultTheme.headerBorder)}>
--        <div className="flex items-center gap-2">
--          {header.logo && (
--            <div className={cn("rounded-lg flex items-center justify-center", defaultTheme.headerBackground)}>
--              <img 
--                src={header.logo.src} 
--                alt={header.logo.alt} 
--                width={header.logo.width || 100}
--                height={header.logo.height}
--              />
-+      return (
-+        <div key={item.label} className="space-y-2">
-+          <Button
-+            variant={isItemActive ? "primary" : "default"}
-+            icon={item.icon}
-+            className="w-full justify-start gap-3 h-auto py-3 px-3 transition-all duration-200"
-+            onClick={() => toggleExpanded(item.label)}
-+          >
-+            <span className="flex-1 text-left">{item.label}</span>
-+            <ChevronDown
-+              className={cn(
-+                "w-4 h-4 transition-transform duration-200",
-+                expandedItems.includes(item.label) && "rotate-180"
-+              )}
-+            />
-+          </Button>
-+          {expandedItems.includes(item.label) && (
-+            <div className="mt-1 ml-6 space-y-1 animate-fade-in">
-+              {item.subItems.map((subItem) => (
-+                <Link 
-+                  key={subItem.href} 
-+                  to={subItem.href}
-+                  onClick={() => handleNavigationClick(subItem.href, subItem)}
-+                >
-+                  <Button
-+                    variant={isActive(subItem.href) ? "primary" : "default"}
-+                    className="w-full justify-start gap-3 h-auto py-2 px-3 text-sm transition-all duration-200 my-1"
-+                  >
-+                    {hasNewInLabel(subItem.label) && (
-+                      <Plus className="w-3 h-3" />
-+                    )}
-+                    <span>{subItem.label}</span>
-+                  </Button>
-+                </Link>
-+              ))}
+         {(!localSchema?.sections || localSchema.sections.length === 0) && (
+           <div className="text-center py-12 text-muted-foreground bg-field-category rounded-lg border border-field-border">
+@@ -327,9 +328,15 @@ function BlueprintCard({ content }: { content: BlueprintContentI }) {
+           </div>
+         )}
+       </div>
+-
++      <div
++        className="border border-dashed rounded-lg border-gray-300  hover:border-gray-400 transition-colors cursor-pointer text-gray-500 h-32 flex items-center justify-center gap-2 group"
++        onClick={() => setAddSectionOpen(true)}
++      >
++        <Plus className="w-6 h-6" />
++        <span className="text-md"> Add Section</span>
++      </div>
+       {/* Entries Section */}
+-      <div className="space-y-4">
++      {/* <div className="space-y-4">
+         <h3 className="text-lg font-semibold text-foreground">
+           Entries ({entries.length})
+         </h3>
+@@ -374,7 +381,7 @@ function BlueprintCard({ content }: { content: BlueprintContentI }) {
              </div>
            )}
--          <div>
--            <h1 className="font-bold text-lg text-cms-sidebar-foreground">
--              {header.title}
--            </h1>
--            {header.subtitle && (
--              <p className="text-xs text-muted-foreground">{header.subtitle}</p>
--            )}
--          </div>
          </div>
 -      </div>
--
--      {/* Navigation */}
--      <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
--        {navigationData.map((item: NavigationItem) => (
--          <div key={item.label}>
--            {hasSubItems(item) ? (
--              <div>
--                <Button
--                  variant={
--                    isParentActive(item) || hasActiveSubItem(item.subItems) ? "primary" : "default"
--                  }
--                  icon={item.icon}
--                  className={cn(
--                    "w-full justify-start gap-3 h-auto py-3 px-3 transition-all duration-200"
--                  )}
--                  onClick={() => toggleExpanded(item.label)}
--                >
--                
--                  <span className="flex-1 text-left">{item.label}</span>
--                  <ChevronDown
--                    className={cn(
--                      "w-4 h-4 transition-transform duration-200",
--                      expandedItems.includes(item.label) && "rotate-180"
--                    )}
++      </div> */}
+ 
+       {/* Settings Dialog */}
+       <Dialog open={open} onOpenChange={setOpen}>
+diff --git a/src/Page-Sections/Landing/FindBranchAtmsPageSection.tsx b/src/Page-Sections/Landing/FindBranchAtmsPageSection.tsx
+index 4021e1a..d908ee3 100644
+--- a/src/Page-Sections/Landing/FindBranchAtmsPageSection.tsx
++++ b/src/Page-Sections/Landing/FindBranchAtmsPageSection.tsx
+@@ -1,9 +1,15 @@
+-import DataTable from "@/components/reusable/data-table";
+ import { useState } from "react";
+-import type { TableColumn } from "@/types/table";
+ import HeroSection from "@/components/reusable/HeroSection";
+-import { CustomInput } from "@/components/ui/CustomInput";
+-import Button from "@/components/ui/button";
++import LocatorSearchFilters from "@/components/sections/LocatorsSearchFilters";
++import LocationTable from "@/components/sections/LocationTable";
++import MapView from "@/components/sections/MapView";
++import type { Location, LocationSearchFilters } from "@/types/location";
++import {
++  categories,
++  districts,
++  regions,
++  sampleLocations,
++} from "@/data/sampleLocations";
+ 
+ function FindBranchAtmsPageSection() {
+   const slides = [
+@@ -15,109 +21,62 @@ function FindBranchAtmsPageSection() {
+       imageUrl: "/images/nbc.jpg",
+     },
+   ];
+-  const [selectedRows, setSelectedRows] = useState<any[]>([]);
+-  const [globalFilter, setGlobalFilter] = useState<string>("");
+-  const data = [
+-    {
+-      id: "m5gr84i9",
+-      category: "Insurance Application Submitted",
+-      region: "Application for health insurance coverage",
+-      district: "success",
+-      distance: "npx-5566-uiin",
+-      mapDirection: "ken99@example.com",
+-    },
+-    {
+-      id: "3u1reuv4",
++  const [filteredLocations, setFilteredLocations] =
++    useState<Location[]>(sampleLocations);
++  const [selectedLocation, setSelectedLocation] = useState<Location | null>(
++    null
++  );
+ 
+-      category: "Insurance Application Submitted",
+-      region: "Application for auto insurance coverage",
+-      district: "success",
+-      distance: "npx-5566-uiin",
+-      mapDirection: "Abe45@example.com",
+-    },
+-    {
+-      id: "derv1ws0",
++  const handleSearch = (filters: LocationSearchFilters) => {
++    let filtered = sampleLocations;
+ 
+-      category: "Insurance Application Submitted",
+-      region: "Application for home insurance coverage",
+-      district: "processing",
+-      distance: "npx-5566-uiin",
+-      mapDirection: "Monserrat44@example.com",
+-    },
+-    {
+-      id: "5kma53ae",
++    if (filters.category && filters.category !== "all") {
++      filtered = filtered.filter(
++        (location) => location.category === filters.category
 +      );
-+    } else {
-+      const isItemActive = isDirectItemActive(item.href, navigationData);
-+      
-+      if (isCollapsed) {
-+        return (
-+          <TooltipProvider key={item.label}>
-+            <Tooltip>
-+              <TooltipTrigger asChild>
-+                <Link to={item.href} onClick={() => handleNavigationClick(item.href, item)}>
-+                  <Button
-+                    variant={isItemActive ? "primary" : "default"}
-+                    className="w-full justify-center h-12 px-3 mb-2"
-+                   
-+                    icon={item.icon}
-                   />
--                </Button>
--                {expandedItems.includes(item.label) && (
--                  <div className="mt-1 ml-6 space-y-1 animate-fade-in">
--                    {item.subItems.map((subItem) => (
--                      <Link 
--                        key={subItem.href} 
--                        to={subItem.href}
--                        onClick={() => handleNavigationClick(subItem.href, subItem)}
--                      >
--                        <Button
--                          variant={
--                            isActive(subItem.href) ? "primary" : "default"
--                          }
--                          className={cn(
--                            "w-full justify-start gap-3 h-auto py-2 px-3 text-sm transition-all duration-200 my-1"
--                          )}
--                        >
--                          {hasNewInLabel(subItem.label) && (
--                            <Plus className="w-3 h-3" />
--                          )}
--                          <span>{subItem.label}</span>
--                        </Button>
--                      </Link>
--                    ))}
--                  </div>
-+                 
-+               
-+                </Link>
-+              </TooltipTrigger>
-+              <TooltipContent side="right" className="font-medium">
-+                {item.label}
-+              </TooltipContent>
-+            </Tooltip>
-+          </TooltipProvider>
-+        );
-+      }
++    }
++    if (filters.region && filters.region !== "all") {
++      filtered = filtered.filter(
++        (location) => location.region === filters.region
++      );
++    }
++    if (filters.district && filters.district !== "all") {
++      filtered = filtered.filter(
++        (location) => location.district === filters.district
++      );
++    }
+ 
+-      category: "Google",
+-      region: "Google service transaction",
+-      district: "success",
+-      distance: "npx-5566-uiin",
+-      mapDirection: "Silas22@example.com",
+-    },
+-    {
+-      id: "bhqecj4p",
+-      category: "Slack",
+-      region: "Slack subscription payment",
+-      district: "failed",
+-      distance: "npx-5566-uiin",
+-      mapDirection: "carmella@example.com",
+-    },
+-  ];
++    setFilteredLocations(filtered);
++    // toast({
++    //   title: "Search completed",
++    //   description: `Found ${filtered.length} location${
++    //     filtered.length !== 1 ? "s" : ""
++    //   } matching your criteria.`,
++    // });
++  };
+ 
+-  const columns: TableColumn<any>[] = [
+-    {
+-      id: "category",
+-      header: "Category",
+-      accessorKey: "category",
+-      cell: ({ row }: { row: any }) => (
+-        <div className="flex flex-col">
+-          <div className="font-medium">{row.getValue("category") || "-"}</div>
+-          {/* <div className="text-xs text-muted-foreground">
+-            {row.original.description || "No description available"}
+-          </div> */}
+-        </div>
+-      ),
+-    },
+-    {
+-      id: "region",
+-      header: "region",
+-      accessorKey: "region",
+-      cell: ({ row }: { row: any }) => (
+-        <div className="font-medium uppercase">
+-          {row.getValue("region") || "-"}
+-        </div>
+-      ),
+-    },
+-    {
+-      id: "district",
+-      header: "district",
+-      accessorKey: "district",
+-      cell: ({ row }: { row: any }) => (
+-        <div className="font-medium uppercase">
+-          {row.getValue("district") || "-"}
+-        </div>
+-      ),
+-    },
+-    {
+-      id: "distance",
+-      header: "distance",
+-      accessorKey: "distance",
+-      cell: ({ row }: { row: any }) => (
+-        <div className="font-medium uppercase">
+-          {row.getValue("distance") || "-"}
+-        </div>
+-      ),
+-    },
+-    {
+-      id: "mapDirection",
+-      header: "mapDirection",
+-      accessorKey: "mapDirection",
+-      cell: ({ row }: { row: any }) => (
+-        <div className="font-medium uppercase">
+-          {row.getValue("mapDirection") || "-"}
+-        </div>
+-      ),
+-    },
+-  ];
++  const handleGetDirections = (location: Location) => {
++    setSelectedLocation(location);
++    // toast({
++    //   title: "Directions updated",
++    //   description: `Showing directions to ${location.category} in ${location.district}, ${location.region}`,
++    // });
 +
-+      return (
-+        <Link 
-+          key={item.label}
-+          to={item.href}
-+          onClick={() => handleNavigationClick(item.href, item)}
-+        >
-+          <Button
-+            variant={isItemActive ? "primary" : "default"}
-+            className="w-full justify-start gap-3 h-auto py-3 px-3 transition-all duration-200 mb-2"
-+          >
-+            <item.icon className="w-4 h-4" />
-+            <span>{item.label}</span>
-+          </Button>
-+        </Link>
-+      );
++    // Scroll to map for better UX
++    const mapElement = document.getElementById("location-map");
++    if (mapElement) {
++      mapElement.scrollIntoView({ behavior: "smooth" });
 +    }
 +  };
 +
-+  return (
-+    <>
-+      {/* Mobile Menu Button */}
-+      <Button
-+        variant="outline"
-+        className="lg:hidden fixed top-4 left-4 z-50 h-10 w-10 p-0"
-+        onClick={toggleMobileMenu}
-+      >
-+        {isMobileOpen ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
-+      </Button>
++  const handleClearSearch = () => {
++    setFilteredLocations(sampleLocations);
++    setSelectedLocation(null);
++    // toast({
++    //   title: "Search cleared",
++    //   description: `Showing all ${sampleLocations.length} locations`,
++    // });
++  };
+ 
+   return (
+     <div>
+@@ -132,31 +91,34 @@ function FindBranchAtmsPageSection() {
+             banking services.
+           </p>
+         </div>
+-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+-          <CustomInput label="Category" placeholder="category" />
+-          <CustomInput label="Region"  placeholder="Dar es Salaam"/>
+-          <CustomInput label="District"  placeholder="Ubungo"/>
+-          <Button variant="primary">Search</Button>
 +
-+      {/* Mobile Backdrop */}
-+      {isMobileOpen && (
-+        <div 
-+          className="lg:hidden fixed inset-0 bg-black/50 z-40" 
-+          onClick={closeMobileMenu}
-+        />
-+      )}
++        <div className="min-h-screen bg-background">
++          <div className="container mx-auto py-4 sm:py-6 lg:py-8 px-3 sm:px-4 lg:px-6 max-w-8xl">
++        
 +
-+      {/* Sidebar */}
-+      <div className={cn(
-+        "h-screen flex flex-col border-r transition-all duration-300 z-40",
-+        // Mobile styles
-+        "fixed lg:relative",
-+        isMobileOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0",
-+        // Desktop styles
-+        isCollapsed ? "lg:w-20" : width,
-+        defaultTheme.background,
-+        defaultTheme.border,
-+        defaultTheme.shadow,
-+        className
-+      )}>
-+        {/* Header */}
-+        <div className={cn(
-+          "py-1 border-b px-6 transition-all duration-300",
-+          isCollapsed && "lg:px-3",
-+          defaultTheme.headerBorder
-+        )}>
-+          <div className="flex items-center gap-2">
-+            {header.logo && (
-+              <div className={cn(
-+                "rounded-lg flex items-center justify-center shrink-0",
-+                defaultTheme.headerBackground
-+              )}>
-+                <img 
-+                  src={header.logo.src} 
-+                  alt={header.logo.alt} 
-+                  width={isCollapsed ? 32 : header.logo.width || 100}
-+                  height={header.logo.height}
-+                  className="transition-all duration-300"
++            <div className="space-y-4 sm:space-y-6">
++              <LocatorSearchFilters
++                onSearch={handleSearch}
++                onClear={handleClearSearch}
++                categories={categories}
++                regions={regions}
++                districts={districts}
++              />
++
++              <LocationTable
++                locations={filteredLocations}
++                onGetDirections={handleGetDirections}
++              />
++
++              <div id="location-map">
++                <MapView
++                  selectedLocation={selectedLocation}
++                  allLocations={filteredLocations}
 +                />
 +              </div>
-+            )}
-+            {!isCollapsed && (
-+              <div className="min-w-0 flex-1">
-+                <h1 className="font-bold text-lg text-cms-sidebar-foreground truncate">
-+                  {header.title}
-+                </h1>
-+                {header.subtitle && (
-+                  <p className="text-xs text-muted-foreground truncate">{header.subtitle}</p>
-                 )}
-               </div>
--            ) : (
--              <Link 
--                to={item.href}
--                onClick={() => handleNavigationClick(item.href, item)}
--              >
--                <Button
--                  variant={isDirectItemActive(item.href, navigationData) ? "primary" : "default"}
--                  className={cn(
--                    "w-full justify-start gap-3 h-auto py-3 px-3 transition-all duration-200"
--                  )}
--                >
--                  <item.icon className="w-4 h-4" />
--                  <span>{item.label}</span>
--                </Button>
--              </Link>
-             )}
--          </div>
--        ))}
--      </nav>
--
--      {/* Footer */}
--      {footer && (
--        <div className={cn("p-4 border-t", defaultTheme.footerBorder)}>
--          <div className="text-xs text-muted-foreground text-center">
--            {footer.text}
-+            {/* Collapse Toggle Button - Desktop Only */}
-+            <Button
-+              variant="ghost"
-+              className="hidden lg:flex h-8 w-8 p-0 shrink-0"
-+              onClick={toggleCollapsed}
-+            >
-+              <Menu className="w-4 h-4" />
-+            </Button>
-           </div>
-         </div>
--      )}
--    </div>
-+
-+        {/* Navigation */}
-+        <nav className={cn(
-+          "flex-1 p-4 space-y-2 overflow-y-auto transition-all duration-300 ",
-+          isCollapsed && "lg:px-2"
-+        )}>
-+          {navigationData.map(renderNavigationItem)}
-+        </nav>
-+
-+        {/* Footer */}
-+        {footer && !isCollapsed && (
-+          <div className={cn("p-4 border-t", defaultTheme.footerBorder)}>
-+            <div className="text-xs text-muted-foreground text-center">
-+              {footer.text}
 +            </div>
 +          </div>
-+        )}
-+      </div>
-+    </>
+         </div>
+-        <DataTable
+-          data={data}
+-          columns={columns}
+-          displayMode="serial"
+-          headerBgColor="bg-nbc-dark-950"
+-          headerTextColor="text-white"
+-          //   actions={actions}
+-          searchableColumns={["email", "status"]}
+-          searchPlaceholder="Search payments..."
+-          enableRowSelection={true}
+-          enableColumnVisibility={true}
+-          globalFilter={globalFilter}
+-          setGlobalFilter={setGlobalFilter}
+-          enablePagination={true}
+-          pageSize={10}
+-          onRowSelectionChange={setSelectedRows}
+-          emptyStateMessage="No payments found."
+-          className="border-gray-300"
+-        />
+       </div>
+     </div>
+   );
+diff --git a/src/Providers/blueprints.provider.tsx b/src/Providers/blueprints.provider.tsx
+index 6a8371d..1ebb1e8 100644
+--- a/src/Providers/blueprints.provider.tsx
++++ b/src/Providers/blueprints.provider.tsx
+@@ -45,6 +45,7 @@ export const BlueprintProvider: React.FC<{ children: React.ReactNode }> = ({
+     setLoading(true);
+     hasFetched.current = true;
+     await blueprintsServices.findAll(setBlueprints, queryString);
++    setLoading(false);
+   }
+ 
+   async function findBlueprintById(id: string) {
+diff --git a/src/Routes/CMSRoutes.tsx b/src/Routes/CMSRoutes.tsx
+index d2d13dd..f0669e5 100644
+--- a/src/Routes/CMSRoutes.tsx
++++ b/src/Routes/CMSRoutes.tsx
+@@ -15,6 +15,11 @@ const CMSLogin = lazy(() => import("@/Pages/Dashboard/CMS/CMSPages/CMSLogin"));
+ const Blueprint = lazy(
+   () => import("@/Pages/Dashboard/CMS/CMSPages/Blueprint")
+ );
++
++const SingleBlueprint = lazy(
++  () => import("@/Pages/Dashboard/CMS/CMSPages/SingleBlueprint")
++);
++
+ const Collection = lazy(
+   () => import("@/Pages/Dashboard/CMS/CMSPages/Collection")
+ );
+@@ -57,7 +62,11 @@ const cmsRoutes = (
+       }
+     >
+       <Route index element={<CMSDashboard />} />
+-      <Route path="blue-prints" element={<Blueprint />} />
++      <Route path="blue-prints">
++        <Route index element={<Blueprint />} />
++        <Route path=":id" element={<SingleBlueprint />} />
++      </Route>
++
+       <Route path="collections">
+         <Route index element={<Collection />} />
+         <Route path=":id" element={<SingleCollection />} />
+diff --git a/src/components/cms/FieldRenderer.tsx b/src/components/cms/FieldRenderer.tsx
+index eaf145b..53e6d45 100644
+--- a/src/components/cms/FieldRenderer.tsx
++++ b/src/components/cms/FieldRenderer.tsx
+@@ -10,12 +10,12 @@ import { CustomSelect } from "../ui/CustomSelect";
+ interface RendererProps {
+   field: BlueprintFieldTypeI | FieldDefinition;
+   value: any;
++  disable?: boolean;
+   onChange: (v: any) => void;
+ }
+ 
+ // Helper function to normalize field data
+ function normalizeField(field: BlueprintFieldTypeI | FieldDefinition) {
+-
+   // Check if it's a BlueprintFieldType (new API structure)
+   if ("displayName" in field && "config" in field) {
+     const blueprintField = field as BlueprintFieldTypeI;
+@@ -45,7 +45,12 @@ function normalizeField(field: BlueprintFieldTypeI | FieldDefinition) {
+   };
+ }
+ 
+-export function FieldRenderer({ field, value, onChange }: RendererProps) {
++export function FieldRenderer({
++  field,
++  value,
++  onChange,
++  disable = false,
++}: RendererProps) {
+   const normalizedField = normalizeField(field);
+ 
+   const common = (
+@@ -81,6 +86,7 @@ export function FieldRenderer({ field, value, onChange }: RendererProps) {
+             placeholder={placeholder}
+             value={value ?? ""}
+             onChange={(e) => onChange(e.target.value)}
++            disabled={disable}
+           />
+         </div>
+       );
+@@ -95,6 +101,7 @@ export function FieldRenderer({ field, value, onChange }: RendererProps) {
+             value={value ?? ""}
+             onChange={(e) => onChange(e.target.value)}
+             rows={normalizedField.config?.rows || 4}
++            disabled={disable}
+           />
+         </div>
+       );
+@@ -125,6 +132,7 @@ export function FieldRenderer({ field, value, onChange }: RendererProps) {
+             min={normalizedField.config?.min}
+             max={normalizedField.config?.max}
+             step={normalizedField.config?.step}
++            disabled={disable}
+           />
+         </div>
+       );
+@@ -150,6 +158,7 @@ export function FieldRenderer({ field, value, onChange }: RendererProps) {
+             id={normalizedField.id}
+             checked={!!value}
+             onCheckedChange={(v: any) => onChange(v)}
++            disabled={disable}
+           />
+           <Label htmlFor={normalizedField.id}>{normalizedField.label}</Label>
+         </div>
+@@ -159,7 +168,6 @@ export function FieldRenderer({ field, value, onChange }: RendererProps) {
+       // case "select":
+       return (
+         <div className="space-y-1">
+-    
+           <CustomSelect
+             options={normalizedField.options || []}
+             onValueChange={(v) => onChange(v)}
+@@ -168,6 +176,7 @@ export function FieldRenderer({ field, value, onChange }: RendererProps) {
+             placeholder={"Select Option"}
+             required={normalizedField.required}
+             className="w-full"
++            disabled={disable}
+           />
+ 
+           {/* <Select value={value ?? ""} onValueChange={(v) => onChange(v)}>
+@@ -194,6 +203,7 @@ export function FieldRenderer({ field, value, onChange }: RendererProps) {
+             type="date"
+             value={value ?? ""}
+             onChange={(e) => onChange(e.target.value)}
++            disabled={disable}
+           />
+         </div>
+       );
+@@ -208,6 +218,7 @@ export function FieldRenderer({ field, value, onChange }: RendererProps) {
+             placeholder="https://example.com"
+             value={value ?? ""}
+             onChange={(e) => onChange(e.target.value)}
++            disabled={disable}
+           />
+         </div>
+       );
+@@ -225,20 +236,21 @@ export function FieldRenderer({ field, value, onChange }: RendererProps) {
+           />
+         </div>
+       );
+-      case "NAVIGATION":
+-        return (
+-          <div className="space-y-1">
+-            <CustomInput
+-              label={normalizedField.label}
+-              description={normalizedField.instructions}
+-              required={normalizedField.required}
+-              id={normalizedField.id}
+-              placeholder={placeholder}
+-              value={value ?? ""}
+-              onChange={(e) => onChange(e.target.value)}
+-            />
+-          </div>
+-        );
++    case "NAVIGATION":
++      return (
++        <div className="space-y-1">
++          <CustomInput
++            label={normalizedField.label}
++            description={normalizedField.instructions}
++            required={normalizedField.required}
++            id={normalizedField.id}
++            placeholder={placeholder}
++            value={value ?? ""}
++            onChange={(e) => onChange(e.target.value)}
++            disabled={disable}
++          />
++        </div>
++      );
+ 
+     default:
+       return (
+diff --git a/src/components/ui/button.tsx b/src/components/ui/button.tsx
+index 74072a9..a8d21a5 100644
+--- a/src/components/ui/button.tsx
++++ b/src/components/ui/button.tsx
+@@ -17,8 +17,7 @@ type ButtonProps = {
+     | "iconOutline"
+     | "iconRounded"
+     | "dropdown"
+-    | "destructive" 
+-    ;
++    | "destructive";
+   size?: "xs" | "sm" | "md" | "lg" | "xl";
+   type?: "button" | "submit" | "reset";
+   disabled?: boolean;
+@@ -28,6 +27,7 @@ type ButtonProps = {
+   children?: React.ReactNode;
+   onClick?: React.MouseEventHandler<HTMLButtonElement>;
+   className?: string;
++  asChild?: boolean; // Add this to the type definition
+   [key: string]: unknown;
+ };
+ 
+@@ -42,6 +42,7 @@ const Button = ({
+   children,
+   onClick,
+   className = "",
++  asChild = false, // Extract asChild prop
+   ...props
+ }: ButtonProps) => {
+   // Base styles
+@@ -123,6 +124,17 @@ const Button = ({
+   const isLightOutline = variant === "lightOutline";
+   const isIconOutline = variant === "iconOutline";
+ 
++  // If asChild is true, return just the styled content without the button wrapper
++  // This allows the parent to control what element is rendered
++  if (asChild) {
++    const child = React.Children.only(children) as React.ReactElement<any>;
++    return React.cloneElement(child, {
++      ...child.props,
++      ...props,
++      className: `${buttonClasses} ${child.props.className || ''}`,
++    });
++  }
++
+   return (
+     <button
+       type={type}
+@@ -211,4 +223,4 @@ const Button = ({
    );
  };
  
-diff --git a/src/components/ui/modal.tsx b/src/components/ui/modal.tsx
-index 993ad76..14a1739 100644
---- a/src/components/ui/modal.tsx
-+++ b/src/components/ui/modal.tsx
-@@ -4,7 +4,7 @@ import { X } from "lucide-react";
- import { useContext, useEffect } from "react";
- 
- function Modal() {
--  const { isOpen, closeModal, modalTitle } = useModal();
-+  const { isOpen, closeModal, modalTitle,modalDescription } = useModal();
-   const context = useContext(ModalContext);
-   const modalContent = context?.modalContent;
-   const modalSize = context?.modalSize || 'auto';
-@@ -73,10 +73,13 @@ function Modal() {
-       >
-         {/* Modal Header */}
-         {modalTitle && (
--          <div className="relative flex items-center justify-between px-4 py-2 border-b border-gray-200/30 backdrop-blur-sm">
--            <h2 className="text-lg font-semibold text-gray-900 animate-fadeInUp" id="modal-title">
-+          <div className="relative flex items-center justify-between px-5 py-3 border-b border-gray-200/30 backdrop-blur-sm">
-+           <div className="">
-+           <h2 className="text-lg font-semibold text-gray-900 animate-fadeInUp" id="modal-title">
-               {modalTitle}
-             </h2>
-+            <p className="text-sm text-gray-400">{modalDescription}</p>
-+           </div>
-             <button
-               onClick={closeModal}
-               className="text-gray-400 hover:text-gray-600 transition-all duration-300 hover:scale-110 hover:rotate-90 p-2 rounded-full hover:bg-gray-100/50"
+-export default Button;
++export default Button;
+\ No newline at end of file
 diff --git a/src/data/cmsNavigationData.ts b/src/data/cmsNavigationData.ts
-index 1d25714..8cabdb8 100644
+index 8cabdb8..b5dcf1c 100644
 --- a/src/data/cmsNavigationData.ts
 +++ b/src/data/cmsNavigationData.ts
 @@ -1,5 +1,5 @@
  import type { NavigationItem } from "@/components/cms/Sidebar";
--import { Edit, FileText, Globe, LayoutDashboard, Navigation } from "lucide-react";
-+import { Edit, FileText, Globe, Images, LayoutDashboard, Navigation } from "lucide-react";
+-import { Edit, FileText, Globe, Images, LayoutDashboard, Navigation } from "lucide-react";
++import { Combine, Edit, FileText, FolderSymlink, Images, LayoutDashboard,  } from "lucide-react";
  
  export const cmsNavigationData: NavigationItem[] = [
    {
-@@ -41,6 +41,11 @@ export const cmsNavigationData: NavigationItem[] = [
-     icon: FileText,
-     href: "/cms/blue-prints",
-   },
-+  {
-+    label: "Assets",
-+    icon: Images,
-+    href: "/cms/assets",
-+  },
+@@ -28,12 +28,12 @@ export const cmsNavigationData: NavigationItem[] = [
+   // },
    {
-     label: "Fieldtypes",
-     icon: Edit,
-diff --git a/src/services/CMS/Navigation.service.ts b/src/services/CMS/Navigation.service.ts
-index 0ee605f..61e8fcb 100644
---- a/src/services/CMS/Navigation.service.ts
-+++ b/src/services/CMS/Navigation.service.ts
-@@ -48,10 +48,12 @@ export const NavigationService = {
-       return error;
-     }
+     label: "Navigation",
+-    icon: Navigation,
++    icon: FolderSymlink,
+     href: "/cms/navigation",
    },
--  findBlueprint: async (id: string,setBlueprint:any) => {
-+  findBlueprint: async (id: string, setBlueprint: any) => {
-     try {
--      const response = await cmsApiService.get(`/cms/navigations/${id}/blueprints`);
--      setBlueprint(response)
-+      const response = await cmsApiService.get(
-+        `/cms/navigations/${id}/blueprints`
-+      );
-+      setBlueprint(response);
-       return response;
-     } catch (error) {
-       return error;
-@@ -80,7 +82,9 @@ export const NavigationService = {
-     try {
-       const response = await cmsApiService.post(
-         `/cms/navigations/${navigationId}/nav-items`,
--        data,
-+        {
-+          data: data,
-+        },
-         {
-           successMessage: "Navigation item created successfully!",
-         }
-@@ -105,7 +109,7 @@ export const NavigationService = {
-   updateItem: async (
-     id: string,
-     navigationId: string,
--    data: { title: string; description: string; url?: string }
-+    data: { title?: string; description?: string; url?: string }
-   ) => {
-     try {
-       const response = await cmsApiService.put(
-diff --git a/src/types/cms/navigation.ts b/src/types/cms/navigation.ts
-index 5c6d770..ba57220 100644
---- a/src/types/cms/navigation.ts
-+++ b/src/types/cms/navigation.ts
-@@ -22,6 +22,7 @@ export type NavigationContentI = {
-   reference: string;
-   title: string;
- };
-+
- export type NavigationI = {
-   content: NavigationContentI;
-   page: number;
-@@ -32,11 +33,12 @@ export type NavigationI = {
+   {
+     label: "Collections",
+-    icon: Globe,
++    icon: Combine,
+     href: "/cms/collections",
+   },
+   {
+diff --git a/src/types/cms/blueprint.interface.ts b/src/types/cms/blueprint.interface.ts
+index 75331f3..904d74b 100644
+--- a/src/types/cms/blueprint.interface.ts
++++ b/src/types/cms/blueprint.interface.ts
+@@ -34,7 +34,7 @@ export interface BlueprintFieldTypeI {
+ }
  
- export type NavigationItemContentI = {
-   reference: string;
--  children:[]
-+  children?: NavigationItemContentI[]; // Changed from [] to NavigationItemContentI[]
-   isExpanded?: boolean;
-   data: {
-     link: string;
-     title: string;
-+    parentId?: string; // Added parentId to data object
-   };
- };
- 
-@@ -48,8 +50,7 @@ export type NavigationItemI = {
-   totalPages: number;
- };
- 
--
--export type NavigationBlueprintSchemaI ={
-+export type NavigationBlueprintSchemaI = {
-   version: string;
-   sections: Array<{
-     id: string;
+ export interface BlueprintSectionI {
+-  id?: string;
++  id: string;
+   handle?: string;
+   displayName?: string;
+   description?: string;
