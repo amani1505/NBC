@@ -1,2172 +1,405 @@
-diff --git a/.env b/.env
-index ae3c379..514aeeb 100644
---- a/.env
-+++ b/.env
-@@ -2,4 +2,20 @@ VITE_API_URL=http://localhost:8000/api
- VITE_CMS_URL=http://22.32.245.79:8449/api/v1
- 
- VITE_APP_NAME=NBC Site
--VITE_WEBSOCKET_URL=ws://localhost:3000/ws
-\ No newline at end of file
-+VITE_WEBSOCKET_URL=ws://localhost:3000/ws
-+VITE_BASE_URL=/
-+
-+
-+
-+# Docker Configuration
-+DEV_PORT=5173
-+PROD_PORT=9090
-+NODE_ENV=development
-+
-+
-+# Legacy React support (for compatibility)
-+REACT_APP_API_URL=http://localhost:8000
-+REACT_APP_APP_NAME=Corporate Website
-+REACT_APP_VERSION=1.0.0
-+REACT_APP_ENV=development
-+REACT_APP_COMPANY_NAME=Your Company Name
-\ No newline at end of file
-diff --git a/.env.development b/.env.development
-index 9237496..3865ac9 100644
---- a/.env.development
-+++ b/.env.development
-@@ -1,2 +1,24 @@
--# Development API URL (will be proxied by Vite)
--VITE_API_URL=/api
-+# Docker Configuration
-+DEV_PORT=5173
-+PROD_PORT=9090
-+NODE_ENV=development
-+
-+# Vite Configuration
-+VITE_APP_NAME=Corporate Website
-+VITE_API_URL=http://localhost:8000
-+VITE_ENV=development
-+VITE_BASE_URL=/
-+
-+
-+# Optional: CMS, Analytics, Marketing Tools
-+# VITE_GOOGLE_ANALYTICS_ID=GA-XXXXXXXXX-X
-+# VITE_GOOGLE_MAPS_API_KEY=your-maps-key-here
-+# VITE_HUBSPOT_PORTAL_ID=your-hubspot-id-here
-+# VITE_MAILCHIMP_API_KEY=your-mailchimp-key-here
-+
-+# Legacy React support (for compatibility)
-+REACT_APP_API_URL=http://localhost:8000
-+REACT_APP_APP_NAME=Corporate Website
-+REACT_APP_VERSION=1.0.0
-+REACT_APP_ENV=development
-+REACT_APP_COMPANY_NAME=Your Company Name
-\ No newline at end of file
-diff --git a/changes.txt b/changes.txt
-index 9315997..e69de29 100644
---- a/changes.txt
-+++ b/changes.txt
-@@ -1,878 +0,0 @@
--diff --git a/package-lock.json b/package-lock.json
--index 87899bc..373332e 100644
----- a/package-lock.json
--+++ b/package-lock.json
--@@ -21,6 +21,7 @@
--         "@radix-ui/react-navigation-menu": "^1.2.13",
--         "@radix-ui/react-popover": "^1.1.14",
--         "@radix-ui/react-radio-group": "^1.3.7",
--+        "@radix-ui/react-scroll-area": "^1.2.10",
--         "@radix-ui/react-select": "^2.2.5",
--         "@radix-ui/react-separator": "^1.1.7",
--         "@radix-ui/react-slider": "^1.3.5",
--@@ -2079,6 +2080,64 @@
--         }
--       }
--     },
--+    "node_modules/@radix-ui/react-scroll-area": {
--+      "version": "1.2.10",
--+      "resolved": "https://registry.npmjs.org/@radix-ui/react-scroll-area/-/react-scroll-area-1.2.10.tgz",
--+      "integrity": "sha512-tAXIa1g3sM5CGpVT0uIbUx/U3Gs5N8T52IICuCtObaos1S8fzsrPXG5WObkQN3S6NVl6wKgPhAIiBGbWnvc97A==",
--+      "dependencies": {
--+        "@radix-ui/number": "1.1.1",
--+        "@radix-ui/primitive": "1.1.3",
--+        "@radix-ui/react-compose-refs": "1.1.2",
--+        "@radix-ui/react-context": "1.1.2",
--+        "@radix-ui/react-direction": "1.1.1",
--+        "@radix-ui/react-presence": "1.1.5",
--+        "@radix-ui/react-primitive": "2.1.3",
--+        "@radix-ui/react-use-callback-ref": "1.1.1",
--+        "@radix-ui/react-use-layout-effect": "1.1.1"
--+      },
--+      "peerDependencies": {
--+        "@types/react": "*",
--+        "@types/react-dom": "*",
--+        "react": "^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc",
--+        "react-dom": "^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc"
--+      },
--+      "peerDependenciesMeta": {
--+        "@types/react": {
--+          "optional": true
--+        },
--+        "@types/react-dom": {
--+          "optional": true
--+        }
--+      }
--+    },
--+    "node_modules/@radix-ui/react-scroll-area/node_modules/@radix-ui/primitive": {
--+      "version": "1.1.3",
--+      "resolved": "https://registry.npmjs.org/@radix-ui/primitive/-/primitive-1.1.3.tgz",
--+      "integrity": "sha512-JTF99U/6XIjCBo0wqkU5sK10glYe27MRRsfwoiq5zzOEZLHU3A3KCMa5X/azekYRCJ0HlwI0crAXS/5dEHTzDg=="
--+    },
--+    "node_modules/@radix-ui/react-scroll-area/node_modules/@radix-ui/react-presence": {
--+      "version": "1.1.5",
--+      "resolved": "https://registry.npmjs.org/@radix-ui/react-presence/-/react-presence-1.1.5.tgz",
--+      "integrity": "sha512-/jfEwNDdQVBCNvjkGit4h6pMOzq8bHkopq458dPt2lMjx+eBQUohZNG9A7DtO/O5ukSbxuaNGXMjHicgwy6rQQ==",
--+      "dependencies": {
--+        "@radix-ui/react-compose-refs": "1.1.2",
--+        "@radix-ui/react-use-layout-effect": "1.1.1"
--+      },
--+      "peerDependencies": {
--+        "@types/react": "*",
--+        "@types/react-dom": "*",
--+        "react": "^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc",
--+        "react-dom": "^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc"
--+      },
--+      "peerDependenciesMeta": {
--+        "@types/react": {
--+          "optional": true
--+        },
--+        "@types/react-dom": {
--+          "optional": true
--+        }
--+      }
--+    },
--     "node_modules/@radix-ui/react-select": {
--       "version": "2.2.5",
--       "resolved": "https://registry.npmjs.org/@radix-ui/react-select/-/react-select-2.2.5.tgz",
--diff --git a/package.json b/package.json
--index 7bdbaab..0bda844 100644
----- a/package.json
--+++ b/package.json
--@@ -23,6 +23,7 @@
--     "@radix-ui/react-navigation-menu": "^1.2.13",
--     "@radix-ui/react-popover": "^1.1.14",
--     "@radix-ui/react-radio-group": "^1.3.7",
--+    "@radix-ui/react-scroll-area": "^1.2.10",
--     "@radix-ui/react-select": "^2.2.5",
--     "@radix-ui/react-separator": "^1.1.7",
--     "@radix-ui/react-slider": "^1.3.5",
--diff --git a/src/Page-Sections/CMSDashboard/BlueprintPageSection.tsx b/src/Page-Sections/CMSDashboard/BlueprintPageSection.tsx
--index 4bcd3af..0443b72 100644
----- a/src/Page-Sections/CMSDashboard/BlueprintPageSection.tsx
--+++ b/src/Page-Sections/CMSDashboard/BlueprintPageSection.tsx
--@@ -1,37 +1,193 @@
-- import { useBlueprint } from "@/hooks/CMS/useBlueprint";
-- import { useEffect } from "react";
---import BlueprintCard from "./Parts/BlueprintCard";
-- import type { BlueprintContentI } from "@/types/cms/blueprint.interface";
---
--+import {
--+  Combine,
--+  FileText,
--+  Database,
--+  Settings,
--+  Layout,
--+  Code,
--+  Image,
--+  Video,
--+  Music,
--+  Archive,
--+  FolderSymlink,
--+  Folder,
--+} from "lucide-react";
--+import { Link } from "react-router-dom";
--+import BlueprintPageSkeletonLoader from "@/components/loader/BlueprintPageSkeletonLoader";
-- 
-- function BlueprintPageSection() {
---  const { blueprints, findAllBlueprint } = useBlueprint();
--- 
---
--+  const { blueprints, findAllBlueprint, loading } = useBlueprint();
-- 
--   useEffect(() => {
--     findAllBlueprint();
--   }, []);
-- 
--+  // Function to get icon and formatted title based on type
--+  const getTypeDetails = (type: string) => {
--+    const normalizedType = type.toLowerCase();
--+
--+    switch (normalizedType) {
--+      case "document":
--+      case "doc":
--+        return {
--+          icon: FileText,
--+          title: "Document Collection",
--+          displayType: normalizedType,
--+        };
--+      case "database":
--+      case "data":
--+        return {
--+          icon: Database,
--+          title: "Database Collection",
--+          displayType: normalizedType,
--+        };
--+      case "component":
--+      case "ui":
--+        return {
--+          icon: Layout,
--+          title: "Component Library",
--+          displayType: normalizedType,
--+        };
--+      case "code":
--+      case "script":
--+        return {
--+          icon: Code,
--+          title: "Code Repository",
--+          displayType: normalizedType,
--+        };
--+      case "image":
--+      case "photo":
--+        return {
--+          icon: Image,
--+          title: "Image Gallery",
--+          displayType: normalizedType,
--+        };
--+      case "video":
--+      case "media":
--+        return {
--+          icon: Video,
--+          title: "Video Collection",
--+          displayType: normalizedType,
--+        };
--+      case "audio":
--+      case "music":
--+        return {
--+          icon: Music,
--+          title: "Audio Library",
--+          displayType: normalizedType,
--+        };
--+      case "archive":
--+      case "backup":
--+        return {
--+          icon: Archive,
--+          title: "Archive Collection",
--+          displayType: normalizedType,
--+        };
--+      case "settings":
--+      case "config":
--+        return {
--+          icon: Settings,
--+          title: "Configuration",
--+          displayType: normalizedType,
--+        };
--+      case "navigation":
--+      case "navigate":
--+        return {
--+          icon: FolderSymlink,
--+          title: "Navigation",
--+          displayType: normalizedType,
--+        };
--+      case "collection":
--+      case "pages":
--+        return {
--+          icon: Combine,
--+          title: "Collection",
--+          displayType: normalizedType,
--+        };
--+      default:
--+        return {
--+          icon: Folder,
--+          title: "General Collection",
--+          displayType: type,
--+        };
--+    }
--+  };
--+
--+  // Group blueprints by type
--+  const groupedBlueprints =
--+    blueprints?.data?.content.reduce((acc, content: BlueprintContentI) => {
--+      const type = content.type ?? "general";
--+      if (!acc[type]) {
--+        acc[type] = [];
--+      }
--+      acc[type].push(content);
--+      return acc;
--+    }, {} as Record<string, BlueprintContentI[]>) || {};
--+
--   return (
---    <div className="space-y-4">
---      <h1 className="text-2xl font-bold">Blueprint</h1>
---      {/* <div className="grid gap-6 xl:grid-cols-[1fr_minmax(280px,380px)] items-start w-full overflow-hidden"> */}
---      <div>
---        <div className="min-w-0 space-y-6">
---          <h2 className="text-lg font-semibold">You Blueprint</h2>
---          <div className="space-y-3">
---            {blueprints?.data?.content.map((content: BlueprintContentI) => (
---              <BlueprintCard key={content.reference} content={content} />
---            ))}
---            {blueprints?.data?.content.length === 0 && (
---              <p className="text-sm text-muted-foreground">
---                No collections yet.
---              </p>
---            )}
--+    <div className="space-y-4 max-w-7xl mx-auto">
--+      {loading ? (
--+        <BlueprintPageSkeletonLoader />
--+      ) : (
--+        <>
--+          <h1 className="text-2xl font-bold">Blueprint</h1>
--+          <div>
--+            <div className="min-w-0 space-y-6">
--+              <h2 className="text-lg font-semibold">Your Blueprints</h2>
--+
--+              <div className="space-y-6">
--+                {Object.entries(groupedBlueprints).map(
--+                  ([type, blueprintsOfType]) => {
--+                    const { icon: IconComponent, displayType } =
--+                      getTypeDetails(type);
--+
--+                    return (
--+                      <div key={type} className="space-y-3">
--+                        <h1 className="font-semibold capitalize flex items-center gap-2">
--+                          {displayType}
--+                        </h1>
--+
--+                        <div className="space-y-2 border border-gray-300 rounded-lg ">
--+                          {blueprintsOfType.map(
--+                            (content: BlueprintContentI) => (
--+                              <div
--+                                key={content.reference}
--+                                className=" text-gray-500 border-b last:border-0 border-gray-400"
--+                              >
--+                                <div className="flex items-center gap-2 p-4 justify-between">
--+                                  <div className="flex items-center gap-2">
--+                                    <IconComponent className="h-5 w-5" />
--+                                    <Link
--+                                      to={`${content.reference}`}
--+                                      state={{ title: content.title }}
--+                                      className="hover:text-nbc-dark-950 transition-colors hover:font-[500] capitalize"
--+                                    >
--+                                      {content.title}
--+                                    </Link>
--+                                  </div>
--+                                </div>
--+                              </div>
--+                            )
--+                          )}
--+                        </div>
--+                      </div>
--+                    );
--+                  }
--+                )}
--+
--+                {Object.keys(groupedBlueprints).length === 0 && (
--+                  <p className="text-sm text-muted-foreground">
--+                    No collections yet.
--+                  </p>
--+                )}
--+              </div>
--+            </div>
--           </div>
---        </div>
---      </div>
--+        </>
--+      )}
--     </div>
--   );
-- }
--diff --git a/src/Page-Sections/CMSDashboard/Parts/BlueprintCard.tsx b/src/Page-Sections/CMSDashboard/Parts/BlueprintCard.tsx
--index 77de624..af903e1 100644
----- a/src/Page-Sections/CMSDashboard/Parts/BlueprintCard.tsx
--+++ b/src/Page-Sections/CMSDashboard/Parts/BlueprintCard.tsx
--@@ -283,6 +283,7 @@ function BlueprintCard({ content }: { content: BlueprintContentI }) {
--                       <FieldRenderer
--                         field={field}
--                         value={values[field.handle]}
--+                        disable={true}
--                         onChange={(v) =>
--                           setValues((s) => ({ ...s, [field.handle]: v }))
--                         }
--@@ -309,7 +310,7 @@ function BlueprintCard({ content }: { content: BlueprintContentI }) {
--             </div>
--           ))}
-- 
---        {localSchema?.sections && localSchema.sections.length > 0 && (
--+        {/* {localSchema?.sections && localSchema.sections.length > 0 && (
--           <Button
--             onClick={saveEntry}
--             className="w-full"
--@@ -318,7 +319,7 @@ function BlueprintCard({ content }: { content: BlueprintContentI }) {
--           >
--             Add Entry
--           </Button>
---        )}
--+        )} */}
-- 
--         {(!localSchema?.sections || localSchema.sections.length === 0) && (
--           <div className="text-center py-12 text-muted-foreground bg-field-category rounded-lg border border-field-border">
--@@ -327,9 +328,15 @@ function BlueprintCard({ content }: { content: BlueprintContentI }) {
--           </div>
--         )}
--       </div>
---
--+      <div
--+        className="border border-dashed rounded-lg border-gray-300  hover:border-gray-400 transition-colors cursor-pointer text-gray-500 h-32 flex items-center justify-center gap-2 group"
--+        onClick={() => setAddSectionOpen(true)}
--+      >
--+        <Plus className="w-6 h-6" />
--+        <span className="text-md"> Add Section</span>
--+      </div>
--       {/* Entries Section */}
---      <div className="space-y-4">
--+      {/* <div className="space-y-4">
--         <h3 className="text-lg font-semibold text-foreground">
--           Entries ({entries.length})
--         </h3>
--@@ -374,7 +381,7 @@ function BlueprintCard({ content }: { content: BlueprintContentI }) {
--             </div>
--           )}
--         </div>
---      </div>
--+      </div> */}
-- 
--       {/* Settings Dialog */}
--       <Dialog open={open} onOpenChange={setOpen}>
--diff --git a/src/Page-Sections/Landing/FindBranchAtmsPageSection.tsx b/src/Page-Sections/Landing/FindBranchAtmsPageSection.tsx
--index 4021e1a..d908ee3 100644
----- a/src/Page-Sections/Landing/FindBranchAtmsPageSection.tsx
--+++ b/src/Page-Sections/Landing/FindBranchAtmsPageSection.tsx
--@@ -1,9 +1,15 @@
---import DataTable from "@/components/reusable/data-table";
-- import { useState } from "react";
---import type { TableColumn } from "@/types/table";
-- import HeroSection from "@/components/reusable/HeroSection";
---import { CustomInput } from "@/components/ui/CustomInput";
---import Button from "@/components/ui/button";
--+import LocatorSearchFilters from "@/components/sections/LocatorsSearchFilters";
--+import LocationTable from "@/components/sections/LocationTable";
--+import MapView from "@/components/sections/MapView";
--+import type { Location, LocationSearchFilters } from "@/types/location";
--+import {
--+  categories,
--+  districts,
--+  regions,
--+  sampleLocations,
--+} from "@/data/sampleLocations";
-- 
-- function FindBranchAtmsPageSection() {
--   const slides = [
--@@ -15,109 +21,62 @@ function FindBranchAtmsPageSection() {
--       imageUrl: "/images/nbc.jpg",
--     },
--   ];
---  const [selectedRows, setSelectedRows] = useState<any[]>([]);
---  const [globalFilter, setGlobalFilter] = useState<string>("");
---  const data = [
---    {
---      id: "m5gr84i9",
---      category: "Insurance Application Submitted",
---      region: "Application for health insurance coverage",
---      district: "success",
---      distance: "npx-5566-uiin",
---      mapDirection: "ken99@example.com",
---    },
---    {
---      id: "3u1reuv4",
--+  const [filteredLocations, setFilteredLocations] =
--+    useState<Location[]>(sampleLocations);
--+  const [selectedLocation, setSelectedLocation] = useState<Location | null>(
--+    null
--+  );
-- 
---      category: "Insurance Application Submitted",
---      region: "Application for auto insurance coverage",
---      district: "success",
---      distance: "npx-5566-uiin",
---      mapDirection: "Abe45@example.com",
---    },
---    {
---      id: "derv1ws0",
--+  const handleSearch = (filters: LocationSearchFilters) => {
--+    let filtered = sampleLocations;
-- 
---      category: "Insurance Application Submitted",
---      region: "Application for home insurance coverage",
---      district: "processing",
---      distance: "npx-5566-uiin",
---      mapDirection: "Monserrat44@example.com",
---    },
---    {
---      id: "5kma53ae",
--+    if (filters.category && filters.category !== "all") {
--+      filtered = filtered.filter(
--+        (location) => location.category === filters.category
--+      );
--+    }
--+    if (filters.region && filters.region !== "all") {
--+      filtered = filtered.filter(
--+        (location) => location.region === filters.region
--+      );
--+    }
--+    if (filters.district && filters.district !== "all") {
--+      filtered = filtered.filter(
--+        (location) => location.district === filters.district
--+      );
--+    }
-- 
---      category: "Google",
---      region: "Google service transaction",
---      district: "success",
---      distance: "npx-5566-uiin",
---      mapDirection: "Silas22@example.com",
---    },
---    {
---      id: "bhqecj4p",
---      category: "Slack",
---      region: "Slack subscription payment",
---      district: "failed",
---      distance: "npx-5566-uiin",
---      mapDirection: "carmella@example.com",
---    },
---  ];
--+    setFilteredLocations(filtered);
--+    // toast({
--+    //   title: "Search completed",
--+    //   description: `Found ${filtered.length} location${
--+    //     filtered.length !== 1 ? "s" : ""
--+    //   } matching your criteria.`,
--+    // });
--+  };
-- 
---  const columns: TableColumn<any>[] = [
---    {
---      id: "category",
---      header: "Category",
---      accessorKey: "category",
---      cell: ({ row }: { row: any }) => (
---        <div className="flex flex-col">
---          <div className="font-medium">{row.getValue("category") || "-"}</div>
---          {/* <div className="text-xs text-muted-foreground">
---            {row.original.description || "No description available"}
---          </div> */}
---        </div>
---      ),
---    },
---    {
---      id: "region",
---      header: "region",
---      accessorKey: "region",
---      cell: ({ row }: { row: any }) => (
---        <div className="font-medium uppercase">
---          {row.getValue("region") || "-"}
---        </div>
---      ),
---    },
---    {
---      id: "district",
---      header: "district",
---      accessorKey: "district",
---      cell: ({ row }: { row: any }) => (
---        <div className="font-medium uppercase">
---          {row.getValue("district") || "-"}
---        </div>
---      ),
---    },
---    {
---      id: "distance",
---      header: "distance",
---      accessorKey: "distance",
---      cell: ({ row }: { row: any }) => (
---        <div className="font-medium uppercase">
---          {row.getValue("distance") || "-"}
---        </div>
---      ),
---    },
---    {
---      id: "mapDirection",
---      header: "mapDirection",
---      accessorKey: "mapDirection",
---      cell: ({ row }: { row: any }) => (
---        <div className="font-medium uppercase">
---          {row.getValue("mapDirection") || "-"}
---        </div>
---      ),
---    },
---  ];
--+  const handleGetDirections = (location: Location) => {
--+    setSelectedLocation(location);
--+    // toast({
--+    //   title: "Directions updated",
--+    //   description: `Showing directions to ${location.category} in ${location.district}, ${location.region}`,
--+    // });
--+
--+    // Scroll to map for better UX
--+    const mapElement = document.getElementById("location-map");
--+    if (mapElement) {
--+      mapElement.scrollIntoView({ behavior: "smooth" });
--+    }
--+  };
--+
--+  const handleClearSearch = () => {
--+    setFilteredLocations(sampleLocations);
--+    setSelectedLocation(null);
--+    // toast({
--+    //   title: "Search cleared",
--+    //   description: `Showing all ${sampleLocations.length} locations`,
--+    // });
--+  };
-- 
--   return (
--     <div>
--@@ -132,31 +91,34 @@ function FindBranchAtmsPageSection() {
--             banking services.
--           </p>
--         </div>
---        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
---          <CustomInput label="Category" placeholder="category" />
---          <CustomInput label="Region"  placeholder="Dar es Salaam"/>
---          <CustomInput label="District"  placeholder="Ubungo"/>
---          <Button variant="primary">Search</Button>
--+
--+        <div className="min-h-screen bg-background">
--+          <div className="container mx-auto py-4 sm:py-6 lg:py-8 px-3 sm:px-4 lg:px-6 max-w-8xl">
--+        
--+
--+            <div className="space-y-4 sm:space-y-6">
--+              <LocatorSearchFilters
--+                onSearch={handleSearch}
--+                onClear={handleClearSearch}
--+                categories={categories}
--+                regions={regions}
--+                districts={districts}
--+              />
--+
--+              <LocationTable
--+                locations={filteredLocations}
--+                onGetDirections={handleGetDirections}
--+              />
--+
--+              <div id="location-map">
--+                <MapView
--+                  selectedLocation={selectedLocation}
--+                  allLocations={filteredLocations}
--+                />
--+              </div>
--+            </div>
--+          </div>
--         </div>
---        <DataTable
---          data={data}
---          columns={columns}
---          displayMode="serial"
---          headerBgColor="bg-nbc-dark-950"
---          headerTextColor="text-white"
---          //   actions={actions}
---          searchableColumns={["email", "status"]}
---          searchPlaceholder="Search payments..."
---          enableRowSelection={true}
---          enableColumnVisibility={true}
---          globalFilter={globalFilter}
---          setGlobalFilter={setGlobalFilter}
---          enablePagination={true}
---          pageSize={10}
---          onRowSelectionChange={setSelectedRows}
---          emptyStateMessage="No payments found."
---          className="border-gray-300"
---        />
--       </div>
--     </div>
--   );
--diff --git a/src/Providers/blueprints.provider.tsx b/src/Providers/blueprints.provider.tsx
--index 6a8371d..1ebb1e8 100644
----- a/src/Providers/blueprints.provider.tsx
--+++ b/src/Providers/blueprints.provider.tsx
--@@ -45,6 +45,7 @@ export const BlueprintProvider: React.FC<{ children: React.ReactNode }> = ({
--     setLoading(true);
--     hasFetched.current = true;
--     await blueprintsServices.findAll(setBlueprints, queryString);
--+    setLoading(false);
--   }
-- 
--   async function findBlueprintById(id: string) {
--diff --git a/src/Routes/CMSRoutes.tsx b/src/Routes/CMSRoutes.tsx
--index d2d13dd..f0669e5 100644
----- a/src/Routes/CMSRoutes.tsx
--+++ b/src/Routes/CMSRoutes.tsx
--@@ -15,6 +15,11 @@ const CMSLogin = lazy(() => import("@/Pages/Dashboard/CMS/CMSPages/CMSLogin"));
-- const Blueprint = lazy(
--   () => import("@/Pages/Dashboard/CMS/CMSPages/Blueprint")
-- );
--+
--+const SingleBlueprint = lazy(
--+  () => import("@/Pages/Dashboard/CMS/CMSPages/SingleBlueprint")
--+);
--+
-- const Collection = lazy(
--   () => import("@/Pages/Dashboard/CMS/CMSPages/Collection")
-- );
--@@ -57,7 +62,11 @@ const cmsRoutes = (
--       }
--     >
--       <Route index element={<CMSDashboard />} />
---      <Route path="blue-prints" element={<Blueprint />} />
--+      <Route path="blue-prints">
--+        <Route index element={<Blueprint />} />
--+        <Route path=":id" element={<SingleBlueprint />} />
--+      </Route>
--+
--       <Route path="collections">
--         <Route index element={<Collection />} />
--         <Route path=":id" element={<SingleCollection />} />
--diff --git a/src/components/cms/FieldRenderer.tsx b/src/components/cms/FieldRenderer.tsx
--index eaf145b..53e6d45 100644
----- a/src/components/cms/FieldRenderer.tsx
--+++ b/src/components/cms/FieldRenderer.tsx
--@@ -10,12 +10,12 @@ import { CustomSelect } from "../ui/CustomSelect";
-- interface RendererProps {
--   field: BlueprintFieldTypeI | FieldDefinition;
--   value: any;
--+  disable?: boolean;
--   onChange: (v: any) => void;
-- }
-- 
-- // Helper function to normalize field data
-- function normalizeField(field: BlueprintFieldTypeI | FieldDefinition) {
---
--   // Check if it's a BlueprintFieldType (new API structure)
--   if ("displayName" in field && "config" in field) {
--     const blueprintField = field as BlueprintFieldTypeI;
--@@ -45,7 +45,12 @@ function normalizeField(field: BlueprintFieldTypeI | FieldDefinition) {
--   };
-- }
-- 
---export function FieldRenderer({ field, value, onChange }: RendererProps) {
--+export function FieldRenderer({
--+  field,
--+  value,
--+  onChange,
--+  disable = false,
--+}: RendererProps) {
--   const normalizedField = normalizeField(field);
-- 
--   const common = (
--@@ -81,6 +86,7 @@ export function FieldRenderer({ field, value, onChange }: RendererProps) {
--             placeholder={placeholder}
--             value={value ?? ""}
--             onChange={(e) => onChange(e.target.value)}
--+            disabled={disable}
--           />
--         </div>
--       );
--@@ -95,6 +101,7 @@ export function FieldRenderer({ field, value, onChange }: RendererProps) {
--             value={value ?? ""}
--             onChange={(e) => onChange(e.target.value)}
--             rows={normalizedField.config?.rows || 4}
--+            disabled={disable}
--           />
--         </div>
--       );
--@@ -125,6 +132,7 @@ export function FieldRenderer({ field, value, onChange }: RendererProps) {
--             min={normalizedField.config?.min}
--             max={normalizedField.config?.max}
--             step={normalizedField.config?.step}
--+            disabled={disable}
--           />
--         </div>
--       );
--@@ -150,6 +158,7 @@ export function FieldRenderer({ field, value, onChange }: RendererProps) {
--             id={normalizedField.id}
--             checked={!!value}
--             onCheckedChange={(v: any) => onChange(v)}
--+            disabled={disable}
--           />
--           <Label htmlFor={normalizedField.id}>{normalizedField.label}</Label>
--         </div>
--@@ -159,7 +168,6 @@ export function FieldRenderer({ field, value, onChange }: RendererProps) {
--       // case "select":
--       return (
--         <div className="space-y-1">
---    
--           <CustomSelect
--             options={normalizedField.options || []}
--             onValueChange={(v) => onChange(v)}
--@@ -168,6 +176,7 @@ export function FieldRenderer({ field, value, onChange }: RendererProps) {
--             placeholder={"Select Option"}
--             required={normalizedField.required}
--             className="w-full"
--+            disabled={disable}
--           />
-- 
--           {/* <Select value={value ?? ""} onValueChange={(v) => onChange(v)}>
--@@ -194,6 +203,7 @@ export function FieldRenderer({ field, value, onChange }: RendererProps) {
--             type="date"
--             value={value ?? ""}
--             onChange={(e) => onChange(e.target.value)}
--+            disabled={disable}
--           />
--         </div>
--       );
--@@ -208,6 +218,7 @@ export function FieldRenderer({ field, value, onChange }: RendererProps) {
--             placeholder="https://example.com"
--             value={value ?? ""}
--             onChange={(e) => onChange(e.target.value)}
--+            disabled={disable}
--           />
--         </div>
--       );
--@@ -225,20 +236,21 @@ export function FieldRenderer({ field, value, onChange }: RendererProps) {
--           />
--         </div>
--       );
---      case "NAVIGATION":
---        return (
---          <div className="space-y-1">
---            <CustomInput
---              label={normalizedField.label}
---              description={normalizedField.instructions}
---              required={normalizedField.required}
---              id={normalizedField.id}
---              placeholder={placeholder}
---              value={value ?? ""}
---              onChange={(e) => onChange(e.target.value)}
---            />
---          </div>
---        );
--+    case "NAVIGATION":
--+      return (
--+        <div className="space-y-1">
--+          <CustomInput
--+            label={normalizedField.label}
--+            description={normalizedField.instructions}
--+            required={normalizedField.required}
--+            id={normalizedField.id}
--+            placeholder={placeholder}
--+            value={value ?? ""}
--+            onChange={(e) => onChange(e.target.value)}
--+            disabled={disable}
--+          />
--+        </div>
--+      );
-- 
--     default:
--       return (
--diff --git a/src/components/ui/button.tsx b/src/components/ui/button.tsx
--index 74072a9..a8d21a5 100644
----- a/src/components/ui/button.tsx
--+++ b/src/components/ui/button.tsx
--@@ -17,8 +17,7 @@ type ButtonProps = {
--     | "iconOutline"
--     | "iconRounded"
--     | "dropdown"
---    | "destructive" 
---    ;
--+    | "destructive";
--   size?: "xs" | "sm" | "md" | "lg" | "xl";
--   type?: "button" | "submit" | "reset";
--   disabled?: boolean;
--@@ -28,6 +27,7 @@ type ButtonProps = {
--   children?: React.ReactNode;
--   onClick?: React.MouseEventHandler<HTMLButtonElement>;
--   className?: string;
--+  asChild?: boolean; // Add this to the type definition
--   [key: string]: unknown;
-- };
-- 
--@@ -42,6 +42,7 @@ const Button = ({
--   children,
--   onClick,
--   className = "",
--+  asChild = false, // Extract asChild prop
--   ...props
-- }: ButtonProps) => {
--   // Base styles
--@@ -123,6 +124,17 @@ const Button = ({
--   const isLightOutline = variant === "lightOutline";
--   const isIconOutline = variant === "iconOutline";
-- 
--+  // If asChild is true, return just the styled content without the button wrapper
--+  // This allows the parent to control what element is rendered
--+  if (asChild) {
--+    const child = React.Children.only(children) as React.ReactElement<any>;
--+    return React.cloneElement(child, {
--+      ...child.props,
--+      ...props,
--+      className: `${buttonClasses} ${child.props.className || ''}`,
--+    });
--+  }
--+
--   return (
--     <button
--       type={type}
--@@ -211,4 +223,4 @@ const Button = ({
--   );
-- };
-- 
---export default Button;
--+export default Button;
--\ No newline at end of file
--diff --git a/src/data/cmsNavigationData.ts b/src/data/cmsNavigationData.ts
--index 8cabdb8..b5dcf1c 100644
----- a/src/data/cmsNavigationData.ts
--+++ b/src/data/cmsNavigationData.ts
--@@ -1,5 +1,5 @@
-- import type { NavigationItem } from "@/components/cms/Sidebar";
---import { Edit, FileText, Globe, Images, LayoutDashboard, Navigation } from "lucide-react";
--+import { Combine, Edit, FileText, FolderSymlink, Images, LayoutDashboard,  } from "lucide-react";
-- 
-- export const cmsNavigationData: NavigationItem[] = [
--   {
--@@ -28,12 +28,12 @@ export const cmsNavigationData: NavigationItem[] = [
--   // },
--   {
--     label: "Navigation",
---    icon: Navigation,
--+    icon: FolderSymlink,
--     href: "/cms/navigation",
--   },
--   {
--     label: "Collections",
---    icon: Globe,
--+    icon: Combine,
--     href: "/cms/collections",
--   },
--   {
--diff --git a/src/types/cms/blueprint.interface.ts b/src/types/cms/blueprint.interface.ts
--index 75331f3..904d74b 100644
----- a/src/types/cms/blueprint.interface.ts
--+++ b/src/types/cms/blueprint.interface.ts
--@@ -34,7 +34,7 @@ export interface BlueprintFieldTypeI {
-- }
-- 
-- export interface BlueprintSectionI {
---  id?: string;
--+  id: string;
--   handle?: string;
--   displayName?: string;
--   description?: string;
-diff --git a/package.json b/package.json
-index 0bda844..9b2debc 100644
---- a/package.json
-+++ b/package.json
-@@ -4,10 +4,18 @@
-   "version": "0.0.0",
-   "type": "module",
-   "scripts": {
--    "dev": "vite",
-+    "dev": "vite --host 0.0.0.0 --port 5173",
-+    "start": "vite --host 0.0.0.0 --port 5173",
-     "build": "tsc -b && vite build",
--    "lint": "eslint .",
--    "preview": "vite preview"
-+    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-+    "lint:fix": "eslint . --ext ts,tsx --fix",
-+    "preview": "vite preview",
-+    "format": "prettier --write \"src/**/*.{ts,tsx,json,css,scss,md}\"",
-+    "type-check": "tsc --noEmit",
-+    "type-check:watch": "tsc --noEmit --watch",
-+    "docker:dev": "docker-compose up corporate-website-dev",
-+    "docker:prod": "docker-compose up corporate-website-prod",
-+    "docker:build": "docker-compose build"
-   },
-   "dependencies": {
-     "@dnd-kit/core": "^6.3.1",
-diff --git a/vite.config.ts b/vite.config.ts
-index 0078e03..970c8ec 100644
---- a/vite.config.ts
-+++ b/vite.config.ts
-@@ -1,21 +1,105 @@
--import path from "path"
--import tailwindcss from "@tailwindcss/vite"
--import react from "@vitejs/plugin-react"
--import { defineConfig } from "vite"
--
--
--
--// https://vite.dev/config/
--export default defineConfig({
--  plugins: [react(), tailwindcss()],
--  resolve: {
--    alias: {
--      "@": path.resolve(__dirname, "./src"),
--    },
--  },
--  server:{
--    port: 3000,
--    host: true,
--       open: true,
--  }
--})
-\ No newline at end of file
-+import { defineConfig, loadEnv } from "vite";
-+import tailwindcss from "@tailwindcss/vite";
-+import react from "@vitejs/plugin-react";
-+import path from "path";
-+
-+// https://vitejs.dev/config/
-+export default defineConfig(({ command, mode }) => {
-+  // Load env file based on `mode` in the current working directory.
-+  // Set the third parameter to '' to load all env regardless of the `VITE_` prefix.
-+  const env = loadEnv(mode, process.cwd(), "");
-+
-+  return {
-+    plugins: [react(), tailwindcss()],
-+
-+    // Development server configuration
-+    server: {
-+      host: "0.0.0.0", // Allow external connections (important for Docker)
-+      port: 5173,
-+      strictPort: true,
-+      watch: {
-+        usePolling: true, // Enable polling for file changes in Docker
-+        interval: 1000,
-+      },
-+      hmr: {
-+        port: 5173,
-+      },
-+    },
-+
-+    // Preview server configuration (for production preview)
-+    preview: {
-+      host: "0.0.0.0",
-+      port: 4173,
-+      strictPort: true,
-+    },
-+
-+    // Build configuration
-+    build: {
-+      outDir: "dist",
-+      sourcemap: env.GENERATE_SOURCEMAP === "true",
-+      minify: mode === "production" ? "esbuild" : false,
-+      rollupOptions: {
-+        output: {
-+          manualChunks: {
-+            // Split vendor libraries for better caching
-+            vendor: ["react", "react-dom"],
-+            router: ["react-router-dom"],
-+          },
-+        },
-+      },
-+      // Increase chunk size warning limit for corporate websites
-+      chunkSizeWarningLimit: 1000,
-+      // Enable/disable type checking during build
-+      emptyOutDir: true,
-+    },
-+
-+    // Path resolution
-+    resolve: {
-+      alias: {
-+        "@": path.resolve(__dirname, "./src"),
-+      },
-+    },
-+
-+    // Environment variables configuration
-+    define: {
-+      // Only expose specific environment variables that are safe for client-side
-+      // Remove the entire process.env exposure
-+      __APP_VERSION__: JSON.stringify(process.env.npm_package_version),
-+      __BUILD_DATE__: JSON.stringify(new Date().toISOString()),
-+      
-+      // If you need specific env vars on client-side, define them explicitly:
-+      // "process.env.VITE_API_URL": JSON.stringify(env.VITE_API_URL),
-+      // "process.env.VITE_APP_NAME": JSON.stringify(env.VITE_APP_NAME),
-+    },
-+
-+    // CSS configuration
-+    css: {
-+      devSourcemap: mode === "development",
-+      modules: {
-+        localsConvention: "camelCase",
-+      },
-+      preprocessorOptions: {
-+        scss: {
-+          additionalData: `@import "@/styles/variables.scss";`,
-+        },
-+      },
-+    },
-+
-+    // Optimization for corporate website assets
-+    assetsInclude: ["**/*.pdf", "**/*.docx", "**/*.xlsx"],
-+
-+    // Base URL configuration (useful for subdirectory deployments)
-+    base: env.VITE_BASE_URL || "/",
-+
-+    // Enable/disable optimizations
-+    optimizeDeps: {
-+      include: ["react", "react-dom", "react-router-dom"],
-+    },
-+
-+    // TypeScript configuration
-+    esbuild: {
-+      // Drop console statements in production
-+      drop: mode === "production" ? ["console", "debugger"] : [],
-+    },
-+  };
-+});
-\ No newline at end of file
-
-
-
-
-diff --git a/package-lock.json b/package-lock.json
-index f5e1d0d..ba69607 100644
---- a/package-lock.json
-+++ b/package-lock.json
-@@ -11,12 +11,15 @@
-         "@radix-ui/react-checkbox": "^1.3.3",
-         "@radix-ui/react-label": "^2.1.7",
-         "@radix-ui/react-slot": "^1.2.3",
-+        "@radix-ui/react-tooltip": "^1.2.8",
-         "class-variance-authority": "^0.7.1",
-         "clsx": "^2.1.1",
-         "embla-carousel-autoplay": "^8.6.0",
-         "embla-carousel-react": "^8.6.0",
-         "framer-motion": "^12.23.12",
-+        "gsap": "^3.13.0",
-         "lucide-react": "^0.539.0",
-+        "motion": "^12.23.12",
-         "next": "15.4.6",
-         "react": "19.1.0",
-         "react-dom": "19.1.0",
-@@ -222,6 +225,40 @@
-         "node": "^18.18.0 || ^20.9.0 || >=21.1.0"
-       }
+     {
+@@ -25,7 +25,7 @@ function EventMainContent() {
+       image: "/images/call.png",
+       description:
+         "Help us collect food donations for those in need during the holiday season.",
+-      compareLink: "Donate",
++        donateLink: "Donate",
+       learnMoreLink: "/events/community-clean-up",
      },
-+    "node_modules/@floating-ui/core": {
-+      "version": "1.7.3",
-+      "resolved": "https://registry.npmjs.org/@floating-ui/core/-/core-1.7.3.tgz",
-+      "integrity": "sha512-sGnvb5dmrJaKEZ+LDIpguvdX3bDlEllmv4/ClQ9awcmCZrlx5jQyyMWFM5kBI+EyNOCDDiKk8il0zeuX3Zlg/w==",
-+      "dependencies": {
-+        "@floating-ui/utils": "^0.2.10"
-+      }
-+    },
-+    "node_modules/@floating-ui/dom": {
-+      "version": "1.7.4",
-+      "resolved": "https://registry.npmjs.org/@floating-ui/dom/-/dom-1.7.4.tgz",
-+      "integrity": "sha512-OOchDgh4F2CchOX94cRVqhvy7b3AFb+/rQXyswmzmGakRfkMgoWVjfnLWkRirfLEfuD4ysVW16eXzwt3jHIzKA==",
-+      "dependencies": {
-+        "@floating-ui/core": "^1.7.3",
-+        "@floating-ui/utils": "^0.2.10"
-+      }
-+    },
-+    "node_modules/@floating-ui/react-dom": {
-+      "version": "2.1.6",
-+      "resolved": "https://registry.npmjs.org/@floating-ui/react-dom/-/react-dom-2.1.6.tgz",
-+      "integrity": "sha512-4JX6rEatQEvlmgU80wZyq9RT96HZJa88q8hp0pBd+LrczeDI4o6uA2M+uvxngVHo4Ihr8uibXxH6+70zhAFrVw==",
-+      "dependencies": {
-+        "@floating-ui/dom": "^1.7.4"
-+      },
-+      "peerDependencies": {
-+        "react": ">=16.8.0",
-+        "react-dom": ">=16.8.0"
-+      }
-+    },
-+    "node_modules/@floating-ui/utils": {
-+      "version": "0.2.10",
-+      "resolved": "https://registry.npmjs.org/@floating-ui/utils/-/utils-0.2.10.tgz",
-+      "integrity": "sha512-aGTxbpbg8/b5JfU1HXSrbH3wXZuLPJcNEcZQFMxLs3oSzgtVu6nFPkbbGGUvBcUjKV2YyB9Wxxabo+HEH9tcRQ=="
-+    },
-     "node_modules/@humanfs/core": {
-       "version": "0.19.1",
-       "resolved": "https://registry.npmjs.org/@humanfs/core/-/core-0.19.1.tgz",
-@@ -921,6 +958,28 @@
-       "resolved": "https://registry.npmjs.org/@radix-ui/primitive/-/primitive-1.1.3.tgz",
-       "integrity": "sha512-JTF99U/6XIjCBo0wqkU5sK10glYe27MRRsfwoiq5zzOEZLHU3A3KCMa5X/azekYRCJ0HlwI0crAXS/5dEHTzDg=="
-     },
-+    "node_modules/@radix-ui/react-arrow": {
-+      "version": "1.1.7",
-+      "resolved": "https://registry.npmjs.org/@radix-ui/react-arrow/-/react-arrow-1.1.7.tgz",
-+      "integrity": "sha512-F+M1tLhO+mlQaOWspE8Wstg+z6PwxwRd8oQ8IXceWz92kfAmalTRf0EjrouQeo7QssEPfCn05B4Ihs1K9WQ/7w==",
-+      "dependencies": {
-+        "@radix-ui/react-primitive": "2.1.3"
-+      },
-+      "peerDependencies": {
-+        "@types/react": "*",
-+        "@types/react-dom": "*",
-+        "react": "^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc",
-+        "react-dom": "^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc"
-+      },
-+      "peerDependenciesMeta": {
-+        "@types/react": {
-+          "optional": true
-+        },
-+        "@types/react-dom": {
-+          "optional": true
-+        }
-+      }
-+    },
-     "node_modules/@radix-ui/react-checkbox": {
-       "version": "1.3.3",
-       "resolved": "https://registry.npmjs.org/@radix-ui/react-checkbox/-/react-checkbox-1.3.3.tgz",
-@@ -978,6 +1037,49 @@
-         }
-       }
-     },
-+    "node_modules/@radix-ui/react-dismissable-layer": {
-+      "version": "1.1.11",
-+      "resolved": "https://registry.npmjs.org/@radix-ui/react-dismissable-layer/-/react-dismissable-layer-1.1.11.tgz",
-+      "integrity": "sha512-Nqcp+t5cTB8BinFkZgXiMJniQH0PsUt2k51FUhbdfeKvc4ACcG2uQniY/8+h1Yv6Kza4Q7lD7PQV0z0oicE0Mg==",
-+      "dependencies": {
-+        "@radix-ui/primitive": "1.1.3",
-+        "@radix-ui/react-compose-refs": "1.1.2",
-+        "@radix-ui/react-primitive": "2.1.3",
-+        "@radix-ui/react-use-callback-ref": "1.1.1",
-+        "@radix-ui/react-use-escape-keydown": "1.1.1"
-+      },
-+      "peerDependencies": {
-+        "@types/react": "*",
-+        "@types/react-dom": "*",
-+        "react": "^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc",
-+        "react-dom": "^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc"
-+      },
-+      "peerDependenciesMeta": {
-+        "@types/react": {
-+          "optional": true
-+        },
-+        "@types/react-dom": {
-+          "optional": true
-+        }
-+      }
-+    },
-+    "node_modules/@radix-ui/react-id": {
-+      "version": "1.1.1",
-+      "resolved": "https://registry.npmjs.org/@radix-ui/react-id/-/react-id-1.1.1.tgz",
-+      "integrity": "sha512-kGkGegYIdQsOb4XjsfM97rXsiHaBwco+hFI66oO4s9LU+PLAC5oJ7khdOVFxkhsmlbpUqDAvXw11CluXP+jkHg==",
-+      "dependencies": {
-+        "@radix-ui/react-use-layout-effect": "1.1.1"
-+      },
-+      "peerDependencies": {
-+        "@types/react": "*",
-+        "react": "^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc"
-+      },
-+      "peerDependenciesMeta": {
-+        "@types/react": {
-+          "optional": true
-+        }
-+      }
-+    },
-     "node_modules/@radix-ui/react-label": {
-       "version": "2.1.7",
-       "resolved": "https://registry.npmjs.org/@radix-ui/react-label/-/react-label-2.1.7.tgz",
-@@ -1000,6 +1102,60 @@
-         }
-       }
-     },
-+    "node_modules/@radix-ui/react-popper": {
-+      "version": "1.2.8",
-+      "resolved": "https://registry.npmjs.org/@radix-ui/react-popper/-/react-popper-1.2.8.tgz",
-+      "integrity": "sha512-0NJQ4LFFUuWkE7Oxf0htBKS6zLkkjBH+hM1uk7Ng705ReR8m/uelduy1DBo0PyBXPKVnBA6YBlU94MBGXrSBCw==",
-+      "dependencies": {
-+        "@floating-ui/react-dom": "^2.0.0",
-+        "@radix-ui/react-arrow": "1.1.7",
-+        "@radix-ui/react-compose-refs": "1.1.2",
-+        "@radix-ui/react-context": "1.1.2",
-+        "@radix-ui/react-primitive": "2.1.3",
-+        "@radix-ui/react-use-callback-ref": "1.1.1",
-+        "@radix-ui/react-use-layout-effect": "1.1.1",
-+        "@radix-ui/react-use-rect": "1.1.1",
-+        "@radix-ui/react-use-size": "1.1.1",
-+        "@radix-ui/rect": "1.1.1"
-+      },
-+      "peerDependencies": {
-+        "@types/react": "*",
-+        "@types/react-dom": "*",
-+        "react": "^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc",
-+        "react-dom": "^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc"
-+      },
-+      "peerDependenciesMeta": {
-+        "@types/react": {
-+          "optional": true
-+        },
-+        "@types/react-dom": {
-+          "optional": true
-+        }
-+      }
-+    },
-+    "node_modules/@radix-ui/react-portal": {
-+      "version": "1.1.9",
-+      "resolved": "https://registry.npmjs.org/@radix-ui/react-portal/-/react-portal-1.1.9.tgz",
-+      "integrity": "sha512-bpIxvq03if6UNwXZ+HTK71JLh4APvnXntDc6XOX8UVq4XQOVl7lwok0AvIl+b8zgCw3fSaVTZMpAPPagXbKmHQ==",
-+      "dependencies": {
-+        "@radix-ui/react-primitive": "2.1.3",
-+        "@radix-ui/react-use-layout-effect": "1.1.1"
-+      },
-+      "peerDependencies": {
-+        "@types/react": "*",
-+        "@types/react-dom": "*",
-+        "react": "^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc",
-+        "react-dom": "^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc"
-+      },
-+      "peerDependenciesMeta": {
-+        "@types/react": {
-+          "optional": true
-+        },
-+        "@types/react-dom": {
-+          "optional": true
-+        }
-+      }
-+    },
-     "node_modules/@radix-ui/react-presence": {
-       "version": "1.1.5",
-       "resolved": "https://registry.npmjs.org/@radix-ui/react-presence/-/react-presence-1.1.5.tgz",
-@@ -1062,6 +1218,53 @@
-         }
-       }
-     },
-+    "node_modules/@radix-ui/react-tooltip": {
-+      "version": "1.2.8",
-+      "resolved": "https://registry.npmjs.org/@radix-ui/react-tooltip/-/react-tooltip-1.2.8.tgz",
-+      "integrity": "sha512-tY7sVt1yL9ozIxvmbtN5qtmH2krXcBCfjEiCgKGLqunJHvgvZG2Pcl2oQ3kbcZARb1BGEHdkLzcYGO8ynVlieg==",
-+      "dependencies": {
-+        "@radix-ui/primitive": "1.1.3",
-+        "@radix-ui/react-compose-refs": "1.1.2",
-+        "@radix-ui/react-context": "1.1.2",
-+        "@radix-ui/react-dismissable-layer": "1.1.11",
-+        "@radix-ui/react-id": "1.1.1",
-+        "@radix-ui/react-popper": "1.2.8",
-+        "@radix-ui/react-portal": "1.1.9",
-+        "@radix-ui/react-presence": "1.1.5",
-+        "@radix-ui/react-primitive": "2.1.3",
-+        "@radix-ui/react-slot": "1.2.3",
-+        "@radix-ui/react-use-controllable-state": "1.2.2",
-+        "@radix-ui/react-visually-hidden": "1.2.3"
-+      },
-+      "peerDependencies": {
-+        "@types/react": "*",
-+        "@types/react-dom": "*",
-+        "react": "^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc",
-+        "react-dom": "^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc"
-+      },
-+      "peerDependenciesMeta": {
-+        "@types/react": {
-+          "optional": true
-+        },
-+        "@types/react-dom": {
-+          "optional": true
-+        }
-+      }
-+    },
-+    "node_modules/@radix-ui/react-use-callback-ref": {
-+      "version": "1.1.1",
-+      "resolved": "https://registry.npmjs.org/@radix-ui/react-use-callback-ref/-/react-use-callback-ref-1.1.1.tgz",
-+      "integrity": "sha512-FkBMwD+qbGQeMu1cOHnuGB6x4yzPjho8ap5WtbEJ26umhgqVXbhekKUQO+hZEL1vU92a3wHwdp0HAcqAUF5iDg==",
-+      "peerDependencies": {
-+        "@types/react": "*",
-+        "react": "^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc"
-+      },
-+      "peerDependenciesMeta": {
-+        "@types/react": {
-+          "optional": true
-+        }
-+      }
-+    },
-     "node_modules/@radix-ui/react-use-controllable-state": {
-       "version": "1.2.2",
-       "resolved": "https://registry.npmjs.org/@radix-ui/react-use-controllable-state/-/react-use-controllable-state-1.2.2.tgz",
-@@ -1097,6 +1300,23 @@
-         }
-       }
-     },
-+    "node_modules/@radix-ui/react-use-escape-keydown": {
-+      "version": "1.1.1",
-+      "resolved": "https://registry.npmjs.org/@radix-ui/react-use-escape-keydown/-/react-use-escape-keydown-1.1.1.tgz",
-+      "integrity": "sha512-Il0+boE7w/XebUHyBjroE+DbByORGR9KKmITzbR7MyQ4akpORYP/ZmbhAr0DG7RmmBqoOnZdy2QlvajJ2QA59g==",
-+      "dependencies": {
-+        "@radix-ui/react-use-callback-ref": "1.1.1"
-+      },
-+      "peerDependencies": {
-+        "@types/react": "*",
-+        "react": "^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc"
-+      },
-+      "peerDependenciesMeta": {
-+        "@types/react": {
-+          "optional": true
-+        }
-+      }
-+    },
-     "node_modules/@radix-ui/react-use-layout-effect": {
-       "version": "1.1.1",
-       "resolved": "https://registry.npmjs.org/@radix-ui/react-use-layout-effect/-/react-use-layout-effect-1.1.1.tgz",
-@@ -1125,6 +1345,23 @@
-         }
-       }
-     },
-+    "node_modules/@radix-ui/react-use-rect": {
-+      "version": "1.1.1",
-+      "resolved": "https://registry.npmjs.org/@radix-ui/react-use-rect/-/react-use-rect-1.1.1.tgz",
-+      "integrity": "sha512-QTYuDesS0VtuHNNvMh+CjlKJ4LJickCMUAqjlE3+j8w+RlRpwyX3apEQKGFzbZGdo7XNG1tXa+bQqIE7HIXT2w==",
-+      "dependencies": {
-+        "@radix-ui/rect": "1.1.1"
-+      },
-+      "peerDependencies": {
-+        "@types/react": "*",
-+        "react": "^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc"
-+      },
-+      "peerDependenciesMeta": {
-+        "@types/react": {
-+          "optional": true
-+        }
-+      }
-+    },
-     "node_modules/@radix-ui/react-use-size": {
-       "version": "1.1.1",
-       "resolved": "https://registry.npmjs.org/@radix-ui/react-use-size/-/react-use-size-1.1.1.tgz",
-@@ -1142,6 +1379,33 @@
-         }
-       }
-     },
-+    "node_modules/@radix-ui/react-visually-hidden": {
-+      "version": "1.2.3",
-+      "resolved": "https://registry.npmjs.org/@radix-ui/react-visually-hidden/-/react-visually-hidden-1.2.3.tgz",
-+      "integrity": "sha512-pzJq12tEaaIhqjbzpCuv/OypJY/BPavOofm+dbab+MHLajy277+1lLm6JFcGgF5eskJ6mquGirhXY2GD/8u8Ug==",
-+      "dependencies": {
-+        "@radix-ui/react-primitive": "2.1.3"
-+      },
-+      "peerDependencies": {
-+        "@types/react": "*",
-+        "@types/react-dom": "*",
-+        "react": "^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc",
-+        "react-dom": "^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc"
-+      },
-+      "peerDependenciesMeta": {
-+        "@types/react": {
-+          "optional": true
-+        },
-+        "@types/react-dom": {
-+          "optional": true
-+        }
-+      }
-+    },
-+    "node_modules/@radix-ui/rect": {
-+      "version": "1.1.1",
-+      "resolved": "https://registry.npmjs.org/@radix-ui/rect/-/rect-1.1.1.tgz",
-+      "integrity": "sha512-HPwpGIzkl28mWyZqG52jiqDJ12waP11Pa1lGoiyUkIEuMLBP0oeK/C89esbXrxsky5we7dfd8U58nm0SgAWpVw=="
-+    },
-     "node_modules/@rtsao/scc": {
-       "version": "1.1.0",
-       "resolved": "https://registry.npmjs.org/@rtsao/scc/-/scc-1.1.0.tgz",
-@@ -3596,6 +3860,11 @@
-       "integrity": "sha512-EtKwoO6kxCL9WO5xipiHTZlSzBm7WLT627TqC/uVRd0HKmq8NXyebnNYxDoBi7wt8eTWrUrKXCOVaFq9x1kgag==",
-       "dev": true
-     },
-+    "node_modules/gsap": {
-+      "version": "3.13.0",
-+      "resolved": "https://registry.npmjs.org/gsap/-/gsap-3.13.0.tgz",
-+      "integrity": "sha512-QL7MJ2WMjm1PHWsoFrAQH/J8wUeqZvMtHO58qdekHpCfhvhSL4gSiz6vJf5EeMP0LOn3ZCprL2ki/gjED8ghVw=="
-+    },
-     "node_modules/has-bigints": {
-       "version": "1.1.0",
-       "resolved": "https://registry.npmjs.org/has-bigints/-/has-bigints-1.1.0.tgz",
-@@ -4619,6 +4888,31 @@
-         "url": "https://github.com/sponsors/isaacs"
-       }
-     },
-+    "node_modules/motion": {
-+      "version": "12.23.12",
-+      "resolved": "https://registry.npmjs.org/motion/-/motion-12.23.12.tgz",
-+      "integrity": "sha512-8jCD8uW5GD1csOoqh1WhH1A6j5APHVE15nuBkFeRiMzYBdRwyAHmSP/oXSuW0WJPZRXTFdBoG4hY9TFWNhhwng==",
-+      "dependencies": {
-+        "framer-motion": "^12.23.12",
-+        "tslib": "^2.4.0"
-+      },
-+      "peerDependencies": {
-+        "@emotion/is-prop-valid": "*",
-+        "react": "^18.0.0 || ^19.0.0",
-+        "react-dom": "^18.0.0 || ^19.0.0"
-+      },
-+      "peerDependenciesMeta": {
-+        "@emotion/is-prop-valid": {
-+          "optional": true
-+        },
-+        "react": {
-+          "optional": true
-+        },
-+        "react-dom": {
-+          "optional": true
-+        }
-+      }
-+    },
-     "node_modules/motion-dom": {
-       "version": "12.23.12",
-       "resolved": "https://registry.npmjs.org/motion-dom/-/motion-dom-12.23.12.tgz",
-diff --git a/package.json b/package.json
-index 23e9837..e645bb7 100644
---- a/package.json
-+++ b/package.json
-@@ -12,12 +12,15 @@
-     "@radix-ui/react-checkbox": "^1.3.3",
-     "@radix-ui/react-label": "^2.1.7",
-     "@radix-ui/react-slot": "^1.2.3",
-+    "@radix-ui/react-tooltip": "^1.2.8",
-     "class-variance-authority": "^0.7.1",
-     "clsx": "^2.1.1",
-     "embla-carousel-autoplay": "^8.6.0",
-     "embla-carousel-react": "^8.6.0",
-     "framer-motion": "^12.23.12",
-+    "gsap": "^3.13.0",
-     "lucide-react": "^0.539.0",
-+    "motion": "^12.23.12",
-     "next": "15.4.6",
-     "react": "19.1.0",
-     "react-dom": "19.1.0",
-diff --git a/src/app/(Landing)/layout.tsx b/src/app/(Landing)/layout.tsx
-deleted file mode 100644
-index 729534c..0000000
---- a/src/app/(Landing)/layout.tsx
-+++ /dev/null
-@@ -1,22 +0,0 @@
--import type { Metadata } from "next";
--import Navbar from "@/components/layout/Navbar";
--import Footer from "@/components/layout/Footer";
--
--export const metadata: Metadata = {
--  title: "NBC Event Management",
--  description: "Event management platform",
--};
--
--export default function LandingLayout({
--  children,
--}: {
--  children: React.ReactNode;
--}) {
--  return (
--    <div>
--      <Navbar />
--      <main>{children}</main>
--      <Footer />
--    </div>
--  );
--}
-diff --git a/src/app/(Landing)/page.tsx b/src/app/(Landing)/page.tsx
-deleted file mode 100644
-index 12f4767..0000000
---- a/src/app/(Landing)/page.tsx
-+++ /dev/null
-@@ -1,62 +0,0 @@
--import HeroSlider, { HeroSliderI } from "@/components/shared/Hero/HeroSlider";
--import { MarathonRegistration } from "@/components/shared/registration/MarathonRegistration";
--
--export default function Home() {
--  const heroSlides: HeroSliderI[] = [
--    {
--      id: "1",
--      title: "NBC Dodoma",
--      subtitle: "Marathon",
--      description:
--        "Join thousands of runners in Tanzania's premier marathon event. Experience the thrill of running through the heart of Dodoma.",
--      backgroundImage: "/images/marathon-hero.png",
--      cta1: "Open Account",
--      cta2: "Learn More",
--      thumbnails: [
--        "/images/marathon-hero.png",
--        "/images/marathon-1.jpg",
--        "/images/marathon-2.jpg",
--        "/images/individual-hero.jpg",
--      ],
--    },
--    {
--      id: "2",
--      title: "Register",
--      subtitle: "Today",
--      description:
--        "Secure your spot in the most anticipated marathon of the year. Early bird registration now open with special discounts.",
--      backgroundImage: "/images/marathon-1.jpg",
--      cta1: "Register Now",
--      cta2: "View Packages",
--      thumbnails: [
--        "/images/marathon-1.jpg",
--        "/images/marathon-hero.png",
--        "/images/marathon-2.jpg",
--        "/images/individual-hero.jpg",
--      ],
--    },
--    {
--      id: "3",
--      title: "Start",
--      subtitle: "Training",
--      description:
--        "Get ready for the challenge with our comprehensive training programs designed for all fitness levels.",
--      backgroundImage: "/images/marathon-2.jpg",
--      cta1: "Training Plans",
--      cta2: "Join Community",
--      thumbnails: [
--        "/images/marathon-2.jpg",
--        "/images/marathon-hero.png",
--        "/images/marathon-1.jpg",
--        "/images/individual-hero.jpg",
--      ],
--    },
--  ];
--
--  return (
--    <div>
--      <HeroSlider heroSlides={heroSlides} />
--      <MarathonRegistration />
--    </div>
--  );
--}
-diff --git a/src/app/dashboard/layout.tsx b/src/app/dashboard/layout.tsx
-deleted file mode 100644
-index be0b4c9..0000000
---- a/src/app/dashboard/layout.tsx
-+++ /dev/null
-@@ -1,19 +0,0 @@
--import type { Metadata } from "next";
--
--export const metadata: Metadata = {
--  title: "Dashboard",
--  description: "Event management platform",
--};
--
--export default function DashboardLayout({
--  children,
--}: {
--  children: React.ReactNode;
--}) {
--  return (
--    <div>
--      <div>Dashboard</div>
--      <main>{children}</main>
--    </div>
--  );
--}
-diff --git a/src/app/dashboard/page.tsx b/src/app/dashboard/page.tsx
-deleted file mode 100644
-index ca2de0d..0000000
---- a/src/app/dashboard/page.tsx
-+++ /dev/null
-@@ -1,10 +0,0 @@
-- export default function Page() {
--    return (
--        <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
--            <h1 className="text-4xl font-bold">Dashboard</h1>
--            <p className="text-lg">Welcome to the dashboard!</p>
--            {/* Add your dashboard content here */}
--            <button className="mt-4 bg-blue-500 text-white py-2 px-4 rounded">Click Me</button>
--        </div>
--    );
-- }
-\ No newline at end of file
+     {
 diff --git a/src/app/globals.css b/src/app/globals.css
-index d3c733c..5f400ed 100644
+index 5f400ed..2a9bf49 100644
 --- a/src/app/globals.css
 +++ b/src/app/globals.css
-@@ -1,6 +1,5 @@
- @import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
- 
--
- @import "tailwindcss";
- @import "tw-animate-css";
- 
-@@ -9,14 +8,12 @@
- @theme {
-   /* My Primary Colors */
-   --color-primary-500: #111d45;
-+  --color-primary-700: #172960;
-   --color-primary-900: #1e347b;
-   --color-primary-950: #213a89;
- 
--
-   /* Secondary Color */
-   --color-secondary-950: #dd0a14;
--
--
+@@ -97,6 +97,14 @@
+   --sidebar-ring: oklch(0.709 0.01 56.259);
+   --background: oklch(1 0 0);
+   --foreground: oklch(0.147 0.004 49.25);
++
++
++   /* Route colors */
++
++  --route-active: 0 84% 60%;
++  --route-active-foreground: 255 255 255;
++  --route-boundary: 214 95% 56%;
++  --route-inactive: 220 13% 91%;
  }
  
- @theme inline {
-@@ -150,3 +147,94 @@ html {
-     @apply bg-background text-foreground;
-   }
- }
-+
-+.section-title {
-+  @apply text-2xl sm:text-3xl lg:text-4xl font-bold text-center   leading-tight sm:leading-snug lg:leading-normal text-primary-950;
-+}
-+.section-subtitle {
-+  @apply text-sm sm:text-base lg:text-lg text-center  mx-auto  leading-relaxed sm:leading-relaxed lg:leading-loose text-[#4B5563]  mb-5;
-+}
-+
-+/* TYPOGRAPHY */
-+
-+.typography-base {
-+  @apply font-sans text-sm sm:text-base leading-relaxed  antialiased;
-+}
-+
-+/* Headings - Fully Responsive */
-+.heading-1 {
-+  @apply text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl 2xl:text-7xl 
-+         font-bold leading-tight tracking-tight;
-+}
-+
-+.heading-2 {
-+  @apply text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl 2xl:text-6xl 
-+         font-bold leading-tight tracking-tight;
-+}
-+
-+.heading-3 {
-+  @apply text-lg sm:text-xl md:text-2xl lg:text-3xl xl:text-4xl 2xl:text-5xl 
-+         font-semibold leading-tight tracking-tight;
-+}
-+
-+.heading-4 {
-+  @apply text-base sm:text-lg md:text-xl lg:text-2xl xl:text-3xl 
-+         font-semibold leading-snug;
-+}
-+
-+.heading-5 {
-+  @apply text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl 
-+         font-semibold leading-snug;
-+}
-+
-+.heading-6 {
-+  @apply text-sm sm:text-base md:text-lg lg:text-xl 
-+         font-semibold leading-normal;
-+}
-+
-+.display-large {
-+  @apply text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl 2xl:text-8xl 
-+         font-black leading-none tracking-tighter;
-+}
-+
-+.display-medium {
-+  @apply text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl 2xl:text-7xl 
-+         font-extrabold leading-none tracking-tight;
-+}
-+
-+.display-small {
-+  @apply text-xl sm:text-2xl md:text-3xl lg:text-4xl xl:text-5xl 2xl:text-6xl 
-+         font-bold leading-tight tracking-tight;
-+}
-+
-+.body-large {
-+  @apply text-base sm:text-lg md:text-xl lg:text-2xl 
-+         leading-relaxed;
-+}
-+
-+.body-medium {
-+  @apply text-sm sm:text-base md:text-lg lg:text-xl 
-+         leading-relaxed;
-+}
-+
-+.body-small {
-+  @apply text-xs sm:text-sm md:text-base lg:text-lg 
-+         leading-relaxed;
-+}
-+
-+/* Paragraph Styles - Responsive */
-+.paragraph-default {
-+  @apply text-sm sm:text-base md:text-lg 
-+         leading-6 sm:leading-7 md:leading-8 max-w-sm sm:max-w-2xl md:max-w-3xl lg:max-w-4xl;
-+}
-+
-+.paragraph-large {
-+  @apply text-base sm:text-lg md:text-xl lg:text-2xl 
-+         leading-7 sm:leading-8 md:leading-9    max-w-md sm:max-w-3xl md:max-w-4xl lg:max-w-5xl;
-+}
-+
-+.paragraph-compact {
-+  @apply text-xs sm:text-sm md:text-base 
-+         leading-5 sm:leading-6 md:leading-7 
-+         max-w-xs sm:max-w-lg md:max-w-2xl lg:max-w-3xl;
-+}
+ html {
 diff --git a/src/components/shared/Card/DetailedCard.tsx b/src/components/shared/Card/DetailedCard.tsx
-index fda4e8d..e0a3429 100644
+index e0a3429..45310cb 100644
 --- a/src/components/shared/Card/DetailedCard.tsx
 +++ b/src/components/shared/Card/DetailedCard.tsx
-@@ -1,11 +1,11 @@
-+"use client";
- import { Badge } from "@/components/ui/badge";
- import { Button } from "@/components/ui/button";
- import { slugify } from "@/lib/utils";
- import { ChevronRight } from "lucide-react";
- import Image from "next/image";
- import Link from "next/link";
--import { useRouter } from "next/router";
--
-+import { useRouter } from "next/navigation";
+@@ -15,7 +15,7 @@ type PressReleaseCardProps = {
+   className?: string;
+   rightSide?: boolean;
+   learnMoreLink?: string;
+-  compareLink?: string;
++  donateLink?: string;
+   buttonText?: string;
+ };
  
- type PressReleaseCardProps = {
-   image: string;
-@@ -34,7 +34,7 @@ const DetailedCard = ({
- 
-   return (
-     <div
--      className={`flex bg-white border border-gray-300 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300 ${
-+      className={`flex bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300 ${
-         rightSide ? "flex-col md:flex-row h-auto md:h-40" : "flex-col"
-       } ${className}`}
-     >
-@@ -50,8 +50,8 @@ const DetailedCard = ({
-           src={image}
-           alt={title}
-           className="w-full h-full object-cover transition-transform duration-300 hover:scale-105"
--          height={100}
--          width={100}
-+          height={700}
-+          width={700}
-           style={{
-             minHeight: "100%",
-             objectFit: "cover",
-@@ -104,7 +104,7 @@ const DetailedCard = ({
- 
-           {learnMoreLink && (
+@@ -27,7 +27,7 @@ const DetailedCard = ({
+   badgeText,
+   rightSide = false,
+   learnMoreLink,
+-  compareLink,
++  donateLink,
+   buttonText,
+ }: PressReleaseCardProps) => {
+   const navigate = useRouter();
+@@ -90,15 +90,15 @@ const DetailedCard = ({
+           {description}
+         </p>
+         <div className="flex items-center justify-between mt-auto pt-2">
+-          {compareLink && (
++          {donateLink && (
              <Button
--              variant="outline"
-+              variant="default"
-               size="lg"
+               variant="outline"
                onClick={() => {
-                 navigate.push(learnMoreLink);
-diff --git a/src/components/shared/Hero/HeroSection.tsx b/src/components/shared/Hero/HeroSection.tsx
-index f787cbd..cf6fcc6 100644
---- a/src/components/shared/Hero/HeroSection.tsx
-+++ b/src/components/shared/Hero/HeroSection.tsx
-@@ -1,166 +1,70 @@
- "use client";
--import * as React from "react";
--import Autoplay from "embla-carousel-autoplay";
--import {
--  Carousel,
--  CarouselContent,
--  CarouselItem,
--  CarouselNext,
--  CarouselPrevious,
--} from "@/components/ui/carousel";
--import { Button } from "../../ui/button";
- 
--type Slide = {
--  title: string;
--  description: string;
--  ctaText: string;
--  imageUrl: string;
--};
-+import React from "react";
-+// import { motion } from "framer-motion";
-+import { Button } from "@/components/ui/button";
- 
--type HeroSectionProps = {
--  slides: Slide[];
--  height?: string; // e.g. "min-h-[600px]" or "h-screen"
--  contentPosition?: "left" | "center" | "right"; // Content horizontal alignment
--  verticalPosition?: "top" | "center" | "bottom"; // Content vertical alignment
--  compact?: boolean; // For smaller heights, use more compact spacing
--};
-+interface HeroSectionProps {
-+  title: string;
-+  description?: string;
-+  height?: string;
-+  backgroundImage: string;
-+  buttonText?: string;
-+  buttonAction?: () => void;
-+}
- 
--export default function HeroSection({
--  slides,
--  height = "h-screen",
--  contentPosition = "left",
--  verticalPosition = "center",
--  compact = false,
-+function HeroSection({
-+  title,
-+  description,
-+  height = "60vh",
-+  backgroundImage,
-+  buttonText,
-+  buttonAction = () => {},
- }: HeroSectionProps) {
--  const plugin = React.useRef(
--    Autoplay({ delay: 3500, stopOnInteraction: false })
--  );
--
--  // Use a numeric height for inline style if possible
--  const numericHeight =
--    height.startsWith("h-") || height.startsWith("min-h-") ? undefined : height;
--
--  // Auto-detect if we should use compact mode based on height
--  const isCompactHeight = height.includes("[")
--    ? parseInt(height.match(/\[(\d+)/)?.[1] || "0") < 500
--    : height.includes("min-h-") && !height.includes("screen");
--
--  const shouldUseCompact = compact || isCompactHeight;
--
--  // Get positioning classes
--  const getJustifyClass = () => {
--    switch (contentPosition) {
--      case "center":
--        return "justify-center";
--      case "right":
--        return "justify-end";
--      default:
--        return "justify-start";
--    }
--  };
--
--  const getItemsClass = () => {
--    switch (verticalPosition) {
--      case "top":
--        return "items-start pt-8 sm:pt-12 md:pt-16";
--      case "bottom":
--        return "items-end pb-8 sm:pb-12 md:pb-16";
--      default:
--        return "items-center";
--    }
--  };
--
-   return (
--    <Carousel
--      className={`relative w-full ${height} overflow-hidden`}
--      plugins={[plugin.current]}
--      opts={{ loop: slides.length > 1 }}
--      style={
--        numericHeight
--          ? { minHeight: numericHeight, height: numericHeight }
--          : undefined
--      }
-+    <div
-+      className="relative w-full bg-cover bg-center"
-+      style={{
-+        height: height,
-+        backgroundImage: `linear-gradient(to right, rgba(0, 0, 0, 0.9), transparent), url(${backgroundImage})`,
-+      }}
-     >
--      <CarouselContent className="h-full">
--        {slides.map((slide, idx) => (
--          <CarouselItem key={idx} className="w-full h-full">
--            <section
--              className={`relative w-full h-full flex ${getItemsClass()} ${getJustifyClass()} px-4 sm:px-8 md:px-16`}
--              style={{
--                height: "100%",
--                minHeight: numericHeight || "100vh",
--                backgroundImage: `url(${slide.imageUrl})`,
--                backgroundSize: "cover",
--                backgroundPosition: "center center",
--              }}
-+      <div className="container mx-auto h-full flex items-center">
-+        <div className="max-w-lg text-white">
-+          <h1
-+            className="text-4xl md:text-5xl font-bold mb-4"
-+            // initial={{ opacity: 0, y: 20 }}
-+            // animate={{ opacity: 1, y: 0 }}
-+            // transition={{ delay: 0.2 }}
-+          >
-+            {title}
-+          </h1>
-+          {description && (
-+            <p
-+              className="text-lg md:text-xl mb-6"
-+              // initial={{ opacity: 0, y: 20 }}
-+              // animate={{ opacity: 1, y: 0 }}
-+              // transition={{ delay: 0.6 }}
+-                navigate.push(compareLink);
++                navigate.push(donateLink);
+               }}
              >
--              {/* Gradient overlay */}
--              <div className="absolute inset-0 h-full w-full bg-gradient-to-t from-black/80 via-black/50 to-transparent pointer-events-none" />
--              {/* Extra dark overlay for readability */}
--              <div className="absolute inset-0 h-full w-full bg-black/30 pointer-events-none" />
-+              {description}
-+            </p>
-+          )}
+-              Compare Account
+-              <ChevronRight />
++           Donate
++              {/* <ChevronRight /> */}
+             </Button>
+           )}
  
--              {/* Content container that adapts to height and positioning */}
--              <div
--                className={`relative z-10 w-full ${
--                  contentPosition === "center"
--                    ? "text-center"
--                    : contentPosition === "right"
--                    ? "text-right"
--                    : "text-left"
--                } ${
--                  contentPosition === "center" ? "max-w-2xl" : "max-w-xl"
--                } text-white`}
--              >
--                <div
--                  className={`${
--                    shouldUseCompact
--                      ? "p-3 sm:p-4 md:p-6 space-y-2 sm:space-y-3"
--                      : "p-4 sm:p-6 md:p-8 space-y-3 sm:space-y-4 md:space-y-6"
--                  } rounded-xl backdrop-blur-md shadow-lg`}
--                >
--                  <h1
--                    className={`${
--                      shouldUseCompact
--                        ? "text-xl sm:text-2xl md:text-3xl"
--                        : "text-2xl sm:text-3xl md:text-4xl lg:text-5xl"
--                    } font-bold leading-tight`}
--                  >
--                    {slide.title}
--                  </h1>
--                  <p
--                    className={`${
--                      shouldUseCompact
--                        ? "text-xs sm:text-sm md:text-base"
--                        : "text-sm sm:text-base md:text-lg"
--                    } leading-relaxed`}
--                  >
--                    {slide.description}
--                  </p>
--                  {slide.ctaText && (
--                    <div className={shouldUseCompact ? "pt-1" : "pt-2"}>
--                      <Button
--                        className={`${
--                          shouldUseCompact
--                            ? "px-3 py-1.5 sm:px-4 sm:py-2 text-xs sm:text-sm"
--                            : "px-4 py-2 sm:px-6 sm:py-3 text-sm sm:text-base"
--                        } bg-primary text-primary-foreground rounded-lg shadow hover:bg-primary/90 transition`}
--                      >
--                        {slide.ctaText}
--                      </Button>
--                    </div>
--                  )}
--                </div>
+diff --git a/src/components/shared/registration/GroupRegistration.tsx b/src/components/shared/registration/GroupRegistration.tsx
+index cf0c708..28e8b13 100644
+--- a/src/components/shared/registration/GroupRegistration.tsx
++++ b/src/components/shared/registration/GroupRegistration.tsx
+@@ -5,8 +5,8 @@ import { cn } from "@/lib/utils";
+ import { FormInput } from "@/components/ui/form-input";
+ import { FormTextarea } from "@/components/ui/form-textarea";
+ import { Checkbox } from "@/components/ui/checkbox";
+-
+ import { Button } from "@/components/ui/button";
++import PhoneNumberInput from "@/components/ui/phone-number-input"
+ 
+ interface GroupRegistrationProps {
+   onNext: (data: GroupRegistrationData) => void;
+@@ -101,8 +101,8 @@ export function GroupRegistration({
+   };
+ 
+   return (
+-    <div className={cn("w-full max-w-3xl mx-auto animate-fade-in", className)}>
+-      <div className="text-center mb-8">
++    <div className={cn("w-full  mx-auto animate-fade-in px-4", className)}>
++      <div className="text-center mb-4">
+         <h2 className="text-3xl font-bold text-foreground mb-2">
+           Create Your One Time Group
+         </h2>
+@@ -112,7 +112,7 @@ export function GroupRegistration({
+       </div>
+ 
+       <form onSubmit={handleSubmit} className="space-y-6">
+-        <div className="bg-card rounded-xl p-8 shadow-lg border border-border">
++        <div className="bg-card rounded-xl ">
+           <div className="space-y-6">
+             {/* Group Name */}
+             <FormInput
+@@ -162,18 +162,27 @@ export function GroupRegistration({
+             </div>
+ 
+             {/* Phone Number */}
+-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+-              <div className="md:col-span-1">
+-                <FormInput
++            <div className="">
++              {/* <div className="md:col-span-1"> */}
++                {/* <FormInput
+                   label="Representative Phone"
+                   placeholder="+255"
+                   value="+255"
+                   readOnly
+                   className="bg-marathon-gray-light"
++                /> */}
++              {/* </div> */}
++                <PhoneNumberInput 
++                label="Representative Phone"
++                value={formData.representativePhone}
++                onChange={(value: string) => {
++                  updateFormData("representativePhone", value);
++                }}
++                required
+                 />
 -              </div>
--            </section>
--          </CarouselItem>
--        ))}
--      </CarouselContent>
--      {slides.length > 1 && (
--        <>
--          <CarouselPrevious />
--          <CarouselNext />
--        </>
--      )}
--    </Carousel>
-+          {buttonText && (
-+            <div
-+            // initial={{ opacity: 0, y: 20 }}
-+            // animate={{ opacity: 1, y: 0 }}
-+            // transition={{ delay: 1 }}
-+            >
-+              <Button variant="outline" size="md" onClick={buttonAction}>
-+                {buttonText}
-+              </Button>
-+            </div>
-+          )}
-+        </div>
-+      </div>
-+    </div>
-   );
- }
+-              <div className="md:col-span-2">
+-                <FormInput
 +
-+export default HeroSection;
-diff --git a/src/components/shared/Hero/HeroSlider.tsx b/src/components/shared/Hero/HeroSlider.tsx
-index e493e92..a4df0fc 100644
---- a/src/components/shared/Hero/HeroSlider.tsx
-+++ b/src/components/shared/Hero/HeroSlider.tsx
-@@ -249,8 +249,9 @@ function HeroSlider({
-                       {slide.cta1}
-                     </Button>
-                     <Button
--                      variant="outline"
-+                      variant="secondary"
-                       size="default"
-+                      color="primary"
-                       className="animate-scale-in animation-delay-500 text-sm sm:text-base px-4 sm:px-6 py-2 sm:py-3 w-full xs:w-auto sm:w-auto"
-                     >
-                       {slide.cta2}
-@@ -264,7 +265,7 @@ function HeroSlider({
++              {/* <div className="md:col-span-2"> */}
++                {/* <FormInput
+                   label="&nbsp;"
+                   placeholder="Month"
+                   required
+@@ -182,8 +191,8 @@ export function GroupRegistration({
+                     updateFormData("representativePhone", e.target.value)
+                   }
+                   error={errors.representativePhone}
+-                />
+-              </div>
++                /> */}
++              {/* </div> */}
+             </div>
  
-         {/* Right Content - Slide Indicators (Desktop only) */}
-         <div className="hidden xl:flex flex-col justify-center items-center space-y-4">
--          {heroSlides.map((_, index) => (
-+          {/* {heroSlides.map((_, index) => (
-             <button
-               key={index}
-               onClick={() => goToSlide(index)}
-@@ -276,7 +277,7 @@ function HeroSlider({
-               }`}
-               aria-label={`Go to slide ${index + 1}`}
-             />
--          ))}
-+          ))} */}
-         </div>
-       </div>
+             {/* Terms and Conditions */}
+diff --git a/src/components/shared/registration/MarathonRegistration.tsx b/src/components/shared/registration/MarathonRegistration.tsx
+index 75c6cca..d01e766 100644
+--- a/src/components/shared/registration/MarathonRegistration.tsx
++++ b/src/components/shared/registration/MarathonRegistration.tsx
+@@ -54,17 +54,17 @@ export function MarathonRegistration() {
+   };
  
-@@ -331,7 +332,7 @@ function HeroSlider({
-       </div>
+   return (
+-    <div className="min-h-screen bg-background py-8 px-4">
++    <div className="  py-8 px-4 border rounded-lg">
+       <div className="max-w-6xl mx-auto">
+         {/* Header */}
+-        <div className="text-center mb-12 animate-fade-in">
++        {/* <div className="text-center mb-12 animate-fade-in">
+           <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-4">
+             Group Marathon 2025 Registration
+           </h1>
+           <p className="text-lg text-marathon-gray max-w-2xl mx-auto">
+             Complete the registration form to secure your spot in the event.
+           </p>
+-        </div>
++        </div> */}
  
-       {/* Top Progress Indicator - More responsive */}
--      {isMounted && !isAutoplayPaused && (
-+      {/* {isMounted && !isAutoplayPaused && (
-         <div className="absolute top-4 sm:top-6 left-1/2 transform -translate-x-1/2 z-30">
-           <div className="w-24 sm:w-32 h-1 sm:h-1.5 bg-black/30 backdrop-blur-sm rounded-full overflow-hidden border border-white/20">
-             <div
-@@ -340,10 +341,10 @@ function HeroSlider({
-             />
-           </div>
-         </div>
--      )}
-+      )} */}
+         {/* Stepper */}
+         <div className="mb-12 animate-slide-in">
+diff --git a/src/components/ui/form-select.tsx b/src/components/ui/form-select.tsx
+index 0ef0455..835f4df 100644
+--- a/src/components/ui/form-select.tsx
++++ b/src/components/ui/form-select.tsx
+@@ -1,51 +1,139 @@
+-import { forwardRef } from "react";
+-import { cn } from "@/lib/utils";
+-import { ChevronDown } from "lucide-react";
++import { Label } from '@/components/ui/label';
++import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
  
-       {/* Side progress indicators (Large screens only) */}
--      {isMounted && (
-+      {/* {isMounted && (
-         <div className="absolute right-4 lg:right-6 top-1/2 transform -translate-y-1/2 z-30 hidden lg:block">
-           <div className="flex flex-col space-y-2 lg:space-y-3">
-             {heroSlides.map((_, index) => (
-@@ -371,7 +372,7 @@ function HeroSlider({
-             ))}
-           </div>
-         </div>
--      )}
-+      )} */}
+-export interface FormSelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
++export interface SelectOption {
++  value: string;
++  label: string;
++  disabled?: boolean;
++}
++
++interface FormSelectProps {
++  /**
++   * Current selected value
++   */
++  value: string;
++  /**
++   * Callback function called when value changes
++   */
++  onValueChange: (value: string) => void;
++  /**
++   * Array of options to display
++   */
++  options: SelectOption[];
++  /**
++   * Label text for the select field
++   */
+   label?: string;
+-  error?: string;
++  /**
++   * Placeholder text when no option is selected
++   */
++  placeholder?: string;
++  /**
++   * Custom CSS class for the container
++   */
++  className?: string;
++  /**
++   * Custom CSS class for the select trigger
++   */
++  triggerClassName?: string;
++  /**
++   * Custom CSS class for the label
++   */
++  labelClassName?: string;
++  /**
++   * Whether the component is disabled
++   * @default false
++   */
++  disabled?: boolean;
++  /**
++   * Whether the field is required
++   * @default false
++   */
+   required?: boolean;
+-  options: { value: string; label: string }[];
++  /**
++   * Error message to display
++   */
++  error?: string;
++  /**
++   * Helper text to display below the select
++   */
++  helperText?: string;
++  /**
++   * ID for the select element
++   */
++  id?: string;
++  /**
++   * Name attribute for the select element
++   */
++  name?: string;
+ }
  
-       {/* Mobile Navigation Arrows (Touch-friendly) */}
-       <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 z-20 flex space-x-6 sm:hidden">
-diff --git a/src/components/ui/button.tsx b/src/components/ui/button.tsx
-index 47a5483..c559436 100644
---- a/src/components/ui/button.tsx
-+++ b/src/components/ui/button.tsx
-@@ -70,10 +70,10 @@ const buttonVariants = cva(
-     variants: {
-       variant: {
-         // Original variants
--        default: "bg-primary/90 text-primary-foreground shadow-xs hover:bg-primary",
--        destructive: "bg-destructive text-white shadow-xs hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60",
--        outline: "border bg-background shadow-xs hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50",
--        secondary: "bg-secondary text-secondary-foreground shadow-xs hover:bg-secondary/80",
-+        default: "bg-primary/90 text-primary-foreground hover:bg-primary",
-+        destructive: "bg-destructive text-white  hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60",
-+        outline: "border border-primary-950 bg-transparent text--primary-950 hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50",
-+        secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/80",
-         ghost: "hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50",
-         link: "text-primary underline-offset-4 hover:underline",
-         
-@@ -245,7 +245,7 @@ const buttonVariants = cva(
-       {
-         variant: ["outline", "outline-dashed", "outline-dotted"],
-         color: "primary",
--        class: "border-blue-600 text-blue-600 hover:bg-blue-50 dark:border-blue-400 dark:text-blue-400 dark:hover:bg-blue-950",
-+        class: "border-primary-950 text-primary-950 hover:bg-primary-900 dark:border-primary-900 dark:text-primary-950 dark:hover:bg-blue-950 hover:text-white transition-colors",
-       },
-       {
-         variant: ["outline", "outline-dashed", "outline-dotted"],
-@@ -317,7 +317,7 @@ const buttonVariants = cva(
-       {
-         variant: "ghost",
-         color: "primary",
--        class: "text-blue-600 hover:bg-blue-50 dark:text-blue-400 dark:hover:bg-blue-950",
-+        class: "text-primary-950 hover:bg-blue-50 dark:text-blue-400 dark:hover:bg-blue-950",
-       },
-       {
-         variant: "ghost",
-@@ -389,7 +389,7 @@ const buttonVariants = cva(
-       {
-         variant: "gradient",
-         color: "primary",
--        class: "from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800",
-+        class: "from-primary-950 to-blue-700 hover:from-blue-700 hover:to-blue-800",
-       },
-       {
-         variant: "gradient",
-@@ -414,7 +414,7 @@ const buttonVariants = cva(
-       {
-         variant: "gradient",
-         color: "info",
--        class: "from-sky-600 to-blue-600 hover:from-sky-700 hover:to-blue-700",
-+        class: "from-sky-600 to-primary-950 hover:from-sky-700 hover:to-blue-700",
-       },
-       {
-         variant: "gradient",
-@@ -436,7 +436,7 @@ const buttonVariants = cva(
-       {
-         variant: "glow",
-         color: "primary",
--        class: "bg-blue-600 text-white hover:bg-blue-700 shadow-blue-200 hover:shadow-blue-300 dark:shadow-blue-900/50 dark:hover:shadow-blue-800/50",
-+        class: "bg-primary-950 text-white hover:bg-blue-700 shadow-blue-200 hover:shadow-blue-300 dark:shadow-blue-900/50 dark:hover:shadow-blue-800/50",
-       },
-       {
-         variant: "glow",
+-const FormSelect = forwardRef<HTMLSelectElement, FormSelectProps>(
+-  ({ className, label, error, required, options, ...props }, ref) => {
+-    return (
+-      <div className="space-y-2">
+-        {label && (
+-          <label className="text-sm font-medium text-foreground">
+-            {label}
+-            {required && <span className="text-destructive ml-1">*</span>}
+-          </label>
+-        )}
+-        <div className="relative">
+-          <select
+-            className={cn(
+-              "flex h-12 w-full appearance-none rounded-lg border border-form-border bg-form-background px-4 py-3 pr-10 text-sm transition-all duration-300",
+-              "focus:border-form-focus focus:ring-2 focus:ring-form-focus/20 focus:outline-none",
+-              "hover:border-marathon-gray-light hover:bg-marathon-gray-light/30",
+-              "disabled:cursor-not-allowed disabled:opacity-50",
+-              error && "border-destructive focus:border-destructive focus:ring-destructive/20",
+-              className
+-            )}
+-            ref={ref}
+-            {...props}
+-          >
+-            {options.map((option) => (
+-              <option key={option.value} value={option.value}>
+-                {option.label}
+-              </option>
+-            ))}
+-          </select>
+-          <ChevronDown className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-marathon-gray pointer-events-none" />
+-        </div>
+-        {error && <p className="text-sm text-destructive">{error}</p>}
+-      </div>
+-    );
+-  }
+-);
+-
+-FormSelect.displayName = "FormSelect";
++export const FormSelect: React.FC<FormSelectProps> = ({
++  value,
++  onValueChange,
++  options,
++  label,
++  placeholder = "Select an option",
++  className = "mb-6",
++  triggerClassName = "w-full hover:border-primary transition-colors duration-200",
++  labelClassName = "text-sm font-medium text-foreground mb-2 block",
++  disabled = false,
++  required = false,
++  error,
++  helperText,
++  id,
++  name
++}) => {
++  return (
++    <div className={className}>
++      {label && (
++        <Label 
++          htmlFor={id} 
++          className={`${labelClassName} ${required ? "after:content-['*'] after:ml-0.5 after:text-red-500" : ""}`}
++        >
++          {label}
++        </Label>
++      )}
++      <Select 
++        value={value} 
++        onValueChange={onValueChange}
++        disabled={disabled}
++        name={name}
++      >
++        <SelectTrigger 
++          id={id}
++          className={`${triggerClassName} ${error ? 'border-red-500 focus:border-red-500' : ''}`}
++        >
++          <SelectValue placeholder={placeholder} />
++        </SelectTrigger>
++        <SelectContent>
++          {options.map((option) => (
++            <SelectItem 
++              key={option.value} 
++              value={option.value}
++              disabled={option.disabled}
++            >
++              {option.label}
++            </SelectItem>
++          ))}
++        </SelectContent>
++      </Select>
++      
++      {/* Error message */}
++      {error && (
++        <p className="mt-1 text-sm text-red-600" role="alert">
++          {error}
++        </p>
++      )}
++      
++      {/* Helper text */}
++      {helperText && !error && (
++        <p className="mt-1 text-sm text-gray-600">
++          {helperText}
++        </p>
++      )}
++    </div>
++  );
++};
+ 
+-export { FormSelect };
+\ No newline at end of file
++export default FormSelect;
+\ No newline at end of file
+diff --git a/src/components/ui/stepper.tsx b/src/components/ui/stepper.tsx
+index dfb2769..b970657 100644
+--- a/src/components/ui/stepper.tsx
++++ b/src/components/ui/stepper.tsx
+@@ -29,11 +29,11 @@ export function Stepper({ steps, currentStep, className }: StepperProps) {
+               <div className="flex flex-col items-center">
+                 <div
+                   className={cn(
+-                    "relative flex h-10 w-10 items-center justify-center rounded-full border-2 transition-all duration-300",
++                    "relative flex h-10 w-10 items-center justify-center rounded-full border-2 transition-all duration-300 cursor-pointer",
+                     {
+                       "border-primary-950 bg-primary-950 text-white": isActive,
+                       "border-primary-900 bg-primary-900 text-white": isCompleted,
+-                      "border-step-inactive bg-background text-marathon-gray": !isActive && !isCompleted,
++                      "border-step-inactive bg-gray-100 text-marathon-gray": !isActive && !isCompleted,
+                     }
+                   )}
+                 >
+@@ -70,7 +70,7 @@ export function Stepper({ steps, currentStep, className }: StepperProps) {
+               {!isLast && (
+                 <div
+                   className={cn(
+-                    "mx-4 h-0.5 w-16 transition-colors duration-300 mt-[-2rem]",
++                    "mx-2 h-0.5 w-16 transition-colors duration-300 mt-[-2rem]",
+                     {
+                       "bg-primary-950": stepNumber < currentStep,
+                       "bg-gray-300": stepNumber >= currentStep,
+diff --git a/tsconfig.json b/tsconfig.json
+index c133409..5fabbce 100644
+--- a/tsconfig.json
++++ b/tsconfig.json
+@@ -22,6 +22,6 @@
+       "@/*": ["./src/*"]
+     }
+   },
+-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
++  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/app/(Pages)/(Landing)/events/[id]/registration"],
+   "exclude": ["node_modules"]
+ }
