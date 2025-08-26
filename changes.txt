@@ -1,405 +1,1099 @@
-     {
-@@ -25,7 +25,7 @@ function EventMainContent() {
+diff --git a/next.config.ts b/next.config.ts
+index 38525b6..000c3fa 100644
+--- a/next.config.ts
++++ b/next.config.ts
+@@ -2,6 +2,14 @@ import type { NextConfig } from "next";
+ 
+ const nextConfig: NextConfig = {
+   output: 'standalone',
++  images: {
++    remotePatterns: [
++      {
++        protocol: "https",
++        hostname: "images.unsplash.com",
++      },
++    ],
++  },
+   /* other config options here */
+ };
+ 
+diff --git a/package-lock.json b/package-lock.json
+index 5418443..01dbf69 100644
+--- a/package-lock.json
++++ b/package-lock.json
+@@ -8,10 +8,14 @@
+       "name": "nbc-event-management",
+       "version": "0.1.0",
+       "dependencies": {
++        "@radix-ui/react-accordion": "^1.2.12",
+         "@radix-ui/react-checkbox": "^1.3.3",
+         "@radix-ui/react-label": "^2.1.7",
++        "@radix-ui/react-radio-group": "^1.3.8",
+         "@radix-ui/react-select": "^2.2.6",
++        "@radix-ui/react-slider": "^1.3.6",
+         "@radix-ui/react-slot": "^1.2.3",
++        "@radix-ui/react-tabs": "^1.1.13",
+         "@radix-ui/react-tooltip": "^1.2.8",
+         "class-variance-authority": "^0.7.1",
+         "clsx": "^2.1.1",
+@@ -965,6 +969,36 @@
+       "resolved": "https://registry.npmjs.org/@radix-ui/primitive/-/primitive-1.1.3.tgz",
+       "integrity": "sha512-JTF99U/6XIjCBo0wqkU5sK10glYe27MRRsfwoiq5zzOEZLHU3A3KCMa5X/azekYRCJ0HlwI0crAXS/5dEHTzDg=="
+     },
++    "node_modules/@radix-ui/react-accordion": {
++      "version": "1.2.12",
++      "resolved": "https://registry.npmjs.org/@radix-ui/react-accordion/-/react-accordion-1.2.12.tgz",
++      "integrity": "sha512-T4nygeh9YE9dLRPhAHSeOZi7HBXo+0kYIPJXayZfvWOWA0+n3dESrZbjfDPUABkUNym6Hd+f2IR113To8D2GPA==",
++      "dependencies": {
++        "@radix-ui/primitive": "1.1.3",
++        "@radix-ui/react-collapsible": "1.1.12",
++        "@radix-ui/react-collection": "1.1.7",
++        "@radix-ui/react-compose-refs": "1.1.2",
++        "@radix-ui/react-context": "1.1.2",
++        "@radix-ui/react-direction": "1.1.1",
++        "@radix-ui/react-id": "1.1.1",
++        "@radix-ui/react-primitive": "2.1.3",
++        "@radix-ui/react-use-controllable-state": "1.2.2"
++      },
++      "peerDependencies": {
++        "@types/react": "*",
++        "@types/react-dom": "*",
++        "react": "^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc",
++        "react-dom": "^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc"
++      },
++      "peerDependenciesMeta": {
++        "@types/react": {
++          "optional": true
++        },
++        "@types/react-dom": {
++          "optional": true
++        }
++      }
++    },
+     "node_modules/@radix-ui/react-arrow": {
+       "version": "1.1.7",
+       "resolved": "https://registry.npmjs.org/@radix-ui/react-arrow/-/react-arrow-1.1.7.tgz",
+@@ -1016,6 +1050,35 @@
+         }
+       }
+     },
++    "node_modules/@radix-ui/react-collapsible": {
++      "version": "1.1.12",
++      "resolved": "https://registry.npmjs.org/@radix-ui/react-collapsible/-/react-collapsible-1.1.12.tgz",
++      "integrity": "sha512-Uu+mSh4agx2ib1uIGPP4/CKNULyajb3p92LsVXmH2EHVMTfZWpll88XJ0j4W0z3f8NK1eYl1+Mf/szHPmcHzyA==",
++      "dependencies": {
++        "@radix-ui/primitive": "1.1.3",
++        "@radix-ui/react-compose-refs": "1.1.2",
++        "@radix-ui/react-context": "1.1.2",
++        "@radix-ui/react-id": "1.1.1",
++        "@radix-ui/react-presence": "1.1.5",
++        "@radix-ui/react-primitive": "2.1.3",
++        "@radix-ui/react-use-controllable-state": "1.2.2",
++        "@radix-ui/react-use-layout-effect": "1.1.1"
++      },
++      "peerDependencies": {
++        "@types/react": "*",
++        "@types/react-dom": "*",
++        "react": "^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc",
++        "react-dom": "^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc"
++      },
++      "peerDependenciesMeta": {
++        "@types/react": {
++          "optional": true
++        },
++        "@types/react-dom": {
++          "optional": true
++        }
++      }
++    },
+     "node_modules/@radix-ui/react-collection": {
+       "version": "1.1.7",
+       "resolved": "https://registry.npmjs.org/@radix-ui/react-collection/-/react-collection-1.1.7.tgz",
+@@ -1285,6 +1348,67 @@
+         }
+       }
+     },
++    "node_modules/@radix-ui/react-radio-group": {
++      "version": "1.3.8",
++      "resolved": "https://registry.npmjs.org/@radix-ui/react-radio-group/-/react-radio-group-1.3.8.tgz",
++      "integrity": "sha512-VBKYIYImA5zsxACdisNQ3BjCBfmbGH3kQlnFVqlWU4tXwjy7cGX8ta80BcrO+WJXIn5iBylEH3K6ZTlee//lgQ==",
++      "dependencies": {
++        "@radix-ui/primitive": "1.1.3",
++        "@radix-ui/react-compose-refs": "1.1.2",
++        "@radix-ui/react-context": "1.1.2",
++        "@radix-ui/react-direction": "1.1.1",
++        "@radix-ui/react-presence": "1.1.5",
++        "@radix-ui/react-primitive": "2.1.3",
++        "@radix-ui/react-roving-focus": "1.1.11",
++        "@radix-ui/react-use-controllable-state": "1.2.2",
++        "@radix-ui/react-use-previous": "1.1.1",
++        "@radix-ui/react-use-size": "1.1.1"
++      },
++      "peerDependencies": {
++        "@types/react": "*",
++        "@types/react-dom": "*",
++        "react": "^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc",
++        "react-dom": "^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc"
++      },
++      "peerDependenciesMeta": {
++        "@types/react": {
++          "optional": true
++        },
++        "@types/react-dom": {
++          "optional": true
++        }
++      }
++    },
++    "node_modules/@radix-ui/react-roving-focus": {
++      "version": "1.1.11",
++      "resolved": "https://registry.npmjs.org/@radix-ui/react-roving-focus/-/react-roving-focus-1.1.11.tgz",
++      "integrity": "sha512-7A6S9jSgm/S+7MdtNDSb+IU859vQqJ/QAtcYQcfFC6W8RS4IxIZDldLR0xqCFZ6DCyrQLjLPsxtTNch5jVA4lA==",
++      "dependencies": {
++        "@radix-ui/primitive": "1.1.3",
++        "@radix-ui/react-collection": "1.1.7",
++        "@radix-ui/react-compose-refs": "1.1.2",
++        "@radix-ui/react-context": "1.1.2",
++        "@radix-ui/react-direction": "1.1.1",
++        "@radix-ui/react-id": "1.1.1",
++        "@radix-ui/react-primitive": "2.1.3",
++        "@radix-ui/react-use-callback-ref": "1.1.1",
++        "@radix-ui/react-use-controllable-state": "1.2.2"
++      },
++      "peerDependencies": {
++        "@types/react": "*",
++        "@types/react-dom": "*",
++        "react": "^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc",
++        "react-dom": "^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc"
++      },
++      "peerDependenciesMeta": {
++        "@types/react": {
++          "optional": true
++        },
++        "@types/react-dom": {
++          "optional": true
++        }
++      }
++    },
+     "node_modules/@radix-ui/react-select": {
+       "version": "2.2.6",
+       "resolved": "https://registry.npmjs.org/@radix-ui/react-select/-/react-select-2.2.6.tgz",
+@@ -1327,6 +1451,38 @@
+         }
+       }
+     },
++    "node_modules/@radix-ui/react-slider": {
++      "version": "1.3.6",
++      "resolved": "https://registry.npmjs.org/@radix-ui/react-slider/-/react-slider-1.3.6.tgz",
++      "integrity": "sha512-JPYb1GuM1bxfjMRlNLE+BcmBC8onfCi60Blk7OBqi2MLTFdS+8401U4uFjnwkOr49BLmXxLC6JHkvAsx5OJvHw==",
++      "dependencies": {
++        "@radix-ui/number": "1.1.1",
++        "@radix-ui/primitive": "1.1.3",
++        "@radix-ui/react-collection": "1.1.7",
++        "@radix-ui/react-compose-refs": "1.1.2",
++        "@radix-ui/react-context": "1.1.2",
++        "@radix-ui/react-direction": "1.1.1",
++        "@radix-ui/react-primitive": "2.1.3",
++        "@radix-ui/react-use-controllable-state": "1.2.2",
++        "@radix-ui/react-use-layout-effect": "1.1.1",
++        "@radix-ui/react-use-previous": "1.1.1",
++        "@radix-ui/react-use-size": "1.1.1"
++      },
++      "peerDependencies": {
++        "@types/react": "*",
++        "@types/react-dom": "*",
++        "react": "^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc",
++        "react-dom": "^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc"
++      },
++      "peerDependenciesMeta": {
++        "@types/react": {
++          "optional": true
++        },
++        "@types/react-dom": {
++          "optional": true
++        }
++      }
++    },
+     "node_modules/@radix-ui/react-slot": {
+       "version": "1.2.3",
+       "resolved": "https://registry.npmjs.org/@radix-ui/react-slot/-/react-slot-1.2.3.tgz",
+@@ -1344,6 +1500,35 @@
+         }
+       }
+     },
++    "node_modules/@radix-ui/react-tabs": {
++      "version": "1.1.13",
++      "resolved": "https://registry.npmjs.org/@radix-ui/react-tabs/-/react-tabs-1.1.13.tgz",
++      "integrity": "sha512-7xdcatg7/U+7+Udyoj2zodtI9H/IIopqo+YOIcZOq1nJwXWBZ9p8xiu5llXlekDbZkca79a/fozEYQXIA4sW6A==",
++      "dependencies": {
++        "@radix-ui/primitive": "1.1.3",
++        "@radix-ui/react-context": "1.1.2",
++        "@radix-ui/react-direction": "1.1.1",
++        "@radix-ui/react-id": "1.1.1",
++        "@radix-ui/react-presence": "1.1.5",
++        "@radix-ui/react-primitive": "2.1.3",
++        "@radix-ui/react-roving-focus": "1.1.11",
++        "@radix-ui/react-use-controllable-state": "1.2.2"
++      },
++      "peerDependencies": {
++        "@types/react": "*",
++        "@types/react-dom": "*",
++        "react": "^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc",
++        "react-dom": "^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc"
++      },
++      "peerDependenciesMeta": {
++        "@types/react": {
++          "optional": true
++        },
++        "@types/react-dom": {
++          "optional": true
++        }
++      }
++    },
+     "node_modules/@radix-ui/react-tooltip": {
+       "version": "1.2.8",
+       "resolved": "https://registry.npmjs.org/@radix-ui/react-tooltip/-/react-tooltip-1.2.8.tgz",
+diff --git a/package.json b/package.json
+index 45d704a..870beec 100644
+--- a/package.json
++++ b/package.json
+@@ -9,10 +9,14 @@
+     "lint": "next lint"
+   },
+   "dependencies": {
++    "@radix-ui/react-accordion": "^1.2.12",
+     "@radix-ui/react-checkbox": "^1.3.3",
+     "@radix-ui/react-label": "^2.1.7",
++    "@radix-ui/react-radio-group": "^1.3.8",
+     "@radix-ui/react-select": "^2.2.6",
++    "@radix-ui/react-slider": "^1.3.6",
+     "@radix-ui/react-slot": "^1.2.3",
++    "@radix-ui/react-tabs": "^1.1.13",
+     "@radix-ui/react-tooltip": "^1.2.8",
+     "class-variance-authority": "^0.7.1",
+     "clsx": "^2.1.1",
+diff --git a/src/app/(PageSections)/Dashboard/MarketPlacePageSection/Sections/MarketPlaceSearchHeader.tsx b/src/app/(PageSections)/Dashboard/MarketPlacePageSection/Sections/MarketPlaceSearchHeader.tsx
+index 2223563..8221db1 100644
+--- a/src/app/(PageSections)/Dashboard/MarketPlacePageSection/Sections/MarketPlaceSearchHeader.tsx
++++ b/src/app/(PageSections)/Dashboard/MarketPlacePageSection/Sections/MarketPlaceSearchHeader.tsx
+@@ -1,4 +1,4 @@
+-"use client"
++"use client";
+ 
+ import React from "react";
+ import {
+@@ -35,7 +35,7 @@ function MarketPlaceSearchHeader() {
+               setCategory(value);
+             }}
+           >
+-            <SelectTrigger className=" border-0 shadow-none hover:bg-transparent cursor-pointer  rounded-none w-auto">
++            <SelectTrigger className=" border-0 shadow-none hover:bg-transparent cursor-pointer  rounded-none w-auto focus:ring-0 focus:ring-offset-0 bg-transparent">
+               <SelectValue placeholder={"Select Category"} />
+             </SelectTrigger>
+             <SelectContent className=" !border-gray-300">
+@@ -54,9 +54,9 @@ function MarketPlaceSearchHeader() {
+           <div className="flex-1 relative  ">
+             <div className="relative">
+               <FormInput
+-                type="text"
++                type="search"
+                 placeholder="Search......"
+-                className="w-full pr-12 pl-4 h-10 border-none shadow-none"
++                className="w-full pr-12 pl-4 h-10 border-none shadow-none focus:ring-0 focus:ring-offset-0 "
+                 // icon={<Search className="h-4 w-4" />}
+                 // onIconClick={() => {
+                 //   alert("Hello");
+diff --git a/src/app/(PageSections)/Dashboard/MarketPlacePageSection/Sections/ProductGrid.tsx b/src/app/(PageSections)/Dashboard/MarketPlacePageSection/Sections/ProductGrid.tsx
+index 5c4beee..2931de9 100644
+--- a/src/app/(PageSections)/Dashboard/MarketPlacePageSection/Sections/ProductGrid.tsx
++++ b/src/app/(PageSections)/Dashboard/MarketPlacePageSection/Sections/ProductGrid.tsx
+@@ -6,81 +6,12 @@ import Link from "next/link";
+ import { useRouter } from "next/navigation";
+ import { useState, useEffect } from "react";
+ import { ProductCardSkeleton } from "./ProductCardSkeleton";
+-import { ProductCard } from "./ProductCard";
++import ShopProductCard from "@/components/shop/ShopProductCard";
++import { products } from "@/data/products";
+ 
+ 
+ // Mock product data based on the image
+-const featuredProducts = [
+-  {
+-    id: "1",
+-    name: "Chapakazi Jersey Marathon Kit",
+-    image: "/images/Chapakazi.png",
+-    price: 25000,
+-    rating: 4.8,
+-    totalReviews: 738,
+-    badge: { text: "HOT", variant: "hot" as const },
+-  },
+-  {
+-    id: "2",
+-    name: "Chapakazi Jersey Marathon Kit",
+-    image: "/images/Jasiri.png",
+-    price: 25000,
+-    rating: 4.7,
+-    totalReviews: 536,
+-  },
+-  {
+-    id: "3",
+-    name: "Chapakazi Jersey Marathon Kit",
+-    image: "/images/Makini.png",
+-    price: 17000,
+-    rating: 4.6,
+-    totalReviews: 423,
+-    badge: { text: "BEST DEALS", variant: "best-deals" as const },
+-  },
+-  {
+-    id: "4",
+-    name: "Portable Washing Machine, 11lbs capacity Model 18RMF...",
+-    image: "/images/Malengo.png",
+-    price: 45000,
+-    rating: 4.2,
+-    totalReviews: 816,
+-  },
+-  {
+-    id: "5",
+-    name: "Wired Over-Ear Gaming Headphones with USB",
+-    image: "/images/Ushindi.png",
+-    price: 67500,
+-    rating: 4.9,
+-    totalReviews: 647,
+-    badge: { text: "25% OFF", variant: "off" as const },
+-  },
+-  {
+-    id: "6",
+-    name: "Red Blue Adidas Runners",
+-    image: "/images/Chapakazi.png",
+-    price: 75000,
+-    originalPrice: 87000,
+-    rating: 4.4,
+-    totalReviews: 877,
+-  },
+-  {
+-    id: "7",
+-    name: "Green blue Adidas runners",
+-    image: "/images/Wezesha.png",
+-    price: 90000,
+-    rating: 4.8,
+-    totalReviews: 426,
+-  },
+-  {
+-    id: "8",
+-    name: "Chapakazi Jersey Marathon Kit",
+-    image: "/images/Pamoja.png",
+-    price: 25000,
+-    rating: 4.9,
+-    totalReviews: 533,
+-    badge: { text: "SALE", variant: "sale" as const },
+-  },
+-];
++
+ 
+ export function ProductGrid() {
+   const [isLoading, setIsLoading] = useState(true);
+@@ -102,7 +33,7 @@ export function ProductGrid() {
+           Our NBC Featured Products
+         </h2>
+         <Link
+-          href="all-products"
++          href="market-place/products"
+           className="text-nbc-dark-950 hover:text-nbc-dark-800 font-medium group flex items-center"
+         >
+           Browse All Product
+@@ -124,18 +55,18 @@ export function ProductGrid() {
+               </div>
+             ))
+           : // Show actual products
+-            featuredProducts.map((product, index) => (
++            products.map((product, index) => (
+               <div
+                 key={product.id}
+                 className="animate-fade-in"
+                 style={{ animationDelay: `${index * 100}ms` }}
+               >
+-                <ProductCard {...product} />
++                <ShopProductCard {...product} baseUrl="market-place/products" />
+               </div>
+             ))}
+       </div>
+       <div className="flex justify-end">
+-        <Button variant="outline" onClick={() => router.push("products")}>
++        <Button variant="outline" onClick={() => router.push("market-place/products")}>
+           View All
+         </Button>
+       </div>
+diff --git a/src/app/(PageSections)/Landing/HomePageSection.tsx b/src/app/(PageSections)/Landing/HomePageSection.tsx
+index 6e02871..fe91ae6 100644
+--- a/src/app/(PageSections)/Landing/HomePageSection.tsx
++++ b/src/app/(PageSections)/Landing/HomePageSection.tsx
+@@ -1,16 +1,74 @@
+-import React from 'react'
+-import UpcomingEvents from './sections/HomeSections/UpcomingEvents'
+-import PartnerEvents from './sections/HomeSections/PartnerEvents'
+-import ContactusBanner from '@/components/shared/Banner/ContactusBanner'
++import React from "react";
++import UpcomingEvents from "./sections/HomeSections/UpcomingEvents";
++import ContactusBanner from "@/components/shared/Banner/ContactusBanner";
++import BankingApps from "./sections/HomeSections/BankingApps";
++import CallToAction from "./sections/HomeSections/CallToAction";
++import HeroSlider, { HeroSliderI } from "@/components/shared/Hero/HeroSlider";
+ 
+ function HomePageSection() {
++  const heroSlides: HeroSliderI[] = [
++    {
++      id: "1",
++      title: "NBC Dodoma",
++      subtitle: "Marathon",
++      description:
++        "Join thousands of runners in Tanzania's premier marathon event. Experience the thrill of running through the heart of Dodoma.",
++      backgroundImage: "/images/marathon-hero.png",
++      cta1: "Open Account",
++      cta2: "Learn More",
++      thumbnails: [
++        "/images/marathon-hero.png",
++        "/images/marathon-1.jpg",
++        "/images/marathon-2.jpg",
++        "/images/individual-hero.jpg",
++      ],
++    },
++    {
++      id: "2",
++      title: "Register",
++      subtitle: "Today",
++      description:
++        "Secure your spot in the most anticipated marathon of the year. Early bird registration now open with special discounts.",
++      backgroundImage: "/images/marathon-1.jpg",
++      cta1: "Register Now",
++      cta2: "View Packages",
++      thumbnails: [
++        "/images/marathon-1.jpg",
++        "/images/marathon-hero.png",
++        "/images/marathon-2.jpg",
++        "/images/individual-hero.jpg",
++      ],
++    },
++    {
++      id: "3",
++      title: "Start",
++      subtitle: "Training",
++      description:
++        "Get ready for the challenge with our comprehensive training programs designed for all fitness levels.",
++      backgroundImage: "/images/marathon-2.jpg",
++      cta1: "Training Plans",
++      cta2: "Join Community",
++      thumbnails: [
++        "/images/marathon-2.jpg",
++        "/images/marathon-hero.png",
++        "/images/marathon-1.jpg",
++        "/images/individual-hero.jpg",
++      ],
++    },
++  ];
+   return (
+-    <div className='container mx-auto py-10 space-y-10'>
+-      <UpcomingEvents />
+-      <PartnerEvents />
++    <>
++      <HeroSlider heroSlides={heroSlides} />
++      <div className="container mx-auto py-10 space-y-10">
++        <UpcomingEvents />
++        {/* <BankingApps /> */}
++        {/* <PartnerEvents /> */}
++      </div>
++      <BankingApps />
+       <ContactusBanner />
+-    </div>
+-  )
++      <CallToAction />
++    </>
++  );
+ }
+ 
+-export default HomePageSection
++export default HomePageSection;
+diff --git a/src/app/(PageSections)/Landing/sections/EventSections/EventMainContent.tsx b/src/app/(PageSections)/Landing/sections/EventSections/EventMainContent.tsx
+index 0ca6a99..dd8ca65 100644
+--- a/src/app/(PageSections)/Landing/sections/EventSections/EventMainContent.tsx
++++ b/src/app/(PageSections)/Landing/sections/EventSections/EventMainContent.tsx
+@@ -9,8 +9,9 @@ function EventMainContent() {
        image: "/images/call.png",
        description:
-         "Help us collect food donations for those in need during the holiday season.",
--      compareLink: "Donate",
-+        donateLink: "Donate",
+         "Join us for a community clean-up event to help keep our neighborhood beautiful.",
+-        donateLink: "Donate",
++      donateLink: "Donate",
        learnMoreLink: "/events/community-clean-up",
++      
      },
      {
+       title: "Charity Run",
+diff --git a/src/app/(Pages)/(Landing)/page.tsx b/src/app/(Pages)/(Landing)/page.tsx
+index 32666ad..a445c82 100644
+--- a/src/app/(Pages)/(Landing)/page.tsx
++++ b/src/app/(Pages)/(Landing)/page.tsx
+@@ -2,60 +2,11 @@ import HomePageSection from "@/app/(PageSections)/Landing/HomePageSection";
+ import HeroSlider, { HeroSliderI } from "@/components/shared/Hero/HeroSlider";
+ 
+ export default function Home() {
+-  const heroSlides: HeroSliderI[] = [
+-    {
+-      id: "1",
+-      title: "NBC Dodoma",
+-      subtitle: "Marathon",
+-      description:
+-        "Join thousands of runners in Tanzania's premier marathon event. Experience the thrill of running through the heart of Dodoma.",
+-      backgroundImage: "/images/marathon-hero.png",
+-      cta1: "Open Account",
+-      cta2: "Learn More",
+-      thumbnails: [
+-        "/images/marathon-hero.png",
+-        "/images/marathon-1.jpg",
+-        "/images/marathon-2.jpg",
+-        "/images/individual-hero.jpg",
+-      ],
+-    },
+-    {
+-      id: "2",
+-      title: "Register",
+-      subtitle: "Today",
+-      description:
+-        "Secure your spot in the most anticipated marathon of the year. Early bird registration now open with special discounts.",
+-      backgroundImage: "/images/marathon-1.jpg",
+-      cta1: "Register Now",
+-      cta2: "View Packages",
+-      thumbnails: [
+-        "/images/marathon-1.jpg",
+-        "/images/marathon-hero.png",
+-        "/images/marathon-2.jpg",
+-        "/images/individual-hero.jpg",
+-      ],
+-    },
+-    {
+-      id: "3",
+-      title: "Start",
+-      subtitle: "Training",
+-      description:
+-        "Get ready for the challenge with our comprehensive training programs designed for all fitness levels.",
+-      backgroundImage: "/images/marathon-2.jpg",
+-      cta1: "Training Plans",
+-      cta2: "Join Community",
+-      thumbnails: [
+-        "/images/marathon-2.jpg",
+-        "/images/marathon-hero.png",
+-        "/images/marathon-1.jpg",
+-        "/images/individual-hero.jpg",
+-      ],
+-    },
+-  ];
++
+ 
+   return (
+     <div>
+-      <HeroSlider heroSlides={heroSlides} />
++     
+       <HomePageSection />
+       {/* <MarathonRegistration /> */}
+     </div>
+diff --git a/src/app/(Pages)/dashboard/DashboardClientLayout.tsx b/src/app/(Pages)/dashboard/DashboardClientLayout.tsx
+index 9bfdfc9..424afcf 100644
+--- a/src/app/(Pages)/dashboard/DashboardClientLayout.tsx
++++ b/src/app/(Pages)/dashboard/DashboardClientLayout.tsx
+@@ -22,7 +22,7 @@ export default function DashboardClientLayout({
+   };
+ 
+   return (
+-    <div className="flex h-screen bg-background">
++    <div className="flex h-screen bg-background overflow-hidden">
+       <Sidebar
+         navigationData={navigationData}
+         isCollapsed={isCollapsed}
+@@ -41,8 +41,8 @@ export default function DashboardClientLayout({
+           text: "Events Portal v1.0",
+         }}
+       />
+-      <main className="w-full">
+-        <div className="border-b py-2 px-1">
++      <main className="flex flex-col flex-1 min-w-0 overflow-hidden">
++        <div className="border-b py-2 px-1 sticky top-0 z-[9999999] bg-white flex-shrink-0">
+           <Button
+             variant="ghost"
+             className="hidden lg:flex h-8 w-8 p-0 shrink-0"
+@@ -51,8 +51,10 @@ export default function DashboardClientLayout({
+             <Menu className="w-4 h-4" />
+           </Button>
+         </div>
+-        <div className=" px-7 py-5">{children}</div>
++        <div className="flex-1 px-7 py-5 overflow-y-auto">
++          {children}
++        </div>
+       </main>
+     </div>
+   );
+-}
++}
+\ No newline at end of file
+diff --git a/src/app/(Pages)/dashboard/market-place/page.tsx b/src/app/(Pages)/dashboard/market-place/page.tsx
+index 1509144..bdf031f 100644
+--- a/src/app/(Pages)/dashboard/market-place/page.tsx
++++ b/src/app/(Pages)/dashboard/market-place/page.tsx
+@@ -1,12 +1,12 @@
+-import MarketPlacePageSection from '@/app/(PageSections)/Dashboard/MarketPlacePageSection/MarketPlacePageSection'
+-import React from 'react'
++import React from "react";
++import MarketPlacePageSection from "@/app/(PageSections)/Dashboard/MarketPlacePageSection/MarketPlacePageSection";
+ 
+ function MarketPlace() {
+   return (
+     <div>
+-<MarketPlacePageSection />
++      <MarketPlacePageSection />
+     </div>
+-  )
++  );
+ }
+ 
+-export default MarketPlace
++export default MarketPlace;
 diff --git a/src/app/globals.css b/src/app/globals.css
-index 5f400ed..2a9bf49 100644
+index ec37fa5..e18bcd5 100644
 --- a/src/app/globals.css
 +++ b/src/app/globals.css
-@@ -97,6 +97,14 @@
-   --sidebar-ring: oklch(0.709 0.01 56.259);
-   --background: oklch(1 0 0);
-   --foreground: oklch(0.147 0.004 49.25);
+@@ -106,6 +106,18 @@
+   --route-active-foreground: 255 255 255;
+   --route-boundary: 214 95% 56%;
+   --route-inactive: 220 13% 91%;
 +
 +
-+   /* Route colors */
 +
-+  --route-active: 0 84% 60%;
-+  --route-active-foreground: 255 255 255;
-+  --route-boundary: 214 95% 56%;
-+  --route-inactive: 220 13% 91%;
++
++   /* Custom design tokens for coming soon page */
++   --gradient-primary: linear-gradient(135deg, hsl(240 100% 70%), hsl(280 100% 75%));
++   --gradient-subtle: linear-gradient(180deg, hsl(240 10% 3.9%), hsl(240 8% 6%));
++   --gradient-glow: radial-gradient(600px circle at 50% 50%, hsl(240 100% 70% / 0.15), transparent);
++   --glow-primary: 0 0 40px hsl(240 100% 70% / 0.3);
++   --glow-secondary: 0 0 60px hsl(280 100% 75% / 0.2);
++   --transition-smooth: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
++
  }
  
  html {
-diff --git a/src/components/shared/Card/DetailedCard.tsx b/src/components/shared/Card/DetailedCard.tsx
-index e0a3429..45310cb 100644
---- a/src/components/shared/Card/DetailedCard.tsx
-+++ b/src/components/shared/Card/DetailedCard.tsx
-@@ -15,7 +15,7 @@ type PressReleaseCardProps = {
-   className?: string;
-   rightSide?: boolean;
-   learnMoreLink?: string;
--  compareLink?: string;
-+  donateLink?: string;
-   buttonText?: string;
- };
+@@ -275,4 +287,39 @@ body{
  
-@@ -27,7 +27,7 @@ const DetailedCard = ({
-   badgeText,
-   rightSide = false,
-   learnMoreLink,
--  compareLink,
-+  donateLink,
-   buttonText,
- }: PressReleaseCardProps) => {
-   const navigate = useRouter();
-@@ -90,15 +90,15 @@ const DetailedCard = ({
-           {description}
-         </p>
-         <div className="flex items-center justify-between mt-auto pt-2">
--          {compareLink && (
-+          {donateLink && (
-             <Button
-               variant="outline"
-               onClick={() => {
--                navigate.push(compareLink);
-+                navigate.push(donateLink);
-               }}
-             >
--              Compare Account
--              <ChevronRight />
-+           Donate
-+              {/* <ChevronRight /> */}
-             </Button>
-           )}
- 
-diff --git a/src/components/shared/registration/GroupRegistration.tsx b/src/components/shared/registration/GroupRegistration.tsx
-index cf0c708..28e8b13 100644
---- a/src/components/shared/registration/GroupRegistration.tsx
-+++ b/src/components/shared/registration/GroupRegistration.tsx
-@@ -5,8 +5,8 @@ import { cn } from "@/lib/utils";
- import { FormInput } from "@/components/ui/form-input";
- import { FormTextarea } from "@/components/ui/form-textarea";
- import { Checkbox } from "@/components/ui/checkbox";
--
- import { Button } from "@/components/ui/button";
-+import PhoneNumberInput from "@/components/ui/phone-number-input"
- 
- interface GroupRegistrationProps {
-   onNext: (data: GroupRegistrationData) => void;
-@@ -101,8 +101,8 @@ export function GroupRegistration({
-   };
- 
-   return (
--    <div className={cn("w-full max-w-3xl mx-auto animate-fade-in", className)}>
--      <div className="text-center mb-8">
-+    <div className={cn("w-full  mx-auto animate-fade-in px-4", className)}>
-+      <div className="text-center mb-4">
-         <h2 className="text-3xl font-bold text-foreground mb-2">
-           Create Your One Time Group
-         </h2>
-@@ -112,7 +112,7 @@ export function GroupRegistration({
-       </div>
- 
-       <form onSubmit={handleSubmit} className="space-y-6">
--        <div className="bg-card rounded-xl p-8 shadow-lg border border-border">
-+        <div className="bg-card rounded-xl ">
-           <div className="space-y-6">
-             {/* Group Name */}
-             <FormInput
-@@ -162,18 +162,27 @@ export function GroupRegistration({
-             </div>
- 
-             {/* Phone Number */}
--            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
--              <div className="md:col-span-1">
--                <FormInput
-+            <div className="">
-+              {/* <div className="md:col-span-1"> */}
-+                {/* <FormInput
-                   label="Representative Phone"
-                   placeholder="+255"
-                   value="+255"
-                   readOnly
-                   className="bg-marathon-gray-light"
-+                /> */}
-+              {/* </div> */}
-+                <PhoneNumberInput 
-+                label="Representative Phone"
-+                value={formData.representativePhone}
-+                onChange={(value: string) => {
-+                  updateFormData("representativePhone", value);
-+                }}
-+                required
-                 />
--              </div>
--              <div className="md:col-span-2">
--                <FormInput
+ .hover\:scrollbar-thumb-blue-300:hover::-webkit-scrollbar-thumb {
+   background-color: rgb(147 197 253);
+-} */
+\ No newline at end of file
++} */
 +
-+              {/* <div className="md:col-span-2"> */}
-+                {/* <FormInput
-                   label="&nbsp;"
-                   placeholder="Month"
-                   required
-@@ -182,8 +191,8 @@ export function GroupRegistration({
-                     updateFormData("representativePhone", e.target.value)
-                   }
-                   error={errors.representativePhone}
--                />
--              </div>
-+                /> */}
-+              {/* </div> */}
-             </div>
- 
-             {/* Terms and Conditions */}
-diff --git a/src/components/shared/registration/MarathonRegistration.tsx b/src/components/shared/registration/MarathonRegistration.tsx
-index 75c6cca..d01e766 100644
---- a/src/components/shared/registration/MarathonRegistration.tsx
-+++ b/src/components/shared/registration/MarathonRegistration.tsx
-@@ -54,17 +54,17 @@ export function MarathonRegistration() {
-   };
- 
-   return (
--    <div className="min-h-screen bg-background py-8 px-4">
-+    <div className="  py-8 px-4 border rounded-lg">
-       <div className="max-w-6xl mx-auto">
-         {/* Header */}
--        <div className="text-center mb-12 animate-fade-in">
-+        {/* <div className="text-center mb-12 animate-fade-in">
-           <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-4">
-             Group Marathon 2025 Registration
-           </h1>
-           <p className="text-lg text-marathon-gray max-w-2xl mx-auto">
-             Complete the registration form to secure your spot in the event.
-           </p>
--        </div>
-+        </div> */}
- 
-         {/* Stepper */}
-         <div className="mb-12 animate-slide-in">
-diff --git a/src/components/ui/form-select.tsx b/src/components/ui/form-select.tsx
-index 0ef0455..835f4df 100644
---- a/src/components/ui/form-select.tsx
-+++ b/src/components/ui/form-select.tsx
-@@ -1,51 +1,139 @@
--import { forwardRef } from "react";
--import { cn } from "@/lib/utils";
--import { ChevronDown } from "lucide-react";
-+import { Label } from '@/components/ui/label';
-+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select';
- 
--export interface FormSelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
-+export interface SelectOption {
-+  value: string;
-+  label: string;
-+  disabled?: boolean;
++
++.logo {
++  height: 6em;
++  padding: 1.5em;
++  will-change: filter;
++  transition: filter 300ms;
++}
++.logo:hover {
++  filter: drop-shadow(0 0 2em #646cffaa);
++}
++.logo.react:hover {
++  filter: drop-shadow(0 0 2em #61dafbaa);
 +}
 +
-+interface FormSelectProps {
-+  /**
-+   * Current selected value
-+   */
-+  value: string;
-+  /**
-+   * Callback function called when value changes
-+   */
-+  onValueChange: (value: string) => void;
-+  /**
-+   * Array of options to display
-+   */
-+  options: SelectOption[];
-+  /**
-+   * Label text for the select field
-+   */
-   label?: string;
--  error?: string;
-+  /**
-+   * Placeholder text when no option is selected
-+   */
-+  placeholder?: string;
-+  /**
-+   * Custom CSS class for the container
-+   */
-+  className?: string;
-+  /**
-+   * Custom CSS class for the select trigger
-+   */
-+  triggerClassName?: string;
-+  /**
-+   * Custom CSS class for the label
-+   */
-+  labelClassName?: string;
-+  /**
-+   * Whether the component is disabled
-+   * @default false
-+   */
-+  disabled?: boolean;
-+  /**
-+   * Whether the field is required
-+   * @default false
-+   */
-   required?: boolean;
--  options: { value: string; label: string }[];
-+  /**
-+   * Error message to display
-+   */
-+  error?: string;
-+  /**
-+   * Helper text to display below the select
-+   */
-+  helperText?: string;
-+  /**
-+   * ID for the select element
-+   */
-+  id?: string;
-+  /**
-+   * Name attribute for the select element
-+   */
-+  name?: string;
- }
++@keyframes logo-spin {
++  from {
++    transform: rotate(0deg);
++  }
++  to {
++    transform: rotate(360deg);
++  }
++}
++
++@media (prefers-reduced-motion: no-preference) {
++  a:nth-of-type(2) .logo {
++    animation: logo-spin infinite 20s linear;
++  }
++}
++
++
++
++.read-the-docs {
++  color: #888;
++}
+\ No newline at end of file
+diff --git a/src/app/not-found.tsx b/src/app/not-found.tsx
+index 1652d7c..1408dd7 100644
+--- a/src/app/not-found.tsx
++++ b/src/app/not-found.tsx
+@@ -1,91 +1,187 @@
++// "use client";
++
++// import { Button } from "@/components/ui/button";
++// import { ArrowLeft, Home, Search } from "lucide-react";
++// import { useRouter } from "next/navigation";
++// import { useEffect, useState } from "react";
++
++// export default function NotFound() {
++//   const [mounted, setMounted] = useState(false);
++//   const router = useRouter();
++
++//   useEffect(() => {
++//     setMounted(true);
++//   }, []);
++
++//   return (
++//     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center px-4 sm:px-6 lg:px-8">
++//       <div
++//         className={`max-w-lg w-full text-center transition-all duration-1000 ${
++//           mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
++//         }`}
++//       >
++//         {/* 404 Number */}
++//         <div className="relative mb-8">
++//           <h1 className="text-8xl sm:text-9xl font-bold text-slate-200 select-none">
++//             404
++//           </h1>
++//           <div className="absolute inset-0 flex items-center justify-center">
++//             <Search className="w-16 h-16 text-slate-400 animate-pulse" />
++//           </div>
++//         </div>
++
++//         {/* Error Message */}
++//         <div className="mb-8">
++//           <h2 className="text-2xl sm:text-3xl font-semibold text-slate-800 mb-4">
++//             Page Not Found
++//           </h2>
++//           <p className="text-slate-600 text-lg leading-relaxed">
++//             Oops! The page you&#39;re looking for doesn&#39;t exist. It might
++//             have been moved, deleted, or you entered the wrong URL.
++//           </p>
++//         </div>
++
++//         {/* Action Buttons */}
++//         <div className="flex flex-col sm:flex-row gap-4 justify-center">
++//           {/* <button
++//           onClick={()=>{}}
++//           className="inline-flex items-center justify-center px-6 py-3 border border-slate-300 text-base font-medium rounded-lg text-slate-700 bg-white hover:bg-slate-50 hover:border-slate-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 transition-all duration-200 transform hover:scale-105"
++//         >
++//           <ArrowLeft className="w-5 h-5 mr-2" />
++//           Go Back
++//         </button> */}
++//           <Button
++//             className="transition-all duration-200 transform hover:scale-105"
++//             variant="outline"
++//             onClick={() => router.back()}
++//           >
++//             <ArrowLeft className="w-5 h-5" /> Go Back
++//           </Button>
++//           <Button
++//             className="transition-all duration-200 transform hover:scale-105"
++//             onClick={() => router.replace("/")}
++//           >
++//             <Home className="w-5 h-5" /> Go Home
++//           </Button>
++
++//           {/* <button
++//           onClick={()=>{}}
++//           className="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-lg text-white bg-slate-800 hover:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-xl"
++//         >
++//           <Home className="w-5 h-5 mr-2" />
++//           Go Home
++//         </button> */}
++//         </div>
++
++//         {/* Decorative Elements */}
++//         <div className="mt-12 flex justify-center space-x-2">
++//           <div className="w-2 h-2 bg-slate-300 rounded-full animate-pulse"></div>
++//           <div
++//             className="w-2 h-2 bg-slate-400 rounded-full animate-pulse"
++//             style={{ animationDelay: "0.2s" }}
++//           ></div>
++//           <div
++//             className="w-2 h-2 bg-slate-500 rounded-full animate-pulse"
++//             style={{ animationDelay: "0.4s" }}
++//           ></div>
++//         </div>
++//       </div>
++//     </div>
++//   );
++// }
++
+ "use client";
  
--const FormSelect = forwardRef<HTMLSelectElement, FormSelectProps>(
--  ({ className, label, error, required, options, ...props }, ref) => {
--    return (
--      <div className="space-y-2">
--        {label && (
--          <label className="text-sm font-medium text-foreground">
--            {label}
--            {required && <span className="text-destructive ml-1">*</span>}
--          </label>
--        )}
--        <div className="relative">
--          <select
--            className={cn(
--              "flex h-12 w-full appearance-none rounded-lg border border-form-border bg-form-background px-4 py-3 pr-10 text-sm transition-all duration-300",
--              "focus:border-form-focus focus:ring-2 focus:ring-form-focus/20 focus:outline-none",
--              "hover:border-marathon-gray-light hover:bg-marathon-gray-light/30",
--              "disabled:cursor-not-allowed disabled:opacity-50",
--              error && "border-destructive focus:border-destructive focus:ring-destructive/20",
--              className
--            )}
--            ref={ref}
--            {...props}
--          >
--            {options.map((option) => (
--              <option key={option.value} value={option.value}>
--                {option.label}
--              </option>
--            ))}
--          </select>
--          <ChevronDown className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-marathon-gray pointer-events-none" />
--        </div>
--        {error && <p className="text-sm text-destructive">{error}</p>}
--      </div>
--    );
--  }
--);
+-import { Button } from "@/components/ui/button";
+-import { ArrowLeft, Home, Search } from "lucide-react";
+ import { useRouter } from "next/navigation";
+-import { useEffect, useState } from "react";
++import "./globals.css";
++import { Button } from "@/components/ui/button";
++import { ArrowLeft, Home } from "lucide-react";
++// import { useToast } from "@/hooks/use-toast";
+ 
+ export default function NotFound() {
+-  const [mounted, setMounted] = useState(false);
+   const router = useRouter();
 -
--FormSelect.displayName = "FormSelect";
-+export const FormSelect: React.FC<FormSelectProps> = ({
-+  value,
-+  onValueChange,
-+  options,
-+  label,
-+  placeholder = "Select an option",
-+  className = "mb-6",
-+  triggerClassName = "w-full hover:border-primary transition-colors duration-200",
-+  labelClassName = "text-sm font-medium text-foreground mb-2 block",
-+  disabled = false,
-+  required = false,
-+  error,
-+  helperText,
-+  id,
-+  name
-+}) => {
-+  return (
-+    <div className={className}>
-+      {label && (
-+        <Label 
-+          htmlFor={id} 
-+          className={`${labelClassName} ${required ? "after:content-['*'] after:ml-0.5 after:text-red-500" : ""}`}
-+        >
-+          {label}
-+        </Label>
-+      )}
-+      <Select 
-+        value={value} 
-+        onValueChange={onValueChange}
-+        disabled={disabled}
-+        name={name}
-+      >
-+        <SelectTrigger 
-+          id={id}
-+          className={`${triggerClassName} ${error ? 'border-red-500 focus:border-red-500' : ''}`}
-+        >
-+          <SelectValue placeholder={placeholder} />
-+        </SelectTrigger>
-+        <SelectContent>
-+          {options.map((option) => (
-+            <SelectItem 
-+              key={option.value} 
-+              value={option.value}
-+              disabled={option.disabled}
-+            >
-+              {option.label}
-+            </SelectItem>
-+          ))}
-+        </SelectContent>
-+      </Select>
-+      
-+      {/* Error message */}
-+      {error && (
-+        <p className="mt-1 text-sm text-red-600" role="alert">
-+          {error}
-+        </p>
-+      )}
-+      
-+      {/* Helper text */}
-+      {helperText && !error && (
-+        <p className="mt-1 text-sm text-gray-600">
-+          {helperText}
-+        </p>
-+      )}
-+    </div>
-+  );
-+};
+-  useEffect(() => {
+-    setMounted(true);
+-  }, []);
++  const currentYear = new Date().getFullYear();
  
--export { FormSelect };
-\ No newline at end of file
-+export default FormSelect;
-\ No newline at end of file
-diff --git a/src/components/ui/stepper.tsx b/src/components/ui/stepper.tsx
-index dfb2769..b970657 100644
---- a/src/components/ui/stepper.tsx
-+++ b/src/components/ui/stepper.tsx
-@@ -29,11 +29,11 @@ export function Stepper({ steps, currentStep, className }: StepperProps) {
-               <div className="flex flex-col items-center">
-                 <div
-                   className={cn(
--                    "relative flex h-10 w-10 items-center justify-center rounded-full border-2 transition-all duration-300",
-+                    "relative flex h-10 w-10 items-center justify-center rounded-full border-2 transition-all duration-300 cursor-pointer",
-                     {
-                       "border-primary-950 bg-primary-950 text-white": isActive,
-                       "border-primary-900 bg-primary-900 text-white": isCompleted,
--                      "border-step-inactive bg-background text-marathon-gray": !isActive && !isCompleted,
-+                      "border-step-inactive bg-gray-100 text-marathon-gray": !isActive && !isCompleted,
-                     }
-                   )}
-                 >
-@@ -70,7 +70,7 @@ export function Stepper({ steps, currentStep, className }: StepperProps) {
-               {!isLast && (
-                 <div
-                   className={cn(
--                    "mx-4 h-0.5 w-16 transition-colors duration-300 mt-[-2rem]",
-+                    "mx-2 h-0.5 w-16 transition-colors duration-300 mt-[-2rem]",
-                     {
-                       "bg-primary-950": stepNumber < currentStep,
-                       "bg-gray-300": stepNumber >= currentStep,
-diff --git a/tsconfig.json b/tsconfig.json
-index c133409..5fabbce 100644
---- a/tsconfig.json
-+++ b/tsconfig.json
-@@ -22,6 +22,6 @@
-       "@/*": ["./src/*"]
-     }
-   },
--  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
-+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/app/(Pages)/(Landing)/events/[id]/registration"],
-   "exclude": ["node_modules"]
+   return (
+-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center px-4 sm:px-6 lg:px-8">
++    <section className="relative min-h-screen flex items-center justify-center bg-[linear-gradient(180deg,hsl(240_10%_3.9%),hsl(240_8%_6%))] overflow-hidden">
++      {/* Animated background glow */}
++      <div className="absolute inset-0 bg-gradient-glow animate-glow-pulse" />
++
++      {/* Floating orbs */}
++      <div
++        className="absolute top-1/4 left-1/4 w-32 h-32 bg-[linear-gradient(135deg,#04392B,#E43B43)] rounded-full opacity-20 animate-float"
++        style={{ animationDelay: "0s" }}
++      />
+       <div
+-        className={`max-w-lg w-full text-center transition-all duration-1000 ${
+-          mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
+-        }`}
+-      >
+-        {/* 404 Number */}
+-        <div className="relative mb-8">
+-          <h1 className="text-8xl sm:text-9xl font-bold text-slate-200 select-none">
+-            404
++        className="absolute top-1/3 right-1/4 w-24 h-24 bg-[linear-gradient(135deg,#04392B,#E43B43)] rounded-full opacity-15 animate-float"
++        style={{ animationDelay: "2s" }}
++      />
++      <div
++        className="absolute bottom-1/3 left-1/3 w-20 h-20 bg-[linear-gradient(135deg,#04392B,#E43B43)] rounded-full opacity-25 animate-float"
++        style={{ animationDelay: "1s" }}
++      />
++
++      <div className="relative z-10 container mx-auto px-4 text-center">
++        <div className="animate-fade-in">
++          <h1 className="text-6xl md:text-8xl font-bold mb-6 bg-[linear-gradient(135deg,#04392B,#E43B43)] bg-clip-text text-transparent leading-tight">
++            Coming Soon
+           </h1>
+-          <div className="absolute inset-0 flex items-center justify-center">
+-            <Search className="w-16 h-16 text-slate-400 animate-pulse" />
+-          </div>
+-        </div>
+ 
+-        {/* Error Message */}
+-        <div className="mb-8">
+-          <h2 className="text-2xl sm:text-3xl font-semibold text-slate-800 mb-4">
+-            Page Not Found
+-          </h2>
+-          <p className="text-slate-600 text-lg leading-relaxed">
+-            Oops! The page you&#39;re looking for doesn&#39;t exist. It might
+-            have been moved, deleted, or you entered the wrong URL.
++          <p className="text-xl md:text-2xl text-muted-foreground mb-8 max-w-2xl mx-auto leading-relaxed">
++            We&apos;re building something incredible. Be the first to experience
++            the future.
+           </p>
+-        </div>
+ 
+-        {/* Action Buttons */}
+-        <div className="flex flex-col sm:flex-row gap-4 justify-center">
+-          {/* <button
+-          onClick={()=>{}}
+-          className="inline-flex items-center justify-center px-6 py-3 border border-slate-300 text-base font-medium rounded-lg text-slate-700 bg-white hover:bg-slate-50 hover:border-slate-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 transition-all duration-200 transform hover:scale-105"
+-        >
+-          <ArrowLeft className="w-5 h-5 mr-2" />
+-          Go Back
+-        </button> */}
+-          <Button
+-            className="transition-all duration-200 transform hover:scale-105"
+-            variant="outline"
+-            onClick={() => router.back()}
+-          >
+-            <ArrowLeft className="w-5 h-5" /> Go Back
+-          </Button>
+-          <Button
+-            className="transition-all duration-200 transform hover:scale-105"
+-            onClick={() => router.replace("/")}
+-          >
+-            <Home className="w-5 h-5" /> Go Home
+-          </Button>
+-
+-          {/* <button
+-          onClick={()=>{}}
+-          className="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-lg text-white bg-slate-800 hover:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-xl"
+-        >
+-          <Home className="w-5 h-5 mr-2" />
+-          Go Home
+-        </button> */}
+-        </div>
++          {/* <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto mb-8">
++            <Input
++              type="email"
++              placeholder="Enter your email"
++              value={email}
++              onChange={(e) => setEmail(e.target.value)}
++              className="flex-1 bg-secondary/50 border-border/50 backdrop-blur-sm"
++              required
++            />
++            <Button 
++              type="submit" 
++              className="bg-[linear-gradient(135deg,#04392B,#E43B43)] hover:shadow-glow-primary transition-all duration-300 font-medium"
++            >
++              Notify Me
++            </Button>
++          </form>
++           */}
++          <div className="flex items-center justify-center gap-8 text-sm text-muted-foreground">
++            <span className="flex items-center gap-2">
++              <div className="w-2 h-2 bg-[linear-gradient(135deg,#04392B,#E43B43)] rounded-full animate-glow-pulse" />
++              Modern Design
++            </span>
++            <span className="flex items-center gap-2">
++              <div className="w-2 h-2 bg-[linear-gradient(135deg,#04392B,#E43B43)] rounded-full animate-glow-pulse" />
++              Fast & Secure
++            </span>
++            <span className="flex items-center gap-2">
++              <div className="w-2 h-2 bg-[linear-gradient(135deg,#04392B,#E43B43)] rounded-full animate-glow-pulse" />
++              Coming {currentYear}
++            </span>
++          </div>
++          <div className="flex justify-center mt-10 gap-5">
++            <Button
++              className="group transition-all duration-200 transform hover:scale-105"
++              onClick={() => router.back()}
++            >
++              <ArrowLeft className="" />
++              Go Back
++            </Button>
+ 
+-        {/* Decorative Elements */}
+-        <div className="mt-12 flex justify-center space-x-2">
+-          <div className="w-2 h-2 bg-slate-300 rounded-full animate-pulse"></div>
+-          <div
+-            className="w-2 h-2 bg-slate-400 rounded-full animate-pulse"
+-            style={{ animationDelay: "0.2s" }}
+-          ></div>
+-          <div
+-            className="w-2 h-2 bg-slate-500 rounded-full animate-pulse"
+-            style={{ animationDelay: "0.4s" }}
+-          ></div>
++            <Button
++              className="group transition-all duration-200 transform hover:scale-105"
++              onClick={() => router.replace("/")}
++            >
++              <Home />
++              Go Home
++            </Button>
++          </div>
+         </div>
+       </div>
+-    </div>
++    </section>
+   );
  }
+diff --git a/src/components/layout/Navbar.tsx b/src/components/layout/Navbar.tsx
+index 922d2c9..2866643 100644
+--- a/src/components/layout/Navbar.tsx
++++ b/src/components/layout/Navbar.tsx
+@@ -36,6 +36,7 @@ export default function Navbar() {
+     { href: "/events", label: "Events", icon: Calendar },
+     { href: "/partners", label: "Partners", icon: Users },
+     { href: "/gallery", label: "Gallery", icon: ImageIcon },
++    { href: "/market-place", label: "Market Place", icon: ImageIcon },
+   ];
+ 
+   const handleLanguageSelect = (lang: { code: string; name: string }) => {
+diff --git a/src/components/layout/Sidebar.tsx b/src/components/layout/Sidebar.tsx
+index 309b148..9e0f311 100644
+--- a/src/components/layout/Sidebar.tsx
++++ b/src/components/layout/Sidebar.tsx
+@@ -21,6 +21,7 @@ import {
+   Users,
+   BookUser,
+   NotebookPen,
++  ShoppingBag,
+ } from "lucide-react";
+ import { cn } from "@/lib/utils";
+ import Link from "next/link";
+@@ -38,6 +39,7 @@ const iconMap = {
+   Users,
+   BookUser,
+   NotebookPen,
++  ShoppingBag
+   // Add more icons as needed
+ } as const;
+ 
+diff --git a/src/components/shared/Card/ImageCard.tsx b/src/components/shared/Card/ImageCard.tsx
+index b4e1ac8..7c57117 100644
+--- a/src/components/shared/Card/ImageCard.tsx
++++ b/src/components/shared/Card/ImageCard.tsx
+@@ -42,7 +42,7 @@ function ImageCard({ event, className = "" }: ImageCardProps) {
+       {/* Content */}
+       <div className="relative z-10 flex h-80 flex-col justify-end p-6">
+         <div className="transform transition-all duration-300 group-hover:translate-y-[-4px]">
+-          <h3 className="text-2xl font-bold text-white mb-2 drop-shadow-lg">
++          <h3 className="text-xl font-bold text-white mb-2 drop-shadow-lg">
+             {event.title}
+           </h3>
+           {/* <p className="text-white/90 text-sm font-medium drop-shadow-md opacity-0 transform translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 delay-100">
+diff --git a/src/components/ui/apple-cards-carousel.tsx b/src/components/ui/apple-cards-carousel.tsx
+index 60fb56f..abce48c 100644
+--- a/src/components/ui/apple-cards-carousel.tsx
++++ b/src/components/ui/apple-cards-carousel.tsx
+@@ -137,13 +137,13 @@ export const AppleCardsCarousel = ({ items, initialScroll = 0 }: AppleCardsCarou
+     >
+       <div className="relative w-full space-y-4">
+         <div
+-          className="flex w-full overflow-x-scroll overscroll-x-auto scroll-smooth [scrollbar-width:none] "
++          className="flex w-full overflow-x-scroll overscroll-x-auto scroll-smooth [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:[display:none]"
+           ref={carouselRef}
+           onScroll={checkScrollability}
+         >
+           <div
+             className={cn(
+-              "flex justify-start gap-4 pl-4",
++              "flex justify-start gap-4 pl-4 overflow-y-hidden",
+               "mx-auto ", // remove max-w-4xl if you want the carousel to span the full width of its container
+             )}
+           >
+@@ -163,7 +163,7 @@ export const AppleCardsCarousel = ({ items, initialScroll = 0 }: AppleCardsCarou
+                   },
+                 }}
+                 key={"card" + index}
+-                className="flex-shrink-0"
++                className="flex-shrink-0 py-3"
+               >
+                 {item}
+               </motion.div>
+diff --git a/src/components/ui/card.tsx b/src/components/ui/card.tsx
+index 938aa22..d414db4 100644
+--- a/src/components/ui/card.tsx
++++ b/src/components/ui/card.tsx
+@@ -9,7 +9,7 @@ const Card = React.forwardRef<
+   <div
+     ref={ref}
+     className={cn(
+-      "rounded-lg border bg-card text-card-foreground shadow-sm",
++      "rounded-lg border bg-card text-card-foreground ",
+       className
+     )}
+     {...props}
+diff --git a/src/components/ui/input.tsx b/src/components/ui/input.tsx
+index 03295ca..cbb36cb 100644
+--- a/src/components/ui/input.tsx
++++ b/src/components/ui/input.tsx
+@@ -9,7 +9,7 @@ function Input({ className, type, ...props }: React.ComponentProps<"input">) {
+       data-slot="input"
+       className={cn(
+         "file:text-foreground placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground dark:bg-input/30 border-input flex h-9 w-full min-w-0 rounded-md border bg-transparent px-3 py-1 text-base shadow-xs transition-[color,box-shadow] outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
+-        "focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]",
++        "focus-visible:border-ring focus-visible:ring-primary-950/50 focus-visible:ring-1",
+         "aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive",
+         className
+       )}
+diff --git a/src/data/DashboardRoutes.ts b/src/data/DashboardRoutes.ts
+index a3cdb67..bcb68b3 100644
+--- a/src/data/DashboardRoutes.ts
++++ b/src/data/DashboardRoutes.ts
+@@ -52,7 +52,7 @@ export const dashboardRoutes: NavigationItemData[] = [
+   },
+   {
+     label: "Market Place",
+-    iconName: "NotebookPen",
++    iconName: "ShoppingBag",
+     href: "/dashboard/market-place",
+   },
+   {
