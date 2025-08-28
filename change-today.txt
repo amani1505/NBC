@@ -1325,3 +1325,1292 @@ index 2b03c98..e32e5e6 100644
 +  --tw-text-opacity: initial;
 +}
 \ No newline at end of file
+
+
+
+
+diff --git a/src/app/(PageSections)/Auth/LoginPageSection.tsx b/src/app/(PageSections)/Auth/LoginPageSection.tsx
+index c2ce2c0..355c9c9 100644
+--- a/src/app/(PageSections)/Auth/LoginPageSection.tsx
++++ b/src/app/(PageSections)/Auth/LoginPageSection.tsx
+@@ -1,53 +1,71 @@
+ import { Button } from "@/components/ui/button";
+ import { FormInput } from "@/components/ui/form-input";
++import { Mail } from "lucide-react";
+ import Image from "next/image";
++import Link from "next/link";
+ import React from "react";
+ 
+ function LoginPageSection() {
+-  const bg = "/images/kiganjani-bg.svg";
+   return (
+-    <div
+-      className="h-[51vh] min-h-[100vh] bg-primary-700 relative flex justify-center items-center"
+-      style={{
+-        backgroundImage: `url(${bg})`,
+-        backgroundSize: "cover",
+-        backgroundPosition: "center",
+-        backgroundRepeat: "no-repeat",
+-      }}
+-    >
+-      <div className="bg-white  space-y-6 flex flex-col items- justify-center py-11 px-11 rounded-lg  w-1/3">
+-        <div className="justify-center items-center flex">
+-          <Image
+-            src="/images/logo.svg"
+-            alt="NBC Logo"
+-            width={100}
+-            height={150}
+-          />
+-        </div>
+-        <div className="text-center">
+-          <h2 className="text-lg font-semibold">Welcome To NBC Bank</h2>
+-          <p className="text-sm text-gray-400">
+-            Create your account to enjoy more of self service
+-          </p>
+-        </div>
++    <div className="w-full space-y-6">
++      {/* Logo Section */}
++      <div className="flex justify-center items-center">
++        <Image
++          src="/images/logo.svg"
++          alt="NBC Logo"
++          width={80}
++          height={120}
++          className="sm:w-[100px] sm:h-[150px]"
++        />
++      </div>
++
++      {/* Header Section */}
++      <div className="text-center space-y-2">
++        <h2 className="text-lg sm:text-xl font-semibold text-primary-950">
++          Welcome To NBC Bank
++        </h2>
++        <p className="text-sm sm:text-base text-gray-400 leading-relaxed">
++          Login Into your Account to enjoy our self service products
++        </p>
++      </div>
++
++      {/* Form Section */}
++      <div className="space-y-4">
++        <FormInput
++          label="Email Address"
++          placeholder="Enter your email"
++          leftIcon={<Mail size={18} />}
++        />
+ 
+-        <div className="space-y-4">
+-          <div className="space-y-4">
+-            <FormInput label="Emai Address" placeholder="" />
++        <FormInput
++          type="password"
++          label="Password"
++          placeholder="Enter your password"
++          showPasswordToggle={true}
++        />
++      </div>
++
++      {/* Login Button */}
++      <div className="pt-2">
++        <Button className="w-full py-3 text-base font-medium">
++          Login
++        </Button>
++      </div>
+ 
+-            <FormInput
+-              type="password"
+-              label="Password"
+-              // showPasswordToggle={true}
+-            />
+-          </div>
+-        </div>
+-        <div>
+-          <Button className="w-full">Login</Button>
+-        </div>
++      {/* Sign Up Link */}
++      <div className="text-center">
++        <p className="text-sm sm:text-base text-gray-400">
++          Don&apos;t Have an Account?{" "}
++          <Link 
++            href="auth/signup" 
++            className="text-primary-950 hover:underline font-medium transition-all duration-200"
++          >
++            Sign Up
++          </Link>
++        </p>
+       </div>
+     </div>
+   );
+ }
+ 
+-export default LoginPageSection;
++export default LoginPageSection;
+\ No newline at end of file
+diff --git a/src/app/(PageSections)/Auth/SignupPageSection.tsx b/src/app/(PageSections)/Auth/SignupPageSection.tsx
+index c2801be..4c77e1e 100644
+--- a/src/app/(PageSections)/Auth/SignupPageSection.tsx
++++ b/src/app/(PageSections)/Auth/SignupPageSection.tsx
+@@ -1,60 +1,142 @@
+-import { Button } from '@/components/ui/button';
+-import { FormInput } from '@/components/ui/form-input';
+-import Image from 'next/image';
+-import React from 'react'
++"use client";
++
++import { Button } from "@/components/ui/button";
++import { Checkbox } from "@/components/ui/checkbox";
++import { FormInput } from "@/components/ui/form-input";
++import FormSelect from "@/components/ui/form-select";
++import PhoneNumberInput from "@/components/ui/phone-number-input";
++import Image from "next/image";
++import Link from "next/link";
++import React, { useState } from "react";
+ 
+ function SignupPageSection() {
+-    const bg = "/images/kiganjani-bg.svg";
+-    return (
+-      <div
+-        className="h-[51vh] min-h-[100vh] bg-primary-700 relative flex justify-center items-center"
+-        style={{
+-          backgroundImage: `url(${bg})`,
+-          backgroundSize: "cover",
+-          backgroundPosition: "center",
+-          backgroundRepeat: "no-repeat",
+-        }}
+-      >
+-        <div className="bg-white  space-y-6 flex flex-col items- justify-center py-11 px-11 rounded-lg  w-1/3">
+-          <div className="justify-center items-center flex">
+-            <Image src="/images/logo.svg" alt="NBC Logo" width={100} height={150} />
+-          </div>
+-          <div className="text-center">
+-            <h2 className="text-lg font-semibold">Welcome To NBC Bank</h2>
+-            <p className="text-sm text-gray-400">
+-              Create your account to enjoy more of self service
+-            </p>
+-          </div>
+-  
+-          <div className="space-y-4">
+-            <div className="grid grid-cols-2 gap-4  w-full">
+-              <FormInput
+-                label="First Name"
+-                placeholder="Enter your first name"
+-              />
+-              <FormInput label="Last Name" placeholder="Enter your last name" />
+-            </div>
+-            <div className="space-y-4">
+-              <FormInput label="Emai Address" placeholder="" />
+-              <FormInput label="Phone Number" placeholder="" />
+-              <FormInput
+-                type="password"
+-                label="Password"
+-                // showPasswordToggle={true}
+-              />
+-              <FormInput
+-                type="password"
+-                label="Confirm Password"
+-                // showPasswordToggle={true}
+-              />
+-            </div>
+-          </div>
+-          <div>
+-            <Button  className="w-full">Sign Up</Button>
+-          </div>
++  const [userTypeOptions] = useState([
++    { label: "Individual", value: "individual" },
++    { label: "Group", value: "group" },
++  ]);
++
++  return (
++    <div className="w-full space-y-6">
++      {/* Logo Section */}
++      <div className="flex justify-center items-center">
++        <Image
++          src="/images/logo.svg"
++          alt="NBC Logo"
++          width={80}
++          height={120}
++          className="sm:w-[100px] sm:h-[150px]"
++        />
++      </div>
++
++      {/* Header Section */}
++      <div className="text-center space-y-2">
++        <h2 className="text-lg sm:text-xl font-semibold text-primary-950">
++          Welcome To NBC Bank
++        </h2>
++        <p className="text-sm sm:text-base text-gray-400 leading-relaxed">
++          Create your account to enjoy more of self service
++        </p>
++      </div>
++
++      {/* Form Section */}
++      <div className="space-y-4">
++        {/* Name Fields - Stack on mobile, side by side on larger screens */}
++        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
++          <FormInput 
++            label="First Name" 
++            placeholder="Enter your first name" 
++          />
++          <FormInput 
++            label="Last Name" 
++            placeholder="Enter your last name" 
++          />
+         </div>
++
++        {/* Other Form Fields */}
++        <div className="space-y-4">
++          <FormInput 
++            label="Email Address" 
++            placeholder="Enter your email address" 
++          />
++          
++          <PhoneNumberInput
++            label="Phone Number"
++            required={true}
++            value=""
++            onChange={(phone: string) => console.log(phone)}
++            placeholder="Enter your phone number"
++          />
++
++          <FormSelect
++            options={userTypeOptions}
++            label="Account Type"
++            value=""
++            onValueChange={(value) => console.log(value)}
++            placeholder="Choose type"
++            className="w-full"
++          />
++
++          <FormInput
++            type="password"
++            label="Password"
++            placeholder="Enter your password"
++            showPasswordToggle={true}
++          />
++          
++          <FormInput
++            type="password"
++            label="Confirm Password"
++            placeholder="Confirm your password"
++            showPasswordToggle={true}
++          />
++        </div>
++      </div>
++
++      {/* Terms and Conditions */}
++      <div className="flex items-start space-x-3 pt-2">
++        <Checkbox
++          id="terms"
++          checked={true}
++          onCheckedChange={(checked) => console.log(checked)}
++          className="mt-1 flex-shrink-0"
++        />
++        <div className="space-y-1">
++          <label
++            htmlFor="terms"
++            className="text-sm font-medium text-foreground cursor-pointer leading-relaxed"
++          >
++            I have read and accepted{" "}
++            <Link
++              href="#"
++              className="text-primary-950 hover:underline transition-colors duration-300"
++            >
++              Terms and Conditions
++            </Link>
++          </label>
++        </div>
++      </div>
++
++      {/* Sign Up Button */}
++      <div className="pt-2">
++        <Button className="w-full py-3 text-base font-medium">
++          Sign Up
++        </Button>
++      </div>
++
++      {/* Sign In Link */}
++      <div className="text-center">
++        <p className="text-sm sm:text-base text-gray-400">
++          Already Have an Account?{" "}
++          <Link 
++            href="/auth" 
++            className="text-primary-950 hover:underline font-medium transition-all duration-200"
++          >
++            Sign In
++          </Link>
++        </p>
+       </div>
+-    );
++    </div>
++  );
+ }
+ 
+-export default SignupPageSection
++export default SignupPageSection;
+\ No newline at end of file
+diff --git a/src/app/(PageSections)/Landing/HomePageSection.tsx b/src/app/(PageSections)/Landing/HomePageSection.tsx
+index 1bfd44e..04605fa 100644
+--- a/src/app/(PageSections)/Landing/HomePageSection.tsx
++++ b/src/app/(PageSections)/Landing/HomePageSection.tsx
+@@ -20,6 +20,7 @@ function HomePageSection() {
+         "Join thousands of runners in Tanzania's premier marathon event. Experience the thrill of running through the heart of Dodoma.",
+       backgroundImage: "/images/marathon-hero.png",
+       cta1: "Register",
++      countdownDate: "2025-12-31T06:00:00Z", 
+       cta1Action() {
+         router.push("events/marathon/registration");
+       },
+@@ -38,6 +39,7 @@ function HomePageSection() {
+       id: "2",
+       title: "Register",
+       subtitle: "Today",
++      countdownDate: "2025-12-31T06:00:00Z", 
+       description:
+         "Secure your spot in the most anticipated marathon of the year. Early bird registration now open with special discounts.",
+       backgroundImage: "/images/marathon-1.jpg",
+@@ -62,6 +64,7 @@ function HomePageSection() {
+       subtitle: "Training",
+       description:
+         "Get ready for the challenge with our comprehensive training programs designed for all fitness levels.",
++        countdownDate: "2025-12-31T06:00:00Z", 
+       backgroundImage: "/images/marathon-2.jpg",
+       cta1: "Register",
+       cta1Action() {
+diff --git a/src/app/(PageSections)/Landing/sections/HomeSections/Parts/OfferingSection.tsx b/src/app/(PageSections)/Landing/sections/HomeSections/Parts/OfferingSection.tsx
+index e83b1e2..188b568 100644
+--- a/src/app/(PageSections)/Landing/sections/HomeSections/Parts/OfferingSection.tsx
++++ b/src/app/(PageSections)/Landing/sections/HomeSections/Parts/OfferingSection.tsx
+@@ -123,7 +123,7 @@ function OfferingSection({
+               className="flex items-center justify-center gap-1 px-4 lg:px-6 py-3 rounded-xl font-medium transition-all duration-300 
+                        data-[state=active]:bg-blue-950 data-[state=active]:text-white text-center 
+                        data-[state=active]:shadow-lg data-[state=active]:shadow-gray-200/50 
+-                       data-[state=active]:scale-105 text-sm lg:text-base cursor-pointer"
++                       data-[state=active]:scale-105 text-sm lg:text-base cursor-pointer z-[99]"
+             >
+             <div>  {tab.icon && <span className="w-4 h-4 lg:w-7 lg:h-7">{tab.icon}</span>}</div>
+               <span>{tab.label}</span>
+diff --git a/src/app/(Pages)/(auth)/login/page.tsx b/src/app/(Pages)/(auth)/login/page.tsx
+deleted file mode 100644
+index 812109d..0000000
+--- a/src/app/(Pages)/(auth)/login/page.tsx
++++ /dev/null
+@@ -1,12 +0,0 @@
+-import LoginPageSection from "@/app/(PageSections)/Auth/LoginPageSection";
+-import React from "react";
+-
+-function Login() {
+-  return (
+-    <div>
+-      <LoginPageSection />
+-    </div>
+-  );
+-}
+-
+-export default Login;
+diff --git a/src/app/(Pages)/(auth)/signup/page.tsx b/src/app/(Pages)/(auth)/signup/page.tsx
+deleted file mode 100644
+index bf51f6d..0000000
+--- a/src/app/(Pages)/(auth)/signup/page.tsx
++++ /dev/null
+@@ -1,12 +0,0 @@
+-import SignupPageSection from '@/app/(PageSections)/Auth/SignupPageSection'
+-import React from 'react'
+-
+-function Signup() {
+-  return (
+-    <div>
+-      <SignupPageSection />
+-    </div>
+-  )
+-}
+-
+-export default Signup
+diff --git a/src/app/(Pages)/dashboard/page.tsx b/src/app/(Pages)/dashboard/page.tsx
+index ca2de0d..3184ef9 100644
+--- a/src/app/(Pages)/dashboard/page.tsx
++++ b/src/app/(Pages)/dashboard/page.tsx
+@@ -1,10 +1,9 @@
+- export default function Page() {
+-    return (
+-        <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
+-            <h1 className="text-4xl font-bold">Dashboard</h1>
+-            <p className="text-lg">Welcome to the dashboard!</p>
+-            {/* Add your dashboard content here */}
+-            <button className="mt-4 bg-blue-500 text-white py-2 px-4 rounded">Click Me</button>
+-        </div>
+-    );
+- }
+\ No newline at end of file
++import DashboardPageSection from "@/app/(PageSections)/Dashboard/DashboardPageSection/DashboardPageSection";
++
++export default function Page() {
++  return (
++    <div>
++      <DashboardPageSection />
++    </div>
++  );
++}
+diff --git a/src/app/(Pages)/dashboard/profile/page.tsx b/src/app/(Pages)/dashboard/profile/page.tsx
+index 4e4095f..65d3ebc 100644
+--- a/src/app/(Pages)/dashboard/profile/page.tsx
++++ b/src/app/(Pages)/dashboard/profile/page.tsx
+@@ -1,13 +1,12 @@
+-import React from 'react'
++import ProfilePageSection from "@/app/(PageSections)/Dashboard/ProfilePageSection/ProfilePageSection";
++import React from "react";
+ 
+ function Profile() {
+   return (
+     <div>
+-      
+-      <h1>Profile</h1>
+-      <p>View and edit your profile information here.</p>
++      <ProfilePageSection />
+     </div>
+-  )
++  );
+ }
+ 
+-export default Profile
++export default Profile;
+diff --git a/src/components/layout/Sidebar.tsx b/src/components/layout/Sidebar.tsx
+index 9e0f311..9a6cae1 100644
+--- a/src/components/layout/Sidebar.tsx
++++ b/src/components/layout/Sidebar.tsx
+@@ -150,9 +150,9 @@ const Sidebar: React.FC<SidebarProps> = ({
+ 
+   // Default theme values
+   const defaultTheme = {
+-    background: "bg-cms-sidebar",
+-    border: "border-border",
+-    shadow: "shadow-cms",
++    background: "bg-white",
++    border: "border-gray-300",
++    shadow: "",
+     headerBackground: "bg-gradient-primary",
+     headerBorder: "border-border",
+     footerBorder: "border-border",
+@@ -373,7 +373,7 @@ const Sidebar: React.FC<SidebarProps> = ({
+                     ${
+                       isItemActive
+                         ? "bg-primary-950 text-white "
+-                        : "bg-gray-100 text-primary-950 hover:bg-gray-200 transition-colors"
++                        : "bg-gray-50 text-primary-950 hover:bg-gray-100 transition-colors"
+                     }
+                     `}
+                 >
+@@ -400,11 +400,11 @@ const Sidebar: React.FC<SidebarProps> = ({
+           key={item.label}
+           href={item.href}
+           onClick={() => handleNavigationClick(item.href, item)}
+-          className={`w-full flex p-2 items-center gap-3 rounded-lg
++          className={`w-full flex px-4 py-3 items-center gap-3 rounded-lg
+             ${
+               isItemActive
+                 ? "bg-primary-950 text-white "
+-                : "bg-gray-100 text-primary-950 hover:bg-gray-200 transition-colors"
++                : "bg-gray-50 text-primary-950 hover:bg-gray-100 transition-colors"
+             }
+             `}
+         >
+diff --git a/src/components/shared/Card/DetailedCard.tsx b/src/components/shared/Card/DetailedCard.tsx
+index 45310cb..37f42ca 100644
+--- a/src/components/shared/Card/DetailedCard.tsx
++++ b/src/components/shared/Card/DetailedCard.tsx
+@@ -2,11 +2,12 @@
+ import { Badge } from "@/components/ui/badge";
+ import { Button } from "@/components/ui/button";
+ import { slugify } from "@/lib/utils";
+-import { ChevronRight } from "lucide-react";
++import { ChevronRight, ClockFading, MapPin,  } from "lucide-react";
+ import Image from "next/image";
+ import Link from "next/link";
+ import { useRouter } from "next/navigation";
+ 
++
+ type PressReleaseCardProps = {
+   image: string;
+   title: string;
+@@ -17,6 +18,9 @@ type PressReleaseCardProps = {
+   learnMoreLink?: string;
+   donateLink?: string;
+   buttonText?: string;
++  date?: string;
++  location?: string;
++  numberOfTickets?: string;
+ };
+ 
+ const DetailedCard = ({
+@@ -29,6 +33,9 @@ const DetailedCard = ({
+   learnMoreLink,
+   donateLink,
+   buttonText,
++  numberOfTickets,
++  location,
++  date,
+ }: PressReleaseCardProps) => {
+   const navigate = useRouter();
+ 
+@@ -89,6 +96,19 @@ const DetailedCard = ({
+         <p className="text-muted-foreground text-xs sm:text-sm leading-relaxed line-clamp-1 flex-grow">
+           {description}
+         </p>
++        {location && date && (
++          <div className="text-sm text-gray-500 flex flex-col sm:flex-row sm:items-center gap-2">
++            <span className="flex items-center gap-2">
++              <ClockFading className="h-4 w-4" />
++              {date}
++            </span>
++            <span className="hidden sm:inline">|</span>
++            <span className="flex items-center gap-2">
++              <MapPin className="h-4 w-4" />
++              {location}
++            </span>
++          </div>
++        )}
+         <div className="flex items-center justify-between mt-auto pt-2">
+           {donateLink && (
+             <Button
+@@ -97,7 +117,7 @@ const DetailedCard = ({
+                 navigate.push(donateLink);
+               }}
+             >
+-           Donate
++              Donate
+               {/* <ChevronRight /> */}
+             </Button>
+           )}
+@@ -114,6 +134,9 @@ const DetailedCard = ({
+               <ChevronRight />
+             </Button>
+           )}
++          {numberOfTickets && (
++            <p className="text-gray-500">{numberOfTickets} Tickets Sold</p>
++          )}
+         </div>
+       </div>
+     </div>
+diff --git a/src/components/shared/Hero/HeroSlider.tsx b/src/components/shared/Hero/HeroSlider.tsx
+index ebb15c9..791b9c6 100644
+--- a/src/components/shared/Hero/HeroSlider.tsx
++++ b/src/components/shared/Hero/HeroSlider.tsx
+@@ -14,10 +14,19 @@ export type HeroSliderI = {
+   cta1: string;
+   cta2: string;
+   thumbnails: string[];
++  countdownDate?: string; // ISO date string for countdown target
++  countdownLabel?: string; // Label for countdown (e.g., "Event Starts In", "Registration Ends In")
+   cta1Action?: () => void;
+   cta2Action?: () => void;
+ };
+ 
++type CountdownTime = {
++  days: number;
++  hours: number;
++  minutes: number;
++  seconds: number;
++};
++
+ type HeroProps = {
+   height?: string;
+   autoplayInterval?: number;
+@@ -38,13 +47,56 @@ function HeroSlider({
+   const [progressKey, setProgressKey] = useState(0);
+   const [touchStart, setTouchStart] = useState<number | null>(null);
+   const [touchEnd, setTouchEnd] = useState<number | null>(null);
++  const [countdownTime, setCountdownTime] = useState<CountdownTime>({
++    days: 0,
++    hours: 0,
++    minutes: 0,
++    seconds: 0,
++  });
+   const intervalRef = useRef<NodeJS.Timeout | null>(null);
++  const countdownRef = useRef<NodeJS.Timeout | null>(null);
+ 
+   // Handle client-side mounting
+   useEffect(() => {
+     setIsMounted(true);
+   }, []);
+ 
++  // Countdown functionality
++  const calculateTimeLeft = (targetDate: string): CountdownTime => {
++    const difference = +new Date(targetDate) - +new Date();
++    
++    if (difference > 0) {
++      return {
++        days: Math.floor(difference / (1000 * 60 * 60 * 24)),
++        hours: Math.floor((difference / (1000 * 60 * 60)) % 24),
++        minutes: Math.floor((difference / 1000 / 60) % 60),
++        seconds: Math.floor((difference / 1000) % 60),
++      };
++    }
++    
++    return { days: 0, hours: 0, minutes: 0, seconds: 0 };
++  };
++
++  // Update countdown every second
++  useEffect(() => {
++    const currentSlideData = heroSlides[currentSlide];
++    
++    if (currentSlideData?.countdownDate && isMounted) {
++      const updateCountdown = () => {
++        setCountdownTime(calculateTimeLeft(currentSlideData.countdownDate!));
++      };
++
++      updateCountdown(); // Initial calculation
++      countdownRef.current = setInterval(updateCountdown, 1000);
++    }
++
++    return () => {
++      if (countdownRef.current) {
++        clearInterval(countdownRef.current);
++      }
++    };
++  }, [currentSlide, heroSlides, isMounted]);
++
+   // Auto-play functionality
+   useEffect(() => {
+     if (!isAutoplayPaused && !previewOpen && isMounted) {
+@@ -168,6 +220,10 @@ function HeroSlider({
+     },
+   ];
+ 
++  const formatNumber = (num: number): string => {
++    return num.toString().padStart(2, '0');
++  };
++
+   return (
+     <section
+       className={`relative ${height} flex items-center overflow-hidden`}
+@@ -241,11 +297,69 @@ function HeroSlider({
+                     {slide.description}
+                   </p>
+ 
+-                  <div className="flex  xs:flex-row sm:flex-row gap-3 sm:gap-4 justify-center lg:justify-start">
++                  {/* Countdown Timer */}
++                  {slide.countdownDate && isMounted && (
++                    <div className="mb-6 sm:mb-8 animate-fade-in animation-delay-200">
++                      {slide.countdownLabel && (
++                        <p className="text-white/80 text-sm sm:text-base font-medium mb-4 tracking-wide uppercase">
++                          {slide.countdownLabel}
++                        </p>
++                      )}
++                      
++                      <div className="flex justify-center lg:justify-start space-x-3 sm:space-x-4 md:space-x-6">
++                        {/* Days */}
++                        <div className="bg-white/10 backdrop-blur-md rounded-xl sm:rounded-2xl p-3 sm:p-4 md:p-6 border border-white/20 shadow-2xl hover:bg-white/15 transition-all duration-300 hover:scale-105">
++                          <div className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white tabular-nums">
++                            {formatNumber(countdownTime.days)}
++                          </div>
++                          <div className="text-white/70 text-xs sm:text-sm md:text-base font-medium mt-1 uppercase tracking-wider">
++                            Days
++                          </div>
++                        </div>
++
++                        {/* Hours */}
++                        <div className="bg-white/10 backdrop-blur-md rounded-xl sm:rounded-2xl p-3 sm:p-4 md:p-6 border border-white/20 shadow-2xl hover:bg-white/15 transition-all duration-300 hover:scale-105">
++                          <div className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white tabular-nums">
++                            {formatNumber(countdownTime.hours)}
++                          </div>
++                          <div className="text-white/70 text-xs sm:text-sm md:text-base font-medium mt-1 uppercase tracking-wider">
++                            Hours
++                          </div>
++                        </div>
++
++                        {/* Minutes */}
++                        <div className="bg-white/10 backdrop-blur-md rounded-xl sm:rounded-2xl p-3 sm:p-4 md:p-6 border border-white/20 shadow-2xl hover:bg-white/15 transition-all duration-300 hover:scale-105">
++                          <div className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white tabular-nums">
++                            {formatNumber(countdownTime.minutes)}
++                          </div>
++                          <div className="text-white/70 text-xs sm:text-sm md:text-base font-medium mt-1 uppercase tracking-wider">
++                            Min
++                          </div>
++                        </div>
++
++                        {/* Seconds */}
++                        <div className="bg-white/10 backdrop-blur-md rounded-xl sm:rounded-2xl p-3 sm:p-4 md:p-6 border border-white/20 shadow-2xl hover:bg-white/15 transition-all duration-300 hover:scale-105">
++                          <div className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white tabular-nums">
++                            {formatNumber(countdownTime.seconds)}
++                          </div>
++                          <div className="text-white/70 text-xs sm:text-sm md:text-base font-medium mt-1 uppercase tracking-wider">
++                            Sec
++                          </div>
++                        </div>
++                      </div>
++                      
++                      {/* Countdown decoration line */}
++                      <div className="mt-4 sm:mt-6 flex justify-center lg:justify-start">
++                        <div className="w-20 sm:w-24 h-0.5 bg-gradient-to-r from-transparent via-white/50 to-transparent"></div>
++                      </div>
++                    </div>
++                  )}
++
++                  <div className="flex xs:flex-row sm:flex-row gap-3 sm:gap-4 justify-center lg:justify-start">
+                     <Button
+                       size="lg"
+                       color="primary"
+-                      className="animate-scale-in animation-delay-300 "
++                      className="animate-scale-in animation-delay-300"
+                       onClick={slide.cta1Action}
+                     >
+                       {slide.cta1}
+@@ -254,7 +368,7 @@ function HeroSlider({
+                       variant="secondary"
+                       size="lg"
+                       color="primary"
+-                      className="animate-scale-in animation-delay-500 "
++                      className="animate-scale-in animation-delay-500"
+                       onClick={slide.cta2Action}
+                     >
+                       {slide.cta2}
+@@ -337,49 +451,6 @@ function HeroSlider({
+         </div>
+       </div>
+ 
+-      {/* Top Progress Indicator - More responsive */}
+-      {/* {isMounted && !isAutoplayPaused && (
+-        <div className="absolute top-4 sm:top-6 left-1/2 transform -translate-x-1/2 z-30">
+-          <div className="w-24 sm:w-32 h-1 sm:h-1.5 bg-black/30 backdrop-blur-sm rounded-full overflow-hidden border border-white/20">
+-            <div
+-              key={progressKey}
+-              className="h-full bg-gradient-to-r from-white/80 to-white rounded-full autoplay-progress-bar"
+-            />
+-          </div>
+-        </div>
+-      )} */}
+-
+-      {/* Side progress indicators (Large screens only) */}
+-      {/* {isMounted && (
+-        <div className="absolute right-4 lg:right-6 top-1/2 transform -translate-y-1/2 z-30 hidden lg:block">
+-          <div className="flex flex-col space-y-2 lg:space-y-3">
+-            {heroSlides.map((_, index) => (
+-              <div
+-                key={index}
+-                className="relative w-1 h-8 lg:h-12 bg-white/20 rounded-full overflow-hidden"
+-              >
+-                <div
+-                  className={`absolute bottom-0 left-0 right-0 bg-white rounded-full transition-all duration-300 ${
+-                    index === currentSlide && !isAutoplayPaused
+-                      ? "autoplay-slide-progress"
+-                      : index < currentSlide
+-                      ? "h-full"
+-                      : "h-0"
+-                  }`}
+-                  key={`${progressKey}-${index}`}
+-                />
+-                <button
+-                  onClick={() => goToSlide(index)}
+-                  disabled={isTransitioning}
+-                  className="absolute inset-0 w-full h-full cursor-pointer"
+-                  aria-label={`Go to slide ${index + 1}`}
+-                />
+-              </div>
+-            ))}
+-          </div>
+-        </div>
+-      )} */}
+-
+       {/* Mobile Navigation Arrows (Touch-friendly) */}
+       <div className="absolute bottom-6 left-1/2 transform -translate-x-1/2 z-20 flex space-x-6 sm:hidden">
+         <button
+@@ -465,9 +536,35 @@ function HeroSlider({
+             min-width: 44px;
+           }
+         }
++
++        /* Countdown animation */
++        @keyframes fade-in {
++          from {
++            opacity: 0;
++            transform: translateY(20px);
++          }
++          to {
++            opacity: 1;
++            transform: translateY(0);
++          }
++        }
++
++        .animate-fade-in {
++          animation: fade-in 0.6s ease-out;
++        }
++
++        .animation-delay-200 {
++          animation-delay: 200ms;
++        }
++
++        /* Tabular numbers for consistent digit width */
++        .tabular-nums {
++          font-feature-settings: 'tnum';
++          font-variant-numeric: tabular-nums;
++        }
+       `}</style>
+     </section>
+   );
+ }
+ 
+-export default HeroSlider;
++export default HeroSlider;
+\ No newline at end of file
+diff --git a/src/components/shared/registration/GroupRegistration.tsx b/src/components/shared/registration/GroupRegistration.tsx
+index 28e8b13..2814955 100644
+--- a/src/components/shared/registration/GroupRegistration.tsx
++++ b/src/components/shared/registration/GroupRegistration.tsx
+@@ -45,9 +45,7 @@ export function GroupRegistration({
+       newErrors.groupName = "Group name is required";
+     }
+ 
+-    if (!formData.description.trim()) {
+-      newErrors.description = "Description is required";
+-    }
++
+ 
+     if (!formData.representativeFirstName.trim()) {
+       newErrors.representativeFirstName = "First name is required";
+@@ -106,7 +104,7 @@ export function GroupRegistration({
+         <h2 className="text-3xl font-bold text-foreground mb-2">
+           Create Your One Time Group
+         </h2>
+-        <p className="text-marathon-gray">
++        <p className="text-gray-500 text-sm">
+           Enter your group information to start registering participants
+         </p>
+       </div>
+@@ -128,7 +126,7 @@ export function GroupRegistration({
+             <FormTextarea
+               label="Description"
+               placeholder="Enter your group description"
+-              required
++             
+               value={formData.description}
+               onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+                 updateFormData("description", e.target.value)
+@@ -163,36 +161,14 @@ export function GroupRegistration({
+ 
+             {/* Phone Number */}
+             <div className="">
+-              {/* <div className="md:col-span-1"> */}
+-                {/* <FormInput
+-                  label="Representative Phone"
+-                  placeholder="+255"
+-                  value="+255"
+-                  readOnly
+-                  className="bg-marathon-gray-light"
+-                /> */}
+-              {/* </div> */}
+-                <PhoneNumberInput 
++              <PhoneNumberInput 
+                 label="Representative Phone"
+                 value={formData.representativePhone}
+                 onChange={(value: string) => {
+                   updateFormData("representativePhone", value);
+                 }}
+                 required
+-                />
+-
+-              {/* <div className="md:col-span-2"> */}
+-                {/* <FormInput
+-                  label="&nbsp;"
+-                  placeholder="Month"
+-                  required
+-                  value={formData.representativePhone}
+-                  onChange={(e) =>
+-                    updateFormData("representativePhone", e.target.value)
+-                  }
+-                  error={errors.representativePhone}
+-                /> */}
+-              {/* </div> */}
++              />
+             </div>
+ 
+             {/* Terms and Conditions */}
+@@ -213,7 +189,7 @@ export function GroupRegistration({
+                   I have read and accepted{" "}
+                   <a
+                     href="#"
+-                    className="text-marathon-blue hover:underline transition-colors duration-300"
++                    className="text-primary-950 hover:underline transition-colors duration-300"
+                   >
+                     Terms and Condition
+                   </a>
+@@ -230,15 +206,19 @@ export function GroupRegistration({
+ 
+         {/* Submit Button */}
+         <div className="flex justify-end">
+-          {/* <MarathonButton
+-            type="submit"
+-            size="lg"
+-            loading={loading}
+-            className="min-w-48"
++          <Button
++            className="w-full"
++            disabled={
++              loading ||
++              !formData.groupName ||
++              !formData.representativeFirstName ||
++              !formData.representativeLastName ||
++              !formData.representativePhone ||
++              !formData.acceptedTerms
++            }
+           >
+             Continue (Step 1/2)
+-          </MarathonButton> */}
+-          <Button className="w-full">Continue (Step 1/2) </Button>
++          </Button>
+         </div>
+       </form>
+     </div>
+diff --git a/src/components/shared/registration/MarathonRegistration.tsx b/src/components/shared/registration/MarathonRegistration.tsx
+index d01e766..566db90 100644
+--- a/src/components/shared/registration/MarathonRegistration.tsx
++++ b/src/components/shared/registration/MarathonRegistration.tsx
+@@ -1,11 +1,13 @@
+-"use client"
++"use client";
+ 
+ import { useState } from "react";
+ import { GroupRegistration, GroupRegistrationData } from "./GroupRegistration";
+ import { ParticipantData, ParticipantDetails } from "./ParticipantDetails";
+ import { Step, Stepper } from "@/components/ui/stepper";
+-
+-
++import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
++import { File } from "lucide-react";
++import { ImageUploader } from "@/components/ui/ImageUploader";
++import { Button } from "@/components/ui/button";
+ 
+ const steps: Step[] = [
+   {
+@@ -22,9 +24,11 @@ const steps: Step[] = [
+ 
+ export function MarathonRegistration() {
+   const [currentStep, setCurrentStep] = useState(1);
+-  const [groupData, setGroupData] = useState<GroupRegistrationData | null>(null);
++  const [groupData, setGroupData] = useState<GroupRegistrationData | null>(
++    null
++  );
+   const [, setParticipantData] = useState<ParticipantData[]>([]);
+-//   const { toast } = useToast();
++  //   const { toast } = useToast();
+ 
+   const handleGroupRegistration = (data: GroupRegistrationData) => {
+     setGroupData(data);
+@@ -41,7 +45,7 @@ export function MarathonRegistration() {
+     //   title: "Registration Complete",
+     //   description: `Successfully registered ${data.length} participant(s) for ${groupData?.groupName}.`,
+     // });
+-    
++
+     // Here you would typically submit to your backend
+     console.log("Final registration data:", {
+       group: groupData,
+@@ -54,37 +58,82 @@ export function MarathonRegistration() {
+   };
+ 
+   return (
+-    <div className="  py-8 px-4 border rounded-lg">
+-      <div className="max-w-6xl mx-auto">
+-        {/* Header */}
+-        {/* <div className="text-center mb-12 animate-fade-in">
+-          <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-4">
+-            Group Marathon 2025 Registration
+-          </h1>
+-          <p className="text-lg text-marathon-gray max-w-2xl mx-auto">
+-            Complete the registration form to secure your spot in the event.
+-          </p>
+-        </div> */}
++    <div className="  py-8 px-4">
++      <div className="">
++        <Tabs defaultValue="tab-1" className="items-center !w-full">
++          <TabsList className="w-1/2">
++            <TabsTrigger value="tab-1">Fill Participant Form</TabsTrigger>
++            <TabsTrigger value="tab-2">Upload Excel Sheet</TabsTrigger>
++          </TabsList>
++          <TabsContent value="tab-1" className="w-full py-5">
++            <div className="max-w-5xl mx-auto space-y-6">
++              <div>
++                <h1 className="text-primary-950 font-semibold text-lg">
++                  Enter (Group Name) Participant Details
++                </h1>
++                <p className="text-gray-500 text-sm">
++                  Enter participant details for group registration
++                </p>
++              </div>
++              <div className="border rounded-lg px-18 py-10">
++                <div className="mb-12 animate-slide-in">
++                  <Stepper steps={steps} currentStep={currentStep} />
++                </div>
+ 
+-        {/* Stepper */}
+-        <div className="mb-12 animate-slide-in">
+-          <Stepper steps={steps} currentStep={currentStep} />
+-        </div>
++                {/* Form Content */}
++                <div className="animate-fade-in">
++                  {currentStep === 1 && (
++                    <GroupRegistration onNext={handleGroupRegistration} />
++                  )}
+ 
+-        {/* Form Content */}
+-        <div className="animate-fade-in">
+-          {currentStep === 1 && (
+-            <GroupRegistration onNext={handleGroupRegistration} />
+-          )}
+-          
+-          {currentStep === 2 && (
+-            <ParticipantDetails
+-              onNext={handleParticipantDetails}
+-              onBack={handleBack}
+-            />
+-          )}
+-        </div>
++                  {currentStep === 2 && (
++                    <ParticipantDetails
++                      onNext={handleParticipantDetails}
++                      onBack={handleBack}
++                    />
++                  )}
++                </div>
++              </div>
++            </div>
++          </TabsContent>
++          <TabsContent value="tab-2" className="w-full py-5">
++            <div className="max-w-5xl mx-auto space-y-6">
++              <div>
++                <h1 className="text-primary-950 font-semibold text-lg">
++                  Download Excel Template & Fill It
++                </h1>
++                <p className="text-gray-500 text-sm">
++                  Fill the required info in this template and upload it
++                </p>
++          <div className="space-y-6">
++          <div className="border bg-gray-100 !cursor-pointer flex items-center gap-4 w-fit px-4 py-2 rounded-md mt-4 hover:bg-gray-200 transition">
++                  <div>
++                    <File className="text-secondary-950" />
++                  </div>
++                  <div>
++                    <h1 className="text-primary-950 font-medium">Group Participants Details Template</h1>
++                    <p className="text-sm text-gray-500 ">300KB</p>
++                  </div >
++                </div>
++                <div>
++                      <ImageUploader
++                          value=""
++                          onChange={(imageUrl: string) => {
++                            console.log("Image uploaded:", imageUrl);
++                          }}
++                          className="mb-4"
++                          showTitle={false}
++                        />
++                </div>
++                <div>
++                  <Button className="w-full">Upload Participants</Button>
++                </div>
++          </div>
++              </div>
++            </div>
++          </TabsContent>
++        </Tabs>
+       </div>
+     </div>
+   );
+-}
+\ No newline at end of file
++}
+diff --git a/src/components/shared/registration/RegistrationForm.tsx b/src/components/shared/registration/RegistrationForm.tsx
+index 8f36104..1edb9f8 100644
+--- a/src/components/shared/registration/RegistrationForm.tsx
++++ b/src/components/shared/registration/RegistrationForm.tsx
+@@ -243,6 +243,7 @@ const RegistrationForm = () => {
+           </div>
+         </div>
+       </div>
++  
+       {category === "individual" && (
+         <Card className="py-5 ">
+           <CardContent className="space-y-8">
+diff --git a/src/components/shared/registration/TicketCard.tsx b/src/components/shared/registration/TicketCard.tsx
+index b97ef87..2b29984 100644
+--- a/src/components/shared/registration/TicketCard.tsx
++++ b/src/components/shared/registration/TicketCard.tsx
+@@ -98,7 +98,7 @@ const TicketCard = ({
+         </div> */}
+ 
+         {/* <p className="text-sm opacity-90">{description}</p> */}
+-        <Image src={image} alt={title} width={150} height={150} />
++        <Image src={image} alt={title} width={200} height={150} />
+         <h3 className="font-bold text-lg">{title}</h3>
+         <span className="text-2xl font-bold uppercase text-[#E43B43]">{price}</span>
+         <p className="text-sm opacity-90">{description}</p>
+diff --git a/src/components/shop/ProductDetails.tsx b/src/components/shop/ProductDetails.tsx
+index 7c40c96..a9f6aa3 100644
+--- a/src/components/shop/ProductDetails.tsx
++++ b/src/components/shop/ProductDetails.tsx
+@@ -7,8 +7,7 @@ export const ProductDetails = () => {
+       <StarRating rating={4.7} reviewCount={21671} />
+ 
+       <h1 className="text-2xl lg:text-3xl font-bold text-foreground leading-tight">
+-        2020 Apple MacBook Pro with Apple M1 Chip (13-inch, 8GB RAM, 256GB SSD
+-        Storage) - Space Gray
++      Chapakazi Blue Jersey
+       </h1>
+ 
+       <div className="grid grid-cols-2 gap-4 text-sm">
+diff --git a/src/components/ui/form-input.tsx b/src/components/ui/form-input.tsx
+index 226c236..78490a9 100644
+--- a/src/components/ui/form-input.tsx
++++ b/src/components/ui/form-input.tsx
+@@ -1,14 +1,45 @@
+-import { forwardRef } from "react";
++"use client"
++
++import { forwardRef, useState } from "react";
++import { Eye, EyeOff } from "lucide-react";
+ import { cn } from "@/lib/utils";
+ 
+ export interface FormInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
+   label?: string;
+   error?: string;
+   required?: boolean;
++  leftIcon?: React.ReactNode;
++  rightIcon?: React.ReactNode;
++  showPasswordToggle?: boolean;
+ }
+ 
+ const FormInput = forwardRef<HTMLInputElement, FormInputProps>(
+-  ({ className, label, error, required, ...props }, ref) => {
++  ({ 
++    className, 
++    label, 
++    error, 
++    required, 
++    leftIcon, 
++    rightIcon, 
++    showPasswordToggle = false,
++    type,
++    ...props 
++  }, ref) => {
++    const [showPassword, setShowPassword] = useState(false);
++    const [inputType, setInputType] = useState(type);
++
++    // Handle password toggle
++    const togglePassword = () => {
++      setShowPassword(!showPassword);
++      setInputType(showPassword ? 'password' : 'text');
++    };
++
++    // Determine if we should show the password toggle
++    const shouldShowPasswordToggle = showPasswordToggle && (type === 'password' || inputType === 'password' || inputType === 'text');
++    
++    // If showPasswordToggle is true and we have a rightIcon, prioritize the toggle
++    const effectiveRightIcon = shouldShowPasswordToggle ? null : rightIcon;
++
+     return (
+       <div className="space-y-2">
+         {label && (
+@@ -17,19 +48,56 @@ const FormInput = forwardRef<HTMLInputElement, FormInputProps>(
+             {required && <span className="text-destructive ml-1">*</span>}
+           </label>
+         )}
+-        <input
+-          className={cn(
+-            "flex h-12 w-full rounded-lg border border-form-border bg-form-background px-4 py-3 text-sm transition-all duration-300",
+-            "placeholder:text-marathon-gray",
+-            "focus:border-form-focus focus:ring-1 focus:ring-form-focus/20 focus:outline-none",
+-            "hover:border-primary-950 hover:bg-white/10",
+-            "disabled:cursor-not-allowed disabled:opacity-50",
+-            error && "border-destructive focus:border-destructive focus:ring-destructive/20",
+-            className
++        
++        <div className="relative">
++          {/* Left Icon */}
++          {leftIcon && (
++            <div className="absolute left-3 top-1/2 transform -translate-y-1/2 text-marathon-gray pointer-events-none">
++              {leftIcon}
++            </div>
++          )}
++          
++          {/* Input Field */}
++          <input
++            className={cn(
++              "flex  w-full rounded-md border border-form-border bg-form-background py-2 text-sm transition-all duration-300",
++              "placeholder:text-marathon-gray placeholder:text-sm",
++              "focus:border-form-focus focus:ring-1 focus:ring-form-focus/20 focus:outline-none",
++              "hover:border-primary-950 hover:bg-white/10",
++              "disabled:cursor-not-allowed disabled:opacity-50",
++              // Dynamic padding based on icons
++              leftIcon ? "pl-10" : "pl-4",
++              (effectiveRightIcon || shouldShowPasswordToggle) ? "pr-10" : "pr-4",
++              error && "border-destructive focus:border-destructive focus:ring-destructive/20",
++              className
++            )}
++            type={shouldShowPasswordToggle ? inputType : type}
++            ref={ref}
++            {...props}
++          />
++          
++          {/* Right Icon or Password Toggle */}
++          {(effectiveRightIcon || shouldShowPasswordToggle) && (
++            <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
++              {shouldShowPasswordToggle ? (
++                <button
++                  type="button"
++                  onClick={togglePassword}
++                  className="text-marathon-gray hover:text-foreground transition-colors duration-200 focus:outline-none focus:text-foreground"
++                  tabIndex={-1}
++                  aria-label={showPassword ? "Hide password" : "Show password"}
++                >
++                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
++                </button>
++              ) : (
++                <div className="text-marathon-gray pointer-events-none">
++                  {effectiveRightIcon}
++                </div>
++              )}
++            </div>
+           )}
+-          ref={ref}
+-          {...props}
+-        />
++        </div>
++        
+         {error && <p className="text-sm text-destructive mt-1">{error}</p>}
+       </div>
+     );
+diff --git a/src/components/ui/phone-number-input.tsx b/src/components/ui/phone-number-input.tsx
+index 9a3b5f2..2e77482 100644
+--- a/src/components/ui/phone-number-input.tsx
++++ b/src/components/ui/phone-number-input.tsx
+@@ -48,7 +48,7 @@ export default function PhoneNumberInput({
+       <RPNInput.default
+         id={id}
+         className={cn(
+-          "flex rounded-md shadow-xs",
++          "flex rounded-md w-full focus-within:ring-1 focus-within:ring-primary-950",
+           error && "border-destructive",
+           disabled && "opacity-50 cursor-not-allowed"
+         )}
+diff --git a/src/components/ui/select.tsx b/src/components/ui/select.tsx
+index fe56d4d..1f715f8 100644
+--- a/src/components/ui/select.tsx
++++ b/src/components/ui/select.tsx
+@@ -17,7 +17,7 @@ const SelectTrigger = React.forwardRef<
+   <SelectPrimitive.Trigger
+     ref={ref}
+     className={cn(
+-      "flex h-10 w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1",
++      "flex  cursor-pointer w-full items-center justify-between rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-primary-950 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1",
+       className
+     )}
+     {...props}
+diff --git a/src/components/ui/tabs.tsx b/src/components/ui/tabs.tsx
+index d249b38..d27df82 100644
+--- a/src/components/ui/tabs.tsx
++++ b/src/components/ui/tabs.tsx
+@@ -40,7 +40,7 @@ function TabsTrigger({
+     <TabsPrimitive.Trigger
+       data-slot="tabs-trigger"
+       className={cn(
+-        "data-[state=active]:bg-nbc-dark-950 dark:data-[state=active]:text-nbc-dark-950 focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:outline-ring dark:data-[state=active]:border-nbc-dark-950 dark:data-[state=active]:bg-input/30 text-foreground dark:text-muted-foreground inline-flex h-[calc(100%-1px)] flex-1 items-center justify-center gap-1.5 rounded-md border border-transparent px-2 py-1 text-sm font-medium whitespace-nowrap transition-[color,box-shadow] focus-visible:ring-[3px] focus-visible:outline-1 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:shadow-sm [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
++        "cursor-pointer data-[state=active]:bg-primary-950 data-[state=active]:text-white dark:data-[state=active]:text-primary-950 focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:outline-ring dark:data-[state=active]:border-primary-950 dark:data-[state=active]:bg-input/30 text-foreground dark:text-muted-foreground inline-flex h-[calc(100%-1px)] flex-1 items-center justify-center gap-1.5 rounded-md border border-transparent px-2 py-1 text-sm font-medium whitespace-nowrap transition-[color,box-shadow] focus-visible:ring-[3px] focus-visible:outline-1 disabled:pointer-events-none disabled:opacity-50 data-[state=active]:shadow-sm [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+         className
+       )}
+       {...props}
