@@ -1,196 +1,1327 @@
-diff --git a/.dockerignore b/.dockerignore
-index c9b3a63..823a649 100644
---- a/.dockerignore
-+++ b/.dockerignore
-@@ -86,7 +86,9 @@ dist
+diff --git a/src/Page-Sections/Landing/Home/BankingApp/BankAppCard.tsx b/src/Page-Sections/Landing/Home/BankingApp/BankAppCard.tsx
+index ae051bc..b3edcd2 100644
+--- a/src/Page-Sections/Landing/Home/BankingApp/BankAppCard.tsx
++++ b/src/Page-Sections/Landing/Home/BankingApp/BankAppCard.tsx
+@@ -115,7 +115,7 @@ function BankAppCard() {
+       <div className="flex h-full">
+         <div className="px-4 sm:px-8 md:px-12 lg:pl-80 pr-4 sm:pr-8 md:pr-12 lg:pr-50 flex flex-col justify-evenly h-full w-full">
+           <div>
+-            <img src="images/ukigusa.png" alt="Ukigusa" className="w-1/2" />
++            <img src="images/ukigusa.png" alt="Ukigusa" className="w-1/2 " />
+           </div>
  
- # Gatsby files
- .cache/
--public
-+# public
-+public/*.log
-+public/temp/
+           <div className="flex items-center gap-4">
+@@ -179,7 +179,7 @@ function BankAppCard() {
+           animate={{ opacity: 1, y: 0 }}
+           exit={{ opacity: 0, y: -20 }}
+           transition={{ duration: 0.3 }}
+-          className=" w-full"
++          className=" w-full "
+         >
+           <div className="md:block hidden   relative w-[771.4209594726562px] bg-red-400">
+             <img
+diff --git a/src/Page-Sections/Landing/Home/BankingApp/Edu-Connect.tsx b/src/Page-Sections/Landing/Home/BankingApp/Edu-Connect.tsx
+index bb7811f..c50a3f8 100644
+--- a/src/Page-Sections/Landing/Home/BankingApp/Edu-Connect.tsx
++++ b/src/Page-Sections/Landing/Home/BankingApp/Edu-Connect.tsx
+@@ -1,9 +1,12 @@
+-import BankAppCard from "./BankAppCard"
++import BankAppCard from "./BankAppCard";
  
- # Vuepress build output
- .vuepress/dist
-diff --git a/Dockerfile b/Dockerfile
-index a56e684..55ff20d 100644
---- a/Dockerfile
-+++ b/Dockerfile
-@@ -1,58 +1,67 @@
--# Stage 1: Dependencies installation
--FROM node:20-alpine AS deps
--RUN apk add --no-cache libc6-compat
--WORKDIR /app
-+# syntax=docker.io/docker/dockerfile:1
+ function EduConnect() {
++  console.log("Edu Connect");
+   return (
+-    <BankAppCard />
+-  )
++    <>
++      <BankAppCard />
++    </>
++  );
+ }
  
--# Copy package files
--COPY package*.json ./
--RUN npm ci --only=production && npm cache clean --force
-+FROM node:20-alpine AS base
+-export default EduConnect
++export default EduConnect;
+diff --git a/src/Page-Sections/Landing/Home/BankingApps.tsx b/src/Page-Sections/Landing/Home/BankingApps.tsx
+index 6803db2..4d9657e 100644
+--- a/src/Page-Sections/Landing/Home/BankingApps.tsx
++++ b/src/Page-Sections/Landing/Home/BankingApps.tsx
+@@ -21,9 +21,10 @@ function BankingApps() {
+       value: "wakala",
+       content: <Wakala />,
+     },
++    
+     {
+       label: "NBC Edu-connect",
+-      value: "edu",
++      value: "edu_connect",
+       content: <EduConnect />,
+     },
+   ];
+diff --git a/src/Page-Sections/Landing/Home/CallToAction.tsx b/src/Page-Sections/Landing/Home/CallToAction.tsx
+index 61126ee..ad0b17e 100644
+--- a/src/Page-Sections/Landing/Home/CallToAction.tsx
++++ b/src/Page-Sections/Landing/Home/CallToAction.tsx
+@@ -20,15 +20,15 @@ function CallToAction() {
+         "+255 (0) 768 984 000",
+         "+255 (0) 222 193 000",
+         "+255 (0) 225 511 000",
+-        "0800711177 (Free)"
++        "0800711177 (Free)",
+       ],
+       address: {
+         company: "NBC Ltd. Head Office",
+         street: "Sokoine Drive & Azikiwe Street",
+         poBox: "P.O. Box 1863, Dar es Salaam,",
+-        city: "Tanzania"
++        city: "Tanzania",
+       },
+-      email: "contact.centre@nbc.co.tz"
++      email: "contact.centre@nbc.co.tz",
+     },
+     {
+       title: "NBC Contact Centre",
+@@ -36,15 +36,15 @@ function CallToAction() {
+         "+255 (0) 768 984 000",
+         "+255 (0) 222 193 000",
+         "+255 (0) 225 511 000",
+-        "0800711177 (Free)"
++        "0800711177 (Free)",
+       ],
+       address: {
+         company: "NBC Ltd. Head Office",
+         street: "Sokoine Drive & Azikiwe Street",
+         poBox: "P.O. Box 1863, Dar es Salaam,",
+-        city: "Tanzania"
++        city: "Tanzania",
+       },
+-      email: "contact.centre@nbc.co.tz"
++      email: "contact.centre@nbc.co.tz",
+     },
+     {
+       title: "NBC Contact Centre",
+@@ -52,15 +52,15 @@ function CallToAction() {
+         "+255 (0) 768 984 000",
+         "+255 (0) 222 193 000",
+         "+255 (0) 225 511 000",
+-        "0800711177 (Free)"
++        "0800711177 (Free)",
+       ],
+       address: {
+         company: "NBC Ltd. Head Office",
+         street: "Sokoine Drive & Azikiwe Street",
+         poBox: "P.O. Box 1863, Dar es Salaam,",
+-        city: "Tanzania"
++        city: "Tanzania",
+       },
+-      email: "contact.centre@nbc.co.tz"
++      email: "contact.centre@nbc.co.tz",
+     },
+     {
+       title: "NBC Contact Centre",
+@@ -68,15 +68,15 @@ function CallToAction() {
+         "+255 (0) 768 984 000",
+         "+255 (0) 222 193 000",
+         "+255 (0) 225 511 000",
+-        "0800711177 (Free)"
++        "0800711177 (Free)",
+       ],
+       address: {
+         company: "NBC Ltd. Head Office",
+         street: "Sokoine Drive & Azikiwe Street",
+         poBox: "P.O. Box 1863, Dar es Salaam,",
+-        city: "Tanzania"
++        city: "Tanzania",
+       },
+-      email: "contact.centre@nbc.co.tz"
++      email: "contact.centre@nbc.co.tz",
+     },
+     {
+       title: "NBC Contact Centre",
+@@ -84,15 +84,15 @@ function CallToAction() {
+         "+255 (0) 768 984 000",
+         "+255 (0) 222 193 000",
+         "+255 (0) 225 511 000",
+-        "0800711177 (Free)"
++        "0800711177 (Free)",
+       ],
+       address: {
+         company: "NBC Ltd. Head Office",
+         street: "Sokoine Drive & Azikiwe Street",
+         poBox: "P.O. Box 1863, Dar es Salaam,",
+-        city: "Tanzania"
++        city: "Tanzania",
+       },
+-      email: "contact.centre@nbc.co.tz"
++      email: "contact.centre@nbc.co.tz",
+     },
+     {
+       title: "NBC Contact Centre",
+@@ -100,64 +100,54 @@ function CallToAction() {
+         "+255 (0) 768 984 000",
+         "+255 (0) 222 193 000",
+         "+255 (0) 225 511 000",
+-        "0800711177 (Free)"
++        "0800711177 (Free)",
+       ],
+       address: {
+         company: "NBC Ltd. Head Office",
+         street: "Sokoine Drive & Azikiwe Street",
+         poBox: "P.O. Box 1863, Dar es Salaam,",
+-        city: "Tanzania"
++        city: "Tanzania",
+       },
+-      email: "contact.centre@nbc.co.tz"
+-    }
++      email: "contact.centre@nbc.co.tz",
++    },
+   ];
  
--# Stage 2: Build stage
--FROM node:20-alpine AS builder
-+# Install dependencies only when needed
-+FROM base AS deps
-+# Check https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine to understand why libc6-compat might be needed.
-+RUN apk add --no-cache libc6-compat
- WORKDIR /app
+   const tabs = [
+     {
+       label: "Talk to Us",
+       value: "talktous",
+-      content:<TalktoUs contacts={contactData} />,
++      content: <TalktoUs contacts={contactData} />,
+       // icon: <MessageCircle className="w-5 h-5" />
+     },
+     {
+       label: "Feedback & Complains",
+       value: "feedback",
+-      content:<FeedbackandComplains />,
++      content: <FeedbackandComplains />,
+       // icon:  <MessageSquare className="w-5 h-5" />
+-      
+     },
+     {
+-      label: "FAQ",
+-      value: "faq",
+-      content:  <Faq />,
++      label: "Suggestion Box",
++      value: "suggestionbox",
++      content: <SuggestionBox />,
+       // icon: <HelpCircle className="w-5 h-5" />
+     },
+     {
+-      label: "Suggestion Box",
+-      value: "suggestionbox",
+-      content:  <SuggestionBox />,
++      label: "FAQ",
++      value: "faq",
++      content: <Faq />,
+       // icon: <HelpCircle className="w-5 h-5" />
+     },
+-   
+   ];
  
--# Copy package files and install all dependencies (including devDependencies)
--COPY package*.json ./
--RUN npm ci
-+# Install dependencies based on the preferred package manager
-+COPY package.json yarn.lock* package-lock.json* pnpm-lock.yaml* .npmrc* ./
-+RUN \
-+  if [ -f yarn.lock ]; then yarn --frozen-lockfile; \
-+  elif [ -f package-lock.json ]; then npm ci; \
-+  elif [ -f pnpm-lock.yaml ]; then corepack enable pnpm && pnpm i --frozen-lockfile; \
-+  else echo "Lockfile not found." && exit 1; \
-+  fi
+-
+-
+-
+-
+-
+-
+   return (
+     <>
+-       <OfferingSection
++      <OfferingSection
+         title="Have A Problem? Don't Worry"
+         description="Let us know how we can help you today!"
+         tabs={tabs}
+         defaultTab="talktous"
+         maxWidth="max-w-4xl"
+-       
+       />
+-     
+     </>
+   );
+ }
+diff --git a/src/Page-Sections/Landing/Home/CallToActionSections/SuggestionBox.tsx b/src/Page-Sections/Landing/Home/CallToActionSections/SuggestionBox.tsx
+index e2208c5..362556f 100644
+--- a/src/Page-Sections/Landing/Home/CallToActionSections/SuggestionBox.tsx
++++ b/src/Page-Sections/Landing/Home/CallToActionSections/SuggestionBox.tsx
+@@ -1,3 +1,4 @@
++import Button from "@/components/ui/button";
+ import { CustomInput } from "@/components/ui/CustomInput";
+ import { ImageUploader } from "@/components/ui/ImageUploader";
+ 
+@@ -24,6 +25,10 @@ function SuggestionBox() {
+         className="mb-4"
+         showTitle={false}
+       />
 +
++      <div>
++        <Button variant="primary" className="w-full">Submit Suggestion</Button>
++      </div>
+     </div>
+   );
+ }
+diff --git a/src/Page-Sections/Landing/Home/home-page-section.tsx b/src/Page-Sections/Landing/Home/home-page-section.tsx
+index 5f1fc98..5a52a41 100644
+--- a/src/Page-Sections/Landing/Home/home-page-section.tsx
++++ b/src/Page-Sections/Landing/Home/home-page-section.tsx
+@@ -2,10 +2,10 @@ import HeroSection from "@/components/reusable/HeroSection";
+ import BankingTailoredSection from "./BankingTailoredSection";
+ import NewsSection from "./NewsSection";
+ import Marathonbanner from "./Marathonbanner";
+-import CarriesandVacancies from "./CarriesandVacancies";
+ import BankingSolutions from "./BankingSolutions";
+ import CallToAction from "./CallToAction";
+ import BankingApps from "./BankingApps";
++import HelpfulInformationSection from "./HelpfulInformationSection";
  
--# Copy source code
-+# Rebuild the source code only when needed
-+FROM base AS builder
-+WORKDIR /app
-+COPY --from=deps /app/node_modules ./node_modules
- COPY . .
+ function HomePageSection() {
+   const slides = [
+@@ -40,7 +40,8 @@ function HomePageSection() {
+       <BankingApps />
+       <NewsSection />
+       <Marathonbanner />
+-      <CarriesandVacancies />
++      <HelpfulInformationSection />
++      {/* <CarriesandVacancies /> */}
+       <CallToAction />
+     </>
+   );
+diff --git a/src/Routes/LandingRoutes.tsx b/src/Routes/LandingRoutes.tsx
+index 13b19d3..721bc83 100644
+--- a/src/Routes/LandingRoutes.tsx
++++ b/src/Routes/LandingRoutes.tsx
+@@ -58,6 +58,10 @@ const CurrencyConvetor = lazy(() => import("@/Pages/Landing/CurrencyConvetor"));
+ // Locate Us
+ const FindBranchAtms = lazy(() => import("@/Pages/Landing/FindBranchAtms"));
  
--# Set environment variable for build
--ENV NODE_ENV=production
--ENV NEXT_TELEMETRY_DISABLED=1
-+# Next.js collects completely anonymous telemetry data about general usage.
-+# Learn more here: https://nextjs.org/telemetry
-+# Uncomment the following line in case you want to disable telemetry during the build.
-+# ENV NEXT_TELEMETRY_DISABLED=1
++// TaarifGuides
++
++const TaarifGuides = lazy(() => import("@/Pages/Landing/TaarifGuides"));
++
+ interface RouteConfig {
+   path: string;
+   element: ReactNode;
+@@ -206,6 +210,12 @@ const landingRoutes: RouteConfig[] = [
+     element: <FindBranchAtms />,
+     withLayout: true,
+   },
++  {
++    
++    path: "taarif-guides",
++    element: <TaarifGuides />,
++    withLayout: true,
++  }
+ ];
  
--# Build the application
--RUN npm run build
-+RUN \
-+  if [ -f yarn.lock ]; then yarn run build; \
-+  elif [ -f package-lock.json ]; then npm run build; \
-+  elif [ -f pnpm-lock.yaml ]; then corepack enable pnpm && pnpm run build; \
-+  else echo "Lockfile not found." && exit 1; \
-+  fi
+ export default landingRoutes;
+diff --git a/src/components/Navigation/MainNavigation.tsx b/src/components/Navigation/MainNavigation.tsx
+index 8b8e2f1..f039cce 100644
+--- a/src/components/Navigation/MainNavigation.tsx
++++ b/src/components/Navigation/MainNavigation.tsx
+@@ -21,8 +21,11 @@ import {
+ } from "@/components/ui/dropdown-menu";
+ import { useNavigation } from "@/hooks/useNavigation";
+ import { useState } from "react";
+-import { quickLinks, type SubMenuItem, type ThirdLevelItem } from "@/data/navigationData";
+-
++import {
++  quickLinks,
++  type SubMenuItem,
++  type ThirdLevelItem,
++} from "@/data/navigationData";
  
--# Stage 3: Runtime stage
--FROM node:20-alpine AS runner
-+# Production image, copy all the files and run next
-+FROM base AS runner
- WORKDIR /app
+ export default function MainNavigation() {
+   const {
+@@ -40,8 +43,12 @@ export default function MainNavigation() {
+   } = useNavigation();
  
--# Set environment variables
- ENV NODE_ENV=production
--ENV NEXT_TELEMETRY_DISABLED=1
-+# Uncomment the following line in case you want to disable telemetry during runtime.
-+# ENV NEXT_TELEMETRY_DISABLED=1
+   const [hoveredCategory, setHoveredCategory] = useState<string | null>(null);
+-  const [hoveredSubCategory, setHoveredSubCategory] = useState<string | null>(null);
+-  const [expandedAccordions, setExpandedAccordions] = useState<Set<string>>(new Set());
++  const [hoveredSubCategory, setHoveredSubCategory] = useState<string | null>(
++    null
++  );
++  const [expandedAccordions, setExpandedAccordions] = useState<Set<string>>(
++    new Set()
++  );
  
--# Create non-root user for security
- RUN addgroup --system --gid 1001 nodejs
- RUN adduser --system --uid 1001 nextjs
+   const closeAllDropdowns = () => {
+     setActiveThirdLevel(null);
+@@ -65,7 +72,10 @@ export default function MainNavigation() {
+   };
  
--# Copy built application from builder stage
--COPY --from=builder /app/next.config.* ./
-+# Copy public folder - ensure it exists in your project root
- COPY --from=builder /app/public ./public
--COPY --from=builder /app/package.json ./package.json
+   const renderIcon = (iconName: string, className = "h-4 w-4") => {
+-    const icons: Record<string, React.ComponentType<React.SVGProps<SVGSVGElement>>> = {
++    const icons: Record<
++      string,
++      React.ComponentType<React.SVGProps<SVGSVGElement>>
++    > = {
+       MapPin,
+       Globe,
+       User,
+@@ -80,7 +90,9 @@ export default function MainNavigation() {
+     if (!activeThirdLevel) return null;
+     for (const item of navigationItems) {
+       if (item.subItems) {
+-        const subItem = item.subItems.find((sub) => sub.label === activeThirdLevel);
++        const subItem = item.subItems.find(
++          (sub) => sub.label === activeThirdLevel
++        );
+         if (subItem?.thirdLevelItems) {
+           return {
+             parentItem: item,
+@@ -125,30 +137,34 @@ export default function MainNavigation() {
+                   {thirdLevelContent.subItem.label}
+                 </h3>
+                 <div className="space-y-1 overflow-y-auto max-h-[480px] pr-2 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
+-                  {thirdLevelContent.items.map((item: ThirdLevelItem, idx: number) => (
+-                    <div
+-                      key={idx}
+-                      className="relative"
+-                      onMouseEnter={() => {
+-                        setHoveredCategory(item.label);
+-                        setHoveredSubCategory(null);
+-                      }}
+-                    >
+-                      <Link
+-                        to={item.href}
+-                        onClick={closeAllDropdowns}
+-                        className="group flex items-center justify-between p-3 rounded-lg hover:bg-white hover:shadow-sm transition-all duration-200 text-gray-700 hover:text-gray-900"
++                  {thirdLevelContent.items.map(
++                    (item: ThirdLevelItem, idx: number) => (
++                      <div
++                        key={idx}
++                        className="relative"
++                        onMouseEnter={() => {
++                          setHoveredCategory(item.label);
++                          setHoveredSubCategory(null);
++                        }}
+                       >
+-                        <div>
+-                          <div className="font-medium">{item.label}</div>
+-                          {item.description && (
+-                            <div className="text-sm text-gray-500 mt-1">{item.description}</div>
+-                          )}
+-                        </div>
+-                        <ChevronRight className="h-4 w-4 opacity-0 group-hover:opacity-100 transition-opacity" />
+-                      </Link>
+-                    </div>
+-                  ))}
++                        <Link
++                          to={item.href}
++                          onClick={closeAllDropdowns}
++                          className="group flex items-center justify-between p-3 rounded-lg hover:bg-white hover:shadow-sm transition-all duration-200 text-gray-700 hover:text-gray-900"
++                        >
++                          <div>
++                            <div className="font-medium">{item.label}</div>
++                            {item.description && (
++                              <div className="text-sm text-gray-500 mt-1">
++                                {item.description}
++                              </div>
++                            )}
++                          </div>
++                          <ChevronRight className="h-4 w-4 opacity-0 group-hover:opacity-100 transition-opacity" />
++                        </Link>
++                      </div>
++                    )
++                  )}
+                 </div>
+               </div>
+             </div>
+@@ -163,62 +179,97 @@ export default function MainNavigation() {
+                   <div className="flex-1 overflow-y-auto max-h-[480px] pr-2 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
+                     <div className="space-y-2">
+                       {getCategorizedItems(thirdLevelContent.subItem)
+-                        .filter((category) => category.label === hoveredCategory)
++                        .filter(
++                          (category) => category.label === hoveredCategory
++                        )
+                         .map((category, idx) => (
+                           <div key={idx} className="rounded-lg overflow-hidden">
+-                            {category.items.map((subItem: ThirdLevelItem, subIdx: number) => (
+-                              <div key={subIdx}>
+-                                {subItem.hasNested && subItem.nestedItems ? (
+-                                  <button
+-                                    className="group flex items-center justify-between p-3 w-full text-left transition-all duration-200 hover:bg-gray-50 rounded-lg"
+-                                    onClick={() => toggleAccordion(`${category.label}-${subItem.label}`)}
+-                                    onMouseEnter={() => setHoveredSubCategory(subItem.label)}
+-                                  >
+-                                    <div className="flex-1">
+-                                      <div className="font-medium text-gray-700 group-hover:text-gray-900">{subItem.label}</div>
+-                                      <div className="text-sm text-gray-500 mt-1">{subItem.nestedItems.length} options available</div>
+-                                    </div>
+-                                    {expandedAccordions.has(`${category.label}-${subItem.label}`) ? (
+-                                      <Minus className="h-4 w-4" />
+-                                    ) : (
+-                                      <Plus className="h-4 w-4" />
+-                                    )}
+-                                  </button>
+-                                ) : (
+-                                  <Link
+-                                    to={subItem.href || "#"}
+-                                    onClick={closeAllDropdowns}
+-                                    className="group/nested flex items-center justify-between p-3 rounded hover:bg-white hover:shadow-sm transition-all duration-150 cursor-pointer"
+-                                    onMouseEnter={() => setHoveredSubCategory(subItem.label)}
+-                                  >
+-                                    <div className="flex-1">
+-                                      <div className="text-sm font-medium text-gray-700 group-hover/nested:text-gray-900">{subItem.label}</div>
+-                                      {subItem.description && (
+-                                        <div className="text-xs text-gray-500 mt-0.5">{subItem.description}</div>
++                            {category.items.map(
++                              (subItem: ThirdLevelItem, subIdx: number) => (
++                                <div key={subIdx}>
++                                  {subItem.hasNested && subItem.nestedItems ? (
++                                    <button
++                                      className="group flex items-center justify-between p-3 w-full text-left transition-all duration-200 hover:bg-gray-50 rounded-lg"
++                                      onClick={() =>
++                                        toggleAccordion(
++                                          `${category.label}-${subItem.label}`
++                                        )
++                                      }
++                                      onMouseEnter={() =>
++                                        setHoveredSubCategory(subItem.label)
++                                      }
++                                    >
++                                      <div className="flex-1">
++                                        <div className="font-medium text-gray-700 group-hover:text-gray-900">
++                                          {subItem.label}
++                                        </div>
++                                        <div className="text-sm text-gray-500 mt-1">
++                                          {subItem.nestedItems.length} options
++                                          available
++                                        </div>
++                                      </div>
++                                      {expandedAccordions.has(
++                                        `${category.label}-${subItem.label}`
++                                      ) ? (
++                                        <Minus className="h-4 w-4" />
++                                      ) : (
++                                        <Plus className="h-4 w-4" />
++                                      )}
++                                    </button>
++                                  ) : (
++                                    <Link
++                                      to={subItem.href || "#"}
++                                      onClick={closeAllDropdowns}
++                                      className="group/nested flex items-center justify-between p-3 rounded hover:bg-white hover:shadow-sm transition-all duration-150 cursor-pointer"
++                                      onMouseEnter={() =>
++                                        setHoveredSubCategory(subItem.label)
++                                      }
++                                    >
++                                      <div className="flex-1">
++                                        <div className="text-sm font-medium text-gray-700 group-hover/nested:text-gray-900">
++                                          {subItem.label}
++                                        </div>
++                                        {subItem.description && (
++                                          <div className="text-xs text-gray-500 mt-0.5">
++                                            {subItem.description}
++                                          </div>
++                                        )}
++                                      </div>
++                                      <ChevronRight className="h-3 w-3 opacity-0 group-hover/nested:opacity-100 transition-opacity text-gray-400" />
++                                    </Link>
++                                  )}
++                                  {subItem.hasNested && subItem.nestedItems && (
++                                    <div
++                                      className={`pl-4 space-y-2 ${
++                                        expandedAccordions.has(
++                                          `${category.label}-${subItem.label}`
++                                        )
++                                          ? "block"
++                                          : "hidden"
++                                      }`}
++                                    >
++                                      {subItem.nestedItems.map(
++                                        (nestedItem, nestedIdx) => (
++                                          <Link
++                                            key={nestedIdx}
++                                            to={nestedItem.href}
++                                            onClick={closeAllDropdowns}
++                                            className="block text-xs text-gray-600 hover:text-gray-900 p-2 rounded hover:bg-white"
++                                            onMouseEnter={() =>
++                                              setHoveredSubCategory(
++                                                nestedItem.label
++                                              )
++                                            }
++                                          >
++                                            {nestedItem.label}
++                                          </Link>
++                                        )
+                                       )}
+                                     </div>
+-                                    <ChevronRight className="h-3 w-3 opacity-0 group-hover/nested:opacity-100 transition-opacity text-gray-400" />
+-                                  </Link>
+-                                )}
+-                                {subItem.hasNested && subItem.nestedItems && (
+-                                  <div
+-                                    className={`pl-4 space-y-2 ${expandedAccordions.has(`${category.label}-${subItem.label}`) ? "block" : "hidden"}`}
+-                                  >
+-                                    {subItem.nestedItems.map((nestedItem, nestedIdx) => (
+-                                      <Link
+-                                        key={nestedIdx}
+-                                        to={nestedItem.href}
+-                                        onClick={closeAllDropdowns}
+-                                        className="block text-xs text-gray-600 hover:text-gray-900 p-2 rounded hover:bg-white"
+-                                        onMouseEnter={() => setHoveredSubCategory(nestedItem.label)}
+-                                      >
+-                                        {nestedItem.label}
+-                                      </Link>
+-                                    ))}
+-                                  </div>
+-                                )}
+-                              </div>
+-                            ))}
++                                  )}
++                                </div>
++                              )
++                            )}
+                           </div>
+                         ))}
+                     </div>
+@@ -229,24 +280,42 @@ export default function MainNavigation() {
  
--# Copy built Next.js files
-+# Automatically leverage output traces to reduce image size
-+# https://nextjs.org/docs/advanced-features/output-file-tracing
- COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
- COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
- 
-+USER nextjs
- 
--# Expose port
- EXPOSE 5174
- 
--# Set port environment variable
- ENV PORT=5174
--ENV HOSTNAME="0.0.0.0"
- 
--# Start the application
--CMD ["npm", "start"]
+             {/* Third Column: Details on Hover */}
+             <div className="bg-white">
+-              {hoveredSubCategory && thirdLevelContent.content?.[hoveredSubCategory] ? (
++              {hoveredSubCategory &&
++              thirdLevelContent.content?.[hoveredSubCategory] ? (
+                 <div className="p-6">
+-                  <h4 className="text-lg font-semibold text-gray-900 mb-4">{hoveredSubCategory}</h4>
++                  <h4 className="text-lg font-semibold text-gray-900 mb-4">
++                    {hoveredSubCategory}
++                  </h4>
+                   <div className="space-y-4">
+                     <img
+-                      src={thirdLevelContent.content[hoveredSubCategory].imageUrl}
+-                      alt={thirdLevelContent.content[hoveredSubCategory].altText}
++                      src={
++                        thirdLevelContent.content[hoveredSubCategory].imageUrl
++                      }
++                      alt={
++                        thirdLevelContent.content[hoveredSubCategory].altText
++                      }
+                       className="w-full h-40 object-cover rounded-lg"
+                       onError={(e) => {
+-                        const altText = thirdLevelContent?.content?.[hoveredSubCategory].altText || "Image not found";
++                        const altText =
++                          thirdLevelContent?.content?.[hoveredSubCategory]
++                            .altText || "Image not found";
+                         e.currentTarget.src = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='160' viewBox='0 0 300 160'%3E%3Crect width='300' height='160' fill='%23f3f4f6'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='Arial, sans-serif' font-size='14' fill='%236b7280'%3E${altText}%3C/text%3E%3C/svg%3E`;
+                       }}
+                     />
+-                    <p className="text-gray-600 text-sm mb-4">{thirdLevelContent.content[hoveredSubCategory].description}</p>
++                    <p className="text-gray-600 text-sm mb-4">
++                      {
++                        thirdLevelContent.content[hoveredSubCategory]
++                          .description
++                      }
++                    </p>
+                     <div>
+-                      <h5 className="font-medium text-gray-900 mb-2">Key Features</h5>
++                      <h5 className="font-medium text-gray-900 mb-2">
++                        Key Features
++                      </h5>
+                       <ul className="text-sm text-gray-600 space-y-1">
+-                        {thirdLevelContent.content[hoveredSubCategory].keyFeatures.map((feature, idx) => (
++                        {thirdLevelContent.content[
++                          hoveredSubCategory
++                        ].keyFeatures.map((feature, idx) => (
+                           <li key={idx}>• {feature}</li>
+                         ))}
+                       </ul>
+@@ -260,30 +329,49 @@ export default function MainNavigation() {
+                       icon={ChevronRight}
+                       iconPosition="right"
+                     >
+-                      <Link to={thirdLevelContent.content[hoveredSubCategory].buttonLink}>
+-                        {thirdLevelContent.content[hoveredSubCategory].buttonText}
++                      <Link
++                        to={
++                          thirdLevelContent.content[hoveredSubCategory]
++                            .buttonLink
++                        }
++                      >
++                        {
++                          thirdLevelContent.content[hoveredSubCategory]
++                            .buttonText
++                        }
+                       </Link>
+                     </Button>
+                   </div>
+                 </div>
+-              ) : hoveredCategory && thirdLevelContent.content?.[hoveredCategory] ? (
++              ) : hoveredCategory &&
++                thirdLevelContent.content?.[hoveredCategory] ? (
+                 <div className="p-6">
+-                  <h4 className="text-lg font-semibold text-gray-900 mb-4">{hoveredCategory}</h4>
++                  <h4 className="text-lg font-semibold text-gray-900 mb-4">
++                    {hoveredCategory}
++                  </h4>
+                   <div className="space-y-4">
+                     <img
+                       src={thirdLevelContent.content[hoveredCategory].imageUrl}
+                       alt={thirdLevelContent.content[hoveredCategory].altText}
+                       className="w-full h-40 object-cover rounded-lg"
+                       onError={(e) => {
+-                        const altText = thirdLevelContent?.content?.[hoveredCategory].altText || "Image not found";
++                        const altText =
++                          thirdLevelContent?.content?.[hoveredCategory]
++                            .altText || "Image not found";
+                         e.currentTarget.src = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='160' viewBox='0 0 300 160'%3E%3Crect width='300' height='160' fill='%23f3f4f6'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='Arial, sans-serif' font-size='14' fill='%236b7280'%3E${altText}%3C/text%3E%3C/svg%3E`;
+                       }}
+                     />
+-                    <p className="text-gray-600 text-sm mb-4">{thirdLevelContent.content[hoveredCategory].description}</p>
++                    <p className="text-gray-600 text-sm mb-4">
++                      {thirdLevelContent.content[hoveredCategory].description}
++                    </p>
+                     <div>
+-                      <h5 className="font-medium text-gray-900 mb-2">Key Features</h5>
++                      <h5 className="font-medium text-gray-900 mb-2">
++                        Key Features
++                      </h5>
+                       <ul className="text-sm text-gray-600 space-y-1">
+-                        {thirdLevelContent.content[hoveredCategory].keyFeatures.map((feature, idx) => (
++                        {thirdLevelContent.content[
++                          hoveredCategory
++                        ].keyFeatures.map((feature, idx) => (
+                           <li key={idx}>• {feature}</li>
+                         ))}
+                       </ul>
+@@ -297,7 +385,11 @@ export default function MainNavigation() {
+                       icon={ChevronRight}
+                       iconPosition="right"
+                     >
+-                      <Link to={thirdLevelContent.content[hoveredCategory].buttonLink}>
++                      <Link
++                        to={
++                          thirdLevelContent.content[hoveredCategory].buttonLink
++                        }
++                      >
+                         {thirdLevelContent.content[hoveredCategory].buttonText}
+                       </Link>
+                     </Button>
+@@ -305,10 +397,16 @@ export default function MainNavigation() {
+                 </div>
+               ) : (
+                 <div className="p-6">
+-                  <h4 className="text-lg font-semibold text-gray-900 mb-4">{thirdLevelContent.subItem.label} Overview</h4>
++                  <h4 className="text-lg font-semibold text-gray-900 mb-4">
++                    {thirdLevelContent.subItem.label} Overview
++                  </h4>
+                   <div className="space-y-4">
+                     <img
+-                      src={thirdLevelContent.subItem.thirdLevelContent?.[thirdLevelContent.subItem.label]?.imageUrl || "/images/default-solution.jpg"}
++                      src={
++                        thirdLevelContent.subItem.thirdLevelContent?.[
++                          thirdLevelContent.subItem.label
++                        ]?.imageUrl || "/images/default-solution.jpg"
++                      }
+                       alt={thirdLevelContent.subItem.label}
+                       className="w-full h-40 object-cover rounded-lg"
+                       onError={(e) => {
+@@ -316,13 +414,19 @@ export default function MainNavigation() {
+                       }}
+                     />
+                     <p className="text-gray-600 text-sm">
+-                      {thirdLevelContent.subItem.thirdLevelContent?.[thirdLevelContent.subItem.label]?.description ||
++                      {thirdLevelContent.subItem.thirdLevelContent?.[
++                        thirdLevelContent.subItem.label
++                      ]?.description ||
+                         `Explore our ${thirdLevelContent.subItem.label.toLowerCase()} solutions tailored to your needs.`}
+                     </p>
+                     <div>
+-                      <h5 className="font-medium text-gray-900 mb-2">Key Features</h5>
++                      <h5 className="font-medium text-gray-900 mb-2">
++                        Key Features
++                      </h5>
+                       <ul className="text-sm text-gray-600 space-y-1">
+-                        {thirdLevelContent.subItem.thirdLevelContent?.[thirdLevelContent.subItem.label]?.keyFeatures?.map((feature, idx) => (
++                        {thirdLevelContent.subItem.thirdLevelContent?.[
++                          thirdLevelContent.subItem.label
++                        ]?.keyFeatures?.map((feature, idx) => (
+                           <li key={idx}>• {feature}</li>
+                         )) || (
+                           <>
+@@ -355,7 +459,9 @@ export default function MainNavigation() {
+           <div className="border-t border-gray-200 bg-gray-50">
+             <div className="container mx-auto px-6 py-4">
+               <div className="flex items-center gap-6">
+-                <span className="text-gray-500 font-medium text-sm">Quick Links:</span>
++                <span className="text-gray-500 font-medium text-sm">
++                  Quick Links:
++                </span>
+                 <div className="flex gap-6">
+                   {quickLinks.map((link, idx) => (
+                     <Link
+@@ -378,7 +484,13 @@ export default function MainNavigation() {
+           <div className="flex items-center justify-between h-16">
+             <div className="flex items-center">
+               <div className="flex-shrink-0 py-10">
+-                <img src="/images/logo.svg" alt="NBC Logo" width={90} height={100} className="z-[10000000]" />
++                <img
++                  src="/images/logo.svg"
++                  alt="NBC Logo"
++                  width={90}
++                  height={100}
++                  className="z-[10000000]"
++                />
+               </div>
+             </div>
+             <div className="hidden lg:flex items-center space-x-4 gap-5">
+@@ -387,8 +499,12 @@ export default function MainNavigation() {
+                 return (
+                   <div
+                     key={index}
+-                    className={`relative group/item cursor-pointer ${hasThirdLevel ? "has-third-level" : ""}`}
+-                    onMouseEnter={() => !item.hasDropdown && setActiveThirdLevel(null)}
++                    className={`relative group/item cursor-pointer ${
++                      hasThirdLevel ? "has-third-level" : ""
++                    }`}
++                    onMouseEnter={() =>
++                      !item.hasDropdown && setActiveThirdLevel(null)
++                    }
+                   >
+                     {item.hasDropdown ? (
+                       <div className="relative">
+@@ -421,7 +537,10 @@ export default function MainNavigation() {
+                                         to={subItem.href ?? "#"}
+                                         onClick={closeAllDropdowns}
+                                         className={`text-nav-text hover:text-nav-text-hover transition-colors duration-150 font-medium whitespace-nowrap flex items-center h-12 space-x-1 relative hover:after:w-full after:absolute after:bottom-0 after:left-0 after:h-0.5 after:bg-nbc-dark-700 after:transition-all after:duration-200 ${
+-                                          subItem.href && isActiveLink(subItem.href) ? "after:w-full" : "after:w-0"
++                                          subItem.href &&
++                                          isActiveLink(subItem.href)
++                                            ? "after:w-full"
++                                            : "after:w-0"
+                                         }`}
+                                       >
+                                         <span>{subItem.label}</span>
+@@ -430,7 +549,10 @@ export default function MainNavigation() {
+                                     ) : (
+                                       <button
+                                         className={`text-nav-text hover:text-nav-text-hover transition-colors duration-150 font-medium whitespace-nowrap flex items-center h-12 space-x-1 relative hover:after:w-full after:absolute after:bottom-0 after:left-0 after:h-0.5 after:bg-nbc-dark-700 after:transition-all after:duration-200 ${
+-                                          subItem.href && isActiveLink(subItem.href) ? "after:w-full" : "after:w-0"
++                                          subItem.href &&
++                                          isActiveLink(subItem.href)
++                                            ? "after:w-full"
++                                            : "after:w-0"
+                                         }`}
+                                       >
+                                         <span>{subItem.label}</span>
+@@ -442,7 +564,10 @@ export default function MainNavigation() {
+                                       to={subItem.href ?? "#"}
+                                       onClick={closeAllDropdowns}
+                                       className={`text-nav-text hover:text-nav-text-hover transition-colors duration-150 font-medium whitespace-nowrap flex items-center h-12 relative hover:after:w-full after:absolute after:bottom-0 after:left-0 after:h-0.5 after:bg-nbc-dark-700 after:transition-all after:duration-200 ${
+-                                        subItem.href && isActiveLink(subItem.href) ? "after:w-full" : "after:w-0"
++                                        subItem.href &&
++                                        isActiveLink(subItem.href)
++                                          ? "after:w-full"
++                                          : "after:w-0"
+                                       }`}
+                                     >
+                                       {subItem.label}
+@@ -470,9 +595,13 @@ export default function MainNavigation() {
+                                     onClick={closeAllDropdowns}
+                                     className="block p-3 rounded-md hover:bg-accent transition-colors duration-150"
+                                   >
+-                                    <div className="font-medium text-nav-text">{subItem.label}</div>
++                                    <div className="font-medium text-nav-text">
++                                      {subItem.label}
++                                    </div>
+                                     {subItem.description && (
+-                                      <div className="text-sm text-muted-foreground mt-1">{subItem.description}</div>
++                                      <div className="text-sm text-muted-foreground mt-1">
++                                        {subItem.description}
++                                      </div>
+                                     )}
+                                   </Link>
+                                 ))}
+@@ -486,7 +615,9 @@ export default function MainNavigation() {
+                         to={item.href ?? "/"}
+                         onClick={closeAllDropdowns}
+                         className={`text-nav-text hover:text-nav-text-hover transition-colors duration-200 font-medium py-2 relative hover:after:w-full after:absolute after:bottom-0 after:left-0 after:h-0.5 after:bg-nbc-dark-700 after:transition-all after:duration-200 ${
+-                          item.href && isActiveLink(item.href) ? "after:w-full" : "after:w-0"
++                          item.href && isActiveLink(item.href)
++                            ? "after:w-full"
++                            : "after:w-0"
+                         }`}
+                       >
+                         {item.label}
+@@ -498,20 +629,32 @@ export default function MainNavigation() {
+             </div>
+             <div className="hidden lg:flex items-center space-x-4">
+               {actionButtons
+-                .filter((btn) => btn.label !== "Login")
++                .filter(
++                  (btn) =>
++                    btn.label !== "Login" && btn.label !== "Internet Banking"
++                )
+                 .map((actionButton) => (
+                   <div key={actionButton.label}>
+                     {actionButton.items ? (
+                       <DropdownMenu>
+                         <DropdownMenuTrigger asChild>
+-                          <Button variant={actionButton.variant} size="sm" icon={ChevronDown} iconPosition="right">
+-                            {actionButton.icon && renderIcon(actionButton.icon, "h-4 w-4 mr-2")}
++                          <Button
++                            variant={actionButton.variant}
++                            size="sm"
++                            icon={ChevronDown}
++                            iconPosition="right"
++                          >
++                            {actionButton.icon &&
++                              renderIcon(actionButton.icon, "h-4 w-4 mr-2")}
+                             {actionButton.label}
+                           </Button>
+                         </DropdownMenuTrigger>
+                         <DropdownMenuContent className="z-[10000000]">
+                           {actionButton.items.map((item) => (
+-                            <DropdownMenuItem key={item.label} onClick={closeAllDropdowns}>
++                            <DropdownMenuItem
++                              key={item.label}
++                              onClick={closeAllDropdowns}
++                            >
+                               <Link to={item.href}>{item.label}</Link>
+                             </DropdownMenuItem>
+                           ))}
+@@ -524,8 +667,13 @@ export default function MainNavigation() {
+                         className="text-nav-text hover:text-nav-text-hover"
+                         asChild
+                       >
+-                        <Link to={actionButton.href ?? "#"} onClick={closeAllDropdowns} className="flex items-center">
+-                          {actionButton.icon && renderIcon(actionButton.icon, "h-4 w-4 mr-2")}
++                        <Link
++                          to={actionButton.href ?? "#"}
++                          onClick={closeAllDropdowns}
++                          className="flex items-center"
++                        >
++                          {actionButton.icon &&
++                            renderIcon(actionButton.icon, "h-4 w-4 mr-2")}
+                           {actionButton.label}
+                         </Link>
+                       </Button>
+@@ -541,10 +689,32 @@ export default function MainNavigation() {
+                 />
+               </div>
+               {actionButtons
+-                .filter((btn) => btn.label === "Login")
++                .filter(
++                  (btn) =>
++                    btn.label === "Login" || btn.label === "Internet Banking"
++                )
+                 .map((actionButton) => (
+-                  <div key={actionButton.label}>
+-                    <DropdownMenu>
++                  <div key={actionButton.label} className="not-group">
++                    <Link
++                      to={"/"}
++                      className={`flex py-1.5 px-3 items-center rounded-md transition-colors duration-300 ${
++                        actionButton.label === "Login"
++                          ? "bg-nbc-dark-950 text-white hover:bg-nbc-dark-800 "
++                          : "border border-nbc-dark-950 hover:bg-nbc-dark-950 hover:text-white"
++                      }`} // Ensure it's above group effects
++                      style={{ isolation: "isolate" }} // CSS isolation
++                      onMouseEnter={(e: any) => e.stopPropagation()} // Prevent event bubbling
++                      onMouseLeave={(e: any) => e.stopPropagation()}
++
++                      // icon={ChevronDown}
++                      // iconPosition="right"
++                    >
++                      {actionButton.icon &&
++                        renderIcon(actionButton.icon, "h-4 w-4 mr-2")}
++                      {actionButton.label}
++                    </Link>
++
++                    {/* <DropdownMenu>
+                       <DropdownMenuTrigger asChild>
+                         <Button variant={actionButton.variant} size="sm" icon={ChevronDown} iconPosition="right">
+                           {actionButton.icon && renderIcon(actionButton.icon, "h-4 w-4 mr-2")}
+@@ -558,7 +728,7 @@ export default function MainNavigation() {
+                           </DropdownMenuItem>
+                         ))}
+                       </DropdownMenuContent>
+-                    </DropdownMenu>
++                    </DropdownMenu> */}
+                   </div>
+                 ))}
+             </div>
+@@ -568,7 +738,11 @@ export default function MainNavigation() {
+                 onClick={toggleMobileMenu}
+                 aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
+               >
+-                {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
++                {isMobileMenuOpen ? (
++                  <X className="h-6 w-6" />
++                ) : (
++                  <Menu className="h-6 w-6" />
++                )}
+               </Button>
+             </div>
+           </div>
+@@ -586,87 +760,141 @@ export default function MainNavigation() {
+                           onClick={() => toggleAccordion(item.label)}
+                         >
+                           {item.label}
+-                          {expandedAccordions.has(item.label) ? <Minus className="h-4 w-4" /> : <Plus className="h-4 w-4" />}
++                          {expandedAccordions.has(item.label) ? (
++                            <Minus className="h-4 w-4" />
++                          ) : (
++                            <Plus className="h-4 w-4" />
++                          )}
+                         </button>
+-                        {expandedAccordions.has(item.label) && item.subItems && (
+-                          <div className="pl-4 space-y-2 mt-2">
+-                            {item.subItems.map((subItem, subIndex) => (
+-                              <div key={subIndex}>
+-                                {subItem.hasThirdLevel ? (
+-                                  <div>
+-                                    <button
+-                                      className="flex items-center justify-between w-full text-nav-text text-sm py-2"
+-                                      onClick={() => toggleAccordion(`${item.label}-${subItem.label}`)}
+-                                    >
+-                                      {subItem.label}
+-                                      {expandedAccordions.has(`${item.label}-${subItem.label}`) ? (
+-                                        <Minus className="h-4 w-4" />
+-                                      ) : (
+-                                        <Plus className="h-4 w-4" />
+-                                      )}
+-                                    </button>
+-                                    {expandedAccordions.has(`${item.label}-${subItem.label}`) && subItem.categories && (
+-                                      <div className="pl-4 space-y-2 mt-2">
+-                                        {Object.entries(subItem.categories).map(([categoryName, categoryItems], catIndex) => (
+-                                          <div key={catIndex}>
+-                                            <button
+-                                              className="flex items-center justify-between w-full text-nav-text text-sm py-2"
+-                                              onClick={() => toggleAccordion(`${item.label}-${subItem.label}-${categoryName}`)}
+-                                            >
+-                                              {categoryName}
+-                                              {expandedAccordions.has(`${item.label}-${subItem.label}-${categoryName}`) ? (
+-                                                <Minus className="h-4 w-4" />
+-                                              ) : (
+-                                                <Plus className="h-4 w-4" />
+-                                              )}
+-                                            </button>
+-                                            {expandedAccordions.has(`${item.label}-${subItem.label}-${categoryName}`) && (
+-                                              <div className="pl-4 space-y-2 mt-2">
+-                                                {categoryItems.map((thirdLevelItem: ThirdLevelItem, thirdIndex: number) => (
+-                                                  <div key={thirdIndex}>
+-                                                    <Link
+-                                                      to={thirdLevelItem.href}
+-                                                      onClick={closeAllDropdowns}
+-                                                      className="block text-sm text-gray-600 hover:text-nbc-dark-950"
+-                                                    >
+-                                                      {thirdLevelItem.label}
+-                                                    </Link>
+-                                                    {thirdLevelItem.hasNested && thirdLevelItem.nestedItems && (
+-                                                      <div className="pl-4 space-y-2 mt-2">
+-                                                        {thirdLevelItem.nestedItems.map((nestedItem, nestedIndex) => (
+-                                                          <Link
+-                                                            key={nestedIndex}
+-                                                            to={nestedItem.href}
+-                                                            onClick={closeAllDropdowns}
+-                                                            className="block text-xs text-gray-600 hover:text-nbc-dark-950"
+-                                                          >
+-                                                            {nestedItem.label}
+-                                                          </Link>
+-                                                        ))}
+-                                                      </div>
++                        {expandedAccordions.has(item.label) &&
++                          item.subItems && (
++                            <div className="pl-4 space-y-2 mt-2">
++                              {item.subItems.map((subItem, subIndex) => (
++                                <div key={subIndex}>
++                                  {subItem.hasThirdLevel ? (
++                                    <div>
++                                      <button
++                                        className="flex items-center justify-between w-full text-nav-text text-sm py-2"
++                                        onClick={() =>
++                                          toggleAccordion(
++                                            `${item.label}-${subItem.label}`
++                                          )
++                                        }
++                                      >
++                                        {subItem.label}
++                                        {expandedAccordions.has(
++                                          `${item.label}-${subItem.label}`
++                                        ) ? (
++                                          <Minus className="h-4 w-4" />
++                                        ) : (
++                                          <Plus className="h-4 w-4" />
++                                        )}
++                                      </button>
++                                      {expandedAccordions.has(
++                                        `${item.label}-${subItem.label}`
++                                      ) &&
++                                        subItem.categories && (
++                                          <div className="pl-4 space-y-2 mt-2">
++                                            {Object.entries(
++                                              subItem.categories
++                                            ).map(
++                                              (
++                                                [categoryName, categoryItems],
++                                                catIndex
++                                              ) => (
++                                                <div key={catIndex}>
++                                                  <button
++                                                    className="flex items-center justify-between w-full text-nav-text text-sm py-2"
++                                                    onClick={() =>
++                                                      toggleAccordion(
++                                                        `${item.label}-${subItem.label}-${categoryName}`
++                                                      )
++                                                    }
++                                                  >
++                                                    {categoryName}
++                                                    {expandedAccordions.has(
++                                                      `${item.label}-${subItem.label}-${categoryName}`
++                                                    ) ? (
++                                                      <Minus className="h-4 w-4" />
++                                                    ) : (
++                                                      <Plus className="h-4 w-4" />
+                                                     )}
+-                                                  </div>
+-                                                ))}
+-                                              </div>
++                                                  </button>
++                                                  {expandedAccordions.has(
++                                                    `${item.label}-${subItem.label}-${categoryName}`
++                                                  ) && (
++                                                    <div className="pl-4 space-y-2 mt-2">
++                                                      {categoryItems.map(
++                                                        (
++                                                          thirdLevelItem: ThirdLevelItem,
++                                                          thirdIndex: number
++                                                        ) => (
++                                                          <div key={thirdIndex}>
++                                                            <Link
++                                                              to={
++                                                                thirdLevelItem.href
++                                                              }
++                                                              onClick={
++                                                                closeAllDropdowns
++                                                              }
++                                                              className="block text-sm text-gray-600 hover:text-nbc-dark-950"
++                                                            >
++                                                              {
++                                                                thirdLevelItem.label
++                                                              }
++                                                            </Link>
++                                                            {thirdLevelItem.hasNested &&
++                                                              thirdLevelItem.nestedItems && (
++                                                                <div className="pl-4 space-y-2 mt-2">
++                                                                  {thirdLevelItem.nestedItems.map(
++                                                                    (
++                                                                      nestedItem,
++                                                                      nestedIndex
++                                                                    ) => (
++                                                                      <Link
++                                                                        key={
++                                                                          nestedIndex
++                                                                        }
++                                                                        to={
++                                                                          nestedItem.href
++                                                                        }
++                                                                        onClick={
++                                                                          closeAllDropdowns
++                                                                        }
++                                                                        className="block text-xs text-gray-600 hover:text-nbc-dark-950"
++                                                                      >
++                                                                        {
++                                                                          nestedItem.label
++                                                                        }
++                                                                      </Link>
++                                                                    )
++                                                                  )}
++                                                                </div>
++                                                              )}
++                                                          </div>
++                                                        )
++                                                      )}
++                                                    </div>
++                                                  )}
++                                                </div>
++                                              )
+                                             )}
+                                           </div>
+-                                        ))}
+-                                      </div>
+-                                    )}
+-                                  </div>
+-                                ) : (
+-                                  <Link
+-                                    to={subItem.href ?? "#"}
+-                                    onClick={closeAllDropdowns}
+-                                    className="block text-sm text-gray-600 hover:text-nbc-dark-950 py-2"
+-                                  >
+-                                    {subItem.label}
+-                                  </Link>
+-                                )}
+-                              </div>
+-                            ))}
+-                          </div>
+-                        )}
++                                        )}
++                                    </div>
++                                  ) : (
++                                    <Link
++                                      to={subItem.href ?? "#"}
++                                      onClick={closeAllDropdowns}
++                                      className="block text-sm text-gray-600 hover:text-nbc-dark-950 py-2"
++                                    >
++                                      {subItem.label}
++                                    </Link>
++                                  )}
++                                </div>
++                              ))}
++                            </div>
++                          )}
+                       </div>
+                     ) : (
+                       <Link
+@@ -693,17 +921,24 @@ export default function MainNavigation() {
+                         <div>
+                           <button
+                             className="flex items-center justify-between w-full text-nav-text text-sm py-2"
+-                            onClick={() => toggleAccordion(`action-${actionButton.label}`)}
++                            onClick={() =>
++                              toggleAccordion(`action-${actionButton.label}`)
++                            }
+                           >
+-                            {actionButton.icon && renderIcon(actionButton.icon, "h-4 w-4 mr-2")}
++                            {actionButton.icon &&
++                              renderIcon(actionButton.icon, "h-4 w-4 mr-2")}
+                             {actionButton.label}
+-                            {expandedAccordions.has(`action-${actionButton.label}`) ? (
++                            {expandedAccordions.has(
++                              `action-${actionButton.label}`
++                            ) ? (
+                               <Minus className="h-4 w-4" />
+                             ) : (
+                               <Plus className="h-4 w-4" />
+                             )}
+                           </button>
+-                          {expandedAccordions.has(`action-${actionButton.label}`) && (
++                          {expandedAccordions.has(
++                            `action-${actionButton.label}`
++                          ) && (
+                             <div className="pl-4 space-y-2 mt-2">
+                               {actionButton.items.map((item, itemIndex) => (
+                                 <Link
+@@ -724,7 +959,8 @@ export default function MainNavigation() {
+                           onClick={closeAllDropdowns}
+                           className="flex items-center text-sm text-gray-600 hover:text-nbc-dark-950 py-2"
+                         >
+-                          {actionButton.icon && renderIcon(actionButton.icon, "h-4 w-4 mr-2")}
++                          {actionButton.icon &&
++                            renderIcon(actionButton.icon, "h-4 w-4 mr-2")}
+                           {actionButton.label}
+                         </Link>
+                       )}
+@@ -733,7 +969,9 @@ export default function MainNavigation() {
+                 </div>
+                 <div className="pt-4 border-t border-gray-200">
+                   <div className="flex flex-col gap-2">
+-                    <span className="text-gray-500 font-medium text-sm">Quick Links:</span>
++                    <span className="text-gray-500 font-medium text-sm">
++                      Quick Links:
++                    </span>
+                     {quickLinks.map((link, idx) => (
+                       <Link
+                         key={idx}
+@@ -753,4 +991,4 @@ export default function MainNavigation() {
+       </nav>
+     </header>
+   );
+-}
 \ No newline at end of file
-+# server.js is created by next build from the standalone output
-+# https://nextjs.org/docs/pages/api-reference/config/next-config-js/output
-+ENV HOSTNAME="0.0.0.0"
-+CMD ["node", "server.js"]
-\ No newline at end of file
-diff --git a/next.config.ts b/next.config.ts
-index e9ffa30..38525b6 100644
---- a/next.config.ts
-+++ b/next.config.ts
-@@ -1,7 +1,8 @@
- import type { NextConfig } from "next";
++}
+diff --git a/src/components/sections/OfferingSection.tsx b/src/components/sections/OfferingSection.tsx
+index 4e5f170..a70686f 100644
+--- a/src/components/sections/OfferingSection.tsx
++++ b/src/components/sections/OfferingSection.tsx
+@@ -99,7 +99,7 @@ function OfferingSection({
+   }, []);
  
- const nextConfig: NextConfig = {
--  /* config options here */
-+  output: 'standalone',
-+  /* other config options here */
- };
+   return (
+-    <div className={`mx-auto ${hasContainer ? "px-4 sm:px-6 py-12 sm:py-16 container":""}`}>
++    <div className={`mx-auto  ${hasContainer ? "px-4 sm:px-6 py-12 sm:py-16 container":""}`}>
+       {/* Header Section */}
+       <div className="text-center mb-8 sm:mb-12">
+         <h1 className="text-nbc-dark-950 text-2xl sm:text-3xl md:text-4xl lg:text-[48px] font-bold leading-tight mb-4">
+@@ -111,7 +111,7 @@ function OfferingSection({
+       </div>
  
--export default nextConfig;
-+export default nextConfig;
-\ No newline at end of file
-diff --git a/src/app/globals.css b/src/app/globals.css
-index 25f0d4f..ec37fa5 100644
---- a/src/app/globals.css
-+++ b/src/app/globals.css
-@@ -8,6 +8,7 @@
- @theme {
-   /* My Primary Colors */
-   --color-primary-500: #111d45;
-+  --color-primary-600: #142352;
-   --color-primary-700: #172960;
-   --color-primary-900: #1e347b;
-   --color-primary-950: #213a89;
-@@ -249,3 +250,29 @@ body{
-          leading-5 sm:leading-6 md:leading-7 
-          max-w-xs sm:max-w-lg md:max-w-2xl lg:max-w-3xl;
+       {/* Modern Tab Navigation with shadcn */}
+-      <Tabs defaultValue={defaultValue} className="w-full">
++      <Tabs defaultValue={defaultValue} className="w-full ">
+         {/* Desktop Tabs - Grid Layout */}
+         <TabsList className={`hidden md:grid w-full ${getGridCols(tabs.length)} mb-8 bg-gray-100 p-1 rounded-2xl ${maxWidth} mx-auto h-auto `}>
+           {tabs.map((tab) => (
+@@ -121,7 +121,7 @@ function OfferingSection({
+               className="flex items-center justify-center gap-1 px-4 lg:px-6 py-3 rounded-xl font-medium transition-all duration-300 
+                        data-[state=active]:bg-blue-950 data-[state=active]:text-white text-center 
+                        data-[state=active]:shadow-lg data-[state=active]:shadow-gray-200/50 
+-                       data-[state=active]:scale-105 text-sm lg:text-base cursor-pointer"
++                       data-[state=active]:scale-105 text-sm lg:text-base cursor-pointer !z-[999]"
+             >
+             <div>  {tab.icon && <span className="w-4 h-4 lg:w-7 lg:h-7">{tab.icon}</span>}</div>
+               <span>{tab.label}</span>
+diff --git a/src/data/navigationData.tsx b/src/data/navigationData.tsx
+index a2d6ea1..e07fee3 100644
+--- a/src/data/navigationData.tsx
++++ b/src/data/navigationData.tsx
+@@ -44,7 +44,7 @@ export interface MenuItem {
+ export interface ActionButton {
+   label: string;
+   href?: string;
+-  variant: "primary" | "secondary" | "ghost";
++  variant: "primary" | "secondary" | "ghost" | "outline";
+   icon?: string;
+   items?: { label: string; href: string }[];
+ }
+@@ -1915,15 +1915,25 @@ export const actionButtons: ActionButton[] = [
+       { label: "Swahili", href: "/language/sw" },
+     ],
+   },
++  {
++    label: "Internet Banking",
++    variant: "outline",
++    // icon: "User",
++    // items: [
++    //   { label: "Internet Banking", href: "/login/personal" },
++    //   { label: "Business Banking", href: "/login/business" },
++    //   { label: "Corporate Banking", href: "/login/corporate" },
++    // ],
++  },
+   {
+     label: "Login",
+     variant: "primary",
+     icon: "User",
+-    items: [
+-      { label: "Internet Banking", href: "/login/personal" },
+-      { label: "Business Banking", href: "/login/business" },
+-      { label: "Corporate Banking", href: "/login/corporate" },
+-    ],
++    // items: [
++    //   { label: "Internet Banking", href: "/login/personal" },
++    //   { label: "Business Banking", href: "/login/business" },
++    //   { label: "Corporate Banking", href: "/login/corporate" },
++    // ],
+   },
+ ];
+ 
+diff --git a/src/index.css b/src/index.css
+index 2b03c98..e32e5e6 100644
+--- a/src/index.css
++++ b/src/index.css
+@@ -210,3 +210,17 @@ body {
+ .section-subtitle {
+   @apply text-sm sm:text-base lg:text-lg text-center  mx-auto  leading-relaxed sm:leading-relaxed lg:leading-loose text-[#4B5563]  mb-5;
  }
 +
 +
-+
-+/* Animations */
-+
-+@keyframes shimmer {
-+  0% { transform: translateX(-100%) skewX(-12deg); }
-+  100% { transform: translateX(200%) skewX(-12deg); }
++.not-group {
++  /* Break out of parent group context */
++  isolation: isolate;
++  /* Reset any inherited group styles */
++  pointer-events: auto;
 +}
 +
-+/* .scrollbar-thin::-webkit-scrollbar {
-+  width: 4px;
++.not-group * {
++  /* Prevent group hover inheritance */
++  --tw-bg-opacity: initial;
++  --tw-text-opacity: initial;
 +}
-+
-+.scrollbar-thin::-webkit-scrollbar-track {
-+  background: transparent;
-+}
-+
-+.scrollbar-thumb-blue-200::-webkit-scrollbar-thumb {
-+  background-color: rgb(191 219 254);
-+  border-radius: 2px;
-+}
-+
-+.hover\:scrollbar-thumb-blue-300:hover::-webkit-scrollbar-thumb {
-+  background-color: rgb(147 197 253);
-+} */
 \ No newline at end of file
-diff --git a/src/data/DashboardRoutes.ts b/src/data/DashboardRoutes.ts
-index a677ea9..a3cdb67 100644
---- a/src/data/DashboardRoutes.ts
-+++ b/src/data/DashboardRoutes.ts
-@@ -50,6 +50,11 @@ export const dashboardRoutes: NavigationItemData[] = [
-     iconName: "NotebookPen",
-     href: "/dashboard/donations",
-   },
-+  {
-+    label: "Market Place",
-+    iconName: "NotebookPen",
-+    href: "/dashboard/market-place",
-+  },
-   {
-     label: "Settings",
-     iconName: "Settings",
