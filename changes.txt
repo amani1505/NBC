@@ -1,183 +1,16 @@
-diff --git a/next.config.ts b/next.config.ts
-index 38525b6..000c3fa 100644
---- a/next.config.ts
-+++ b/next.config.ts
-@@ -2,6 +2,14 @@ import type { NextConfig } from "next";
- 
- const nextConfig: NextConfig = {
-   output: 'standalone',
-+  images: {
-+    remotePatterns: [
-+      {
-+        protocol: "https",
-+        hostname: "images.unsplash.com",
-+      },
-+    ],
-+  },
-   /* other config options here */
- };
- 
 diff --git a/package-lock.json b/package-lock.json
-index 5418443..01dbf69 100644
+index ac19eae..d225b98 100644
 --- a/package-lock.json
 +++ b/package-lock.json
-@@ -8,10 +8,14 @@
-       "name": "nbc-event-management",
-       "version": "0.1.0",
-       "dependencies": {
-+        "@radix-ui/react-accordion": "^1.2.12",
-         "@radix-ui/react-checkbox": "^1.3.3",
-         "@radix-ui/react-label": "^2.1.7",
-+        "@radix-ui/react-radio-group": "^1.3.8",
+@@ -18,6 +18,7 @@
+         "@radix-ui/react-scroll-area": "^1.2.10",
          "@radix-ui/react-select": "^2.2.6",
+         "@radix-ui/react-separator": "^1.1.7",
 +        "@radix-ui/react-slider": "^1.3.6",
-         "@radix-ui/react-slot": "^1.2.3",
-+        "@radix-ui/react-tabs": "^1.1.13",
+         "@radix-ui/react-switch": "^1.2.6",
          "@radix-ui/react-tooltip": "^1.2.8",
-         "class-variance-authority": "^0.7.1",
-         "clsx": "^2.1.1",
-@@ -965,6 +969,36 @@
-       "resolved": "https://registry.npmjs.org/@radix-ui/primitive/-/primitive-1.1.3.tgz",
-       "integrity": "sha512-JTF99U/6XIjCBo0wqkU5sK10glYe27MRRsfwoiq5zzOEZLHU3A3KCMa5X/azekYRCJ0HlwI0crAXS/5dEHTzDg=="
-     },
-+    "node_modules/@radix-ui/react-accordion": {
-+      "version": "1.2.12",
-+      "resolved": "https://registry.npmjs.org/@radix-ui/react-accordion/-/react-accordion-1.2.12.tgz",
-+      "integrity": "sha512-T4nygeh9YE9dLRPhAHSeOZi7HBXo+0kYIPJXayZfvWOWA0+n3dESrZbjfDPUABkUNym6Hd+f2IR113To8D2GPA==",
-+      "dependencies": {
-+        "@radix-ui/primitive": "1.1.3",
-+        "@radix-ui/react-collapsible": "1.1.12",
-+        "@radix-ui/react-collection": "1.1.7",
-+        "@radix-ui/react-compose-refs": "1.1.2",
-+        "@radix-ui/react-context": "1.1.2",
-+        "@radix-ui/react-direction": "1.1.1",
-+        "@radix-ui/react-id": "1.1.1",
-+        "@radix-ui/react-primitive": "2.1.3",
-+        "@radix-ui/react-use-controllable-state": "1.2.2"
-+      },
-+      "peerDependencies": {
-+        "@types/react": "*",
-+        "@types/react-dom": "*",
-+        "react": "^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc",
-+        "react-dom": "^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc"
-+      },
-+      "peerDependenciesMeta": {
-+        "@types/react": {
-+          "optional": true
-+        },
-+        "@types/react-dom": {
-+          "optional": true
-+        }
-+      }
-+    },
-     "node_modules/@radix-ui/react-arrow": {
-       "version": "1.1.7",
-       "resolved": "https://registry.npmjs.org/@radix-ui/react-arrow/-/react-arrow-1.1.7.tgz",
-@@ -1016,6 +1050,35 @@
-         }
-       }
-     },
-+    "node_modules/@radix-ui/react-collapsible": {
-+      "version": "1.1.12",
-+      "resolved": "https://registry.npmjs.org/@radix-ui/react-collapsible/-/react-collapsible-1.1.12.tgz",
-+      "integrity": "sha512-Uu+mSh4agx2ib1uIGPP4/CKNULyajb3p92LsVXmH2EHVMTfZWpll88XJ0j4W0z3f8NK1eYl1+Mf/szHPmcHzyA==",
-+      "dependencies": {
-+        "@radix-ui/primitive": "1.1.3",
-+        "@radix-ui/react-compose-refs": "1.1.2",
-+        "@radix-ui/react-context": "1.1.2",
-+        "@radix-ui/react-id": "1.1.1",
-+        "@radix-ui/react-presence": "1.1.5",
-+        "@radix-ui/react-primitive": "2.1.3",
-+        "@radix-ui/react-use-controllable-state": "1.2.2",
-+        "@radix-ui/react-use-layout-effect": "1.1.1"
-+      },
-+      "peerDependencies": {
-+        "@types/react": "*",
-+        "@types/react-dom": "*",
-+        "react": "^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc",
-+        "react-dom": "^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc"
-+      },
-+      "peerDependenciesMeta": {
-+        "@types/react": {
-+          "optional": true
-+        },
-+        "@types/react-dom": {
-+          "optional": true
-+        }
-+      }
-+    },
-     "node_modules/@radix-ui/react-collection": {
-       "version": "1.1.7",
-       "resolved": "https://registry.npmjs.org/@radix-ui/react-collection/-/react-collection-1.1.7.tgz",
-@@ -1285,6 +1348,67 @@
-         }
-       }
-     },
-+    "node_modules/@radix-ui/react-radio-group": {
-+      "version": "1.3.8",
-+      "resolved": "https://registry.npmjs.org/@radix-ui/react-radio-group/-/react-radio-group-1.3.8.tgz",
-+      "integrity": "sha512-VBKYIYImA5zsxACdisNQ3BjCBfmbGH3kQlnFVqlWU4tXwjy7cGX8ta80BcrO+WJXIn5iBylEH3K6ZTlee//lgQ==",
-+      "dependencies": {
-+        "@radix-ui/primitive": "1.1.3",
-+        "@radix-ui/react-compose-refs": "1.1.2",
-+        "@radix-ui/react-context": "1.1.2",
-+        "@radix-ui/react-direction": "1.1.1",
-+        "@radix-ui/react-presence": "1.1.5",
-+        "@radix-ui/react-primitive": "2.1.3",
-+        "@radix-ui/react-roving-focus": "1.1.11",
-+        "@radix-ui/react-use-controllable-state": "1.2.2",
-+        "@radix-ui/react-use-previous": "1.1.1",
-+        "@radix-ui/react-use-size": "1.1.1"
-+      },
-+      "peerDependencies": {
-+        "@types/react": "*",
-+        "@types/react-dom": "*",
-+        "react": "^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc",
-+        "react-dom": "^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc"
-+      },
-+      "peerDependenciesMeta": {
-+        "@types/react": {
-+          "optional": true
-+        },
-+        "@types/react-dom": {
-+          "optional": true
-+        }
-+      }
-+    },
-+    "node_modules/@radix-ui/react-roving-focus": {
-+      "version": "1.1.11",
-+      "resolved": "https://registry.npmjs.org/@radix-ui/react-roving-focus/-/react-roving-focus-1.1.11.tgz",
-+      "integrity": "sha512-7A6S9jSgm/S+7MdtNDSb+IU859vQqJ/QAtcYQcfFC6W8RS4IxIZDldLR0xqCFZ6DCyrQLjLPsxtTNch5jVA4lA==",
-+      "dependencies": {
-+        "@radix-ui/primitive": "1.1.3",
-+        "@radix-ui/react-collection": "1.1.7",
-+        "@radix-ui/react-compose-refs": "1.1.2",
-+        "@radix-ui/react-context": "1.1.2",
-+        "@radix-ui/react-direction": "1.1.1",
-+        "@radix-ui/react-id": "1.1.1",
-+        "@radix-ui/react-primitive": "2.1.3",
-+        "@radix-ui/react-use-callback-ref": "1.1.1",
-+        "@radix-ui/react-use-controllable-state": "1.2.2"
-+      },
-+      "peerDependencies": {
-+        "@types/react": "*",
-+        "@types/react-dom": "*",
-+        "react": "^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc",
-+        "react-dom": "^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc"
-+      },
-+      "peerDependenciesMeta": {
-+        "@types/react": {
-+          "optional": true
-+        },
-+        "@types/react-dom": {
-+          "optional": true
-+        }
-+      }
-+    },
-     "node_modules/@radix-ui/react-select": {
-       "version": "2.2.6",
-       "resolved": "https://registry.npmjs.org/@radix-ui/react-select/-/react-select-2.2.6.tgz",
-@@ -1327,6 +1451,38 @@
+         "@tailwindcss/vite": "^4.1.12",
+@@ -1660,6 +1661,38 @@
          }
        }
      },
@@ -216,884 +49,1660 @@ index 5418443..01dbf69 100644
      "node_modules/@radix-ui/react-slot": {
        "version": "1.2.3",
        "resolved": "https://registry.npmjs.org/@radix-ui/react-slot/-/react-slot-1.2.3.tgz",
-@@ -1344,6 +1500,35 @@
-         }
-       }
-     },
-+    "node_modules/@radix-ui/react-tabs": {
-+      "version": "1.1.13",
-+      "resolved": "https://registry.npmjs.org/@radix-ui/react-tabs/-/react-tabs-1.1.13.tgz",
-+      "integrity": "sha512-7xdcatg7/U+7+Udyoj2zodtI9H/IIopqo+YOIcZOq1nJwXWBZ9p8xiu5llXlekDbZkca79a/fozEYQXIA4sW6A==",
-+      "dependencies": {
-+        "@radix-ui/primitive": "1.1.3",
-+        "@radix-ui/react-context": "1.1.2",
-+        "@radix-ui/react-direction": "1.1.1",
-+        "@radix-ui/react-id": "1.1.1",
-+        "@radix-ui/react-presence": "1.1.5",
-+        "@radix-ui/react-primitive": "2.1.3",
-+        "@radix-ui/react-roving-focus": "1.1.11",
-+        "@radix-ui/react-use-controllable-state": "1.2.2"
-+      },
-+      "peerDependencies": {
-+        "@types/react": "*",
-+        "@types/react-dom": "*",
-+        "react": "^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc",
-+        "react-dom": "^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc"
-+      },
-+      "peerDependenciesMeta": {
-+        "@types/react": {
-+          "optional": true
-+        },
-+        "@types/react-dom": {
-+          "optional": true
-+        }
-+      }
-+    },
-     "node_modules/@radix-ui/react-tooltip": {
-       "version": "1.2.8",
-       "resolved": "https://registry.npmjs.org/@radix-ui/react-tooltip/-/react-tooltip-1.2.8.tgz",
 diff --git a/package.json b/package.json
-index 45d704a..870beec 100644
+index 49cc950..a75ad01 100644
 --- a/package.json
 +++ b/package.json
-@@ -9,10 +9,14 @@
-     "lint": "next lint"
-   },
-   "dependencies": {
-+    "@radix-ui/react-accordion": "^1.2.12",
-     "@radix-ui/react-checkbox": "^1.3.3",
-     "@radix-ui/react-label": "^2.1.7",
-+    "@radix-ui/react-radio-group": "^1.3.8",
+@@ -20,6 +20,7 @@
+     "@radix-ui/react-scroll-area": "^1.2.10",
      "@radix-ui/react-select": "^2.2.6",
+     "@radix-ui/react-separator": "^1.1.7",
 +    "@radix-ui/react-slider": "^1.3.6",
-     "@radix-ui/react-slot": "^1.2.3",
-+    "@radix-ui/react-tabs": "^1.1.13",
+     "@radix-ui/react-switch": "^1.2.6",
      "@radix-ui/react-tooltip": "^1.2.8",
-     "class-variance-authority": "^0.7.1",
-     "clsx": "^2.1.1",
-diff --git a/src/app/(PageSections)/Dashboard/MarketPlacePageSection/Sections/MarketPlaceSearchHeader.tsx b/src/app/(PageSections)/Dashboard/MarketPlacePageSection/Sections/MarketPlaceSearchHeader.tsx
-index 2223563..8221db1 100644
---- a/src/app/(PageSections)/Dashboard/MarketPlacePageSection/Sections/MarketPlaceSearchHeader.tsx
-+++ b/src/app/(PageSections)/Dashboard/MarketPlacePageSection/Sections/MarketPlaceSearchHeader.tsx
-@@ -1,4 +1,4 @@
--"use client"
-+"use client";
+     "@tailwindcss/vite": "^4.1.12",
+diff --git a/src/Context/assets.context.tsx b/src/Context/assets.context.tsx
+index 051f3f9..24018d3 100644
+--- a/src/Context/assets.context.tsx
++++ b/src/Context/assets.context.tsx
+@@ -1,9 +1,10 @@
+ import type { ApiResponse } from "@/types/api";
++import type { AssetContainerI } from "@/types/assets";
+ import { createContext } from "react";
  
- import React from "react";
- import {
-@@ -35,7 +35,7 @@ function MarketPlaceSearchHeader() {
-               setCategory(value);
-             }}
-           >
--            <SelectTrigger className=" border-0 shadow-none hover:bg-transparent cursor-pointer  rounded-none w-auto">
-+            <SelectTrigger className=" border-0 shadow-none hover:bg-transparent cursor-pointer  rounded-none w-auto focus:ring-0 focus:ring-offset-0 bg-transparent">
-               <SelectValue placeholder={"Select Category"} />
-             </SelectTrigger>
-             <SelectContent className=" !border-gray-300">
-@@ -54,9 +54,9 @@ function MarketPlaceSearchHeader() {
-           <div className="flex-1 relative  ">
-             <div className="relative">
-               <FormInput
--                type="text"
-+                type="search"
-                 placeholder="Search......"
--                className="w-full pr-12 pl-4 h-10 border-none shadow-none"
-+                className="w-full pr-12 pl-4 h-10 border-none shadow-none focus:ring-0 focus:ring-offset-0 "
-                 // icon={<Search className="h-4 w-4" />}
-                 // onIconClick={() => {
-                 //   alert("Hello");
-diff --git a/src/app/(PageSections)/Dashboard/MarketPlacePageSection/Sections/ProductGrid.tsx b/src/app/(PageSections)/Dashboard/MarketPlacePageSection/Sections/ProductGrid.tsx
-index 5c4beee..2931de9 100644
---- a/src/app/(PageSections)/Dashboard/MarketPlacePageSection/Sections/ProductGrid.tsx
-+++ b/src/app/(PageSections)/Dashboard/MarketPlacePageSection/Sections/ProductGrid.tsx
-@@ -6,81 +6,12 @@ import Link from "next/link";
- import { useRouter } from "next/navigation";
- import { useState, useEffect } from "react";
- import { ProductCardSkeleton } from "./ProductCardSkeleton";
--import { ProductCard } from "./ProductCard";
-+import ShopProductCard from "@/components/shop/ShopProductCard";
-+import { products } from "@/data/products";
+ // Define CmsAssetsProps type
+ type AssetsProps = {
+-  assetContainers: ApiResponse<any | undefined>;
++  assetContainers: ApiResponse<AssetContainerI | undefined>;
+   assetContainer: ApiResponse<any | undefined>;
+   assetFolders: ApiResponse<any | undefined>;
+   assetFolder: ApiResponse<any | undefined>;
+@@ -34,7 +35,7 @@ type AssetsProps = {
+     containerId: string,
+     folderId: string
+   ) => Promise<any>;
+-  uploadAsset: (file: File) => Promise<any>;
++  uploadAsset: (formData: FormData) => Promise<any>;
+   downloadAsset: (id: string) => Promise<any>;
+   deleteAsset: (id: string) => Promise<any>;
+ };
+diff --git a/src/Page-Sections/SingleAssetContainerPageSection.tsx b/src/Page-Sections/SingleAssetContainerPageSection.tsx
+index 99f495e..5411807 100644
+--- a/src/Page-Sections/SingleAssetContainerPageSection.tsx
++++ b/src/Page-Sections/SingleAssetContainerPageSection.tsx
+@@ -1,5 +1,4 @@
+-import { useRef, useState } from "react";
+-import { toast } from "sonner";
++import { useEffect, useRef, useState } from "react";
+ import { AssetPreview } from "@/components/Assets/AssetPreview";
+ import { CreateFolderForm } from "@/components/Assets/CreateFolderForm";
+ import { FileList } from "@/components/Assets/FileList";
+@@ -7,61 +6,100 @@ import Button from "@/components/ui/button";
+ import { Input } from "@/components/ui/input";
+ import { Grid3X3, List, Plus, Search, Upload } from "lucide-react";
+ import { useModal } from "@/hooks/useModal";
++import { useAssets } from "@/hooks/useAsste";
++import { useParams } from "react-router-dom";
++import { convertToFormData } from "@/utils/formData.util";
  
+ function SingleAssetContainerPageSection() {
+   const [searchQuery, setSearchQuery] = useState("");
+   const [viewMode, setViewMode] = useState<"grid" | "list">("list");
+   const [currentFolder, setCurrentFolder] = useState<string | null>(null);
+-  const [previewAsset, setPreviewAsset] = useState<any>(null);
++  const [, setPreviewAsset] = useState<any>(null);
+   const fileInputRef = useRef<HTMLInputElement>(null);
+-  const { openModal } = useModal();
++  const { openModal, closeModal } = useModal();
++  const {
++    findAssetContainerById,
++    assetContainer,
++    createFolder,
++    isCreateLoading,
++    uploadAsset,
++    downloadAsset,
++  } = useAssets();
++  const { id } = useParams();
  
- // Mock product data based on the image
--const featuredProducts = [
--  {
--    id: "1",
--    name: "Chapakazi Jersey Marathon Kit",
--    image: "/images/Chapakazi.png",
--    price: 25000,
--    rating: 4.8,
--    totalReviews: 738,
--    badge: { text: "HOT", variant: "hot" as const },
--  },
--  {
--    id: "2",
--    name: "Chapakazi Jersey Marathon Kit",
--    image: "/images/Jasiri.png",
--    price: 25000,
--    rating: 4.7,
--    totalReviews: 536,
--  },
--  {
--    id: "3",
--    name: "Chapakazi Jersey Marathon Kit",
--    image: "/images/Makini.png",
--    price: 17000,
--    rating: 4.6,
--    totalReviews: 423,
--    badge: { text: "BEST DEALS", variant: "best-deals" as const },
--  },
--  {
--    id: "4",
--    name: "Portable Washing Machine, 11lbs capacity Model 18RMF...",
--    image: "/images/Malengo.png",
--    price: 45000,
--    rating: 4.2,
--    totalReviews: 816,
--  },
--  {
--    id: "5",
--    name: "Wired Over-Ear Gaming Headphones with USB",
--    image: "/images/Ushindi.png",
--    price: 67500,
--    rating: 4.9,
--    totalReviews: 647,
--    badge: { text: "25% OFF", variant: "off" as const },
--  },
--  {
--    id: "6",
--    name: "Red Blue Adidas Runners",
--    image: "/images/Chapakazi.png",
--    price: 75000,
--    originalPrice: 87000,
--    rating: 4.4,
--    totalReviews: 877,
--  },
--  {
--    id: "7",
--    name: "Green blue Adidas runners",
--    image: "/images/Wezesha.png",
--    price: 90000,
--    rating: 4.8,
--    totalReviews: 426,
--  },
--  {
--    id: "8",
--    name: "Chapakazi Jersey Marathon Kit",
--    image: "/images/Pamoja.png",
--    price: 25000,
--    rating: 4.9,
--    totalReviews: 533,
--    badge: { text: "SALE", variant: "sale" as const },
--  },
--];
+-  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
++  const handleFileUpload = async (
++    event: React.ChangeEvent<HTMLInputElement>
++  ) => {
+     const files = event.target.files;
 +
++
+     if (files) {
+-      // Handle file upload logic here
+-      toast.success(`Uploading ${files.length} file(s)...`);
+-      // In a real app, you would upload to your backend/Supabase storage
++      const formData = convertToFormData({
++        file: files[0], // This will create the file field
++        assetContainerReference: id, // This matches your payload structure
++      });
++      await uploadAsset(formData);
++
++      findAssetContainerById(id as string);
+     }
+   };
  
- export function ProductGrid() {
-   const [isLoading, setIsLoading] = useState(true);
-@@ -102,7 +33,7 @@ export function ProductGrid() {
-           Our NBC Featured Products
-         </h2>
-         <Link
--          href="all-products"
-+          href="market-place/products"
-           className="text-nbc-dark-950 hover:text-nbc-dark-800 font-medium group flex items-center"
-         >
-           Browse All Product
-@@ -124,18 +55,18 @@ export function ProductGrid() {
-               </div>
-             ))
-           : // Show actual products
--            featuredProducts.map((product, index) => (
-+            products.map((product, index) => (
-               <div
-                 key={product.id}
-                 className="animate-fade-in"
-                 style={{ animationDelay: `${index * 100}ms` }}
-               >
--                <ProductCard {...product} />
-+                <ShopProductCard {...product} baseUrl="market-place/products" />
-               </div>
-             ))}
-       </div>
-       <div className="flex justify-end">
--        <Button variant="outline" onClick={() => router.push("products")}>
-+        <Button variant="outline" onClick={() => router.push("market-place/products")}>
-           View All
-         </Button>
-       </div>
-diff --git a/src/app/(PageSections)/Landing/HomePageSection.tsx b/src/app/(PageSections)/Landing/HomePageSection.tsx
-index 6e02871..fe91ae6 100644
---- a/src/app/(PageSections)/Landing/HomePageSection.tsx
-+++ b/src/app/(PageSections)/Landing/HomePageSection.tsx
-@@ -1,16 +1,74 @@
--import React from 'react'
--import UpcomingEvents from './sections/HomeSections/UpcomingEvents'
--import PartnerEvents from './sections/HomeSections/PartnerEvents'
--import ContactusBanner from '@/components/shared/Banner/ContactusBanner'
-+import React from "react";
-+import UpcomingEvents from "./sections/HomeSections/UpcomingEvents";
-+import ContactusBanner from "@/components/shared/Banner/ContactusBanner";
-+import BankingApps from "./sections/HomeSections/BankingApps";
-+import CallToAction from "./sections/HomeSections/CallToAction";
-+import HeroSlider, { HeroSliderI } from "@/components/shared/Hero/HeroSlider";
+   const handleFileClick = (file: any) => {
+-    console.log("File clicked:", file);
++  
+     if (file.type === "folder") {
+       setCurrentFolder(file.id);
+     } else {
+       setPreviewAsset(file);
+-      handlePreviewFile();
++      handlePreviewFile(file);
+     }
+   };
+   const handleButtonClick = () => {
+     openModal(
+-      <CreateFolderForm />,
++      <CreateFolderForm
++        handleCreate={async (data: any) => {
++          await createFolder(id!, data);
++          closeModal();
++          findAssetContainerById(id as string);
++        }}
++        loading={isCreateLoading}
++      />,
+       "Create Folder",
+       "lg",
+-      "Create a new folder to organize your assets",
++      "Create a new folder to organize your assets"
+     );
+   };
  
- function HomePageSection() {
-+  const heroSlides: HeroSliderI[] = [
-+    {
-+      id: "1",
-+      title: "NBC Dodoma",
-+      subtitle: "Marathon",
-+      description:
-+        "Join thousands of runners in Tanzania's premier marathon event. Experience the thrill of running through the heart of Dodoma.",
-+      backgroundImage: "/images/marathon-hero.png",
-+      cta1: "Open Account",
-+      cta2: "Learn More",
-+      thumbnails: [
-+        "/images/marathon-hero.png",
-+        "/images/marathon-1.jpg",
-+        "/images/marathon-2.jpg",
-+        "/images/individual-hero.jpg",
-+      ],
-+    },
-+    {
-+      id: "2",
-+      title: "Register",
-+      subtitle: "Today",
-+      description:
-+        "Secure your spot in the most anticipated marathon of the year. Early bird registration now open with special discounts.",
-+      backgroundImage: "/images/marathon-1.jpg",
-+      cta1: "Register Now",
-+      cta2: "View Packages",
-+      thumbnails: [
-+        "/images/marathon-1.jpg",
-+        "/images/marathon-hero.png",
-+        "/images/marathon-2.jpg",
-+        "/images/individual-hero.jpg",
-+      ],
-+    },
-+    {
-+      id: "3",
-+      title: "Start",
-+      subtitle: "Training",
-+      description:
-+        "Get ready for the challenge with our comprehensive training programs designed for all fitness levels.",
-+      backgroundImage: "/images/marathon-2.jpg",
-+      cta1: "Training Plans",
-+      cta2: "Join Community",
-+      thumbnails: [
-+        "/images/marathon-2.jpg",
-+        "/images/marathon-hero.png",
-+        "/images/marathon-1.jpg",
-+        "/images/individual-hero.jpg",
-+      ],
-+    },
-+  ];
+-  const handlePreviewFile = () => {
+-    console.log("Previewing file:", previewAsset);
++  const handlePreviewFile = (file: any) => {
++    
+     const asset = {
+-      id: "whatsapp-image",
++      id: file.id,
+       isImage: true,
+-      lastModified: "0 seconds ago",
+-      name: "/images/home-hero.jpg",
+-      size: "36 KB",
+-      type: "file",
+-      url: "/images/home-hero.jpg",
++      lastModified: file.lastModified,
++      name: file.name,
++      size: file.size,
++      type: file.type,
++      url: file.url,
+     };
+     openModal(
+-      <AssetPreview asset={asset} />,
+-      "https://unsplash.com/photos/a-modern-blue-skyscraper-displays-bank-cOlutcMjEd4",
++      <AssetPreview
++        asset={asset}
++        download={async (id) => {
++          const response = await downloadAsset(id);
++          return response
++        }}
++      />,
++      file.name,
+       "xl",
+-      "36 KB",
++      file.size
+     );
+   };
+ 
++  useEffect(() => {
++    if (id) {
++      findAssetContainerById(id);
++    }
++  }, [id]);
++
    return (
--    <div className='container mx-auto py-10 space-y-10'>
--      <UpcomingEvents />
--      <PartnerEvents />
-+    <>
-+      <HeroSlider heroSlides={heroSlides} />
-+      <div className="container mx-auto py-10 space-y-10">
-+        <UpcomingEvents />
-+        {/* <BankingApps /> */}
-+        {/* <PartnerEvents /> */}
-+      </div>
-+      <BankingApps />
-       <ContactusBanner />
+     <div className="px-10 py-6">
+       <div className="space-y-6">
+@@ -77,17 +115,20 @@ function SingleAssetContainerPageSection() {
+             />
+           </div>
+           <div className="flex items-center space-x-2">
+-            <Button
+-              variant="outline"
+-              size="sm"
+-              onClick={() => {
+-                handleButtonClick();
+-              }}
+-              className="border-border text-foreground hover:bg-hover-overlay"
+-            >
+-              <Plus className="mr-2 h-4 w-4" />
+-              Create Folder
+-            </Button>
++            {assetContainer.data?.createFolders && (
++              <Button
++                variant="outline"
++                size="sm"
++                onClick={() => {
++                  handleButtonClick();
++                }}
++                className="border-border text-foreground hover:bg-hover-overlay"
++              >
++                <Plus className="mr-2 h-4 w-4" />
++                Create Folder
++              </Button>
++            )}
++
+             <Button
+               variant="outline"
+               size="sm"
+@@ -130,6 +171,7 @@ function SingleAssetContainerPageSection() {
+         <FileList
+           searchQuery={searchQuery}
+           viewMode={viewMode}
++          assets={assetContainer.data}
+           currentFolder={currentFolder}
+           onFileClick={handleFileClick}
+         />
+diff --git a/src/Pages/Dashboard/Assets.tsx b/src/Pages/Dashboard/Assets.tsx
+index 8d0201b..1296bb5 100644
+--- a/src/Pages/Dashboard/Assets.tsx
++++ b/src/Pages/Dashboard/Assets.tsx
+@@ -1,10 +1,11 @@
+ import AssetsPagesection from "@/Page-Sections/AssetsPagesection";
++import { AssetsProvider } from "@/Providers/assets.provider";
+ 
+ function Assets() {
+   return (
+-    <div>
++    <AssetsProvider>
+       <AssetsPagesection />
 -    </div>
--  )
-+      <CallToAction />
-+    </>
-+  );
++    </AssetsProvider>
+   );
  }
  
--export default HomePageSection
-+export default HomePageSection;
-diff --git a/src/app/(PageSections)/Landing/sections/EventSections/EventMainContent.tsx b/src/app/(PageSections)/Landing/sections/EventSections/EventMainContent.tsx
-index 0ca6a99..dd8ca65 100644
---- a/src/app/(PageSections)/Landing/sections/EventSections/EventMainContent.tsx
-+++ b/src/app/(PageSections)/Landing/sections/EventSections/EventMainContent.tsx
-@@ -9,8 +9,9 @@ function EventMainContent() {
-       image: "/images/call.png",
-       description:
-         "Join us for a community clean-up event to help keep our neighborhood beautiful.",
--        donateLink: "Donate",
-+      donateLink: "Donate",
-       learnMoreLink: "/events/community-clean-up",
-+      
-     },
-     {
-       title: "Charity Run",
-diff --git a/src/app/(Pages)/(Landing)/page.tsx b/src/app/(Pages)/(Landing)/page.tsx
-index 32666ad..a445c82 100644
---- a/src/app/(Pages)/(Landing)/page.tsx
-+++ b/src/app/(Pages)/(Landing)/page.tsx
-@@ -2,60 +2,11 @@ import HomePageSection from "@/app/(PageSections)/Landing/HomePageSection";
- import HeroSlider, { HeroSliderI } from "@/components/shared/Hero/HeroSlider";
+diff --git a/src/Pages/Dashboard/CreateAssetContainer.tsx b/src/Pages/Dashboard/CreateAssetContainer.tsx
+index 6101712..d0529c5 100644
+--- a/src/Pages/Dashboard/CreateAssetContainer.tsx
++++ b/src/Pages/Dashboard/CreateAssetContainer.tsx
+@@ -1,10 +1,11 @@
+ import CreateAssetContainerPageSection from "@/Page-Sections/CreateAssetContainerPageSection";
++import { AssetsProvider } from "@/Providers/assets.provider";
  
- export default function Home() {
--  const heroSlides: HeroSliderI[] = [
--    {
--      id: "1",
--      title: "NBC Dodoma",
--      subtitle: "Marathon",
--      description:
--        "Join thousands of runners in Tanzania's premier marathon event. Experience the thrill of running through the heart of Dodoma.",
--      backgroundImage: "/images/marathon-hero.png",
--      cta1: "Open Account",
--      cta2: "Learn More",
--      thumbnails: [
--        "/images/marathon-hero.png",
--        "/images/marathon-1.jpg",
--        "/images/marathon-2.jpg",
--        "/images/individual-hero.jpg",
--      ],
--    },
--    {
--      id: "2",
--      title: "Register",
--      subtitle: "Today",
--      description:
--        "Secure your spot in the most anticipated marathon of the year. Early bird registration now open with special discounts.",
--      backgroundImage: "/images/marathon-1.jpg",
--      cta1: "Register Now",
--      cta2: "View Packages",
--      thumbnails: [
--        "/images/marathon-1.jpg",
--        "/images/marathon-hero.png",
--        "/images/marathon-2.jpg",
--        "/images/individual-hero.jpg",
--      ],
--    },
--    {
--      id: "3",
--      title: "Start",
--      subtitle: "Training",
--      description:
--        "Get ready for the challenge with our comprehensive training programs designed for all fitness levels.",
--      backgroundImage: "/images/marathon-2.jpg",
--      cta1: "Training Plans",
--      cta2: "Join Community",
--      thumbnails: [
--        "/images/marathon-2.jpg",
--        "/images/marathon-hero.png",
--        "/images/marathon-1.jpg",
--        "/images/individual-hero.jpg",
--      ],
--    },
--  ];
+ function CreateAssetContainer() {
+   return (
+-    <div>
++    <AssetsProvider>
+       <CreateAssetContainerPageSection />
+-    </div>
++    </AssetsProvider>
+   );
+ }
+ 
+diff --git a/src/Pages/Dashboard/SingleAssetContainer.tsx b/src/Pages/Dashboard/SingleAssetContainer.tsx
+index 4417ba3..904e2c9 100644
+--- a/src/Pages/Dashboard/SingleAssetContainer.tsx
++++ b/src/Pages/Dashboard/SingleAssetContainer.tsx
+@@ -1,10 +1,13 @@
+ import ModalProvider from "@/Context/ModalContext";
+ import SingleAssetContainerPageSection from "@/Page-Sections/SingleAssetContainerPageSection";
++import { AssetsProvider } from "@/Providers/assets.provider";
+ 
+ function SingleAssetContainer() {
+   return (
+     <ModalProvider>
+-      <SingleAssetContainerPageSection />
++      <AssetsProvider>
++        <SingleAssetContainerPageSection />
++      </AssetsProvider>
+     </ModalProvider>
+   );
+ }
+diff --git a/src/Providers/assets.provider.tsx b/src/Providers/assets.provider.tsx
+index 392e685..9620633 100644
+--- a/src/Providers/assets.provider.tsx
++++ b/src/Providers/assets.provider.tsx
+@@ -1,15 +1,19 @@
+ import React, { useState } from "react";
+ import { AssetsContext } from "../Context/assets.context";
+ import { AssetService } from "@/services/assets.service";
++import type { ApiResponse } from "@/types/api";
++import type { AssetContainerI } from "@/types/assets";
+ export const AssetsProvider: React.FC<{ children: React.ReactNode }> = ({
+   children,
+ }) => {
+   const [isLoading, setIsLoading] = useState(false);
+   const [isCreateLoading, setIsCreateLoading] = useState(false);
+-  const [assetContainers, setAssetContainers] = useState<{
+-    data: any;
+-    message: string;
+-  }>({ data: undefined, message: "" });
++  const [assetContainers, setAssetContainers] = useState<
++      ApiResponse<AssetContainerI | undefined>
++    >({
++      data: undefined,
++      message: "",
++    });
+   const [assetContainer, setAssetContainer] = useState<{
+     data: any;
+     message: string;
+@@ -199,15 +203,15 @@ export const AssetsProvider: React.FC<{ children: React.ReactNode }> = ({
+     }
+   };
+ 
+-  const uploadAsset = async (file: File) => {
++  const uploadAsset = async (formData: FormData) => {
+     try {
+       setIsCreateLoading(true);
+-      const response = await AssetService.uploadAsset(file);
++      const response = await AssetService.uploadAsset(formData);
+       setIsCreateLoading(false);
+       return response;
+     } catch (error) {
+       setIsCreateLoading(false);
+-      return error;
++      throw error; // Re-throw to allow proper error handling in the component
+     }
+   };
+   const downloadAsset = async (id: string) => {
+diff --git a/src/components/Assets/AssetContainer.tsx b/src/components/Assets/AssetContainer.tsx
+index b57c998..4991f15 100644
+--- a/src/components/Assets/AssetContainer.tsx
++++ b/src/components/Assets/AssetContainer.tsx
+@@ -1,23 +1,22 @@
+-import { Folder, Image, FileText, MoreHorizontal } from "lucide-react";
++import { Folder, Image, FileText, MoreHorizontal, Edit, Trash2 } from "lucide-react";
+ import Button from "@/components/ui/button";
+-
+-interface Container {
+-  id: string;
+-  name: string;
+-  files: number;
+-}
++import type { AssetContainerContentI } from "@/types/assets";
++import OptionsDropdown from "../ui/OptionsDropdown";
+ 
+ interface AssetContainerProps {
+-  containers: Container[];
++  containers: AssetContainerContentI[];
+   onSelectContainer: (id: string, title: string) => void;
+   onCreateContainer: () => void;
++  onDeleteContainer?: (id: string) => void;
+ }
+ 
+ export const AssetContainer = ({
+   containers,
+   onSelectContainer,
+   onCreateContainer,
++  onDeleteContainer,
+ }: AssetContainerProps) => {
++
+   return (
+     <div className="space-y-8">
+       {containers.length > 0 ? (
+@@ -42,28 +41,58 @@ export const AssetContainer = ({
+             </div>
+           </div>
+           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+-            {containers.map((container) => (
+-              <div
+-                key={container.id}
+-                onClick={() => onSelectContainer(container.id, container.name)}
+-                className="group cursor-pointer rounded-lg border border-border bg-card p-6 transition-all hover:bg-hover-overlay hover:border-primary/50"
+-              >
+-                <div className="flex items-center space-x-3">
+-                  <div className="rounded-md bg-primary/10 p-2">
+-                    <Folder className="h-6 w-6 text-nbc-dark-950" />
+-                  </div>
+-                  <div>
+-                    <h3 className="font-medium text-nbc-dark-950 group-hover:text-nbc-dark-800 transition-colors">
+-                      {container.name}
+-                    </h3>
+-                    <p className="text-sm text-text-dim">
+-                      {container.files}{" "}
+-                      {container.files === 1 ? "file" : "files"}
+-                    </p>
++            {containers.map((container) => {
++              // Create fileOptions for each container with access to container.reference
++              const fileOptions = [
++                {
++                  id: "edit",
++                  label: "Edit",
++                  icon: <Edit className="h-4 w-4" />,
++                  onClick: () => {
++                    // Handle edit functionality here
++                    console.log("Edit container:", container.reference);
++                  },
++                  showSeparator: true,
++                },
++                {
++                  id: "delete",
++                  label: "Delete",
++                  icon: <Trash2 className="h-4 w-4" />,
++                  onClick: () => onDeleteContainer && onDeleteContainer(container.reference),
++                  destructive: true,
++                },
++              ];
++
++              return (
++                <div
++                  key={container.reference}
++                  onClick={() =>
++                    onSelectContainer(container.reference, container.title)
++                  }
++                  className="group cursor-pointer rounded-lg border border-border bg-card p-3 transition-all hover:bg-hover-overlay
++                   hover:border-primary/50 flex justify-between "
++                >
++                  <div className="flex items-center space-x-3">
++                    <div className="rounded-md bg-primary/10 p-2">
++                      <Folder className="h-6 w-6 text-nbc-dark-950" />
++                    </div>
++                    <div>
++                      <h3 className="font-semibold text-nbc-dark-950 group-hover:text-nbc-dark-800 transition-colors">
++                        {container.title}
++                      </h3>
++                      <p className="text-sm">
++                        {container.description}
++                      </p>
++                      <p className="text-sm text-text-dim">
++                        {container.assetCount} assets {container.folderCount}{" "}
++                        folders
++                      </p>
++                    </div>
+                   </div>
++                  <OptionsDropdown options={fileOptions} />
+                 </div>
+-              </div>
+-            ))}
++              );
++            })}
+           </div>
+         </>
+       ) : (
+@@ -97,4 +126,4 @@ export const AssetContainer = ({
+       )}
+     </div>
+   );
+-};
++};
+\ No newline at end of file
+diff --git a/src/components/Assets/AssetManager.tsx b/src/components/Assets/AssetManager.tsx
+index e646817..9786639 100644
+--- a/src/components/Assets/AssetManager.tsx
++++ b/src/components/Assets/AssetManager.tsx
+@@ -1,13 +1,25 @@
++import { useAssets } from "@/hooks/useAsste";
+ import { AssetContainer } from "./AssetContainer";
+ import { useNavigate } from "react-router-dom";
++import { useEffect } from "react";
+ 
+ export const AssetManager = () => {
+   const navigate = useNavigate();
++  const {assetContainers,findAllAssetContainers,deleteAssetContainer} = useAssets();
++
++  const handleDeleteContainer = async(id:string) =>{
++
++    await deleteAssetContainer(id)
++    findAllAssetContainers()
++  }
++
++
++useEffect(()=>{
++
++  findAllAssetContainers()
++},[])
 +
  
+-  const containers = [
+-    { id: ",b.,jn.nkn", name: "Logo container", files: 1 },
+-    { id: "b,jb,jb,", name: "Assets", files: 0 },
+-  ];
+ 
    return (
-     <div>
--      <HeroSlider heroSlides={heroSlides} />
-+     
-       <HomePageSection />
-       {/* <MarathonRegistration /> */}
-     </div>
-diff --git a/src/app/(Pages)/dashboard/DashboardClientLayout.tsx b/src/app/(Pages)/dashboard/DashboardClientLayout.tsx
-index 9bfdfc9..424afcf 100644
---- a/src/app/(Pages)/dashboard/DashboardClientLayout.tsx
-+++ b/src/app/(Pages)/dashboard/DashboardClientLayout.tsx
-@@ -22,7 +22,7 @@ export default function DashboardClientLayout({
+     <div className="bg-background text-foreground">
+@@ -16,9 +28,10 @@ export const AssetManager = () => {
+       {/* Main Content */}
+       <div className="flex-1 p-6">
+         <AssetContainer
+-          containers={containers}
++          containers={assetContainers?.data?.content || []}
++          onDeleteContainer={(id:string)=> handleDeleteContainer(id)}
+           onSelectContainer={(id, title) => {
+-            console.log("Asset ID", id);
++
+             navigate(`${id}`, {
+               state: { title: title || `Container ${id}` },
+             });
+diff --git a/src/components/Assets/AssetPreview.tsx b/src/components/Assets/AssetPreview.tsx
+index 825c7ca..dd7c5bb 100644
+--- a/src/components/Assets/AssetPreview.tsx
++++ b/src/components/Assets/AssetPreview.tsx
+@@ -1,44 +1,178 @@
+ import Button from "@/components/ui/button";
+-import { Download, ExternalLink } from "lucide-react";
++import { AssetService } from "@/services/assets.service";
++import { Download } from "lucide-react";
++import { useEffect, useState } from "react";
+ 
+ interface AssetPreviewProps {
+   asset: any;
++  download: (id: string) => Promise<any>;
+ }
+ 
+-export const AssetPreview = ({ asset }: AssetPreviewProps) => {
++export const AssetPreview = ({ asset, download }: AssetPreviewProps) => {
++  const assetUrl = asset?.url || asset?.src || asset?.path || asset?.publicUrl;
++  const [url, setUrl] = useState<string | null>(null);
++  const [isLoading, setIsLoading] = useState(true);
++  const [error, setError] = useState<string | null>(null);
++
++  // Effect for fetching the data
++  useEffect(() => {
++    async function fetchPreview() {
++      if (!assetUrl) {
++        setIsLoading(false);
++        return;
++      }
++
++      setIsLoading(true);
++      setUrl(null);
++      setError(null);
++
++      try {
++        console.log("Fetching preview for URL:", assetUrl);
++        const preview = await AssetService.priviewFile(assetUrl);
++        const newBlob = new Blob([preview]);
++        const objectUrl = URL.createObjectURL(newBlob);
++        setUrl(objectUrl);
++
++        console.log("new blob", newBlob);
++
++        console.log("Preview response type:", typeof preview);
++        console.log("Preview response:", preview.data);
++
++        // Check if response is wrapped (common with API services)
++        let blob = preview;
++        if (preview && preview.data && preview.data instanceof Blob) {
++          blob = preview.data;
++        } else if (
++          preview &&
++          typeof preview === "object" &&
++          !(preview instanceof Blob)
++        ) {
++          // If response is wrapped in an object, try to find the blob
++          blob = preview.blob || preview.file || preview.data || preview;
++        }
++
++        console.log("Processed blob:", blob);
++        console.log("Is Blob:", blob instanceof Blob);
++        console.log("Blob size:", blob instanceof Blob ? blob.size : "N/A");
++        console.log("Blob type:", blob instanceof Blob ? blob.type : "N/A");
++        console.log("Valid Blob received:", blob);
++        // if (blob instanceof Blob && blob.size > 0) {
++
++        //   const objectUrl = URL.createObjectURL(blob);
++        //   setUrl(objectUrl);
++        //   console.log("Object URL created:", objectUrl);
++        // } else {
++        //   console.error("Response is not a valid Blob:", {
++        //     type: typeof blob,
++        //     isBlob: blob instanceof Blob,
++        //     size: blob instanceof Blob ? blob.size : 'N/A',
++        //     response: blob
++        //   });
++        //   throw new Error(`Invalid response type: ${typeof blob}. Expected Blob.`);
++        // }
++      } catch (error: any) {
++        console.error("Failed to fetch preview:", error);
++        setError(error.message || "Failed to load preview");
++        setUrl(null);
++      } finally {
++        setIsLoading(false);
++      }
++    }
++
++    fetchPreview();
++  }, [assetUrl]);
++
++  // Effect for cleaning up the object URL
++  useEffect(() => {
++    return () => {
++      if (url) {
++        URL.revokeObjectURL(url);
++        console.log("Object URL revoked:", url);
++      }
++    };
++  }, [url]);
++
+   if (!asset) return null;
+ 
++  const handleDownload = async () => {
++    try {
++      const blob = await download(asset.id);
++      console.log("Download blob received:", blob);
++
++      // Handle wrapped response for download too
++      let downloadBlob = blob;
++      if (blob && blob.data && blob.data instanceof Blob) {
++        downloadBlob = blob.data;
++      }
++
++      if (!(downloadBlob instanceof Blob)) {
++        throw new Error("Download response is not a Blob");
++      }
++
++      const downloadUrl = window.URL.createObjectURL(downloadBlob);
++      console.log("Download URL created:", downloadUrl);
++
++      const link = document.createElement("a");
++      link.href = downloadUrl;
++      link.download = asset.name || `download-${asset.id}`;
++
++      document.body.appendChild(link);
++      link.click();
++      document.body.removeChild(link);
++
++      window.URL.revokeObjectURL(downloadUrl);
++    } catch (error) {
++      console.error("Download failed:", error);
++    }
++  };
++
+   const isImage =
+     asset.isImage || asset.name?.match(/\.(jpg|jpeg|png|gif|webp)$/i);
+   const isVideo = asset.name?.match(/\.(mp4|webm|ogg|mov)$/i);
+   const isPdf = asset.name?.match(/\.pdf$/i);
+ 
+-  // Get the actual asset URL - adjust these properties based on your asset object structure
+-  console.log("Asset",asset.url)
+-  const assetUrl = asset.url || asset.src || asset.path || asset.publicUrl;
+-  
+   return (
+     <>
+-      <div className="flex-1 flex items-center justify-center  bg-muted/30 rounded-lg min-h-[400px]">
+-        {isImage && assetUrl && (
++      <div className="flex-1 flex items-center justify-center bg-muted/30 rounded-lg min-h-[400px]">
++        {/* Loading state */}
++        {isLoading && (
++          <div className="flex flex-col items-center space-y-4 text-center">
++            <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
++            <p className="text-text-dim">Loading preview...</p>
++          </div>
++        )}
++
++        {/* Error state */}
++        {error && !isLoading && (
++          <div className="flex flex-col items-center space-y-4 text-center">
++            <div className="w-24 h-24 bg-destructive/10 rounded-lg flex items-center justify-center">
++              <span className="text-lg font-semibold text-destructive">!</span>
++            </div>
++            <p className="text-destructive text-sm">{error}</p>
++          </div>
++        )}
++
++        {/* Image preview */}
++        {isImage && url && !isLoading && !error && (
+           <img
+-            src={assetUrl}
++            src={url}
+             alt={asset.name}
+-            className="max-w-full max-h-full object-contain rounded-lg "
+-            onError={() => {
+-              // Fallback to placeholder if image fails to load
+-              console.error('Failed to load image:', assetUrl);
+-              // Unable to set fallback src without event, consider handling differently if needed
++            className="max-w-full max-h-full object-contain rounded-lg"
++            onError={(e) => {
++              console.error("Image load error:", e);
++              setError("Failed to load image");
+             }}
+           />
+         )}
+ 
+-        {isVideo && assetUrl && (
++        {/* Video preview */}
++        {isVideo && assetUrl && !isLoading && !error && (
+           <video
+             controls
+             className="max-w-full max-h-full object-contain rounded-lg"
+-            onError={() => {
+-              console.error('Failed to load video:', assetUrl);
++            onError={(e) => {
++              console.error("Video load error:", e);
++              setError("Failed to load video");
+             }}
+           >
+             <source src={assetUrl} type="video/mp4" />
+@@ -46,55 +180,24 @@ export const AssetPreview = ({ asset }: AssetPreviewProps) => {
+           </video>
+         )}
+ 
+-        {isPdf && assetUrl && (
++        {/* PDF preview */}
++        {isPdf && assetUrl && !isLoading && !error && (
+           <div className="flex flex-col items-center space-y-4 text-center">
+             <iframe
+               src={assetUrl}
+               className="w-full h-96 rounded-lg border"
+               title={asset.name}
+-              onError={() => {
+-                console.error('Failed to load PDF:', assetUrl);
++              onError={(e) => {
++                console.error("PDF load error:", e);
++                setError("Failed to load PDF");
+               }}
+             />
+             <p className="text-text-dim">PDF Preview</p>
+           </div>
+         )}
+ 
+-        {/* Show placeholder when no URL is available */}
+-        {!assetUrl && isImage && (
+-          <div className="flex flex-col items-center space-y-4 text-center">
+-            <div className="w-24 h-24 bg-muted rounded-lg flex items-center justify-center">
+-              <span className="text-lg font-semibold text-muted-foreground">
+-                IMG
+-              </span>
+-            </div>
+-            <p className="text-text-dim">Image URL not available</p>
+-          </div>
+-        )}
+-
+-        {!assetUrl && isVideo && (
+-          <div className="flex flex-col items-center space-y-4 text-center">
+-            <div className="w-24 h-24 bg-muted rounded-lg flex items-center justify-center">
+-              <span className="text-lg font-semibold text-muted-foreground">
+-                VID
+-              </span>
+-            </div>
+-            <p className="text-text-dim">Video URL not available</p>
+-          </div>
+-        )}
+-
+-        {isPdf && !assetUrl && (
+-          <div className="flex flex-col items-center space-y-4 text-center">
+-            <div className="w-24 h-24 bg-destructive/10 rounded-lg flex items-center justify-center">
+-              <span className="text-2xl font-semibold text-destructive">
+-                PDF
+-              </span>
+-            </div>
+-            <p className="text-text-dim">PDF URL not available</p>
+-          </div>
+-        )}
+-
+-        {!isImage && !isVideo && !isPdf && (
++        {/* Unsupported file type */}
++        {!isImage && !isVideo && !isPdf && !isLoading && !error && (
+           <div className="flex flex-col items-center space-y-4 text-center">
+             <div className="w-24 h-24 bg-muted rounded-lg flex items-center justify-center">
+               <span className="text-lg font-semibold text-muted-foreground">
+@@ -118,40 +221,17 @@ export const AssetPreview = ({ asset }: AssetPreviewProps) => {
+         </div>
+ 
+         <div className="flex items-center space-x-2">
+-          <Button 
+-            variant="outline" 
+-            size="sm" 
++          <Button
++            variant="outline"
++            size="sm"
+             className="border-border"
+-            onClick={() => {
+-              if (assetUrl) {
+-                // Create a download link
+-                const link = document.createElement('a');
+-                link.href = assetUrl;
+-                link.download = asset.name || 'download';
+-                link.click();
+-              }
+-            }}
+-            disabled={!assetUrl}
++            onClick={handleDownload}
+           >
+             <Download className="mr-2 h-4 w-4" />
+             Download
+           </Button>
+-          <Button 
+-            variant="outline" 
+-            size="sm" 
+-            className="border-border"
+-            onClick={() => {
+-              if (assetUrl) {
+-                window.open(assetUrl, '_blank');
+-              }
+-            }}
+-            disabled={!assetUrl}
+-          >
+-            <ExternalLink className="mr-2 h-4 w-4" />
+-            Open
+-          </Button>
+         </div>
+       </div>
+     </>
+   );
+-};
+\ No newline at end of file
++};
+diff --git a/src/components/Assets/CreateAssetContainer.tsx b/src/components/Assets/CreateAssetContainer.tsx
+index 4425a11..78d9472 100644
+--- a/src/components/Assets/CreateAssetContainer.tsx
++++ b/src/components/Assets/CreateAssetContainer.tsx
+@@ -11,6 +11,7 @@ import {
+   SelectValue,
+ } from "@/components/ui/select";
+ import { CustomInput } from "@/components/ui/CustomInput";
++import { useAssets } from "@/hooks/useAsste";
+ 
+ interface CreateAssetContainerDialogProps {
+   open: boolean;
+@@ -30,8 +31,10 @@ export const CreateAssetContainer = ({
+   const [validationRules, setValidationRules] = useState("");
+   const [processSourceImages, setProcessSourceImages] = useState(true);
+   const [warmPresets, setWarmPresets] = useState(true);
++const {createAssetContainer,isCreateLoading} = useAssets()
+ 
+-  const handleSave = () => {
++
++  const handleSave = async() => {
+     const containerData = {
+       title,
+       handle,
+@@ -47,10 +50,16 @@ export const CreateAssetContainer = ({
+       },
+     };
+ 
+-    // Here you would integrate with Statamic API
+-    console.log("Creating asset container:", containerData);
+-    onOpenChange(false);
+-    resetForm();
++
++   await createAssetContainer({
++        title: containerData.title,
++        description:containerData.handle,
++        diskPath: containerData.disk,
++      });
++      console.log("Asset container created successfully:", containerData);
++      onOpenChange(false);
++      resetForm();
++ 
+   };
+ 
+   const resetForm = () => {
+@@ -79,8 +88,11 @@ export const CreateAssetContainer = ({
+         </div>
+         <Button
+           onClick={handleSave}
++          type="submit"
++          variant="primary"
+           disabled={!title.trim() || !handle.trim()}
+-          className="bg-primary text-primary-foreground hover:bg-primary/90"
++          loading={isCreateLoading}
++        
+         >
+           Save
+         </Button>
+diff --git a/src/components/Assets/CreateFolderForm.tsx b/src/components/Assets/CreateFolderForm.tsx
+index e825374..6a53836 100644
+--- a/src/components/Assets/CreateFolderForm.tsx
++++ b/src/components/Assets/CreateFolderForm.tsx
+@@ -5,15 +5,18 @@ import { CustomInput } from "@/components/ui/CustomInput";
+ interface CreateFolderFormProps {
+   open?: boolean;
+   onOpenChange?: (open: boolean) => void;
++  loading?: boolean;
++  handleCreate:(data:any)=>void
+ }
+ 
+-export const CreateFolderForm = ({ onOpenChange }: CreateFolderFormProps) => {
++export const CreateFolderForm = ({ onOpenChange,loading,handleCreate }: CreateFolderFormProps) => {
+   const [folderName, setFolderName] = useState("");
+ 
+-  const handleCreate = () => {
++  const handleSubmit = () => {
+     if (folderName.trim()) {
+       // Here you would integrate with Statamic API
+-      console.log("Creating folder:", folderName);
++   
++      handleCreate({ name: folderName.trim() });
+       onOpenChange?.(false);
+       setFolderName("");
+     }
+@@ -38,7 +41,7 @@ export const CreateFolderForm = ({ onOpenChange }: CreateFolderFormProps) => {
+             placeholder="Enter folder name"
+             onKeyDown={(e) => {
+               if (e.key === "Enter") {
+-                handleCreate();
++                handleSubmit();
+               }
+               if (e.key === "Escape") {
+                 handleCancel();
+@@ -57,9 +60,10 @@ export const CreateFolderForm = ({ onOpenChange }: CreateFolderFormProps) => {
+           Cancel
+         </Button>
+         <Button
+-          onClick={handleCreate}
++          onClick={handleSubmit}
+           variant="primary"
+           disabled={!folderName.trim()}
++          loading={loading}
+         >
+           Confirm
+         </Button>
+diff --git a/src/components/Assets/FileList.tsx b/src/components/Assets/FileList.tsx
+index 1bc83dc..0e9b5ad 100644
+--- a/src/components/Assets/FileList.tsx
++++ b/src/components/Assets/FileList.tsx
+@@ -1,15 +1,9 @@
+ import { useState } from "react";
+-import {
+-  Folder,
+-  FileImage,
+-  ChevronUp,
+-  ChevronDown,
+-  Edit,
+-} from "lucide-react";
++import { Folder, FileImage, ChevronUp, ChevronDown, Edit } from "lucide-react";
+ import { Checkbox } from "@/components/ui/checkbox";
+-import {
+-  OptionsDropdown,
+-} from "@/components/ui/OptionsDropdown";
++import { OptionsDropdown } from "@/components/ui/OptionsDropdown";
++import { formatFileSize } from "@/utils/formatFileSize";
++
+ interface FileItem {
+   id: string;
+   name: string;
+@@ -24,13 +18,14 @@ interface FileListProps {
+   searchQuery: string;
+   viewMode: "grid" | "list";
+   currentFolder?: string | null;
++  assets: any;
+   onFileClick?: (file: FileItem) => void;
+ }
+ 
+ export const FileList = ({
+   searchQuery,
+   viewMode,
+-  currentFolder,
++  assets,
+   onFileClick,
+ }: FileListProps) => {
+   const [sortBy, setSortBy] = useState<"name" | "size" | "modified">("name");
+@@ -39,60 +34,63 @@ export const FileList = ({
+ 
+   const fileOptions = [
+     {
+-      id: "rename",
+-      label: "Rename",
++      id: "edit",
++      label: "Edit",
+       icon: <Edit className="h-4 w-4" />,
+       onClick: () => {},
+       showSeparator: true,
+     },
+     {
+-      id: "rename",
+-      label: "Rename",
++      id: "delete",
++      label: "Delete",
+       icon: <Edit className="h-4 w-4" />,
+       onClick: () => {},
+-      showSeparator: true,
++      destructive: true,
+     },
+-
+   ];
+ 
+-  // Show different files based on current folder
++  // Convert assets data to FileItem format
+   const getAllFiles = (): FileItem[] => {
+-    if (currentFolder === "new-folder") {
+-      return [
+-        {
+-          id: "subfolder",
+-          name: "Subfolder",
++    if (!assets) return [];
++
++    const files: FileItem[] = [];
++
++    // Add folders from rootFolders
++    if (assets.rootFolders && Array.isArray(assets.rootFolders)) {
++      assets.rootFolders.forEach((folder: any) => {
++        files.push({
++          id: folder.reference,
++          name: folder.name,
+           type: "folder",
+-          lastModified: "1 minute ago",
+-        },
+-        {
+-          id: "document",
+-          name: "document.pdf",
++          lastModified: assets.updatedAt || "Unknown",
++        });
++      });
++    }
++
++    // Add files from rootAssets
++    if (assets.rootAssets && Array.isArray(assets.rootAssets)) {
++      assets.rootAssets.forEach((asset: any) => {
++        // Determine file size (you may need to add size info to your API response)
++        const fileSize = formatFileSize(asset?.metadata?.size); // You can calculate this from file data if available
++
++        // Check if it's an image based on file extension
++        const isImage = /\.(jpg|jpeg|png|gif|bmp|webp|svg)$/i.test(
++          asset.filename || asset.originalFilename
++        );
++
++        files.push({
++          id: asset.reference,
++          name: asset.originalFilename || asset.filename,
+           type: "file",
+-          size: "120 KB",
+-          lastModified: "2 minutes ago",
+-        },
+-      ];
++          size: fileSize,
++          url: asset.presignedUrl,
++          lastModified: assets.updatedAt || "Unknown",
++          isImage,
++        });
++      });
+     }
+ 
+-    // Root container files
+-    return [
+-      {
+-        id: "new-folder",
+-        name: "new-folder",
+-        type: "folder",
+-        lastModified: "0 seconds ago",
+-      },
+-      {
+-        id: "whatsapp-image",
+-        name: "/images/home-hero.jpg",
+-        url: "/images/home-hero.jpg",
+-        type: "file",
+-        size: "36 KB",
+-        lastModified: "0 seconds ago",
+-        isImage: true,
+-      },
+-    ];
++    return files;
+   };
+ 
+   const files = getAllFiles();
+@@ -203,69 +201,7 @@ export const FileList = ({
+             </div>
+ 
+             <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+-              {/* <DropdownMenu>
+-                <DropdownMenuTrigger asChild>
+-                  <Button
+-                    variant="ghost"
+-                    size="sm"
+-                    className="h-6 w-6 p-0"
+-                    onClick={(e) => e.stopPropagation()}
+-                  >
+-                    <MoreHorizontal className="h-3 w-3" />
+-                  </Button>
+-                </DropdownMenuTrigger>
+-                <DropdownMenuContent
+-                  align="end"
+-                  className="z-50 bg-popover text-popover-foreground border border-border shadow-lg"
+-                >
+-                  {file.type === "folder" ? (
+-                    <>
+-                      <DropdownMenuItem
+-                        onClick={(e) => {
+-                          e.stopPropagation();
+-                          onFileClick?.(file);
+-                        }}
+-                      >
+-                        Open
+-                      </DropdownMenuItem>
+-                    </>
+-                  ) : (
+-                    <>
+-                      <DropdownMenuItem
+-                        onClick={(e) => {
+-                          e.stopPropagation();
+-                          onFileClick?.(file);
+-                        }}
+-                      >
+-                        Preview
+-                      </DropdownMenuItem>
+-                      <DropdownMenuItem
+-                        onClick={(e) => {
+-                          e.stopPropagation();
+-                        }}
+-                      >
+-                        Download
+-                      </DropdownMenuItem>
+-                    </>
+-                  )}
+-                  <DropdownMenuSeparator />
+-                  <DropdownMenuItem
+-                    onClick={(e) => {
+-                      e.stopPropagation();
+-                    }}
+-                  >
+-                    Rename
+-                  </DropdownMenuItem>
+-                  <DropdownMenuItem
+-                    onClick={(e) => {
+-                      e.stopPropagation();
+-                    }}
+-                  >
+-                    Delete
+-                  </DropdownMenuItem>
+-                </DropdownMenuContent>
+-              </DropdownMenu> */}
+-              <OptionsDropdown options={fileOptions}  />
++              <OptionsDropdown options={fileOptions} />
+             </div>
+           </div>
+         ))}
+diff --git a/src/components/Layout/CustomBreadcrumb.tsx b/src/components/Layout/CustomBreadcrumb.tsx
+index 27007d2..0d8c4e1 100644
+--- a/src/components/Layout/CustomBreadcrumb.tsx
++++ b/src/components/Layout/CustomBreadcrumb.tsx
+@@ -146,7 +146,7 @@ const CustomBreadcrumb: React.FC<CustomBreadcrumbProps> = ({
+     : [];
+ 
+   return (
+-    <Breadcrumb className={cn("mb-4", className)}>
++    <Breadcrumb className={cn("p-5 sticky top-0 bg-white z-[9]", className)}>
+       <BreadcrumbList>
+         {/* Home/Dashboard segment */}
+         <BreadcrumbItem>
+diff --git a/src/components/NavigationHeader.tsx b/src/components/NavigationHeader.tsx
+index 8d48358..82a7e36 100644
+--- a/src/components/NavigationHeader.tsx
++++ b/src/components/NavigationHeader.tsx
+@@ -19,9 +19,6 @@ export const NavigationHeader: React.FC<NavigationHeaderProps> = ({
+   onDiscard,
+   onAddItem,
+ }) => {
+-
+-
+-
+   return (
+     <header className=" bg-nav-background">
+   
+diff --git a/src/components/ui/Messages/MessageModal.tsx b/src/components/ui/Messages/MessageModal.tsx
+index e5e1432..c1373b7 100644
+--- a/src/components/ui/Messages/MessageModal.tsx
++++ b/src/components/ui/Messages/MessageModal.tsx
+@@ -48,7 +48,7 @@ export const MessageModal: React.FC<MessageModalProps> = ({ message }) => {
    };
  
    return (
--    <div className="flex h-screen bg-background">
-+    <div className="flex h-screen bg-background overflow-hidden">
-       <Sidebar
-         navigationData={navigationData}
-         isCollapsed={isCollapsed}
-@@ -41,8 +41,8 @@ export default function DashboardClientLayout({
-           text: "Events Portal v1.0",
-         }}
-       />
--      <main className="w-full">
--        <div className="border-b py-2 px-1">
-+      <main className="flex flex-col flex-1 min-w-0 overflow-hidden">
-+        <div className="border-b py-2 px-1 sticky top-0 z-[9999999] bg-white flex-shrink-0">
-           <Button
-             variant="ghost"
-             className="hidden lg:flex h-8 w-8 p-0 shrink-0"
-@@ -51,8 +51,10 @@ export default function DashboardClientLayout({
-             <Menu className="w-4 h-4" />
-           </Button>
-         </div>
--        <div className=" px-7 py-5">{children}</div>
-+        <div className="flex-1 px-7 py-5 overflow-y-auto">
-+          {children}
-+        </div>
-       </main>
-     </div>
-   );
--}
-+}
-\ No newline at end of file
-diff --git a/src/app/(Pages)/dashboard/market-place/page.tsx b/src/app/(Pages)/dashboard/market-place/page.tsx
-index 1509144..bdf031f 100644
---- a/src/app/(Pages)/dashboard/market-place/page.tsx
-+++ b/src/app/(Pages)/dashboard/market-place/page.tsx
-@@ -1,12 +1,12 @@
--import MarketPlacePageSection from '@/app/(PageSections)/Dashboard/MarketPlacePageSection/MarketPlacePageSection'
--import React from 'react'
-+import React from "react";
-+import MarketPlacePageSection from "@/app/(PageSections)/Dashboard/MarketPlacePageSection/MarketPlacePageSection";
+-    <div className="fixed inset-0 bg-black/60 bg-opacity-50 flex items-center justify-center z-50 h-[100vh]">
++    <div className="fixed inset-0 bg-black/60 bg-opacity-50 flex items-center justify-center z-[99999999999999999] h-[100vh]">
+       <div className="bg-white rounded-lg p-8 max-w-md w-full mx-4 text-center">
+         <div className="mb-6 flex justify-center">{getIcon()}</div>
  
- function MarketPlace() {
-   return (
-     <div>
--<MarketPlacePageSection />
-+      <MarketPlacePageSection />
-     </div>
--  )
-+  );
- }
- 
--export default MarketPlace
-+export default MarketPlace;
-diff --git a/src/app/globals.css b/src/app/globals.css
-index ec37fa5..e18bcd5 100644
---- a/src/app/globals.css
-+++ b/src/app/globals.css
-@@ -106,6 +106,18 @@
-   --route-active-foreground: 255 255 255;
-   --route-boundary: 214 95% 56%;
-   --route-inactive: 220 13% 91%;
-+
-+
-+
-+
-+   /* Custom design tokens for coming soon page */
-+   --gradient-primary: linear-gradient(135deg, hsl(240 100% 70%), hsl(280 100% 75%));
-+   --gradient-subtle: linear-gradient(180deg, hsl(240 10% 3.9%), hsl(240 8% 6%));
-+   --gradient-glow: radial-gradient(600px circle at 50% 50%, hsl(240 100% 70% / 0.15), transparent);
-+   --glow-primary: 0 0 40px hsl(240 100% 70% / 0.3);
-+   --glow-secondary: 0 0 60px hsl(280 100% 75% / 0.2);
-+   --transition-smooth: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-+
- }
- 
- html {
-@@ -275,4 +287,39 @@ body{
- 
- .hover\:scrollbar-thumb-blue-300:hover::-webkit-scrollbar-thumb {
-   background-color: rgb(147 197 253);
--} */
-\ No newline at end of file
-+} */
-+
-+
-+.logo {
-+  height: 6em;
-+  padding: 1.5em;
-+  will-change: filter;
-+  transition: filter 300ms;
-+}
-+.logo:hover {
-+  filter: drop-shadow(0 0 2em #646cffaa);
-+}
-+.logo.react:hover {
-+  filter: drop-shadow(0 0 2em #61dafbaa);
-+}
-+
-+@keyframes logo-spin {
-+  from {
-+    transform: rotate(0deg);
-+  }
-+  to {
-+    transform: rotate(360deg);
-+  }
-+}
-+
-+@media (prefers-reduced-motion: no-preference) {
-+  a:nth-of-type(2) .logo {
-+    animation: logo-spin infinite 20s linear;
-+  }
-+}
-+
-+
-+
-+.read-the-docs {
-+  color: #888;
-+}
-\ No newline at end of file
-diff --git a/src/app/not-found.tsx b/src/app/not-found.tsx
-index 1652d7c..1408dd7 100644
---- a/src/app/not-found.tsx
-+++ b/src/app/not-found.tsx
-@@ -1,91 +1,187 @@
-+// "use client";
-+
-+// import { Button } from "@/components/ui/button";
-+// import { ArrowLeft, Home, Search } from "lucide-react";
-+// import { useRouter } from "next/navigation";
-+// import { useEffect, useState } from "react";
-+
-+// export default function NotFound() {
-+//   const [mounted, setMounted] = useState(false);
-+//   const router = useRouter();
-+
-+//   useEffect(() => {
-+//     setMounted(true);
-+//   }, []);
-+
-+//   return (
-+//     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center px-4 sm:px-6 lg:px-8">
-+//       <div
-+//         className={`max-w-lg w-full text-center transition-all duration-1000 ${
-+//           mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
-+//         }`}
-+//       >
-+//         {/* 404 Number */}
-+//         <div className="relative mb-8">
-+//           <h1 className="text-8xl sm:text-9xl font-bold text-slate-200 select-none">
-+//             404
-+//           </h1>
-+//           <div className="absolute inset-0 flex items-center justify-center">
-+//             <Search className="w-16 h-16 text-slate-400 animate-pulse" />
-+//           </div>
-+//         </div>
-+
-+//         {/* Error Message */}
-+//         <div className="mb-8">
-+//           <h2 className="text-2xl sm:text-3xl font-semibold text-slate-800 mb-4">
-+//             Page Not Found
-+//           </h2>
-+//           <p className="text-slate-600 text-lg leading-relaxed">
-+//             Oops! The page you&#39;re looking for doesn&#39;t exist. It might
-+//             have been moved, deleted, or you entered the wrong URL.
-+//           </p>
-+//         </div>
-+
-+//         {/* Action Buttons */}
-+//         <div className="flex flex-col sm:flex-row gap-4 justify-center">
-+//           {/* <button
-+//           onClick={()=>{}}
-+//           className="inline-flex items-center justify-center px-6 py-3 border border-slate-300 text-base font-medium rounded-lg text-slate-700 bg-white hover:bg-slate-50 hover:border-slate-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 transition-all duration-200 transform hover:scale-105"
-+//         >
-+//           <ArrowLeft className="w-5 h-5 mr-2" />
-+//           Go Back
-+//         </button> */}
-+//           <Button
-+//             className="transition-all duration-200 transform hover:scale-105"
-+//             variant="outline"
-+//             onClick={() => router.back()}
-+//           >
-+//             <ArrowLeft className="w-5 h-5" /> Go Back
-+//           </Button>
-+//           <Button
-+//             className="transition-all duration-200 transform hover:scale-105"
-+//             onClick={() => router.replace("/")}
-+//           >
-+//             <Home className="w-5 h-5" /> Go Home
-+//           </Button>
-+
-+//           {/* <button
-+//           onClick={()=>{}}
-+//           className="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-lg text-white bg-slate-800 hover:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-xl"
-+//         >
-+//           <Home className="w-5 h-5 mr-2" />
-+//           Go Home
-+//         </button> */}
-+//         </div>
-+
-+//         {/* Decorative Elements */}
-+//         <div className="mt-12 flex justify-center space-x-2">
-+//           <div className="w-2 h-2 bg-slate-300 rounded-full animate-pulse"></div>
-+//           <div
-+//             className="w-2 h-2 bg-slate-400 rounded-full animate-pulse"
-+//             style={{ animationDelay: "0.2s" }}
-+//           ></div>
-+//           <div
-+//             className="w-2 h-2 bg-slate-500 rounded-full animate-pulse"
-+//             style={{ animationDelay: "0.4s" }}
-+//           ></div>
-+//         </div>
-+//       </div>
-+//     </div>
-+//   );
-+// }
-+
- "use client";
- 
--import { Button } from "@/components/ui/button";
--import { ArrowLeft, Home, Search } from "lucide-react";
- import { useRouter } from "next/navigation";
--import { useEffect, useState } from "react";
-+import "./globals.css";
-+import { Button } from "@/components/ui/button";
-+import { ArrowLeft, Home } from "lucide-react";
-+// import { useToast } from "@/hooks/use-toast";
- 
- export default function NotFound() {
--  const [mounted, setMounted] = useState(false);
-   const router = useRouter();
--
--  useEffect(() => {
--    setMounted(true);
--  }, []);
-+  const currentYear = new Date().getFullYear();
+diff --git a/src/components/ui/modal.tsx b/src/components/ui/modal.tsx
+index dfce796..2b446ce 100644
+--- a/src/components/ui/modal.tsx
++++ b/src/components/ui/modal.tsx
+@@ -44,7 +44,7 @@ function Modal() {
  
    return (
--    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center px-4 sm:px-6 lg:px-8">
-+    <section className="relative min-h-screen flex items-center justify-center bg-[linear-gradient(180deg,hsl(240_10%_3.9%),hsl(240_8%_6%))] overflow-hidden">
-+      {/* Animated background glow */}
-+      <div className="absolute inset-0 bg-gradient-glow animate-glow-pulse" />
-+
-+      {/* Floating orbs */}
-+      <div
-+        className="absolute top-1/4 left-1/4 w-32 h-32 bg-[linear-gradient(135deg,#04392B,#E43B43)] rounded-full opacity-20 animate-float"
-+        style={{ animationDelay: "0s" }}
-+      />
-       <div
--        className={`max-w-lg w-full text-center transition-all duration-1000 ${
--          mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-8"
--        }`}
--      >
--        {/* 404 Number */}
--        <div className="relative mb-8">
--          <h1 className="text-8xl sm:text-9xl font-bold text-slate-200 select-none">
--            404
-+        className="absolute top-1/3 right-1/4 w-24 h-24 bg-[linear-gradient(135deg,#04392B,#E43B43)] rounded-full opacity-15 animate-float"
-+        style={{ animationDelay: "2s" }}
-+      />
-+      <div
-+        className="absolute bottom-1/3 left-1/3 w-20 h-20 bg-[linear-gradient(135deg,#04392B,#E43B43)] rounded-full opacity-25 animate-float"
-+        style={{ animationDelay: "1s" }}
-+      />
-+
-+      <div className="relative z-10 container mx-auto px-4 text-center">
-+        <div className="animate-fade-in">
-+          <h1 className="text-6xl md:text-8xl font-bold mb-6 bg-[linear-gradient(135deg,#04392B,#E43B43)] bg-clip-text text-transparent leading-tight">
-+            Coming Soon
-           </h1>
--          <div className="absolute inset-0 flex items-center justify-center">
--            <Search className="w-16 h-16 text-slate-400 animate-pulse" />
--          </div>
--        </div>
+     <div
+-      className={`fixed inset-0 z-50 flex items-center justify-center p-2 transition-all duration-500 ${
++      className={`fixed inset-0 z-[9999999999999] flex items-center justify-center p-2 transition-all duration-500 ${
+         isOpen ? 'opacity-100 visible' : 'opacity-0 invisible'
+       }`}
+       role="dialog"
+diff --git a/src/services/Api.service.ts b/src/services/Api.service.ts
+index 4a61705..0da58a6 100644
+--- a/src/services/Api.service.ts
++++ b/src/services/Api.service.ts
+@@ -4,9 +4,17 @@ import axios, {
+   AxiosError,
+   type AxiosInstance,
+   type AxiosResponse,
++  type AxiosRequestConfig,
+ } from "axios";
+ import { showConfirmation } from "@/utils/confirmation";
  
--        {/* Error Message */}
--        <div className="mb-8">
--          <h2 className="text-2xl sm:text-3xl font-semibold text-slate-800 mb-4">
--            Page Not Found
--          </h2>
--          <p className="text-slate-600 text-lg leading-relaxed">
--            Oops! The page you&#39;re looking for doesn&#39;t exist. It might
--            have been moved, deleted, or you entered the wrong URL.
-+          <p className="text-xl md:text-2xl text-muted-foreground mb-8 max-w-2xl mx-auto leading-relaxed">
-+            We&apos;re building something incredible. Be the first to experience
-+            the future.
-           </p>
--        </div>
++// Extended RequestConfig to include content type options and response type
++interface ExtendedRequestConfig extends RequestConfig {
++  contentType?: 'json' | 'multipart' | 'text' | 'xml' | string;
++  isFormData?: boolean;
++  responseType?: 'json' | 'blob' | 'text' | 'arraybuffer' | 'document' | 'stream';
++}
++
+ export class ApiService {
+   private axiosInstance: AxiosInstance;
+   private readonly PRECONDITION_FAILED = 428;
+@@ -18,34 +26,71 @@ export class ApiService {
+       baseURL,
+       timeout: 30000,
+       withCredentials: true,
+-      headers: {
+-        "Content-Type": "application/json",
+-      },
++      // Remove default Content-Type header to make it dynamic
+     });
  
--        {/* Action Buttons */}
--        <div className="flex flex-col sm:flex-row gap-4 justify-center">
--          {/* <button
--          onClick={()=>{}}
--          className="inline-flex items-center justify-center px-6 py-3 border border-slate-300 text-base font-medium rounded-lg text-slate-700 bg-white hover:bg-slate-50 hover:border-slate-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 transition-all duration-200 transform hover:scale-105"
--        >
--          <ArrowLeft className="w-5 h-5 mr-2" />
--          Go Back
--        </button> */}
--          <Button
--            className="transition-all duration-200 transform hover:scale-105"
--            variant="outline"
--            onClick={() => router.back()}
--          >
--            <ArrowLeft className="w-5 h-5" /> Go Back
--          </Button>
--          <Button
--            className="transition-all duration-200 transform hover:scale-105"
--            onClick={() => router.replace("/")}
--          >
--            <Home className="w-5 h-5" /> Go Home
--          </Button>
+     this.loginRoute = loginRoute;
+     this.setupInterceptors();
 -
--          {/* <button
--          onClick={()=>{}}
--          className="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-lg text-white bg-slate-800 hover:bg-slate-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-slate-500 transition-all duration-200 transform hover:scale-105 shadow-lg hover:shadow-xl"
--        >
--          <Home className="w-5 h-5 mr-2" />
--          Go Home
--        </button> */}
--        </div>
-+          {/* <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto mb-8">
-+            <Input
-+              type="email"
-+              placeholder="Enter your email"
-+              value={email}
-+              onChange={(e) => setEmail(e.target.value)}
-+              className="flex-1 bg-secondary/50 border-border/50 backdrop-blur-sm"
-+              required
-+            />
-+            <Button 
-+              type="submit" 
-+              className="bg-[linear-gradient(135deg,#04392B,#E43B43)] hover:shadow-glow-primary transition-all duration-300 font-medium"
-+            >
-+              Notify Me
-+            </Button>
-+          </form>
-+           */}
-+          <div className="flex items-center justify-center gap-8 text-sm text-muted-foreground">
-+            <span className="flex items-center gap-2">
-+              <div className="w-2 h-2 bg-[linear-gradient(135deg,#04392B,#E43B43)] rounded-full animate-glow-pulse" />
-+              Modern Design
-+            </span>
-+            <span className="flex items-center gap-2">
-+              <div className="w-2 h-2 bg-[linear-gradient(135deg,#04392B,#E43B43)] rounded-full animate-glow-pulse" />
-+              Fast & Secure
-+            </span>
-+            <span className="flex items-center gap-2">
-+              <div className="w-2 h-2 bg-[linear-gradient(135deg,#04392B,#E43B43)] rounded-full animate-glow-pulse" />
-+              Coming {currentYear}
-+            </span>
-+          </div>
-+          <div className="flex justify-center mt-10 gap-5">
-+            <Button
-+              className="group transition-all duration-200 transform hover:scale-105"
-+              onClick={() => router.back()}
-+            >
-+              <ArrowLeft className="" />
-+              Go Back
-+            </Button>
+-    // Initialize token immediately after setup
+     this.initializeAuthToken();
  
--        {/* Decorative Elements */}
--        <div className="mt-12 flex justify-center space-x-2">
--          <div className="w-2 h-2 bg-slate-300 rounded-full animate-pulse"></div>
--          <div
--            className="w-2 h-2 bg-slate-400 rounded-full animate-pulse"
--            style={{ animationDelay: "0.2s" }}
--          ></div>
--          <div
--            className="w-2 h-2 bg-slate-500 rounded-full animate-pulse"
--            style={{ animationDelay: "0.4s" }}
--          ></div>
-+            <Button
-+              className="group transition-all duration-200 transform hover:scale-105"
-+              onClick={() => router.replace("/")}
-+            >
-+              <Home />
-+              Go Home
-+            </Button>
-+          </div>
-         </div>
-       </div>
--    </div>
-+    </section>
-   );
- }
-diff --git a/src/components/layout/Navbar.tsx b/src/components/layout/Navbar.tsx
-index 922d2c9..2866643 100644
---- a/src/components/layout/Navbar.tsx
-+++ b/src/components/layout/Navbar.tsx
-@@ -36,6 +36,7 @@ export default function Navbar() {
-     { href: "/events", label: "Events", icon: Calendar },
-     { href: "/partners", label: "Partners", icon: Users },
-     { href: "/gallery", label: "Gallery", icon: ImageIcon },
-+    { href: "/market-place", label: "Market Place", icon: ImageIcon },
-   ];
+-    // Make this instance globally available for token sync
+     if (typeof window !== "undefined") {
+       (window as any).apiService = this;
+     }
+   }
  
-   const handleLanguageSelect = (lang: { code: string; name: string }) => {
-diff --git a/src/components/layout/Sidebar.tsx b/src/components/layout/Sidebar.tsx
-index 309b148..9e0f311 100644
---- a/src/components/layout/Sidebar.tsx
-+++ b/src/components/layout/Sidebar.tsx
-@@ -21,6 +21,7 @@ import {
-   Users,
-   BookUser,
-   NotebookPen,
-+  ShoppingBag,
- } from "lucide-react";
- import { cn } from "@/lib/utils";
- import Link from "next/link";
-@@ -38,6 +39,7 @@ const iconMap = {
-   Users,
-   BookUser,
-   NotebookPen,
-+  ShoppingBag
-   // Add more icons as needed
- } as const;
+-  // Add this method to initialize token on service creation
+   private initializeAuthToken(): void {
+     const token = localStorage.getItem("accessToken");
+     if (token) {
+-      // Set the authorization header immediately
+       this.axiosInstance.defaults.headers.common[
+         "Authorization"
+       ] = `Bearer ${token}`;
+     }
+   }
  
-diff --git a/src/components/shared/Card/ImageCard.tsx b/src/components/shared/Card/ImageCard.tsx
-index b4e1ac8..7c57117 100644
---- a/src/components/shared/Card/ImageCard.tsx
-+++ b/src/components/shared/Card/ImageCard.tsx
-@@ -42,7 +42,7 @@ function ImageCard({ event, className = "" }: ImageCardProps) {
-       {/* Content */}
-       <div className="relative z-10 flex h-80 flex-col justify-end p-6">
-         <div className="transform transition-all duration-300 group-hover:translate-y-[-4px]">
--          <h3 className="text-2xl font-bold text-white mb-2 drop-shadow-lg">
-+          <h3 className="text-xl font-bold text-white mb-2 drop-shadow-lg">
-             {event.title}
-           </h3>
-           {/* <p className="text-white/90 text-sm font-medium drop-shadow-md opacity-0 transform translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 delay-100">
-diff --git a/src/components/ui/apple-cards-carousel.tsx b/src/components/ui/apple-cards-carousel.tsx
-index 60fb56f..abce48c 100644
---- a/src/components/ui/apple-cards-carousel.tsx
-+++ b/src/components/ui/apple-cards-carousel.tsx
-@@ -137,13 +137,13 @@ export const AppleCardsCarousel = ({ items, initialScroll = 0 }: AppleCardsCarou
-     >
-       <div className="relative w-full space-y-4">
++  private getContentTypeHeader(data: any, config: ExtendedRequestConfig = {}): string {
++    // If explicitly specified, use that
++    if (config.contentType) {
++      if (config.contentType === 'json') return 'application/json';
++      if (config.contentType === 'multipart') return 'multipart/form-data';
++      if (config.contentType === 'text') return 'text/plain';
++      if (config.contentType === 'xml') return 'application/xml';
++      return config.contentType; // Custom content type
++    }
++
++    // Auto-detect based on data type
++    if (data instanceof FormData) {
++      // Don't set Content-Type for FormData - let browser set it with boundary
++      return '';
++    }
++    
++    if (typeof data === 'string') {
++      return 'text/plain';
++    }
++
++    // Default to JSON for objects
++    return 'application/json';
++  }
++
++  private buildRequestConfig(data: any, config: ExtendedRequestConfig = {}): AxiosRequestConfig {
++    const requestConfig: AxiosRequestConfig = {};
++    
++    const contentType = this.getContentTypeHeader(data, config);
++    
++    if (contentType) {
++      requestConfig.headers = {
++        'Content-Type': contentType,
++      };
++    }
++    // If contentType is empty (FormData case), don't set any Content-Type header
++
++    // Set response type if specified
++    if (config.responseType) {
++      requestConfig.responseType = config.responseType;
++    }
++
++    return requestConfig;
++  }
++
+   private setupInterceptors(): void {
+     // Request interceptor
+     this.axiosInstance.interceptors.request.use(
+@@ -55,22 +100,30 @@ export class ApiService {
+         if (token) {
+           config.headers.Authorization = `Bearer ${token}`;
+         } else {
+-          // Remove authorization header if no token
+           delete config.headers.Authorization;
+         }
+ 
+         // Add request timestamp for debugging
+         config.metadata = { startTime: new Date() };
+ 
+-        // console.log(
+-        //   `🚀 ${config.method?.toUpperCase()} ${config.url}`,
+-        //   config.data || config.params
+-        // );
++  
++        
++        // Log data appropriately
++        if (config.data instanceof FormData) {
++        
++          for (const [key, value] of config.data.entries()) {
++            if (value instanceof File) {
++              console.log(`  ${key}: File(${value.name}, ${value.size} bytes)`);
++            } else {
++              console.log(`  ${key}: ${value}`);
++            }
++          }
++        } 
+ 
+         return config;
+       },
+       (error) => {
+-        // console.error("❌ Request Error:", error);
++    
+         return Promise.reject(error);
+       }
+     );
+@@ -83,12 +136,7 @@ export class ApiService {
+         //   ? new Date().getTime() - startTime.getTime()
+         //   : 0;
+ 
+-        // console.log(
+-        //   `✅ ${response.config.method?.toUpperCase()} ${
+-        //     response.config.url
+-        //   } (${duration}ms)`,
+-        //   response.data
+-        // );
++ 
+ 
+         return response;
+       },
+@@ -108,7 +156,6 @@ export class ApiService {
+         // Handle token expiration
+         if (error.response?.status === 401) {
+           localStorage.removeItem("accessToken");
+-          // Clear authorization header
+           delete this.axiosInstance.defaults.headers.common["Authorization"];
+           window.location.href = this.loginRoute;
+         }
+@@ -126,9 +173,7 @@ export class ApiService {
+ 
+   private handleFailure(error: ApiError): { error: string; path?: string } {
+     if (!error.response) {
+-      // console.error("Network error or no response received:", error.message);
+       const errorMsg = "Network error. Please check your connection.";
+-
+       globalMessageService.error("Network Error", errorMsg);
+       return { error: errorMsg };
+     }
+@@ -138,12 +183,10 @@ export class ApiService {
+       errorData?.message?.trim() || "An unexpected error occurred";
+     let redirectPath = errorData?.errors?.redirect;
+ 
+-    // Clean up redirect path
+     if (typeof redirectPath === "string" && redirectPath.startsWith("\\")) {
+       redirectPath = redirectPath.replace(/\\/g, "");
+     }
+ 
+-    // Handle specific redirect scenarios
+     const redirectMessages = [
+       "Forbidden. Admin access required.",
+       "Forbidden - You do not have permission to access this resource.",
+@@ -159,7 +202,6 @@ export class ApiService {
+       return { error: "Redirecting...", path: redirectPath };
+     }
+ 
+-    // Show error message
+     globalMessageService.error(
+       "Error",
+       error.response?.data?.errors?.error || errorMsg
+@@ -168,15 +210,23 @@ export class ApiService {
+     return { error: errorMsg };
+   }
+ 
+-  async get<T = any>(url: string, params?: any): Promise<ApiResponse<T>> {
++  async get<T = any>(url: string, params?: any, config: ExtendedRequestConfig = {}): Promise<ApiResponse<T>> {
+     try {
+-      const response = await this.axiosInstance.get<ApiResponse<T>>(url, {
++      const requestConfig = {
+         params,
+-      });
++        ...this.buildRequestConfig(null, config)
++      };
++
++      const response = await this.axiosInstance.get<ApiResponse<T>>(url, requestConfig);
++      
++      // For blob responses, return the blob directly instead of trying to parse as ApiResponse
++      if (config.responseType === 'blob') {
++        return response.data as any;
++      }
++      
+       return response.data;
+     } catch (error: any) {
+       this.handleFailure(error as ApiError);
+-
+       const apiError = error as ApiError;
+       if (
+         apiError.response?.status &&
+@@ -191,10 +241,20 @@ export class ApiService {
+   async post<T = any>(
+     url: string,
+     data: any,
+-    config: RequestConfig = {}
++    config: ExtendedRequestConfig = {}
+   ): Promise<ApiResponse<T>> {
+     try {
+-      const response = await this.axiosInstance.post<ApiResponse<T>>(url, data);
++      const requestConfig = this.buildRequestConfig(data, config);
++      const response = await this.axiosInstance.post<ApiResponse<T>>(
++        url, 
++        data, 
++        requestConfig
++      );
++
++      // For blob responses, return the blob directly
++      if (config.responseType === 'blob') {
++        return response.data as any;
++      }
+ 
+       if (config.successMessage || config.showSuccessMessage) {
+         this.handleSuccess(
+@@ -216,10 +276,20 @@ export class ApiService {
+   async put<T = any>(
+     url: string,
+     data: any,
+-    config: RequestConfig = {}
++    config: ExtendedRequestConfig = {}
+   ): Promise<ApiResponse<T>> {
+     try {
+-      const response = await this.axiosInstance.put<ApiResponse<T>>(url, data);
++      const requestConfig = this.buildRequestConfig(data, config);
++      const response = await this.axiosInstance.put<ApiResponse<T>>(
++        url, 
++        data, 
++        requestConfig
++      );
++
++      // For blob responses, return the blob directly
++      if (config.responseType === 'blob') {
++        return response.data as any;
++      }
+ 
+       if (config.successMessage || config.showSuccessMessage) {
+         this.handleSuccess(config.successMessage || "Updated successfully");
+@@ -235,14 +305,21 @@ export class ApiService {
+   async patch<T = any>(
+     url: string,
+     data: any,
+-    config: RequestConfig = {}
++    config: ExtendedRequestConfig = {}
+   ): Promise<ApiResponse<T>> {
+     try {
++      const requestConfig = this.buildRequestConfig(data, config);
+       const response = await this.axiosInstance.patch<ApiResponse<T>>(
+         url,
+-        data
++        data,
++        requestConfig
+       );
+ 
++      // For blob responses, return the blob directly
++      if (config.responseType === 'blob') {
++        return response.data as any;
++      }
++
+       if (config.successMessage || config.showSuccessMessage) {
+         this.handleSuccess(config.successMessage || "Updated successfully");
+       }
+@@ -254,12 +331,49 @@ export class ApiService {
+     }
+   }
+ 
++  // Convenience method specifically for file uploads
++  async uploadFile<T = any>(
++    url: string,
++    formData: FormData,
++    config: ExtendedRequestConfig = {}
++  ): Promise<ApiResponse<T>> {
++    return this.post<T>(url, formData, {
++      ...config,
++      contentType: 'multipart',
++      successMessage: config.successMessage || 'File uploaded successfully'
++    });
++  }
++
++  // Convenience method for downloading files as blobs
++  async downloadFile(
++    url: string,
++    params?: any,
++    config: ExtendedRequestConfig = {}
++  ): Promise<Blob> {
++    const response = await this.get<Blob>(url, params, {
++      ...config,
++      responseType: 'blob'
++    });
++    return response as any; // Type assertion since we know it's a Blob for blob responses
++  }
++
++  // Utility method to create download link for blob
++  createDownloadLink(blob: Blob, filename: string): void {
++    const url = window.URL.createObjectURL(blob);
++    const link = document.createElement('a');
++    link.href = url;
++    link.download = filename;
++    document.body.appendChild(link);
++    link.click();
++    document.body.removeChild(link);
++    window.URL.revokeObjectURL(url);
++  }
++
+   async delete<T = any>(
+     url: string,
+-    config: RequestConfig = {}
++    config: ExtendedRequestConfig = {}
+   ): Promise<ApiResponse<T> | false> {
+     try {
+-      // Show confirmation dialog if required
+       if (config.confirmationMessage) {
+         const confirmed = await showConfirmation(
+           "Confirm Deletion",
+@@ -273,10 +387,14 @@ export class ApiService {
+         }
+       }
+ 
+-      const response = await this.axiosInstance.delete<ApiResponse<T>>(url);
+-    
++      const requestConfig = this.buildRequestConfig(null, config);
++      const response = await this.axiosInstance.delete<ApiResponse<T>>(url, requestConfig);
++
++      // For blob responses, return the blob directly
++      if (config.responseType === 'blob') {
++        return response.data as any;
++      }
+ 
+-      // Prefer config.successMessage if provided
+       if (response.status === 200) {
+         this.handleSuccess(config.successMessage || response.data.message);
+       } else if (config.successMessage) {
+@@ -293,10 +411,9 @@ export class ApiService {
+   async deleteWithPayload<T = any>(
+     url: string,
+     data?: any,
+-    config: RequestConfig = {}
++    config: ExtendedRequestConfig = {}
+   ): Promise<ApiResponse<T> | false> {
+     try {
+-      // Show confirmation dialog if required
+       if (config.confirmationMessage) {
+         const confirmed = await showConfirmation(
+           "Confirm Action",
+@@ -310,7 +427,17 @@ export class ApiService {
+         }
+       }
+ 
+-      const response = await this.axiosInstance.post<ApiResponse<T>>(url, data);
++      const requestConfig = this.buildRequestConfig(data, config);
++      const response = await this.axiosInstance.post<ApiResponse<T>>(
++        url, 
++        data, 
++        requestConfig
++      );
++
++      // For blob responses, return the blob directly
++      if (config.responseType === 'blob') {
++        return response.data as any;
++      }
+ 
+       if (response.data.message) {
+         this.handleSuccess(response.data.message);
+@@ -325,23 +452,18 @@ export class ApiService {
+     }
+   }
+ 
+-  // Update setAuthToken method
+   setAuthToken(token: string): void {
+     localStorage.setItem("accessToken", token);
+-    // Set the authorization header on the axios instance
+     this.axiosInstance.defaults.headers.common[
+       "Authorization"
+     ] = `Bearer ${token}`;
+   }
+ 
+-  // Update clearAuthToken method
+   clearAuthToken(): void {
+     localStorage.removeItem("accessToken");
+-    // Remove authorization header
+     delete this.axiosInstance.defaults.headers.common["Authorization"];
+   }
+ 
+-  // Get axios instance for advanced usage
+   getAxiosInstance(): AxiosInstance {
+     return this.axiosInstance;
+   }
+@@ -349,5 +471,4 @@ export class ApiService {
+ 
+ export const apiService = new ApiService(
+   import.meta.env.VITE_API_URL || "/api"
+-  // Optionally pass a custom login route here, e.g. "/login"
+-);
++);
+\ No newline at end of file
+diff --git a/src/services/assets.service.ts b/src/services/assets.service.ts
+index dce912a..9c49aab 100644
+--- a/src/services/assets.service.ts
++++ b/src/services/assets.service.ts
+@@ -58,14 +58,11 @@ export const AssetService = {
+   // DELETE - Delete container
+   deleteContainer: async (id: string) => {
+     try {
+-      const response = await apiService.delete(
+-        `/cms/asset-containers/${id}`,
+-        {
+-          confirmationMessage:
+-            "Are you sure you want to delete this container? All associated assets will also be deleted.",
+-          successMessage: "Container deleted successfully",
+-        }
+-      );
++      const response = await apiService.delete(`/cms/asset-containers/${id}`, {
++        confirmationMessage:
++          "Are you sure you want to delete this container? All associated assets will also be deleted.",
++        successMessage: "Container deleted successfully",
++      });
+       return response;
+     } catch (error) {
+       return error;
+@@ -195,7 +192,21 @@ export const AssetService = {
+     }
+   },
+ 
++  priviewFile: async (url: string) => {
++    try {
++      // Option 1: If using axios or similar, specify responseType
++      const response = await apiService.get(url);
++
++      // If your apiService wraps the response, you might need to access response.data
++      return response.data || response;
++    } catch (error) {
++ 
++      return error;
++    }
++  },
++
+   uploadAsset: async (asset: any) => {
++   
+     try {
+       const response = await apiService.post("/cms/assets", asset, {
+         successMessage: "Asset uploaded successfully",
+@@ -208,9 +219,7 @@ export const AssetService = {
+ 
+   downloadAsset: async (assetId: string) => {
+     try {
+-      const response = await apiService.get(
+-        `/cms/assets/${assetId}/download`
+-      );
++      const response = await apiService.get(`/cms/assets/${assetId}/download`);
+       return response;
+     } catch (error) {
+       return error;
+diff --git a/src/utils/confirmation.tsx b/src/utils/confirmation.tsx
+index da20788..fe3df9b 100644
+--- a/src/utils/confirmation.tsx
++++ b/src/utils/confirmation.tsx
+@@ -63,8 +63,8 @@ export const showConfirmation = (
+       return createPortal(
          <div
--          className="flex w-full overflow-x-scroll overscroll-x-auto scroll-smooth [scrollbar-width:none] "
-+          className="flex w-full overflow-x-scroll overscroll-x-auto scroll-smooth [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:[display:none]"
-           ref={carouselRef}
-           onScroll={checkScrollability}
-         >
-           <div
-             className={cn(
--              "flex justify-start gap-4 pl-4",
-+              "flex justify-start gap-4 pl-4 overflow-y-hidden",
-               "mx-auto ", // remove max-w-4xl if you want the carousel to span the full width of its container
-             )}
-           >
-@@ -163,7 +163,7 @@ export const AppleCardsCarousel = ({ items, initialScroll = 0 }: AppleCardsCarou
-                   },
-                 }}
-                 key={"card" + index}
--                className="flex-shrink-0"
-+                className="flex-shrink-0 py-3"
-               >
-                 {item}
-               </motion.div>
-diff --git a/src/components/ui/card.tsx b/src/components/ui/card.tsx
-index 938aa22..d414db4 100644
---- a/src/components/ui/card.tsx
-+++ b/src/components/ui/card.tsx
-@@ -9,7 +9,7 @@ const Card = React.forwardRef<
-   <div
-     ref={ref}
-     className={cn(
--      "rounded-lg border bg-card text-card-foreground shadow-sm",
-+      "rounded-lg border bg-card text-card-foreground ",
-       className
-     )}
-     {...props}
-diff --git a/src/components/ui/input.tsx b/src/components/ui/input.tsx
-index 03295ca..cbb36cb 100644
---- a/src/components/ui/input.tsx
-+++ b/src/components/ui/input.tsx
-@@ -9,7 +9,7 @@ function Input({ className, type, ...props }: React.ComponentProps<"input">) {
-       data-slot="input"
-       className={cn(
-         "file:text-foreground placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground dark:bg-input/30 border-input flex h-9 w-full min-w-0 rounded-md border bg-transparent px-3 py-1 text-base shadow-xs transition-[color,box-shadow] outline-none file:inline-flex file:h-7 file:border-0 file:bg-transparent file:text-sm file:font-medium disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
--        "focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]",
-+        "focus-visible:border-ring focus-visible:ring-primary-950/50 focus-visible:ring-1",
-         "aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive",
-         className
-       )}
-diff --git a/src/data/DashboardRoutes.ts b/src/data/DashboardRoutes.ts
-index a3cdb67..bcb68b3 100644
---- a/src/data/DashboardRoutes.ts
-+++ b/src/data/DashboardRoutes.ts
-@@ -52,7 +52,7 @@ export const dashboardRoutes: NavigationItemData[] = [
-   },
-   {
-     label: "Market Place",
--    iconName: "NotebookPen",
-+    iconName: "ShoppingBag",
-     href: "/dashboard/market-place",
-   },
-   {
+           className={`
+-            fixed inset-0 z-50 flex items-center justify-center p-4
+-            transition-all duration-300 ease-out
++            fixed inset-0 flex items-center justify-center p-4
++            transition-all duration-300 ease-out z-[999999999999]
+             ${
+               open
+                 ? "bg-black/60 backdrop-blur-sm"
