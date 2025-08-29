@@ -1,1324 +1,1152 @@
-diff --git a/package-lock.json b/package-lock.json
-index ac19eae..d225b98 100644
---- a/package-lock.json
-+++ b/package-lock.json
-@@ -18,6 +18,7 @@
-         "@radix-ui/react-scroll-area": "^1.2.10",
-         "@radix-ui/react-select": "^2.2.6",
-         "@radix-ui/react-separator": "^1.1.7",
-+        "@radix-ui/react-slider": "^1.3.6",
-         "@radix-ui/react-switch": "^1.2.6",
-         "@radix-ui/react-tooltip": "^1.2.8",
-         "@tailwindcss/vite": "^4.1.12",
-@@ -1660,6 +1661,38 @@
-         }
-       }
-     },
-+    "node_modules/@radix-ui/react-slider": {
-+      "version": "1.3.6",
-+      "resolved": "https://registry.npmjs.org/@radix-ui/react-slider/-/react-slider-1.3.6.tgz",
-+      "integrity": "sha512-JPYb1GuM1bxfjMRlNLE+BcmBC8onfCi60Blk7OBqi2MLTFdS+8401U4uFjnwkOr49BLmXxLC6JHkvAsx5OJvHw==",
-+      "dependencies": {
-+        "@radix-ui/number": "1.1.1",
-+        "@radix-ui/primitive": "1.1.3",
-+        "@radix-ui/react-collection": "1.1.7",
-+        "@radix-ui/react-compose-refs": "1.1.2",
-+        "@radix-ui/react-context": "1.1.2",
-+        "@radix-ui/react-direction": "1.1.1",
-+        "@radix-ui/react-primitive": "2.1.3",
-+        "@radix-ui/react-use-controllable-state": "1.2.2",
-+        "@radix-ui/react-use-layout-effect": "1.1.1",
-+        "@radix-ui/react-use-previous": "1.1.1",
-+        "@radix-ui/react-use-size": "1.1.1"
-+      },
-+      "peerDependencies": {
-+        "@types/react": "*",
-+        "@types/react-dom": "*",
-+        "react": "^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc",
-+        "react-dom": "^16.8 || ^17.0 || ^18.0 || ^19.0 || ^19.0.0-rc"
-+      },
-+      "peerDependenciesMeta": {
-+        "@types/react": {
-+          "optional": true
-+        },
-+        "@types/react-dom": {
-+          "optional": true
-+        }
-+      }
-+    },
-     "node_modules/@radix-ui/react-slot": {
-       "version": "1.2.3",
-       "resolved": "https://registry.npmjs.org/@radix-ui/react-slot/-/react-slot-1.2.3.tgz",
-diff --git a/package.json b/package.json
-index 49cc950..a75ad01 100644
---- a/package.json
-+++ b/package.json
-@@ -20,6 +20,7 @@
-     "@radix-ui/react-scroll-area": "^1.2.10",
-     "@radix-ui/react-select": "^2.2.6",
-     "@radix-ui/react-separator": "^1.1.7",
-+    "@radix-ui/react-slider": "^1.3.6",
-     "@radix-ui/react-switch": "^1.2.6",
-     "@radix-ui/react-tooltip": "^1.2.8",
-     "@tailwindcss/vite": "^4.1.12",
-diff --git a/src/Context/assets.context.tsx b/src/Context/assets.context.tsx
-index 051f3f9..24018d3 100644
---- a/src/Context/assets.context.tsx
-+++ b/src/Context/assets.context.tsx
-@@ -1,9 +1,10 @@
- import type { ApiResponse } from "@/types/api";
-+import type { AssetContainerI } from "@/types/assets";
- import { createContext } from "react";
+diff --git a/.env b/.env
+index 514aeeb..c215b44 100644
+--- a/.env
++++ b/.env
+@@ -1,11 +1,13 @@
+-VITE_API_URL=http://localhost:8000/api
++VITE_API_URL=hhttp://22.32.245.79:8449/api/v1
+ VITE_CMS_URL=http://22.32.245.79:8449/api/v1
  
- // Define CmsAssetsProps type
- type AssetsProps = {
--  assetContainers: ApiResponse<any | undefined>;
-+  assetContainers: ApiResponse<AssetContainerI | undefined>;
-   assetContainer: ApiResponse<any | undefined>;
-   assetFolders: ApiResponse<any | undefined>;
-   assetFolder: ApiResponse<any | undefined>;
-@@ -34,7 +35,7 @@ type AssetsProps = {
-     containerId: string,
-     folderId: string
-   ) => Promise<any>;
--  uploadAsset: (file: File) => Promise<any>;
-+  uploadAsset: (formData: FormData) => Promise<any>;
-   downloadAsset: (id: string) => Promise<any>;
-   deleteAsset: (id: string) => Promise<any>;
- };
-diff --git a/src/Page-Sections/SingleAssetContainerPageSection.tsx b/src/Page-Sections/SingleAssetContainerPageSection.tsx
-index 99f495e..5411807 100644
---- a/src/Page-Sections/SingleAssetContainerPageSection.tsx
-+++ b/src/Page-Sections/SingleAssetContainerPageSection.tsx
-@@ -1,5 +1,4 @@
--import { useRef, useState } from "react";
--import { toast } from "sonner";
-+import { useEffect, useRef, useState } from "react";
- import { AssetPreview } from "@/components/Assets/AssetPreview";
- import { CreateFolderForm } from "@/components/Assets/CreateFolderForm";
- import { FileList } from "@/components/Assets/FileList";
-@@ -7,61 +6,100 @@ import Button from "@/components/ui/button";
- import { Input } from "@/components/ui/input";
- import { Grid3X3, List, Plus, Search, Upload } from "lucide-react";
- import { useModal } from "@/hooks/useModal";
-+import { useAssets } from "@/hooks/useAsste";
-+import { useParams } from "react-router-dom";
-+import { convertToFormData } from "@/utils/formData.util";
+ VITE_APP_NAME=NBC Site
+ VITE_WEBSOCKET_URL=ws://localhost:3000/ws
+ VITE_BASE_URL=/
  
- function SingleAssetContainerPageSection() {
-   const [searchQuery, setSearchQuery] = useState("");
-   const [viewMode, setViewMode] = useState<"grid" | "list">("list");
-   const [currentFolder, setCurrentFolder] = useState<string | null>(null);
--  const [previewAsset, setPreviewAsset] = useState<any>(null);
-+  const [, setPreviewAsset] = useState<any>(null);
-   const fileInputRef = useRef<HTMLInputElement>(null);
--  const { openModal } = useModal();
-+  const { openModal, closeModal } = useModal();
-+  const {
-+    findAssetContainerById,
-+    assetContainer,
-+    createFolder,
-+    isCreateLoading,
-+    uploadAsset,
-+    downloadAsset,
-+  } = useAssets();
-+  const { id } = useParams();
- 
--  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-+  const handleFileUpload = async (
-+    event: React.ChangeEvent<HTMLInputElement>
-+  ) => {
-     const files = event.target.files;
-+
-+
-     if (files) {
--      // Handle file upload logic here
--      toast.success(`Uploading ${files.length} file(s)...`);
--      // In a real app, you would upload to your backend/Supabase storage
-+      const formData = convertToFormData({
-+        file: files[0], // This will create the file field
-+        assetContainerReference: id, // This matches your payload structure
-+      });
-+      await uploadAsset(formData);
-+
-+      findAssetContainerById(id as string);
-     }
-   };
- 
-   const handleFileClick = (file: any) => {
--    console.log("File clicked:", file);
-+  
-     if (file.type === "folder") {
-       setCurrentFolder(file.id);
-     } else {
-       setPreviewAsset(file);
--      handlePreviewFile();
-+      handlePreviewFile(file);
-     }
-   };
-   const handleButtonClick = () => {
-     openModal(
--      <CreateFolderForm />,
-+      <CreateFolderForm
-+        handleCreate={async (data: any) => {
-+          await createFolder(id!, data);
-+          closeModal();
-+          findAssetContainerById(id as string);
-+        }}
-+        loading={isCreateLoading}
-+      />,
-       "Create Folder",
-       "lg",
--      "Create a new folder to organize your assets",
-+      "Create a new folder to organize your assets"
-     );
-   };
- 
--  const handlePreviewFile = () => {
--    console.log("Previewing file:", previewAsset);
-+  const handlePreviewFile = (file: any) => {
-+    
-     const asset = {
--      id: "whatsapp-image",
-+      id: file.id,
-       isImage: true,
--      lastModified: "0 seconds ago",
--      name: "/images/home-hero.jpg",
--      size: "36 KB",
--      type: "file",
--      url: "/images/home-hero.jpg",
-+      lastModified: file.lastModified,
-+      name: file.name,
-+      size: file.size,
-+      type: file.type,
-+      url: file.url,
-     };
-     openModal(
--      <AssetPreview asset={asset} />,
--      "https://unsplash.com/photos/a-modern-blue-skyscraper-displays-bank-cOlutcMjEd4",
-+      <AssetPreview
-+        asset={asset}
-+        download={async (id) => {
-+          const response = await downloadAsset(id);
-+          return response
-+        }}
-+      />,
-+      file.name,
-       "xl",
--      "36 KB",
-+      file.size
-     );
-   };
- 
-+  useEffect(() => {
-+    if (id) {
-+      findAssetContainerById(id);
-+    }
-+  }, [id]);
-+
-   return (
-     <div className="px-10 py-6">
-       <div className="space-y-6">
-@@ -77,17 +115,20 @@ function SingleAssetContainerPageSection() {
-             />
-           </div>
-           <div className="flex items-center space-x-2">
--            <Button
--              variant="outline"
--              size="sm"
--              onClick={() => {
--                handleButtonClick();
--              }}
--              className="border-border text-foreground hover:bg-hover-overlay"
--            >
--              <Plus className="mr-2 h-4 w-4" />
--              Create Folder
--            </Button>
-+            {assetContainer.data?.createFolders && (
-+              <Button
-+                variant="outline"
-+                size="sm"
-+                onClick={() => {
-+                  handleButtonClick();
-+                }}
-+                className="border-border text-foreground hover:bg-hover-overlay"
-+              >
-+                <Plus className="mr-2 h-4 w-4" />
-+                Create Folder
-+              </Button>
-+            )}
-+
-             <Button
-               variant="outline"
-               size="sm"
-@@ -130,6 +171,7 @@ function SingleAssetContainerPageSection() {
-         <FileList
-           searchQuery={searchQuery}
-           viewMode={viewMode}
-+          assets={assetContainer.data}
-           currentFolder={currentFolder}
-           onFileClick={handleFileClick}
-         />
-diff --git a/src/Pages/Dashboard/Assets.tsx b/src/Pages/Dashboard/Assets.tsx
-index 8d0201b..1296bb5 100644
---- a/src/Pages/Dashboard/Assets.tsx
-+++ b/src/Pages/Dashboard/Assets.tsx
-@@ -1,10 +1,11 @@
- import AssetsPagesection from "@/Page-Sections/AssetsPagesection";
-+import { AssetsProvider } from "@/Providers/assets.provider";
- 
- function Assets() {
-   return (
--    <div>
-+    <AssetsProvider>
-       <AssetsPagesection />
--    </div>
-+    </AssetsProvider>
-   );
- }
- 
-diff --git a/src/Pages/Dashboard/CreateAssetContainer.tsx b/src/Pages/Dashboard/CreateAssetContainer.tsx
-index 6101712..d0529c5 100644
---- a/src/Pages/Dashboard/CreateAssetContainer.tsx
-+++ b/src/Pages/Dashboard/CreateAssetContainer.tsx
-@@ -1,10 +1,11 @@
- import CreateAssetContainerPageSection from "@/Page-Sections/CreateAssetContainerPageSection";
-+import { AssetsProvider } from "@/Providers/assets.provider";
- 
- function CreateAssetContainer() {
-   return (
--    <div>
-+    <AssetsProvider>
-       <CreateAssetContainerPageSection />
--    </div>
-+    </AssetsProvider>
-   );
- }
- 
-diff --git a/src/Pages/Dashboard/SingleAssetContainer.tsx b/src/Pages/Dashboard/SingleAssetContainer.tsx
-index 4417ba3..904e2c9 100644
---- a/src/Pages/Dashboard/SingleAssetContainer.tsx
-+++ b/src/Pages/Dashboard/SingleAssetContainer.tsx
-@@ -1,10 +1,13 @@
- import ModalProvider from "@/Context/ModalContext";
- import SingleAssetContainerPageSection from "@/Page-Sections/SingleAssetContainerPageSection";
-+import { AssetsProvider } from "@/Providers/assets.provider";
- 
- function SingleAssetContainer() {
-   return (
-     <ModalProvider>
--      <SingleAssetContainerPageSection />
-+      <AssetsProvider>
-+        <SingleAssetContainerPageSection />
-+      </AssetsProvider>
-     </ModalProvider>
-   );
- }
-diff --git a/src/Providers/assets.provider.tsx b/src/Providers/assets.provider.tsx
-index 392e685..9620633 100644
---- a/src/Providers/assets.provider.tsx
-+++ b/src/Providers/assets.provider.tsx
-@@ -1,15 +1,19 @@
- import React, { useState } from "react";
- import { AssetsContext } from "../Context/assets.context";
- import { AssetService } from "@/services/assets.service";
-+import type { ApiResponse } from "@/types/api";
-+import type { AssetContainerI } from "@/types/assets";
- export const AssetsProvider: React.FC<{ children: React.ReactNode }> = ({
-   children,
- }) => {
-   const [isLoading, setIsLoading] = useState(false);
-   const [isCreateLoading, setIsCreateLoading] = useState(false);
--  const [assetContainers, setAssetContainers] = useState<{
--    data: any;
--    message: string;
--  }>({ data: undefined, message: "" });
-+  const [assetContainers, setAssetContainers] = useState<
-+      ApiResponse<AssetContainerI | undefined>
-+    >({
-+      data: undefined,
-+      message: "",
-+    });
-   const [assetContainer, setAssetContainer] = useState<{
-     data: any;
-     message: string;
-@@ -199,15 +203,15 @@ export const AssetsProvider: React.FC<{ children: React.ReactNode }> = ({
-     }
-   };
- 
--  const uploadAsset = async (file: File) => {
-+  const uploadAsset = async (formData: FormData) => {
-     try {
-       setIsCreateLoading(true);
--      const response = await AssetService.uploadAsset(file);
-+      const response = await AssetService.uploadAsset(formData);
-       setIsCreateLoading(false);
-       return response;
-     } catch (error) {
-       setIsCreateLoading(false);
--      return error;
-+      throw error; // Re-throw to allow proper error handling in the component
-     }
-   };
-   const downloadAsset = async (id: string) => {
-diff --git a/src/components/Assets/AssetContainer.tsx b/src/components/Assets/AssetContainer.tsx
-index b57c998..4991f15 100644
---- a/src/components/Assets/AssetContainer.tsx
-+++ b/src/components/Assets/AssetContainer.tsx
-@@ -1,23 +1,22 @@
--import { Folder, Image, FileText, MoreHorizontal } from "lucide-react";
-+import { Folder, Image, FileText, MoreHorizontal, Edit, Trash2 } from "lucide-react";
- import Button from "@/components/ui/button";
 -
--interface Container {
--  id: string;
--  name: string;
--  files: number;
--}
-+import type { AssetContainerContentI } from "@/types/assets";
-+import OptionsDropdown from "../ui/OptionsDropdown";
++# OAuth Configuration
++VITE_CLIENT_ID=frontend
++VITE_CLIENT_SECRET=sPooFEfBVqX9UDm6NY6jk
  
- interface AssetContainerProps {
--  containers: Container[];
-+  containers: AssetContainerContentI[];
-   onSelectContainer: (id: string, title: string) => void;
-   onCreateContainer: () => void;
-+  onDeleteContainer?: (id: string) => void;
- }
+ # Docker Configuration
+ DEV_PORT=5173
+diff --git a/.env.development b/.env.development
+index 3865ac9..84199ec 100644
+--- a/.env.development
++++ b/.env.development
+@@ -5,7 +5,7 @@ NODE_ENV=development
  
- export const AssetContainer = ({
-   containers,
-   onSelectContainer,
-   onCreateContainer,
-+  onDeleteContainer,
- }: AssetContainerProps) => {
-+
-   return (
-     <div className="space-y-8">
-       {containers.length > 0 ? (
-@@ -42,28 +41,58 @@ export const AssetContainer = ({
-             </div>
-           </div>
-           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
--            {containers.map((container) => (
--              <div
--                key={container.id}
--                onClick={() => onSelectContainer(container.id, container.name)}
--                className="group cursor-pointer rounded-lg border border-border bg-card p-6 transition-all hover:bg-hover-overlay hover:border-primary/50"
--              >
--                <div className="flex items-center space-x-3">
--                  <div className="rounded-md bg-primary/10 p-2">
--                    <Folder className="h-6 w-6 text-nbc-dark-950" />
--                  </div>
--                  <div>
--                    <h3 className="font-medium text-nbc-dark-950 group-hover:text-nbc-dark-800 transition-colors">
--                      {container.name}
--                    </h3>
--                    <p className="text-sm text-text-dim">
--                      {container.files}{" "}
--                      {container.files === 1 ? "file" : "files"}
--                    </p>
-+            {containers.map((container) => {
-+              // Create fileOptions for each container with access to container.reference
-+              const fileOptions = [
-+                {
-+                  id: "edit",
-+                  label: "Edit",
-+                  icon: <Edit className="h-4 w-4" />,
-+                  onClick: () => {
-+                    // Handle edit functionality here
-+                    console.log("Edit container:", container.reference);
-+                  },
-+                  showSeparator: true,
-+                },
-+                {
-+                  id: "delete",
-+                  label: "Delete",
-+                  icon: <Trash2 className="h-4 w-4" />,
-+                  onClick: () => onDeleteContainer && onDeleteContainer(container.reference),
-+                  destructive: true,
-+                },
-+              ];
-+
-+              return (
-+                <div
-+                  key={container.reference}
-+                  onClick={() =>
-+                    onSelectContainer(container.reference, container.title)
-+                  }
-+                  className="group cursor-pointer rounded-lg border border-border bg-card p-3 transition-all hover:bg-hover-overlay
-+                   hover:border-primary/50 flex justify-between "
-+                >
-+                  <div className="flex items-center space-x-3">
-+                    <div className="rounded-md bg-primary/10 p-2">
-+                      <Folder className="h-6 w-6 text-nbc-dark-950" />
-+                    </div>
-+                    <div>
-+                      <h3 className="font-semibold text-nbc-dark-950 group-hover:text-nbc-dark-800 transition-colors">
-+                        {container.title}
-+                      </h3>
-+                      <p className="text-sm">
-+                        {container.description}
-+                      </p>
-+                      <p className="text-sm text-text-dim">
-+                        {container.assetCount} assets {container.folderCount}{" "}
-+                        folders
-+                      </p>
-+                    </div>
-                   </div>
-+                  <OptionsDropdown options={fileOptions} />
-                 </div>
--              </div>
--            ))}
-+              );
-+            })}
-           </div>
-         </>
-       ) : (
-@@ -97,4 +126,4 @@ export const AssetContainer = ({
-       )}
-     </div>
-   );
--};
-+};
-\ No newline at end of file
-diff --git a/src/components/Assets/AssetManager.tsx b/src/components/Assets/AssetManager.tsx
-index e646817..9786639 100644
---- a/src/components/Assets/AssetManager.tsx
-+++ b/src/components/Assets/AssetManager.tsx
-@@ -1,13 +1,25 @@
-+import { useAssets } from "@/hooks/useAsste";
- import { AssetContainer } from "./AssetContainer";
- import { useNavigate } from "react-router-dom";
-+import { useEffect } from "react";
+ # Vite Configuration
+ VITE_APP_NAME=Corporate Website
+-VITE_API_URL=http://localhost:8000
++VITE_API_URL=http://22.32.245.79:8449/api/v1
+ VITE_ENV=development
+ VITE_BASE_URL=/
  
- export const AssetManager = () => {
-   const navigate = useNavigate();
-+  const {assetContainers,findAllAssetContainers,deleteAssetContainer} = useAssets();
-+
-+  const handleDeleteContainer = async(id:string) =>{
-+
-+    await deleteAssetContainer(id)
-+    findAllAssetContainers()
-+  }
-+
-+
-+useEffect(()=>{
-+
-+  findAllAssetContainers()
-+},[])
-+
- 
--  const containers = [
--    { id: ",b.,jn.nkn", name: "Logo container", files: 1 },
--    { id: "b,jb,jb,", name: "Assets", files: 0 },
--  ];
- 
-   return (
-     <div className="bg-background text-foreground">
-@@ -16,9 +28,10 @@ export const AssetManager = () => {
-       {/* Main Content */}
-       <div className="flex-1 p-6">
-         <AssetContainer
--          containers={containers}
-+          containers={assetContainers?.data?.content || []}
-+          onDeleteContainer={(id:string)=> handleDeleteContainer(id)}
-           onSelectContainer={(id, title) => {
--            console.log("Asset ID", id);
-+
-             navigate(`${id}`, {
-               state: { title: title || `Container ${id}` },
-             });
-diff --git a/src/components/Assets/AssetPreview.tsx b/src/components/Assets/AssetPreview.tsx
-index 825c7ca..dd7c5bb 100644
---- a/src/components/Assets/AssetPreview.tsx
-+++ b/src/components/Assets/AssetPreview.tsx
-@@ -1,44 +1,178 @@
- import Button from "@/components/ui/button";
--import { Download, ExternalLink } from "lucide-react";
-+import { AssetService } from "@/services/assets.service";
-+import { Download } from "lucide-react";
-+import { useEffect, useState } from "react";
- 
- interface AssetPreviewProps {
-   asset: any;
-+  download: (id: string) => Promise<any>;
- }
- 
--export const AssetPreview = ({ asset }: AssetPreviewProps) => {
-+export const AssetPreview = ({ asset, download }: AssetPreviewProps) => {
-+  const assetUrl = asset?.url || asset?.src || asset?.path || asset?.publicUrl;
-+  const [url, setUrl] = useState<string | null>(null);
-+  const [isLoading, setIsLoading] = useState(true);
-+  const [error, setError] = useState<string | null>(null);
-+
-+  // Effect for fetching the data
-+  useEffect(() => {
-+    async function fetchPreview() {
-+      if (!assetUrl) {
-+        setIsLoading(false);
-+        return;
-+      }
-+
-+      setIsLoading(true);
-+      setUrl(null);
-+      setError(null);
-+
-+      try {
-+        console.log("Fetching preview for URL:", assetUrl);
-+        const preview = await AssetService.priviewFile(assetUrl);
-+        const newBlob = new Blob([preview]);
-+        const objectUrl = URL.createObjectURL(newBlob);
-+        setUrl(objectUrl);
-+
-+        console.log("new blob", newBlob);
-+
-+        console.log("Preview response type:", typeof preview);
-+        console.log("Preview response:", preview.data);
-+
-+        // Check if response is wrapped (common with API services)
-+        let blob = preview;
-+        if (preview && preview.data && preview.data instanceof Blob) {
-+          blob = preview.data;
-+        } else if (
-+          preview &&
-+          typeof preview === "object" &&
-+          !(preview instanceof Blob)
-+        ) {
-+          // If response is wrapped in an object, try to find the blob
-+          blob = preview.blob || preview.file || preview.data || preview;
-+        }
-+
-+        console.log("Processed blob:", blob);
-+        console.log("Is Blob:", blob instanceof Blob);
-+        console.log("Blob size:", blob instanceof Blob ? blob.size : "N/A");
-+        console.log("Blob type:", blob instanceof Blob ? blob.type : "N/A");
-+        console.log("Valid Blob received:", blob);
-+        // if (blob instanceof Blob && blob.size > 0) {
-+
-+        //   const objectUrl = URL.createObjectURL(blob);
-+        //   setUrl(objectUrl);
-+        //   console.log("Object URL created:", objectUrl);
-+        // } else {
-+        //   console.error("Response is not a valid Blob:", {
-+        //     type: typeof blob,
-+        //     isBlob: blob instanceof Blob,
-+        //     size: blob instanceof Blob ? blob.size : 'N/A',
-+        //     response: blob
-+        //   });
-+        //   throw new Error(`Invalid response type: ${typeof blob}. Expected Blob.`);
-+        // }
-+      } catch (error: any) {
-+        console.error("Failed to fetch preview:", error);
-+        setError(error.message || "Failed to load preview");
-+        setUrl(null);
-+      } finally {
-+        setIsLoading(false);
-+      }
-+    }
-+
-+    fetchPreview();
-+  }, [assetUrl]);
-+
-+  // Effect for cleaning up the object URL
-+  useEffect(() => {
-+    return () => {
-+      if (url) {
-+        URL.revokeObjectURL(url);
-+        console.log("Object URL revoked:", url);
-+      }
-+    };
-+  }, [url]);
-+
-   if (!asset) return null;
- 
-+  const handleDownload = async () => {
-+    try {
-+      const blob = await download(asset.id);
-+      console.log("Download blob received:", blob);
-+
-+      // Handle wrapped response for download too
-+      let downloadBlob = blob;
-+      if (blob && blob.data && blob.data instanceof Blob) {
-+        downloadBlob = blob.data;
-+      }
-+
-+      if (!(downloadBlob instanceof Blob)) {
-+        throw new Error("Download response is not a Blob");
-+      }
-+
-+      const downloadUrl = window.URL.createObjectURL(downloadBlob);
-+      console.log("Download URL created:", downloadUrl);
-+
-+      const link = document.createElement("a");
-+      link.href = downloadUrl;
-+      link.download = asset.name || `download-${asset.id}`;
-+
-+      document.body.appendChild(link);
-+      link.click();
-+      document.body.removeChild(link);
-+
-+      window.URL.revokeObjectURL(downloadUrl);
-+    } catch (error) {
-+      console.error("Download failed:", error);
-+    }
-+  };
-+
-   const isImage =
-     asset.isImage || asset.name?.match(/\.(jpg|jpeg|png|gif|webp)$/i);
-   const isVideo = asset.name?.match(/\.(mp4|webm|ogg|mov)$/i);
-   const isPdf = asset.name?.match(/\.pdf$/i);
- 
--  // Get the actual asset URL - adjust these properties based on your asset object structure
--  console.log("Asset",asset.url)
--  const assetUrl = asset.url || asset.src || asset.path || asset.publicUrl;
--  
-   return (
-     <>
--      <div className="flex-1 flex items-center justify-center  bg-muted/30 rounded-lg min-h-[400px]">
--        {isImage && assetUrl && (
-+      <div className="flex-1 flex items-center justify-center bg-muted/30 rounded-lg min-h-[400px]">
-+        {/* Loading state */}
-+        {isLoading && (
-+          <div className="flex flex-col items-center space-y-4 text-center">
-+            <div className="w-8 h-8 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
-+            <p className="text-text-dim">Loading preview...</p>
-+          </div>
-+        )}
-+
-+        {/* Error state */}
-+        {error && !isLoading && (
-+          <div className="flex flex-col items-center space-y-4 text-center">
-+            <div className="w-24 h-24 bg-destructive/10 rounded-lg flex items-center justify-center">
-+              <span className="text-lg font-semibold text-destructive">!</span>
-+            </div>
-+            <p className="text-destructive text-sm">{error}</p>
-+          </div>
-+        )}
-+
-+        {/* Image preview */}
-+        {isImage && url && !isLoading && !error && (
-           <img
--            src={assetUrl}
-+            src={url}
-             alt={asset.name}
--            className="max-w-full max-h-full object-contain rounded-lg "
--            onError={() => {
--              // Fallback to placeholder if image fails to load
--              console.error('Failed to load image:', assetUrl);
--              // Unable to set fallback src without event, consider handling differently if needed
-+            className="max-w-full max-h-full object-contain rounded-lg"
-+            onError={(e) => {
-+              console.error("Image load error:", e);
-+              setError("Failed to load image");
-             }}
-           />
-         )}
- 
--        {isVideo && assetUrl && (
-+        {/* Video preview */}
-+        {isVideo && assetUrl && !isLoading && !error && (
-           <video
-             controls
-             className="max-w-full max-h-full object-contain rounded-lg"
--            onError={() => {
--              console.error('Failed to load video:', assetUrl);
-+            onError={(e) => {
-+              console.error("Video load error:", e);
-+              setError("Failed to load video");
-             }}
-           >
-             <source src={assetUrl} type="video/mp4" />
-@@ -46,55 +180,24 @@ export const AssetPreview = ({ asset }: AssetPreviewProps) => {
-           </video>
-         )}
- 
--        {isPdf && assetUrl && (
-+        {/* PDF preview */}
-+        {isPdf && assetUrl && !isLoading && !error && (
-           <div className="flex flex-col items-center space-y-4 text-center">
-             <iframe
-               src={assetUrl}
-               className="w-full h-96 rounded-lg border"
-               title={asset.name}
--              onError={() => {
--                console.error('Failed to load PDF:', assetUrl);
-+              onError={(e) => {
-+                console.error("PDF load error:", e);
-+                setError("Failed to load PDF");
-               }}
-             />
-             <p className="text-text-dim">PDF Preview</p>
-           </div>
-         )}
- 
--        {/* Show placeholder when no URL is available */}
--        {!assetUrl && isImage && (
--          <div className="flex flex-col items-center space-y-4 text-center">
--            <div className="w-24 h-24 bg-muted rounded-lg flex items-center justify-center">
--              <span className="text-lg font-semibold text-muted-foreground">
--                IMG
--              </span>
--            </div>
--            <p className="text-text-dim">Image URL not available</p>
--          </div>
--        )}
--
--        {!assetUrl && isVideo && (
--          <div className="flex flex-col items-center space-y-4 text-center">
--            <div className="w-24 h-24 bg-muted rounded-lg flex items-center justify-center">
--              <span className="text-lg font-semibold text-muted-foreground">
--                VID
--              </span>
--            </div>
--            <p className="text-text-dim">Video URL not available</p>
--          </div>
--        )}
--
--        {isPdf && !assetUrl && (
--          <div className="flex flex-col items-center space-y-4 text-center">
--            <div className="w-24 h-24 bg-destructive/10 rounded-lg flex items-center justify-center">
--              <span className="text-2xl font-semibold text-destructive">
--                PDF
--              </span>
--            </div>
--            <p className="text-text-dim">PDF URL not available</p>
--          </div>
--        )}
--
--        {!isImage && !isVideo && !isPdf && (
-+        {/* Unsupported file type */}
-+        {!isImage && !isVideo && !isPdf && !isLoading && !error && (
-           <div className="flex flex-col items-center space-y-4 text-center">
-             <div className="w-24 h-24 bg-muted rounded-lg flex items-center justify-center">
-               <span className="text-lg font-semibold text-muted-foreground">
-@@ -118,40 +221,17 @@ export const AssetPreview = ({ asset }: AssetPreviewProps) => {
-         </div>
- 
-         <div className="flex items-center space-x-2">
--          <Button 
--            variant="outline" 
--            size="sm" 
-+          <Button
-+            variant="outline"
-+            size="sm"
-             className="border-border"
--            onClick={() => {
--              if (assetUrl) {
--                // Create a download link
--                const link = document.createElement('a');
--                link.href = assetUrl;
--                link.download = asset.name || 'download';
--                link.click();
--              }
--            }}
--            disabled={!assetUrl}
-+            onClick={handleDownload}
-           >
-             <Download className="mr-2 h-4 w-4" />
-             Download
-           </Button>
--          <Button 
--            variant="outline" 
--            size="sm" 
--            className="border-border"
--            onClick={() => {
--              if (assetUrl) {
--                window.open(assetUrl, '_blank');
--              }
--            }}
--            disabled={!assetUrl}
--          >
--            <ExternalLink className="mr-2 h-4 w-4" />
--            Open
--          </Button>
-         </div>
-       </div>
-     </>
-   );
--};
-\ No newline at end of file
-+};
-diff --git a/src/components/Assets/CreateAssetContainer.tsx b/src/components/Assets/CreateAssetContainer.tsx
-index 4425a11..78d9472 100644
---- a/src/components/Assets/CreateAssetContainer.tsx
-+++ b/src/components/Assets/CreateAssetContainer.tsx
-@@ -11,6 +11,7 @@ import {
-   SelectValue,
- } from "@/components/ui/select";
- import { CustomInput } from "@/components/ui/CustomInput";
-+import { useAssets } from "@/hooks/useAsste";
- 
- interface CreateAssetContainerDialogProps {
-   open: boolean;
-@@ -30,8 +31,10 @@ export const CreateAssetContainer = ({
-   const [validationRules, setValidationRules] = useState("");
-   const [processSourceImages, setProcessSourceImages] = useState(true);
-   const [warmPresets, setWarmPresets] = useState(true);
-+const {createAssetContainer,isCreateLoading} = useAssets()
- 
--  const handleSave = () => {
-+
-+  const handleSave = async() => {
-     const containerData = {
-       title,
-       handle,
-@@ -47,10 +50,16 @@ export const CreateAssetContainer = ({
-       },
-     };
- 
--    // Here you would integrate with Statamic API
--    console.log("Creating asset container:", containerData);
--    onOpenChange(false);
--    resetForm();
-+
-+   await createAssetContainer({
-+        title: containerData.title,
-+        description:containerData.handle,
-+        diskPath: containerData.disk,
-+      });
-+      console.log("Asset container created successfully:", containerData);
-+      onOpenChange(false);
-+      resetForm();
-+ 
-   };
- 
-   const resetForm = () => {
-@@ -79,8 +88,11 @@ export const CreateAssetContainer = ({
-         </div>
-         <Button
-           onClick={handleSave}
-+          type="submit"
-+          variant="primary"
-           disabled={!title.trim() || !handle.trim()}
--          className="bg-primary text-primary-foreground hover:bg-primary/90"
-+          loading={isCreateLoading}
-+        
-         >
-           Save
-         </Button>
-diff --git a/src/components/Assets/CreateFolderForm.tsx b/src/components/Assets/CreateFolderForm.tsx
-index e825374..6a53836 100644
---- a/src/components/Assets/CreateFolderForm.tsx
-+++ b/src/components/Assets/CreateFolderForm.tsx
-@@ -5,15 +5,18 @@ import { CustomInput } from "@/components/ui/CustomInput";
- interface CreateFolderFormProps {
-   open?: boolean;
-   onOpenChange?: (open: boolean) => void;
-+  loading?: boolean;
-+  handleCreate:(data:any)=>void
- }
- 
--export const CreateFolderForm = ({ onOpenChange }: CreateFolderFormProps) => {
-+export const CreateFolderForm = ({ onOpenChange,loading,handleCreate }: CreateFolderFormProps) => {
-   const [folderName, setFolderName] = useState("");
- 
--  const handleCreate = () => {
-+  const handleSubmit = () => {
-     if (folderName.trim()) {
-       // Here you would integrate with Statamic API
--      console.log("Creating folder:", folderName);
-+   
-+      handleCreate({ name: folderName.trim() });
-       onOpenChange?.(false);
-       setFolderName("");
-     }
-@@ -38,7 +41,7 @@ export const CreateFolderForm = ({ onOpenChange }: CreateFolderFormProps) => {
-             placeholder="Enter folder name"
-             onKeyDown={(e) => {
-               if (e.key === "Enter") {
--                handleCreate();
-+                handleSubmit();
-               }
-               if (e.key === "Escape") {
-                 handleCancel();
-@@ -57,9 +60,10 @@ export const CreateFolderForm = ({ onOpenChange }: CreateFolderFormProps) => {
-           Cancel
-         </Button>
-         <Button
--          onClick={handleCreate}
-+          onClick={handleSubmit}
-           variant="primary"
-           disabled={!folderName.trim()}
-+          loading={loading}
-         >
-           Confirm
-         </Button>
-diff --git a/src/components/Assets/FileList.tsx b/src/components/Assets/FileList.tsx
-index 1bc83dc..0e9b5ad 100644
---- a/src/components/Assets/FileList.tsx
-+++ b/src/components/Assets/FileList.tsx
-@@ -1,15 +1,9 @@
- import { useState } from "react";
--import {
--  Folder,
--  FileImage,
--  ChevronUp,
--  ChevronDown,
--  Edit,
--} from "lucide-react";
-+import { Folder, FileImage, ChevronUp, ChevronDown, Edit } from "lucide-react";
- import { Checkbox } from "@/components/ui/checkbox";
--import {
--  OptionsDropdown,
--} from "@/components/ui/OptionsDropdown";
-+import { OptionsDropdown } from "@/components/ui/OptionsDropdown";
-+import { formatFileSize } from "@/utils/formatFileSize";
-+
- interface FileItem {
-   id: string;
-   name: string;
-@@ -24,13 +18,14 @@ interface FileListProps {
-   searchQuery: string;
-   viewMode: "grid" | "list";
-   currentFolder?: string | null;
-+  assets: any;
-   onFileClick?: (file: FileItem) => void;
- }
- 
- export const FileList = ({
-   searchQuery,
-   viewMode,
--  currentFolder,
-+  assets,
-   onFileClick,
- }: FileListProps) => {
-   const [sortBy, setSortBy] = useState<"name" | "size" | "modified">("name");
-@@ -39,60 +34,63 @@ export const FileList = ({
- 
-   const fileOptions = [
+diff --git a/src/Page-Sections/Landing/AboutPageSection/Parts/MissionVision.tsx b/src/Page-Sections/Landing/AboutPageSection/Parts/MissionVision.tsx
+index a8e14c5..681caeb 100644
+--- a/src/Page-Sections/Landing/AboutPageSection/Parts/MissionVision.tsx
++++ b/src/Page-Sections/Landing/AboutPageSection/Parts/MissionVision.tsx
+@@ -3,14 +3,14 @@ import WhyYouShouldSection from "@/components/sections/WhyYouShouldSection";
+ function MissionVision() {
+   const missionVision = [
      {
--      id: "rename",
--      label: "Rename",
-+      id: "edit",
-+      label: "Edit",
-       icon: <Edit className="h-4 w-4" />,
-       onClick: () => {},
-       showSeparator: true,
+-      icon: "/images/dynamic-website.svg",
+-      title: "Vision",
++      icon: "/images/static-website.svg",
++      title: "Purpose",
+       description:
+         "It is well recognized that component of interaction design is an essential part of user UX",
      },
      {
--      id: "rename",
--      label: "Rename",
-+      id: "delete",
-+      label: "Delete",
-       icon: <Edit className="h-4 w-4" />,
-       onClick: () => {},
--      showSeparator: true,
-+      destructive: true,
+-      icon: "/images/static-website.svg",
+-      title: "Mission",
++      icon: "/images/interaction-design.svg",
++      title: "Value",
+       description:
+         "To enable a pleasurable and desirable end user experience, the following",
      },
--
+@@ -20,12 +20,12 @@ function MissionVision() {
+     //   description:
+     //     "Usability is attached with all tools used by humans and is extended to both digital ",
+     // },
+-    {
+-      icon: "/images/interaction-design.svg",
+-      title: "Values",
+-      description:
+-        "The goal of interaction design is to create a product that produces an efficient ",
+-    },
++    // {
++    //   icon: "/images/interaction-design.svg",
++    //   title: "Values",
++    //   description:
++    //     "The goal of interaction design is to create a product that produces an efficient ",
++    // },
    ];
  
--  // Show different files based on current folder
-+  // Convert assets data to FileItem format
-   const getAllFiles = (): FileItem[] => {
--    if (currentFolder === "new-folder") {
--      return [
--        {
--          id: "subfolder",
--          name: "Subfolder",
-+    if (!assets) return [];
+   return (
+diff --git a/src/Page-Sections/Landing/AboutPageSection/sections/OverviewPageSection.tsx b/src/Page-Sections/Landing/AboutPageSection/sections/OverviewPageSection.tsx
+index b484240..59483db 100644
+--- a/src/Page-Sections/Landing/AboutPageSection/sections/OverviewPageSection.tsx
++++ b/src/Page-Sections/Landing/AboutPageSection/sections/OverviewPageSection.tsx
+@@ -40,7 +40,6 @@ function OverviewPageSection() {
+         <HeadingPart
+           title="Our History"
+           subtitle={`A visual guide could be a wireframe, creative composition, or information architecture. A device that enables collaboration will lessen the chance of work having to be completely redone. A manager could create a visual guide for the team to complete the build-out.\n
+-A visual guide could be a wireframe, creative composition, or information architecture. A device that enables collaboration will lessen the chance of work having to be completely redone. A manager could create a visual guide for the team to complete the build-out.A visual guide could be a wireframe, creative composition, or information architecture. A device that enables collaboration will lessen the chance of work having to be completely redone. A manager could create a visual guide for the team to complete the build-out.\n
+ A visual guide could be a wireframe, creative composition, or information architecture. A device that enables collaboration will lessen the chance of work having to be completely redone. A manager could create a visual guide for the team to complete the build-out.A visual guide could be a wireframe, creative composition, or information architecture. A device that enables collaboration will lessen the chance of work having to be completely redone. A manager could create a visual guide for the team to complete the build-out.`}
+         />
+       </div>
+diff --git a/src/Page-Sections/UserDashboardPageSection/DashboadSections/InsuranceSections/Tabs/InsuranceApplication.tsx b/src/Page-Sections/UserDashboardPageSection/DashboadSections/InsuranceSections/Tabs/InsuranceApplication.tsx
+index 56f429e..ca0ee9c 100644
+--- a/src/Page-Sections/UserDashboardPageSection/DashboadSections/InsuranceSections/Tabs/InsuranceApplication.tsx
++++ b/src/Page-Sections/UserDashboardPageSection/DashboadSections/InsuranceSections/Tabs/InsuranceApplication.tsx
+@@ -69,7 +69,7 @@ function InsuranceApplication() {
+   };
+ 
+   return (
+-    <div className="border border-gray-300 rounded-lg p-4 sm:p-6 bg-white space-y-4">
++    <div className="border border-gray-300 rounded-lg p-4 sm:p-6 bg-white space-y-4">     
+       <div>
+         <h2 className="text-md font-semibold text-gray-400">
+           Insurance Application
+diff --git a/src/Pages/error/NotFound.tsx b/src/Pages/error/NotFound.tsx
+index 30e86a7..23c58f8 100644
+--- a/src/Pages/error/NotFound.tsx
++++ b/src/Pages/error/NotFound.tsx
+@@ -1,19 +1,97 @@
++import Button from "@/components/ui/button";
++import { ArrowLeft, Home } from "lucide-react";
+ import React from "react";
++import { useNavigate } from "react-router-dom";
 +
-+    const files: FileItem[] = [];
++const NotFound: React.FC = () => {
++const navigate = useNavigate();
 +
-+    // Add folders from rootFolders
-+    if (assets.rootFolders && Array.isArray(assets.rootFolders)) {
-+      assets.rootFolders.forEach((folder: any) => {
-+        files.push({
-+          id: folder.reference,
-+          name: folder.name,
-           type: "folder",
--          lastModified: "1 minute ago",
--        },
--        {
--          id: "document",
--          name: "document.pdf",
-+          lastModified: assets.updatedAt || "Unknown",
-+        });
-+      });
++  const currentYear = new Date().getFullYear();
++
++  return (
++    <section className="relative min-h-screen flex items-center justify-center bg-[linear-gradient(180deg,hsl(240_10%_3.9%),hsl(240_8%_6%))] overflow-hidden">
++      {/* Animated background glow */}
++      <div className="absolute inset-0 bg-gradient-glow animate-glow-pulse" />
++
++      {/* Floating orbs */}
++      <div
++        className="absolute top-1/4 left-1/4 w-32 h-32 bg-[linear-gradient(135deg,#04392B,#E43B43)] rounded-full opacity-20 animate-float"
++        style={{ animationDelay: "0s" }}
++      />
++      <div
++        className="absolute top-1/3 right-1/4 w-24 h-24 bg-[linear-gradient(135deg,#04392B,#E43B43)] rounded-full opacity-15 animate-float"
++        style={{ animationDelay: "2s" }}
++      />
++      <div
++        className="absolute bottom-1/3 left-1/3 w-20 h-20 bg-[linear-gradient(135deg,#04392B,#E43B43)] rounded-full opacity-25 animate-float"
++        style={{ animationDelay: "1s" }}
++      />
++
++      <div className="relative z-10 container mx-auto px-4 text-center">
++        <div className="animate-fade-in">
++          <h1 className="text-6xl md:text-8xl font-bold mb-6 bg-[linear-gradient(135deg,#04392B,#E43B43)] bg-clip-text text-transparent leading-tight">
++            Coming Soon
++          </h1>
++
++          <p className="text-xl md:text-2xl text-muted-foreground mb-8 max-w-2xl mx-auto leading-relaxed">
++            We&apos;re building something incredible. Be the first to experience
++            the future.
++          </p>
++
++          {/* <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto mb-8">
++            <Input
++              type="email"
++              placeholder="Enter your email"
++              value={email}
++              onChange={(e) => setEmail(e.target.value)}
++              className="flex-1 bg-secondary/50 border-border/50 backdrop-blur-sm"
++              required
++            />
++            <Button 
++              type="submit" 
++              className="bg-[linear-gradient(135deg,#04392B,#E43B43)] hover:shadow-glow-primary transition-all duration-300 font-medium"
++            >
++              Notify Me
++            </Button>
++          </form>
++           */}
++          <div className="flex items-center justify-center gap-8 text-sm text-muted-foreground">
++            <span className="flex items-center gap-2">
++              <div className="w-2 h-2 bg-[linear-gradient(135deg,#04392B,#E43B43)] rounded-full animate-glow-pulse" />
++              Modern Design
++            </span>
++            <span className="flex items-center gap-2">
++              <div className="w-2 h-2 bg-[linear-gradient(135deg,#04392B,#E43B43)] rounded-full animate-glow-pulse" />
++              Fast & Secure
++            </span>
++            <span className="flex items-center gap-2">
++              <div className="w-2 h-2 bg-[linear-gradient(135deg,#04392B,#E43B43)] rounded-full animate-glow-pulse" />
++              Coming {currentYear}
++            </span>
++          </div>
++          <div className="flex justify-center mt-10 gap-5">
++            <Button
++              className="group transition-all duration-200 transform hover:scale-105"
++              onClick={() => navigate(-1)}
++            >
++              <ArrowLeft className="" />
++              Go Back
++            </Button>
++
++            <Button
++              className="group transition-all duration-200 transform hover:scale-105"
++              onClick={() => navigate('/')}
++            >
++              <Home />
++              Go Home
++            </Button>
++          </div>
++        </div>
++      </div>
++    </section>
++  );
++}
++ 
+ 
+-const NotFound: React.FC = () => (
+-  <div style={{ textAlign: "center", padding: "4rem 1rem" }}>
+-    <h1>404 - Page Not Found</h1>
+-    <p>The page you are looking for does not exist.</p>
+-    <a href="/" style={{
+-      display: "inline-block",
+-      marginTop: "2rem",
+-      padding: "0.75rem 2rem",
+-      background: "#007bff",
+-      color: "#fff",
+-      borderRadius: "4px",
+-      textDecoration: "none"
+-    }}>Go Home</a>
+-  </div>
+-);
+ 
+ export default NotFound; 
+\ No newline at end of file
+diff --git a/src/Routes/StatusRoutes.tsx b/src/Routes/StatusRoutes.tsx
+index 2a5f807..d0d13d2 100644
+--- a/src/Routes/StatusRoutes.tsx
++++ b/src/Routes/StatusRoutes.tsx
+@@ -3,7 +3,7 @@ import { Route } from "react-router-dom";
+ 
+ // Lazy Loading Status Pages
+ const SignUp = lazy(() => import("@/Pages/Dashboard/User/Auth/SignUp"));
+-const NotFound = lazy(() => import("@/Pages/Status/NotFound"));
++const NotFound = lazy(() => import("@/Pages/error/NotFound"));
+ const Error = lazy(() => import("@/Pages/Status/Error"));
+ const UnderMaintenance = lazy(() => import("@/Pages/Status/UnderMaintenance"));
+ 
+diff --git a/src/components/reusable/HeroSection.tsx b/src/components/reusable/HeroSection.tsx
+index 2ae738e..63c69d2 100644
+--- a/src/components/reusable/HeroSection.tsx
++++ b/src/components/reusable/HeroSection.tsx
+@@ -10,7 +10,8 @@ import { cn } from "@/lib/utils";
+ import type { EmblaCarouselType } from "embla-carousel";
+ import useCarousel, { CarouselContext } from "@/Context/CorouselContext";
+ import { motion } from "framer-motion";
+-import { useNavigate } from "react-router-dom";
++import { fXExchangeRateService } from "@/services/fx-exchange-rate.service";
++import { ForexMarquee } from "./ForexMarquee";
+ 
+ type Slide = {
+   title: string;
+@@ -51,6 +52,21 @@ function CarouselDots() {
+   );
+ }
+ 
++interface ForexRateI {
++  currencyCode: string;
++  currencyName: string;
++  buyingCashRate: number;
++  buyingTransferRate: number;
++  sellingCashRate: number;
++  sellingTransferRate: number;
++}
++
++interface ForexRatesResponseI {
++  success: boolean;
++  exchangeRates: ForexRateI[];
++  lastUpdated: string;
++}
++
+ function HeroSection({
+   slides,
+   hasForex = true,
+@@ -58,45 +74,21 @@ function HeroSection({
+ }: HeroSectionProps) {
+   const [api, setApi] = useState<EmblaCarouselType | null>(null);
+   const [selected, setSelected] = useState(0);
+-  const navigate = useNavigate();
+-
+-  const forexRates = [
+-    {
+-      currency: "SEK",
+-      buy: 2257,
+-      sell: 2367,
+-      code: "SEK",
+-      image: "/images/asset7.webp",
+-    },
+-    {
+-      currency: "OMR",
+-      buy: 1905,
+-      sell: 1915,
+-      code: "OMR",
+-      image: "/images/asset11.webp",
+-    },
+-    {
+-      currency: "ZMK",
+-      buy: 1,
+-      sell: 1,
+-      code: "ZMK",
+-      image: "/images/asset8.webp",
+-    },
+-    {
+-      currency: "INR",
+-      buy: 255,
+-      sell: 365,
+-      code: "INR",
+-      image: "/images/asset10.webp",
+-    },
+-    {
+-      currency: "ZWD",
+-      buy: 255,
+-      sell: 365,
+-      code: "ZWD",
+-      image: "/images/asset9.webp",
+-    },
+-  ];
++  const [forexRates, setForexRates] = useState<ForexRatesResponseI | undefined>(undefined);
++
++
++  const getForexRates = async () => {
++    await fXExchangeRateService.getExchangeRates(setForexRates);
++  };
++
++  useEffect(() => {
++    if (hasForex) {
++      getForexRates();
 +    }
++  }, [hasForex]);
++  console.log(forexRates);
 +
-+    // Add files from rootAssets
-+    if (assets.rootAssets && Array.isArray(assets.rootAssets)) {
-+      assets.rootAssets.forEach((asset: any) => {
-+        // Determine file size (you may need to add size info to your API response)
-+        const fileSize = formatFileSize(asset?.metadata?.size); // You can calculate this from file data if available
 +
-+        // Check if it's an image based on file extension
-+        const isImage = /\.(jpg|jpeg|png|gif|bmp|webp|svg)$/i.test(
-+          asset.filename || asset.originalFilename
-+        );
-+
-+        files.push({
-+          id: asset.reference,
-+          name: asset.originalFilename || asset.filename,
-           type: "file",
--          size: "120 KB",
--          lastModified: "2 minutes ago",
--        },
--      ];
-+          size: fileSize,
-+          url: asset.presignedUrl,
-+          lastModified: assets.updatedAt || "Unknown",
-+          isImage,
-+        });
-+      });
-     }
  
--    // Root container files
--    return [
--      {
--        id: "new-folder",
--        name: "new-folder",
--        type: "folder",
--        lastModified: "0 seconds ago",
--      },
--      {
--        id: "whatsapp-image",
--        name: "/images/home-hero.jpg",
--        url: "/images/home-hero.jpg",
--        type: "file",
--        size: "36 KB",
--        lastModified: "0 seconds ago",
--        isImage: true,
--      },
--    ];
-+    return files;
-   };
- 
-   const files = getAllFiles();
-@@ -203,69 +201,7 @@ export const FileList = ({
-             </div>
- 
-             <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
--              {/* <DropdownMenu>
--                <DropdownMenuTrigger asChild>
--                  <Button
--                    variant="ghost"
--                    size="sm"
--                    className="h-6 w-6 p-0"
--                    onClick={(e) => e.stopPropagation()}
--                  >
--                    <MoreHorizontal className="h-3 w-3" />
--                  </Button>
--                </DropdownMenuTrigger>
--                <DropdownMenuContent
--                  align="end"
--                  className="z-50 bg-popover text-popover-foreground border border-border shadow-lg"
+   // Update selected slide index
+   useEffect(() => {
+@@ -184,57 +176,7 @@ function HeroSection({
+           {slides.length > 1 && <CarouselDots />}
+         </CarouselContext.Provider>
+       </Carousel>
+-      {hasForex && (
+-        <div className="bg-nbc-dark-700 text-white">
+-          <div className="container px-4 py-3 mx-auto">
+-            <div className="flex justify-center items-center md:justify-between">
+-              <div className="overflow-hidden relative flex-1">
+-                <div
+-                  className="flex whitespace-nowrap animate-marquee"
+-                  style={{ animation: "marquee 18s linear infinite" }}
 -                >
--                  {file.type === "folder" ? (
--                    <>
--                      <DropdownMenuItem
--                        onClick={(e) => {
--                          e.stopPropagation();
--                          onFileClick?.(file);
--                        }}
--                      >
--                        Open
--                      </DropdownMenuItem>
--                    </>
--                  ) : (
--                    <>
--                      <DropdownMenuItem
--                        onClick={(e) => {
--                          e.stopPropagation();
--                          onFileClick?.(file);
--                        }}
--                      >
--                        Preview
--                      </DropdownMenuItem>
--                      <DropdownMenuItem
--                        onClick={(e) => {
--                          e.stopPropagation();
--                        }}
--                      >
--                        Download
--                      </DropdownMenuItem>
--                    </>
--                  )}
--                  <DropdownMenuSeparator />
--                  <DropdownMenuItem
--                    onClick={(e) => {
--                      e.stopPropagation();
--                    }}
--                  >
--                    Rename
--                  </DropdownMenuItem>
--                  <DropdownMenuItem
--                    onClick={(e) => {
--                      e.stopPropagation();
--                    }}
--                  >
--                    Delete
--                  </DropdownMenuItem>
--                </DropdownMenuContent>
--              </DropdownMenu> */}
--              <OptionsDropdown options={fileOptions}  />
-+              <OptionsDropdown options={fileOptions} />
-             </div>
-           </div>
-         ))}
-diff --git a/src/components/Layout/CustomBreadcrumb.tsx b/src/components/Layout/CustomBreadcrumb.tsx
-index 27007d2..0d8c4e1 100644
---- a/src/components/Layout/CustomBreadcrumb.tsx
-+++ b/src/components/Layout/CustomBreadcrumb.tsx
-@@ -146,7 +146,7 @@ const CustomBreadcrumb: React.FC<CustomBreadcrumbProps> = ({
-     : [];
+-                  {[...forexRates, ...forexRates].map((rate, index, arr) => (
+-                    <div
+-                      key={rate.code + "-" + index}
+-                      className={
+-                        `flex items-center gap-2 text-sm px-6 h-10 text-white` +
+-                        (index === arr.length - 1 ? " mr-8" : "")
+-                      }
+-                      style={{ minWidth: "300px" }}
+-                    >
+-                      <span className="font-bold text-crdb-green-600">
+-                        {rate.code}:
+-                      </span>
+-                      <span className="ml-2">
+-                        Buying{" "}
+-                        <span className="text-green-500 font-bold">
+-                          {" "}
+-                          {rate.buy}
+-                        </span>{" "}
+-                        - Selling
+-                        <span className="text-red-500 font-bold">
+-                          {" "}
+-                          {rate.sell}
+-                        </span>
+-                      </span>
+-                    </div>
+-                  ))}
+-                </div>
+-              </div>
+-              <div className="flex justify-center md:block">
+-                <Button
+-                  className="ml-5 bg-white text-[#213A89] py-2 hover:bg-white cursor-pointer font-[600]"
+-                  onClick={() => {
+-                    navigate("/currency-convetor");
+-                  }}
+-                >
+-                  Currency Calculator
+-                </Button>
+-              </div>
+-            </div>
+-          </div>
+-        </div>
+-      )}
++      {hasForex && forexRates && <ForexMarquee forexRates={forexRates.exchangeRates} />}
+     </>
+   );
+ }
+diff --git a/src/components/sections/ContactForm.tsx b/src/components/sections/ContactForm.tsx
+index e7ff30e..a0f1fe5 100644
+--- a/src/components/sections/ContactForm.tsx
++++ b/src/components/sections/ContactForm.tsx
+@@ -1,135 +1,182 @@
+ import { useState } from "react";
+ import Button from "../ui/button";
++import { CustomSelect } from "../ui/CustomSelect";
  
-   return (
--    <Breadcrumb className={cn("mb-4", className)}>
-+    <Breadcrumb className={cn("p-5 sticky top-0 bg-white z-[9]", className)}>
-       <BreadcrumbList>
-         {/* Home/Dashboard segment */}
-         <BreadcrumbItem>
-diff --git a/src/components/NavigationHeader.tsx b/src/components/NavigationHeader.tsx
-index 8d48358..82a7e36 100644
---- a/src/components/NavigationHeader.tsx
-+++ b/src/components/NavigationHeader.tsx
-@@ -19,9 +19,6 @@ export const NavigationHeader: React.FC<NavigationHeaderProps> = ({
-   onDiscard,
-   onAddItem,
- }) => {
--
--
--
-   return (
-     <header className=" bg-nav-background">
-   
-diff --git a/src/components/ui/Messages/MessageModal.tsx b/src/components/ui/Messages/MessageModal.tsx
-index e5e1432..c1373b7 100644
---- a/src/components/ui/Messages/MessageModal.tsx
-+++ b/src/components/ui/Messages/MessageModal.tsx
-@@ -48,7 +48,7 @@ export const MessageModal: React.FC<MessageModalProps> = ({ message }) => {
-   };
+ type LoadingStates = {
+   submit?: boolean;
+   [key: string]: boolean | undefined;
+ };
  
-   return (
--    <div className="fixed inset-0 bg-black/60 bg-opacity-50 flex items-center justify-center z-50 h-[100vh]">
-+    <div className="fixed inset-0 bg-black/60 bg-opacity-50 flex items-center justify-center z-[99999999999999999] h-[100vh]">
-       <div className="bg-white rounded-lg p-8 max-w-md w-full mx-4 text-center">
-         <div className="mb-6 flex justify-center">{getIcon()}</div>
+-function ContactForm ()  {
+-    const [loadingStates] = useState<LoadingStates>({});
+-    const [formData, setFormData] = useState({
+-      firstName: '',
+-      lastName: '',
+-      phone: '',
+-      email: '',
+-      message: ''
+-    });
+-  
+-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+-      const { name, value } = e.target;
+-      setFormData(prev => ({
+-        ...prev,
+-        [name]: value
+-      }));
+-    };
+-  
+-    const handleSubmit = () => {
+-      console.log('Form submitted:', formData);
+-      // Handle form submission logic here
+-      alert('Form submitted successfully!');
+-    };
+-  
+-    return (
+-      <div className="space-y-4">
+-        {/* First Name and Last Name */}
+-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+-          <div>
+-            <label htmlFor="firstName" className="block text-sm font-medium text-gray-700 mb-1">
+-              First Name
+-            </label>
+-            <input
+-              type="text"
+-              id="firstName"
+-              name="firstName"
+-              value={formData.firstName}
+-              onChange={handleInputChange}
+-              placeholder="Enter your first name"
+-              className="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 hover:border-blue-300"
+-            />
+-          </div>
+-          <div>
+-            <label htmlFor="lastName" className="block text-sm font-medium text-gray-700 mb-1">
+-              Last Name
+-            </label>
+-            <input
+-              type="text"
+-              id="lastName"
+-              name="lastName"
+-              value={formData.lastName}
+-              onChange={handleInputChange}
+-              placeholder="Enter your last name"
+-              className="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 hover:border-blue-300"
+-            />
+-          </div>
+-        </div>
+-  
+-        {/* Phone Number */}
++function ContactForm() {
++  const [loadingStates] = useState<LoadingStates>({});
++  const [formData, setFormData] = useState({
++    firstName: "",
++    lastName: "",
++    phone: "",
++    email: "",
++    message: "",
++  });
++
++  const handleInputChange = (
++    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
++  ) => {
++    const { name, value } = e.target;
++    setFormData((prev) => ({
++      ...prev,
++      [name]: value,
++    }));
++  };
++
++  const handleSubmit = () => {
++    console.log("Form submitted:", formData);
++    // Handle form submission logic here
++    alert("Form submitted successfully!");
++  };
++
++  return (
++    <div className="space-y-4">
++      {/* First Name and Last Name */}
++      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+         <div>
+-          <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">
+-            Phone Number
++          <label
++            htmlFor="firstName"
++            className="block text-sm font-medium text-gray-700 mb-1"
++          >
++            First Name
+           </label>
+-          <div className="flex">
+-            <select className="px-3 py-2.5 border border-gray-300 rounded-l-lg bg-gray-50 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300">
+-              <option>TZ (+255)</option>
+-            </select>
+-            <input
+-              type="tel"
+-              id="phone"
+-              name="phone"
+-              value={formData.phone}
+-              onChange={handleInputChange}
+-              placeholder="Phone number"
+-              className="flex-1 px-3 py-2.5 border border-l-0 border-gray-300 rounded-r-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 hover:border-blue-300"
+-            />
+-          </div>
++          <input
++            type="text"
++            id="firstName"
++            name="firstName"
++            value={formData.firstName}
++            onChange={handleInputChange}
++            placeholder="Enter your first name"
++            className="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 hover:border-blue-300"
++          />
+         </div>
+-  
+-        {/* Email */}
+         <div>
+-          <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+-            Email
++          <label
++            htmlFor="lastName"
++            className="block text-sm font-medium text-gray-700 mb-1"
++          >
++            Last Name
+           </label>
+           <input
+-            type="email"
+-            id="email"
+-            name="email"
+-            value={formData.email}
++            type="text"
++            id="lastName"
++            name="lastName"
++            value={formData.lastName}
+             onChange={handleInputChange}
+-            placeholder="Enter your email"
++            placeholder="Enter your last name"
+             className="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 hover:border-blue-300"
+           />
+         </div>
+-  
+-        {/* Subject/Message */}
+-        <div>
+-          <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-1">
+-            Subject/Message
+-          </label>
+-          <textarea
+-            id="message"
+-            name="message"
+-            value={formData.message}
++      </div>
++
++      {/* Phone Number */}
++      <div>
++        <label
++          htmlFor="phone"
++          className="block text-sm font-medium text-gray-700 mb-1"
++        >
++          Phone Number
++        </label>
++        <div className="flex">
++          <select className="px-3 py-2.5 border border-gray-300 rounded-l-lg bg-gray-50 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-300">
++            <option>TZ (+255)</option>
++          </select>
++          <input
++            type="tel"
++            id="phone"
++            name="phone"
++            value={formData.phone}
+             onChange={handleInputChange}
+-            placeholder="Type your message here"
+-            rows={4}
+-            className="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none transition-all duration-300 hover:border-blue-300"
++            placeholder="Phone number"
++            className="flex-1 px-3 py-2.5 border border-l-0 border-gray-300 rounded-r-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 hover:border-blue-300"
+           />
+         </div>
+-  
+-        {/* Submit Button */}
++      </div>
++
++      {/* Email */}
++      <div>
++        <label
++          htmlFor="email"
++          className="block text-sm font-medium text-gray-700 mb-1"
++        >
++          Email
++        </label>
++        <input
++          type="email"
++          id="email"
++          name="email"
++          value={formData.email}
++          onChange={handleInputChange}
++          placeholder="Enter your email"
++          className="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300 hover:border-blue-300"
++        />
++      </div>
++
++      <CustomSelect
++        options={[
++          {
++            label: "General Inquiry",
++            value: "general_inquiry",
++          },
++          {
++            label: "Support",
++            value: "support",
++          },
++          {
++            label: "Feedback",
++            value: "feedback",
++          },
++        ]}
++        onValueChange={(value) => {
++          console.log(value);
++        }}
++        label="Request Category"
++        value={""}
++        placeholder="Choose category"
++        className="w-full"
++      />
  
-diff --git a/src/components/ui/modal.tsx b/src/components/ui/modal.tsx
-index dfce796..2b446ce 100644
---- a/src/components/ui/modal.tsx
-+++ b/src/components/ui/modal.tsx
-@@ -44,7 +44,7 @@ function Modal() {
+-        <Button variant="primary" onClick={handleSubmit} className="w-full" loading={loadingStates['submit']}>
++      {/* Subject/Message */}
++      <div>
++        <label
++          htmlFor="message"
++          className="block text-sm font-medium text-gray-700 mb-1"
++        >
++          Subject/Message
++        </label>
++        <textarea
++          id="message"
++          name="message"
++          value={formData.message}
++          onChange={handleInputChange}
++          placeholder="Type your message here"
++          rows={4}
++          className="w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none transition-all duration-300 hover:border-blue-300"
++        />
++      </div>
++
++      {/* Submit Button */}
++
++      <Button
++        variant="primary"
++        onClick={handleSubmit}
++        className="w-full"
++        loading={loadingStates["submit"]}
++      >
+         Submit Request
+-        </Button>
+-        {/* <button
++      </Button>
++      {/* <button
+           onClick={handleSubmit}
+           className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 px-6 rounded-xl  focus:outline-none focus:ring-2  focus:ring-offset-2 transition-all duration-300 font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 active:scale-95"
+         >
+        
+         </button> */}
+-      </div>
+-    );
+-  };
+-  
+-  export default ContactForm
+\ No newline at end of file
++    </div>
++  );
++}
++
++export default ContactForm;
+diff --git a/src/components/sections/WhyYouShouldSection.tsx b/src/components/sections/WhyYouShouldSection.tsx
+index 044a4f6..319dd30 100644
+--- a/src/components/sections/WhyYouShouldSection.tsx
++++ b/src/components/sections/WhyYouShouldSection.tsx
+@@ -66,7 +66,7 @@ function WhyYouShouldSection({
+         
+         {/* Items Grid */}
+         <div className="max-w-7xl mx-auto w-full">
+-          <div className={`grid grid-cols-1 sm:grid-cols-2  gap-6 sm:gap-8 lg:gap-12 xl:gap-14 px-4 sm:px-6 lg:px-8 ${items.length > 3 ? 'lg:grid-cols-4' : 'lg:grid-cols-3'}`}>
++          <div className={`grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-8 lg:gap-12 xl:gap-14 px-4 sm:px-6 lg:px-8 ${items.length === 2 ? 'lg:grid-cols-2' : items.length > 3 ? 'lg:grid-cols-4' : 'lg:grid-cols-3'}`}>
+             {items.map((item, index) => (
+               <div 
+                 className="flex flex-col items-center text-center space-y-4 sm:space-y-5" 
+diff --git a/src/index.css b/src/index.css
+index e32e5e6..2c1180d 100644
+--- a/src/index.css
++++ b/src/index.css
+@@ -100,6 +100,13 @@
+   --sale-badge: 120 100% 40%;
+   --best-deals-badge: 45 100% 51%;
+   --discount-badge: 220 50% 47%;
++
++
++  --forex-dark: 220 20% 12%;
++  --forex-green: 142 71% 45%;
++  --forex-red: 0 84% 55%;
++  --forex-accent: 213 89% 50%;
++  --forex-muted: 215 16% 47%;
+ }
  
-   return (
-     <div
--      className={`fixed inset-0 z-50 flex items-center justify-center p-2 transition-all duration-500 ${
-+      className={`fixed inset-0 z-[9999999999999] flex items-center justify-center p-2 transition-all duration-500 ${
-         isOpen ? 'opacity-100 visible' : 'opacity-0 invisible'
-       }`}
-       role="dialog"
+ body {
+@@ -188,6 +195,72 @@ body {
+   }
+ }
+ 
++
++
++
++
++@layer utilities {
++  /* Forex Marquee Animation */
++  @keyframes marquee {
++    0% {
++      transform: translateX(100%);
++    }
++    100% {
++      transform: translateX(-100%);
++    }
++  }
++  
++  .animate-marquee {
++    animation: marquee 20s linear infinite;
++  }
++  
++  /* Forex Rate Components */
++  .forex-rate-item {
++    display: flex;
++    align-items: center;
++    gap: 1.5rem;
++    font-size: 0.875rem;
++    padding-left: 2rem;
++    padding-right: 2rem;
++    padding-top: 0.75rem;
++    padding-bottom: 0.75rem;
++    min-width: max-content;
++    white-space: nowrap;
++  }
++  
++  .forex-currency {
++    font-weight: 700;
++    font-size: 1rem;
++    color: hsl(var(--forex-accent));
++  }
++  
++  .forex-rate-group {
++    display: flex;
++    align-items: center;
++    gap: 2rem;
++  }
++  
++  .forex-rate-label {
++    font-size: 0.875rem;
++    font-weight: 500;
++    color: hsl(var(--forex-muted));
++  }
++  
++  .forex-rate-value {
++    font-weight: 700;
++    font-size: 1rem;
++    margin-left: 0.5rem;
++  }
++  
++  .forex-rate-buy {
++    color: hsl(var(--forex-green));
++  }
++  
++  .forex-rate-sell {
++    color: hsl(var(--forex-red));
++  }
++}
++
+ /* Remove red border ring on focus for all elements */
+ :focus-visible,
+ .focus-visible,
 diff --git a/src/services/Api.service.ts b/src/services/Api.service.ts
-index 4a61705..0da58a6 100644
+index e1319bb..e934a0d 100644
 --- a/src/services/Api.service.ts
 +++ b/src/services/Api.service.ts
-@@ -4,9 +4,17 @@ import axios, {
-   AxiosError,
-   type AxiosInstance,
+@@ -7,12 +7,41 @@ import axios, {
    type AxiosResponse,
-+  type AxiosRequestConfig,
  } from "axios";
- import { showConfirmation } from "@/utils/confirmation";
  
-+// Extended RequestConfig to include content type options and response type
-+interface ExtendedRequestConfig extends RequestConfig {
-+  contentType?: 'json' | 'multipart' | 'text' | 'xml' | string;
-+  isFormData?: boolean;
-+  responseType?: 'json' | 'blob' | 'text' | 'arraybuffer' | 'document' | 'stream';
++// Updated interface to match your new response structure
++interface TokenResponse {
++  accessToken: string;
++  tokenType: string;
++  expiresAt: string; // ISO date string
++  scope: string;
++}
++
++interface AuthCredentials {
++  clientId: string;
++  clientSecret: string;
 +}
 +
  export class ApiService {
    private axiosInstance: AxiosInstance;
    private readonly PRECONDITION_FAILED = 428;
-@@ -18,34 +26,71 @@ export class ApiService {
+   private readonly STATUS_ERROR_THRESHOLD = 300;
+   private loginRoute: string;
+ 
++  // Authentication related properties
++  private authCredentials: AuthCredentials | null = null;
++  private tokenRefreshPromise: Promise<string> | null = null;
++  private refreshTimer: NodeJS.Timeout | null = null;
++  private isInitializing = false;
++
++  // Request queue for handling concurrent requests during token refresh
++  private isRefreshing = false;
++  private failedQueue: Array<{
++    resolve: (token: string) => void;
++    reject: (error: any) => void;
++  }> = [];
++
++  // Request deduplication
++  private pendingRequests = new Map<string, Promise<any>>();
++
+   constructor(baseURL: string, loginRoute: string = "/login") {
+     this.axiosInstance = axios.create({
        baseURL,
-       timeout: 30000,
-       withCredentials: true,
--      headers: {
--        "Content-Type": "application/json",
--      },
-+      // Remove default Content-Type header to make it dynamic
+@@ -24,10 +53,13 @@ export class ApiService {
      });
  
      this.loginRoute = loginRoute;
++    this.loadCredentials();
      this.setupInterceptors();
--
--    // Initialize token immediately after setup
-     this.initializeAuthToken();
  
--    // Make this instance globally available for token sync
+-    // Initialize token immediately after setup
+-    this.initializeAuthToken();
++    // Initialize authentication only if VITE_API_URL is present
++    if (import.meta.env.VITE_API_URL) {
++      this.initializeAuthentication();
++    }
+ 
+     // Make this instance globally available for token sync
      if (typeof window !== "undefined") {
-       (window as any).apiService = this;
+@@ -35,82 +67,346 @@ export class ApiService {
      }
    }
  
 -  // Add this method to initialize token on service creation
-   private initializeAuthToken(): void {
+-  private initializeAuthToken(): void {
++  /**
++   * Load credentials from environment variables (secure approach)
++   * In production, these should be injected securely at build time
++   */
++  private loadCredentials(): void {
++    const clientId = import.meta.env.VITE_CLIENT_ID;
++    const clientSecret = import.meta.env.VITE_CLIENT_SECRET;
++
++    if (clientId && clientSecret) {
++      this.authCredentials = { clientId, clientSecret };
++    } else {
++      console.warn("Client credentials not found in environment variables");
++    }
++  }
++
++  /**
++   * Get stored token from localStorage or cookie
++   */
++  private getStoredToken(): { token: string | null; expiry: number | null } {
++    // Try localStorage first
      const token = localStorage.getItem("accessToken");
-     if (token) {
+-    if (token) {
 -      // Set the authorization header immediately
++    const tokenExpiry = localStorage.getItem("tokenExpiry");
++    
++    if (token && tokenExpiry) {
++      return { 
++        token, 
++        expiry: parseInt(tokenExpiry) 
++      };
++    }
++
++    // Fallback to cookie if localStorage is not available
++    if (typeof document !== 'undefined') {
++      const cookieToken = this.getCookie("accessToken");
++      const cookieExpiry = this.getCookie("tokenExpiry");
++      
++      if (cookieToken && cookieExpiry) {
++        return { 
++          token: cookieToken, 
++          expiry: parseInt(cookieExpiry) 
++        };
++      }
++    }
++
++    return { token: null, expiry: null };
++  }
++
++  /**
++   * Store token in both localStorage and cookie for redundancy
++   */
++  private storeToken(token: string, expiryTime: number): void {
++    try {
++      // Store in localStorage
++      localStorage.setItem("accessToken", token);
++      localStorage.setItem("tokenExpiry", expiryTime.toString());
++    } catch (_error) {
++      console.warn("localStorage not available, using cookies only");
++    }
++
++    // Also store in cookie as backup
++    if (typeof document !== 'undefined') {
++      const expiryDate = new Date(expiryTime);
++      this.setCookie("accessToken", token, expiryDate);
++      this.setCookie("tokenExpiry", expiryTime.toString(), expiryDate);
++    }
++  }
++
++  /**
++   * Clear token from both localStorage and cookie
++   */
++  private clearStoredToken(): void {
++    try {
++      localStorage.removeItem("accessToken");
++      localStorage.removeItem("tokenExpiry");
++    } catch (error) {
++      console.warn("Failed to clear stored token:", error);
++    }
++
++    // Also clear cookies
++    if (typeof document !== 'undefined') {
++      this.deleteCookie("accessToken");
++      this.deleteCookie("tokenExpiry");
++    }
++  }
++
++  /**
++   * Cookie utility methods
++   */
++  private setCookie(name: string, value: string, expires: Date): void {
++    document.cookie = `${name}=${value}; expires=${expires.toUTCString()}; path=/; secure; samesite=strict`;
++  }
++
++  private getCookie(name: string): string | null {
++    const nameEQ = name + "=";
++    const ca = document.cookie.split(';');
++    for (let i = 0; i < ca.length; i++) {
++      let c = ca[i];
++      while (c.charAt(0) === ' ') c = c.substring(1, c.length);
++      if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
++    }
++    return null;
++  }
++
++  private deleteCookie(name: string): void {
++    document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
++  }
++
++  /**
++   * Initialize authentication on app start - only fetch token if none exists
++   */
++  private async initializeAuthentication(): Promise<void> {
++    if (this.isInitializing || !this.authCredentials) return;
++
++    this.isInitializing = true;
++
++    try {
++      // Check if we have a valid token first
++      const { token: existingToken, expiry: tokenExpiry } = this.getStoredToken();
++
++      if (existingToken && tokenExpiry) {
++        const now = Date.now();
++
++        // If token expires in more than 5 minutes, use it
++        if (tokenExpiry > now + 300000) {
++          this.setAuthToken(existingToken);
++          this.scheduleTokenRefresh(tokenExpiry - now);
++          console.log("Using existing valid token");
++          return;
++        }
++      }
++
++      // Only fetch new token if no valid token exists
++      console.log("No valid token found, fetching new token...");
++      await this.refreshAuthToken();
++    } catch (error) {
++      console.error("Failed to initialize authentication:", error);
++      // Don't redirect on initial auth failure, just log it
++    } finally {
++      this.isInitializing = false;
++    }
++  }
++
++  /**
++   * Get authentication token from backend - updated for new response format
++   */
++  private async getAuthToken(): Promise<TokenResponse> {
++    if (!this.authCredentials) {
++      throw new Error("Authentication credentials not configured");
++    }
++
++    if (!import.meta.env.VITE_API_URL) {
++      throw new Error("API URL not configured");
++    }
++
++    try {
++      // Create a separate axios instance for auth to avoid interceptors
++      const authInstance = axios.create({
++        baseURL: import.meta.env.VITE_API_URL,
++        timeout: 30000,
++        headers: {
++          "Content-Type": "application/json",
++        },
++      });
++
++      const response = await authInstance.post<TokenResponse>("/auth/token", {
++        clientId: this.authCredentials.clientId,
++        clientSecret: this.authCredentials.clientSecret,
++      });
++
++      return response.data;
++    } catch (error) {
++      console.error("Failed to get auth token:", error);
++      throw error;
++    }
++  }
++
++  /**
++   * Process the failed request queue
++   */
++  private processQueue(error: any, token: string | null = null): void {
++    this.failedQueue.forEach(({ resolve, reject }) => {
++      if (error) {
++        reject(error);
++      } else {
++        resolve(token!);
++      }
++    });
++
++    this.failedQueue = [];
++  }
++
++  /**
++   * Refresh the authentication token
++   */
++  private async refreshAuthToken(): Promise<string> {
++    // Prevent multiple concurrent refresh attempts
++    if (this.tokenRefreshPromise) {
++      return this.tokenRefreshPromise;
++    }
++
++    this.tokenRefreshPromise = this.performTokenRefresh();
++
++    try {
++      return await this.tokenRefreshPromise;
++    } finally {
++      this.tokenRefreshPromise = null;
++    }
++  }
++
++  /**
++   * Perform the actual token refresh - updated for new response format
++   */
++  private async performTokenRefresh(): Promise<string> {
++    try {
++      const tokenData = await this.getAuthToken();
++      const token = tokenData.accessToken; // Updated field name
++
++      // Parse the expiresAt date string and calculate expiry time
++      const expiresAtDate = new Date(tokenData.expiresAt);
++      const expiryTime = expiresAtDate.getTime();
++      
++      // Calculate buffer time (5 minutes before actual expiry for safety)
++      const bufferTime = 5 * 60 * 1000; // 5 minutes in milliseconds
++      const refreshTime = expiryTime - bufferTime;
++
++      // Store token and expiry in both localStorage and cookie
++      this.storeToken(token, expiryTime);
++
++      // Set authorization header
        this.axiosInstance.defaults.headers.common[
          "Authorization"
-       ] = `Bearer ${token}`;
+-      ] = `Bearer ${token}`;
++      ] = `${tokenData.tokenType} ${token}`; // Use tokenType from response
++
++      // Schedule next refresh
++      const timeUntilRefresh = refreshTime - Date.now();
++      if (timeUntilRefresh > 0) {
++        this.scheduleTokenRefresh(timeUntilRefresh);
++      }
++
++      console.log(`Token refreshed successfully. Expires at: ${tokenData.expiresAt}`);
++      return token;
++    } catch (error) {
++      console.error("Token refresh failed:", error);
++      this.clearAuthToken();
++      throw error;
      }
    }
  
-+  private getContentTypeHeader(data: any, config: ExtendedRequestConfig = {}): string {
-+    // If explicitly specified, use that
-+    if (config.contentType) {
-+      if (config.contentType === 'json') return 'application/json';
-+      if (config.contentType === 'multipart') return 'multipart/form-data';
-+      if (config.contentType === 'text') return 'text/plain';
-+      if (config.contentType === 'xml') return 'application/xml';
-+      return config.contentType; // Custom content type
++  /**
++   * Schedule automatic token refresh
++   */
++  private scheduleTokenRefresh(delay: number): void {
++    if (this.refreshTimer) {
++      clearTimeout(this.refreshTimer);
 +    }
 +
-+    // Auto-detect based on data type
-+    if (data instanceof FormData) {
-+      // Don't set Content-Type for FormData - let browser set it with boundary
-+      return '';
++    if (delay > 0) {
++      this.refreshTimer = setTimeout(async () => {
++        try {
++          await this.refreshAuthToken();
++        } catch (error) {
++          console.error("Scheduled token refresh failed:", error);
++        }
++      }, delay);
++      
++      console.log(`Next token refresh scheduled in ${Math.round(delay / 1000 / 60)} minutes`);
 +    }
-+    
-+    if (typeof data === 'string') {
-+      return 'text/plain';
-+    }
-+
-+    // Default to JSON for objects
-+    return 'application/json';
 +  }
 +
-+  private buildRequestConfig(data: any, config: ExtendedRequestConfig = {}): AxiosRequestConfig {
-+    const requestConfig: AxiosRequestConfig = {};
-+    
-+    const contentType = this.getContentTypeHeader(data, config);
-+    
-+    if (contentType) {
-+      requestConfig.headers = {
-+        'Content-Type': contentType,
-+      };
-+    }
-+    // If contentType is empty (FormData case), don't set any Content-Type header
-+
-+    // Set response type if specified
-+    if (config.responseType) {
-+      requestConfig.responseType = config.responseType;
-+    }
-+
-+    return requestConfig;
-+  }
-+
++  /**
++   * Enhanced setup interceptors with automatic token inclusion
++   */
    private setupInterceptors(): void {
-     // Request interceptor
+-    // Request interceptor
++    // Request interceptor - automatically add token to all requests
      this.axiosInstance.interceptors.request.use(
-@@ -55,22 +100,30 @@ export class ApiService {
-         if (token) {
-           config.headers.Authorization = `Bearer ${token}`;
-         } else {
+       (config) => {
+-        // Always get the latest token from localStorage
+-        const token = localStorage.getItem("accessToken");
+-        if (token) {
+-          config.headers.Authorization = `Bearer ${token}`;
+-        } else {
 -          // Remove authorization header if no token
-           delete config.headers.Authorization;
+-          delete config.headers.Authorization;
++        // Skip adding token for auth requests
++        if (!config.url?.includes("/auth/token")) {
++          const { token } = this.getStoredToken();
++          if (token) {
++            // Use Bearer as default token type
++            config.headers.Authorization = `Bearer ${token}`;
++          } else {
++            delete config.headers.Authorization;
++          }
          }
  
          // Add request timestamp for debugging
@@ -1328,51 +1156,108 @@ index 4a61705..0da58a6 100644
 -        //   `🚀 ${config.method?.toUpperCase()} ${config.url}`,
 -        //   config.data || config.params
 -        // );
-+  
-+        
-+        // Log data appropriately
-+        if (config.data instanceof FormData) {
-+        
-+          for (const [key, value] of config.data.entries()) {
-+            if (value instanceof File) {
-+              console.log(`  ${key}: File(${value.name}, ${value.size} bytes)`);
-+            } else {
-+              console.log(`  ${key}: ${value}`);
-+            }
-+          }
-+        } 
- 
+-
          return config;
        },
        (error) => {
 -        // console.error("❌ Request Error:", error);
-+    
          return Promise.reject(error);
        }
      );
-@@ -83,12 +136,7 @@ export class ApiService {
-         //   ? new Date().getTime() - startTime.getTime()
-         //   : 0;
  
+-    // Response interceptor
++    // Enhanced response interceptor with request queuing
+     this.axiosInstance.interceptors.response.use(
+       (response: AxiosResponse) => {
+-        // const startTime = response.config?.metadata?.startTime;
+-        // const duration = startTime
+-        //   ? new Date().getTime() - startTime.getTime()
+-        //   : 0;
+-
 -        // console.log(
 -        //   `✅ ${response.config.method?.toUpperCase()} ${
 -        //     response.config.url
 -        //   } (${duration}ms)`,
 -        //   response.data
 -        // );
-+ 
- 
+-
          return response;
        },
-@@ -108,7 +156,6 @@ export class ApiService {
+-      (error: AxiosError) => {
+-        // const startTime = error.config?.metadata?.startTime;
+-        // const duration = startTime
+-        //   ? new Date().getTime() - startTime.getTime()
+-        //   : 0;
+-
+-        // console.error(
+-        //   `❌ ${error.config?.method?.toUpperCase()} ${
+-        //     error.config?.url
+-        //   } (${duration}ms)`,
+-        //   error.response?.data || error.message
+-        // );
++      async (error: AxiosError) => {
++        const originalRequest = error.config as any;
+ 
          // Handle token expiration
-         if (error.response?.status === 401) {
-           localStorage.removeItem("accessToken");
+-        if (error.response?.status === 401) {
+-          localStorage.removeItem("accessToken");
 -          // Clear authorization header
-           delete this.axiosInstance.defaults.headers.common["Authorization"];
-           window.location.href = this.loginRoute;
+-          delete this.axiosInstance.defaults.headers.common["Authorization"];
+-          window.location.href = this.loginRoute;
++        if (error.response?.status === 401 && !originalRequest._retry) {
++          if (this.isRefreshing) {
++            // If we're already refreshing, queue this request
++            return new Promise((resolve, reject) => {
++              this.failedQueue.push({ resolve, reject });
++            })
++              .then((token) => {
++                originalRequest.headers.Authorization = `Bearer ${token}`;
++                return this.axiosInstance(originalRequest);
++              })
++              .catch((err) => {
++                return Promise.reject(err);
++              });
++          }
++
++          originalRequest._retry = true;
++          this.isRefreshing = true;
++
++          return new Promise((resolve, reject) => {
++            this.refreshAuthToken()
++              .then((newToken) => {
++                originalRequest.headers.Authorization = `Bearer ${newToken}`;
++                this.processQueue(null, newToken);
++                resolve(this.axiosInstance(originalRequest));
++              })
++              .catch((err) => {
++                this.processQueue(err, null);
++                this.clearAuthToken();
++                window.location.href = this.loginRoute;
++                reject(err);
++              })
++              .finally(() => {
++                this.isRefreshing = false;
++              });
++          });
          }
-@@ -126,9 +173,7 @@ export class ApiService {
+ 
+         return Promise.reject(error);
+@@ -118,6 +414,14 @@ export class ApiService {
+     );
+   }
+ 
++  /**
++   * Generate a unique key for request deduplication
++   */
++  private generateRequestKey(method: string, url: string, data?: any): string {
++    const dataStr = data ? JSON.stringify(data) : "";
++    return `${method}:${url}:${btoa(dataStr).slice(0, 10)}`;
++  }
++
+   private handleSuccess(message?: string): void {
+     if (message) {
+       globalMessageService.success("Success", message);
+@@ -126,9 +430,7 @@ export class ApiService {
  
    private handleFailure(error: ApiError): { error: string; path?: string } {
      if (!error.response) {
@@ -1382,327 +1267,280 @@ index 4a61705..0da58a6 100644
        globalMessageService.error("Network Error", errorMsg);
        return { error: errorMsg };
      }
-@@ -138,12 +183,10 @@ export class ApiService {
-       errorData?.message?.trim() || "An unexpected error occurred";
-     let redirectPath = errorData?.errors?.redirect;
- 
--    // Clean up redirect path
-     if (typeof redirectPath === "string" && redirectPath.startsWith("\\")) {
-       redirectPath = redirectPath.replace(/\\/g, "");
-     }
- 
--    // Handle specific redirect scenarios
-     const redirectMessages = [
-       "Forbidden. Admin access required.",
-       "Forbidden - You do not have permission to access this resource.",
-@@ -159,7 +202,6 @@ export class ApiService {
-       return { error: "Redirecting...", path: redirectPath };
-     }
- 
--    // Show error message
-     globalMessageService.error(
-       "Error",
-       error.response?.data?.errors?.error || errorMsg
-@@ -168,15 +210,23 @@ export class ApiService {
+@@ -168,7 +470,31 @@ export class ApiService {
      return { error: errorMsg };
    }
  
--  async get<T = any>(url: string, params?: any): Promise<ApiResponse<T>> {
-+  async get<T = any>(url: string, params?: any, config: ExtendedRequestConfig = {}): Promise<ApiResponse<T>> {
-     try {
--      const response = await this.axiosInstance.get<ApiResponse<T>>(url, {
-+      const requestConfig = {
-         params,
--      });
-+        ...this.buildRequestConfig(null, config)
-+      };
++  // Enhanced API methods with deduplication
+   async get<T = any>(url: string, params?: any): Promise<ApiResponse<T>> {
++    const requestKey = this.generateRequestKey("GET", url, params);
 +
-+      const response = await this.axiosInstance.get<ApiResponse<T>>(url, requestConfig);
-+      
-+      // For blob responses, return the blob directly instead of trying to parse as ApiResponse
-+      if (config.responseType === 'blob') {
-+        return response.data as any;
-+      }
-+      
-       return response.data;
-     } catch (error: any) {
-       this.handleFailure(error as ApiError);
--
-       const apiError = error as ApiError;
-       if (
-         apiError.response?.status &&
-@@ -191,10 +241,20 @@ export class ApiService {
-   async post<T = any>(
-     url: string,
-     data: any,
--    config: RequestConfig = {}
-+    config: ExtendedRequestConfig = {}
-   ): Promise<ApiResponse<T>> {
-     try {
--      const response = await this.axiosInstance.post<ApiResponse<T>>(url, data);
-+      const requestConfig = this.buildRequestConfig(data, config);
-+      const response = await this.axiosInstance.post<ApiResponse<T>>(
-+        url, 
-+        data, 
-+        requestConfig
-+      );
++    // Check if the same request is already pending
++    if (this.pendingRequests.has(requestKey)) {
++      return this.pendingRequests.get(requestKey);
++    }
 +
-+      // For blob responses, return the blob directly
-+      if (config.responseType === 'blob') {
-+        return response.data as any;
-+      }
- 
-       if (config.successMessage || config.showSuccessMessage) {
-         this.handleSuccess(
-@@ -216,10 +276,20 @@ export class ApiService {
-   async put<T = any>(
-     url: string,
-     data: any,
--    config: RequestConfig = {}
-+    config: ExtendedRequestConfig = {}
-   ): Promise<ApiResponse<T>> {
-     try {
--      const response = await this.axiosInstance.put<ApiResponse<T>>(url, data);
-+      const requestConfig = this.buildRequestConfig(data, config);
-+      const response = await this.axiosInstance.put<ApiResponse<T>>(
-+        url, 
-+        data, 
-+        requestConfig
-+      );
++    const requestPromise = this.performGet<T>(url, params);
++    this.pendingRequests.set(requestKey, requestPromise);
 +
-+      // For blob responses, return the blob directly
-+      if (config.responseType === 'blob') {
-+        return response.data as any;
-+      }
- 
-       if (config.successMessage || config.showSuccessMessage) {
-         this.handleSuccess(config.successMessage || "Updated successfully");
-@@ -235,14 +305,21 @@ export class ApiService {
-   async patch<T = any>(
-     url: string,
-     data: any,
--    config: RequestConfig = {}
-+    config: ExtendedRequestConfig = {}
-   ): Promise<ApiResponse<T>> {
-     try {
-+      const requestConfig = this.buildRequestConfig(data, config);
-       const response = await this.axiosInstance.patch<ApiResponse<T>>(
-         url,
--        data
-+        data,
-+        requestConfig
-       );
- 
-+      // For blob responses, return the blob directly
-+      if (config.responseType === 'blob') {
-+        return response.data as any;
-+      }
++    try {
++      const result = await requestPromise;
++      return result;
++    } finally {
++      // Clean up the pending request
++      this.pendingRequests.delete(requestKey);
++    }
++  }
 +
-       if (config.successMessage || config.showSuccessMessage) {
-         this.handleSuccess(config.successMessage || "Updated successfully");
-       }
-@@ -254,12 +331,49 @@ export class ApiService {
-     }
-   }
- 
-+  // Convenience method specifically for file uploads
-+  async uploadFile<T = any>(
++  private async performGet<T = any>(
 +    url: string,
-+    formData: FormData,
-+    config: ExtendedRequestConfig = {}
++    params?: any
 +  ): Promise<ApiResponse<T>> {
-+    return this.post<T>(url, formData, {
-+      ...config,
-+      contentType: 'multipart',
-+      successMessage: config.successMessage || 'File uploaded successfully'
-+    });
-+  }
-+
-+  // Convenience method for downloading files as blobs
-+  async downloadFile(
-+    url: string,
-+    params?: any,
-+    config: ExtendedRequestConfig = {}
-+  ): Promise<Blob> {
-+    const response = await this.get<Blob>(url, params, {
-+      ...config,
-+      responseType: 'blob'
-+    });
-+    return response as any; // Type assertion since we know it's a Blob for blob responses
-+  }
-+
-+  // Utility method to create download link for blob
-+  createDownloadLink(blob: Blob, filename: string): void {
-+    const url = window.URL.createObjectURL(blob);
-+    const link = document.createElement('a');
-+    link.href = url;
-+    link.download = filename;
-+    document.body.appendChild(link);
-+    link.click();
-+    document.body.removeChild(link);
-+    window.URL.revokeObjectURL(url);
-+  }
-+
-   async delete<T = any>(
+     try {
+       const response = await this.axiosInstance.get<ApiResponse<T>>(url, {
+         params,
+@@ -192,6 +518,34 @@ export class ApiService {
      url: string,
--    config: RequestConfig = {}
-+    config: ExtendedRequestConfig = {}
+     data: any,
+     config: RequestConfig = {}
++  ): Promise<ApiResponse<T>> {
++    // For POST requests, only deduplicate if explicitly requested
++    // (since POST requests often have side effects)
++    if (config.allowDeduplication) {
++      const requestKey = this.generateRequestKey("POST", url, data);
++
++      if (this.pendingRequests.has(requestKey)) {
++        return this.pendingRequests.get(requestKey);
++      }
++
++      const requestPromise = this.performPost<T>(url, data, config);
++      this.pendingRequests.set(requestKey, requestPromise);
++
++      try {
++        const result = await requestPromise;
++        return result;
++      } finally {
++        this.pendingRequests.delete(requestKey);
++      }
++    }
++
++    return this.performPost<T>(url, data, config);
++  }
++
++  private async performPost<T = any>(
++    url: string,
++    data: any,
++    config: RequestConfig = {}
+   ): Promise<ApiResponse<T>> {
+     try {
+       const response = await this.axiosInstance.post<ApiResponse<T>>(url, data);
+@@ -217,6 +571,33 @@ export class ApiService {
+     url: string,
+     data: any,
+     config: RequestConfig = {}
++  ): Promise<ApiResponse<T>> {
++    // For PUT requests, optionally deduplicate if requested
++    if (config.allowDeduplication) {
++      const requestKey = this.generateRequestKey("PUT", url, data);
++
++      if (this.pendingRequests.has(requestKey)) {
++        return this.pendingRequests.get(requestKey);
++      }
++
++      const requestPromise = this.performPut<T>(url, data, config);
++      this.pendingRequests.set(requestKey, requestPromise);
++
++      try {
++        const result = await requestPromise;
++        return result;
++      } finally {
++        this.pendingRequests.delete(requestKey);
++      }
++    }
++
++    return this.performPut<T>(url, data, config);
++  }
++
++  private async performPut<T = any>(
++    url: string,
++    data: any,
++    config: RequestConfig = {}
+   ): Promise<ApiResponse<T>> {
+     try {
+       const response = await this.axiosInstance.put<ApiResponse<T>>(url, data);
+@@ -236,6 +617,33 @@ export class ApiService {
+     url: string,
+     data: any,
+     config: RequestConfig = {}
++  ): Promise<ApiResponse<T>> {
++    // For PATCH requests, optionally deduplicate if requested
++    if (config.allowDeduplication) {
++      const requestKey = this.generateRequestKey("PATCH", url, data);
++
++      if (this.pendingRequests.has(requestKey)) {
++        return this.pendingRequests.get(requestKey);
++      }
++
++      const requestPromise = this.performPatch<T>(url, data, config);
++      this.pendingRequests.set(requestKey, requestPromise);
++
++      try {
++        const result = await requestPromise;
++        return result;
++      } finally {
++        this.pendingRequests.delete(requestKey);
++      }
++    }
++
++    return this.performPatch<T>(url, data, config);
++  }
++
++  private async performPatch<T = any>(
++    url: string,
++    data: any,
++    config: RequestConfig = {}
+   ): Promise<ApiResponse<T>> {
+     try {
+       const response = await this.axiosInstance.patch<ApiResponse<T>>(
+@@ -259,7 +667,6 @@ export class ApiService {
+     config: RequestConfig = {}
    ): Promise<ApiResponse<T> | false> {
      try {
 -      // Show confirmation dialog if required
        if (config.confirmationMessage) {
          const confirmed = await showConfirmation(
            "Confirm Deletion",
-@@ -273,10 +387,14 @@ export class ApiService {
-         }
+@@ -274,9 +681,7 @@ export class ApiService {
        }
  
--      const response = await this.axiosInstance.delete<ApiResponse<T>>(url);
+       const response = await this.axiosInstance.delete<ApiResponse<T>>(url);
 -    
-+      const requestConfig = this.buildRequestConfig(null, config);
-+      const response = await this.axiosInstance.delete<ApiResponse<T>>(url, requestConfig);
-+
-+      // For blob responses, return the blob directly
-+      if (config.responseType === 'blob') {
-+        return response.data as any;
-+      }
  
 -      // Prefer config.successMessage if provided
        if (response.status === 200) {
          this.handleSuccess(config.successMessage || response.data.message);
        } else if (config.successMessage) {
-@@ -293,10 +411,9 @@ export class ApiService {
-   async deleteWithPayload<T = any>(
-     url: string,
-     data?: any,
--    config: RequestConfig = {}
-+    config: ExtendedRequestConfig = {}
+@@ -296,7 +701,6 @@ export class ApiService {
+     config: RequestConfig = {}
    ): Promise<ApiResponse<T> | false> {
      try {
 -      // Show confirmation dialog if required
        if (config.confirmationMessage) {
          const confirmed = await showConfirmation(
            "Confirm Action",
-@@ -310,7 +427,17 @@ export class ApiService {
-         }
-       }
- 
--      const response = await this.axiosInstance.post<ApiResponse<T>>(url, data);
-+      const requestConfig = this.buildRequestConfig(data, config);
-+      const response = await this.axiosInstance.post<ApiResponse<T>>(
-+        url, 
-+        data, 
-+        requestConfig
-+      );
-+
-+      // For blob responses, return the blob directly
-+      if (config.responseType === 'blob') {
-+        return response.data as any;
-+      }
- 
-       if (response.data.message) {
-         this.handleSuccess(response.data.message);
-@@ -325,23 +452,18 @@ export class ApiService {
+@@ -325,29 +729,87 @@ export class ApiService {
      }
    }
  
 -  // Update setAuthToken method
-   setAuthToken(token: string): void {
-     localStorage.setItem("accessToken", token);
+-  setAuthToken(token: string): void {
+-    localStorage.setItem("accessToken", token);
 -    // Set the authorization header on the axios instance
-     this.axiosInstance.defaults.headers.common[
-       "Authorization"
-     ] = `Bearer ${token}`;
+-    this.axiosInstance.defaults.headers.common[
+-      "Authorization"
+-    ] = `Bearer ${token}`;
++  /**
++   * Manual token refresh (public method)
++   */
++  async forceRefreshToken(): Promise<void> {
++    await this.refreshAuthToken();
++  }
++
++  /**
++   * Set auth token manually (updated to handle new format)
++   */
++  setAuthToken(token: string, expiresAt?: string | Date): void {
++    let expiryTime: number;
++    
++    if (expiresAt) {
++      expiryTime = expiresAt instanceof Date ? expiresAt.getTime() : new Date(expiresAt).getTime();
++    } else {
++      // Default to 1 hour from now if no expiry provided
++      expiryTime = Date.now() + (60 * 60 * 1000);
++    }
++
++    this.storeToken(token, expiryTime);
++    this.axiosInstance.defaults.headers.common["Authorization"] = `Bearer ${token}`;
++    
++    // Schedule refresh
++    const refreshTime = expiryTime - (5 * 60 * 1000); // 5 minutes before expiry
++    const timeUntilRefresh = refreshTime - Date.now();
++    if (timeUntilRefresh > 0) {
++      this.scheduleTokenRefresh(timeUntilRefresh);
++    }
    }
  
 -  // Update clearAuthToken method
++  /**
++   * Clear auth token and cancel refresh timer
++   */
    clearAuthToken(): void {
-     localStorage.removeItem("accessToken");
+-    localStorage.removeItem("accessToken");
 -    // Remove authorization header
++    this.clearStoredToken();
++
++    if (this.refreshTimer) {
++      clearTimeout(this.refreshTimer);
++      this.refreshTimer = null;
++    }
++
      delete this.axiosInstance.defaults.headers.common["Authorization"];
    }
  
 -  // Get axios instance for advanced usage
++  /**
++   * Check if currently authenticated
++   */
++  isAuthenticated(): boolean {
++    const { token, expiry } = this.getStoredToken();
++
++    if (!token || !expiry) return false;
++
++    return expiry > Date.now();
++  }
++
++  /**
++   * Get axios instance for advanced usage
++   */
    getAxiosInstance(): AxiosInstance {
      return this.axiosInstance;
    }
-@@ -349,5 +471,4 @@ export class ApiService {
- 
- export const apiService = new ApiService(
-   import.meta.env.VITE_API_URL || "/api"
--  // Optionally pass a custom login route here, e.g. "/login"
--);
-+);
-\ No newline at end of file
-diff --git a/src/services/assets.service.ts b/src/services/assets.service.ts
-index dce912a..9c49aab 100644
---- a/src/services/assets.service.ts
-+++ b/src/services/assets.service.ts
-@@ -58,14 +58,11 @@ export const AssetService = {
-   // DELETE - Delete container
-   deleteContainer: async (id: string) => {
-     try {
--      const response = await apiService.delete(
--        `/cms/asset-containers/${id}`,
--        {
--          confirmationMessage:
--            "Are you sure you want to delete this container? All associated assets will also be deleted.",
--          successMessage: "Container deleted successfully",
--        }
--      );
-+      const response = await apiService.delete(`/cms/asset-containers/${id}`, {
-+        confirmationMessage:
-+          "Are you sure you want to delete this container? All associated assets will also be deleted.",
-+        successMessage: "Container deleted successfully",
-+      });
-       return response;
-     } catch (error) {
-       return error;
-@@ -195,7 +192,21 @@ export const AssetService = {
-     }
-   },
- 
-+  priviewFile: async (url: string) => {
-+    try {
-+      // Option 1: If using axios or similar, specify responseType
-+      const response = await apiService.get(url);
 +
-+      // If your apiService wraps the response, you might need to access response.data
-+      return response.data || response;
-+    } catch (error) {
-+ 
-+      return error;
++  /**
++   * Clear all pending requests (useful during cleanup)
++   */
++  clearPendingRequests(): void {
++    this.pendingRequests.clear();
++  }
++
++  /**
++   * Enhanced cleanup method to clear timers and pending requests
++   */
++  destroy(): void {
++    if (this.refreshTimer) {
++      clearTimeout(this.refreshTimer);
++      this.refreshTimer = null;
 +    }
-+  },
-+
-   uploadAsset: async (asset: any) => {
-+   
-     try {
-       const response = await apiService.post("/cms/assets", asset, {
-         successMessage: "Asset uploaded successfully",
-@@ -208,9 +219,7 @@ export const AssetService = {
++    this.clearPendingRequests();
++    this.processQueue(new Error("Service destroyed"), null);
++  }
+ }
  
-   downloadAsset: async (assetId: string) => {
-     try {
--      const response = await apiService.get(
--        `/cms/assets/${assetId}/download`
--      );
-+      const response = await apiService.get(`/cms/assets/${assetId}/download`);
-       return response;
-     } catch (error) {
-       return error;
-diff --git a/src/utils/confirmation.tsx b/src/utils/confirmation.tsx
-index da20788..fe3df9b 100644
---- a/src/utils/confirmation.tsx
-+++ b/src/utils/confirmation.tsx
-@@ -63,8 +63,8 @@ export const showConfirmation = (
-       return createPortal(
-         <div
-           className={`
--            fixed inset-0 z-50 flex items-center justify-center p-4
--            transition-all duration-300 ease-out
-+            fixed inset-0 flex items-center justify-center p-4
-+            transition-all duration-300 ease-out z-[999999999999]
-             ${
-               open
-                 ? "bg-black/60 backdrop-blur-sm"
+-export const apiService = new ApiService(
+-  import.meta.env.VITE_API_URL || "/api"
+-  // Optionally pass a custom login route here, e.g. "/cms/login"
+-);
++export const apiService = new ApiService(import.meta.env.VITE_API_URL);
+\ No newline at end of file
+diff --git a/src/types/api.ts b/src/types/api.ts
+index 1842a52..c0843d2 100644
+--- a/src/types/api.ts
++++ b/src/types/api.ts
+@@ -25,6 +25,7 @@ export interface RequestConfig {
+   showErrorMessage?: boolean;
+   confirmationMessage?: string;
+   successMessage?: string;
++  allowDeduplication?: boolean; 
+ }
+ 
+ export interface User {
