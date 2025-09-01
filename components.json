@@ -19,3 +19,1858 @@
   },
   "iconLibrary": "lucide"
 }
+
+
+
+changes for 1 sep
+
+
+
+diff --git a/src/app/(PageSections)/Auth/LoginPageSection.tsx b/src/app/(PageSections)/Auth/LoginPageSection.tsx
+index 355c9c9..1a2f334 100644
+--- a/src/app/(PageSections)/Auth/LoginPageSection.tsx
++++ b/src/app/(PageSections)/Auth/LoginPageSection.tsx
+@@ -1,11 +1,45 @@
++"use client";
++
+ import { Button } from "@/components/ui/button";
+ import { FormInput } from "@/components/ui/form-input";
+-import { Mail } from "lucide-react";
++import { Lock, User } from "lucide-react";
+ import Image from "next/image";
+ import Link from "next/link";
+ import React from "react";
++import { Formik, Form } from "formik";
++import * as Yup from "yup";
++import { useAuth } from "@/hooks/use-auth";
++
++// Validation schema
++const loginValidationSchema = Yup.object({
++  username: Yup.string().required("Username  is required"),
++  password: Yup.string()
++    .min(8, "Password must be at least 6 characters")
++    .required("Password is required"),
++});
++
++// Form values interface
++interface LoginFormValues {
++  username: string;
++  password: string;
++}
+ 
+ function LoginPageSection() {
++  const initialValues: LoginFormValues = {
++    username: "",
++    password: "",
++  };
++
++  const { login, isLoading } = useAuth();
++
++  const handleSubmit = async (values: LoginFormValues) => {
++    const data = {
++      username: values.username,
++      password: values.password,
++    };
++    await login(data);
++  };
++
+   return (
+     <div className="w-full space-y-6">
+       {/* Logo Section */}
+@@ -30,34 +64,73 @@ function LoginPageSection() {
+       </div>
+ 
+       {/* Form Section */}
+-      <div className="space-y-4">
+-        <FormInput
+-          label="Email Address"
+-          placeholder="Enter your email"
+-          leftIcon={<Mail size={18} />}
+-        />
++      <Formik
++        initialValues={initialValues}
++        validationSchema={loginValidationSchema}
++        onSubmit={handleSubmit}
++      >
++        {({
++          values,
++          errors,
++          touched,
++          handleChange,
++          handleBlur,
++          isValid,
++          dirty,
++        }) => (
++          <Form className="space-y-4">
++            <FormInput
++              name="username"
++              label="Username"
++              placeholder="Enter your username"
++              leftIcon={<User size={18} />}
++              value={values.username}
++              onChange={handleChange}
++              onBlur={handleBlur}
++              error={
++                touched.username && errors.username
++                  ? errors.username
++                  : undefined
++              }
++            />
+ 
+-        <FormInput
+-          type="password"
+-          label="Password"
+-          placeholder="Enter your password"
+-          showPasswordToggle={true}
+-        />
+-      </div>
++            <FormInput
++              type="password"
++              name="password"
++              label="Password"
++              placeholder="Enter your password"
++              leftIcon={<Lock size={18} />}
++              showPasswordToggle={true}
++              value={values.password}
++              onChange={handleChange}
++              onBlur={handleBlur}
++              error={
++                touched.password && errors.password
++                  ? errors.password
++                  : undefined
++              }
++            />
+ 
+-      {/* Login Button */}
+-      <div className="pt-2">
+-        <Button className="w-full py-3 text-base font-medium">
+-          Login
+-        </Button>
+-      </div>
++            {/* Login Button */}
++            <div className="pt-2">
++              <Button
++                type="submit"
++                className="w-full py-3 text-base font-medium"
++                disabled={isLoading || !isValid || !dirty}
++              >
++                {isLoading ? "Logging in..." : "Login"}
++              </Button>
++            </div>
++          </Form>
++        )}
++      </Formik>
+ 
+       {/* Sign Up Link */}
+       <div className="text-center">
+         <p className="text-sm sm:text-base text-gray-400">
+           Don&apos;t Have an Account?{" "}
+-          <Link 
+-            href="auth/signup" 
++          <Link
++            href="/auth/signup"
+             className="text-primary-950 hover:underline font-medium transition-all duration-200"
+           >
+             Sign Up
+@@ -68,4 +141,4 @@ function LoginPageSection() {
+   );
+ }
+ 
+-export default LoginPageSection;
+\ No newline at end of file
++export default LoginPageSection;
+diff --git a/src/app/(PageSections)/Auth/SignupPageSection.tsx b/src/app/(PageSections)/Auth/SignupPageSection.tsx
+index 4c77e1e..24953b4 100644
+--- a/src/app/(PageSections)/Auth/SignupPageSection.tsx
++++ b/src/app/(PageSections)/Auth/SignupPageSection.tsx
+@@ -1,19 +1,109 @@
+ "use client";
+ 
+ import { Button } from "@/components/ui/button";
+-import { Checkbox } from "@/components/ui/checkbox";
++// import { Checkbox } from "@/components/ui/checkbox";
+ import { FormInput } from "@/components/ui/form-input";
+-import FormSelect from "@/components/ui/form-select";
+-import PhoneNumberInput from "@/components/ui/phone-number-input";
++// import FormSelect from "@/components/ui/form-select";
++// import PhoneNumberInput from "@/components/ui/phone-number-input";
+ import Image from "next/image";
+ import Link from "next/link";
+-import React, { useState } from "react";
++import React from "react";
++import { Formik, Form } from "formik";
++import * as Yup from "yup";
++import { PasswordStrengthIndicator } from "@/components/shared/PasswordStrengthIndicator";
++import { useRouter } from "next/navigation";
++import { useAuth } from "@/hooks/use-auth";
++
++
++// Password strength interface
++
++// Validation schema
++const signupSchema = Yup.object().shape({
++  firstName: Yup.string()
++    .min(2, "First name must be at least 2 characters")
++    .required("First name is required"),
++  lastName: Yup.string()
++    .min(2, "Last name must be at least 2 characters")
++    .required("Last name is required"),
++  email: Yup.string()
++    .email("Invalid email address")
++    .required("Email is required"),
++  // phoneNumber: Yup.string().required("Phone number is required"),
++  // accountType: Yup.string().required("Account type is required"),
++  password: Yup.string()
++    .min(8, "Password must be at least 8 characters")
++    .matches(/[A-Z]/, "Password must contain at least one uppercase letter")
++    .matches(/[a-z]/, "Password must contain at least one lowercase letter")
++    .matches(/\d/, "Password must contain at least one number")
++    .matches(
++      /[!@#$%^&*(),.?":{}|<>]/,
++      "Password must contain at least one special character"
++    )
++    .required("Password is required"),
++  confirmPassword: Yup.string()
++    .oneOf([Yup.ref("password")], "Passwords must match")
++    .required("Confirm password is required"),
++  // termsAccepted: Yup.boolean()
++  //   .oneOf([true], "You must accept the terms and conditions")
++  //   .required("You must accept the terms and conditions"),
++});
++
++// Initial form values
++const initialValues = {
++  firstName: "",
++  lastName: "",
++  username: "",
++  email: "",
++  // phoneNumber: "",
++  // accountType: "",
++  password: "",
++  confirmPassword: "",
++  // termsAccepted: false,
++};
+ 
+ function SignupPageSection() {
+-  const [userTypeOptions] = useState([
+-    { label: "Individual", value: "individual" },
+-    { label: "Group", value: "group" },
+-  ]);
++  // const [userTypeOptions] = useState([
++  //   { label: "Individual", value: "individual" },
++  //   { label: "Group", value: "group" },
++  // ]);
++
++  const { register, isLoading } = useAuth();
++  const router = useRouter();
++
++  // Function to generate username from first name and last name
++  const generateUsername = (firstName: string, lastName: string): string => {
++    if (!firstName || !lastName) return "";
++
++    const cleanFirstName = firstName
++      .trim()
++      .toLowerCase()
++      .replace(/[^a-z0-9]/g, "");
++    const cleanLastName = lastName
++      .trim()
++      .toLowerCase()
++      .replace(/[^a-z0-9]/g, "");
++
++    return `${cleanFirstName}.${cleanLastName}`;
++  };
++
++  const handleSubmit = async (values: typeof initialValues) => {
++    const data = {
++      login: values.email,
++      firstName: values.firstName,
++      lastName: values.lastName,
++      email: values.email,
++      password: values.password,
++    };
++
++    // console.log("Form submitted:", data);
++
++    if (register) {
++      await register(data);
++      router.push("/auth");
++    }
++
++    // Handle form submission here
++  };
+ 
+   return (
+     <div className="w-full space-y-6">
+@@ -38,97 +128,211 @@ function SignupPageSection() {
+         </p>
+       </div>
+ 
+-      {/* Form Section */}
+-      <div className="space-y-4">
+-        {/* Name Fields - Stack on mobile, side by side on larger screens */}
+-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+-          <FormInput 
+-            label="First Name" 
+-            placeholder="Enter your first name" 
+-          />
+-          <FormInput 
+-            label="Last Name" 
+-            placeholder="Enter your last name" 
+-          />
+-        </div>
+-
+-        {/* Other Form Fields */}
+-        <div className="space-y-4">
+-          <FormInput 
+-            label="Email Address" 
+-            placeholder="Enter your email address" 
+-          />
+-          
+-          <PhoneNumberInput
+-            label="Phone Number"
+-            required={true}
+-            value=""
+-            onChange={(phone: string) => console.log(phone)}
+-            placeholder="Enter your phone number"
+-          />
+-
+-          <FormSelect
+-            options={userTypeOptions}
+-            label="Account Type"
+-            value=""
+-            onValueChange={(value) => console.log(value)}
+-            placeholder="Choose type"
+-            className="w-full"
+-          />
+-
+-          <FormInput
+-            type="password"
+-            label="Password"
+-            placeholder="Enter your password"
+-            showPasswordToggle={true}
+-          />
+-          
+-          <FormInput
+-            type="password"
+-            label="Confirm Password"
+-            placeholder="Confirm your password"
+-            showPasswordToggle={true}
+-          />
+-        </div>
+-      </div>
++      {/* Formik Form */}
++      <Formik
++        initialValues={initialValues}
++        validationSchema={signupSchema}
++        onSubmit={handleSubmit}
++      >
++        {({
++          values,
++          errors,
++          touched,
++          setFieldValue,
++          setFieldTouched,
++          isValid,
++        }) => {
++          // Generate username whenever first name or last name changes
++          const handleFirstNameChange = (
++            e: React.ChangeEvent<HTMLInputElement>
++          ) => {
++            const newFirstName = e.target.value;
++            setFieldValue("firstName", newFirstName);
++            const newUsername = generateUsername(newFirstName, values.lastName);
++            setFieldValue("username", newUsername);
++          };
+ 
+-      {/* Terms and Conditions */}
+-      <div className="flex items-start space-x-3 pt-2">
+-        <Checkbox
+-          id="terms"
+-          checked={true}
+-          onCheckedChange={(checked) => console.log(checked)}
+-          className="mt-1 flex-shrink-0"
+-        />
+-        <div className="space-y-1">
+-          <label
+-            htmlFor="terms"
+-            className="text-sm font-medium text-foreground cursor-pointer leading-relaxed"
+-          >
+-            I have read and accepted{" "}
+-            <Link
+-              href="#"
+-              className="text-primary-950 hover:underline transition-colors duration-300"
+-            >
+-              Terms and Conditions
+-            </Link>
+-          </label>
+-        </div>
+-      </div>
++          const handleLastNameChange = (
++            e: React.ChangeEvent<HTMLInputElement>
++          ) => {
++            const newLastName = e.target.value;
++            setFieldValue("lastName", newLastName);
++            const newUsername = generateUsername(values.firstName, newLastName);
++            setFieldValue("username", newUsername);
++          };
+ 
+-      {/* Sign Up Button */}
+-      <div className="pt-2">
+-        <Button className="w-full py-3 text-base font-medium">
+-          Sign Up
+-        </Button>
+-      </div>
++          return (
++            <Form className="space-y-4">
++              {/* Name Fields - Stack on mobile, side by side on larger screens */}
++              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
++                <FormInput
++                  label="First Name"
++                  placeholder="Enter your first name"
++                  value={values.firstName}
++                  onChange={handleFirstNameChange}
++                  onBlur={() => setFieldTouched("firstName", true)}
++                  error={
++                    touched.firstName && errors.firstName
++                      ? errors.firstName
++                      : undefined
++                  }
++                />
++                <FormInput
++                  label="Last Name"
++                  placeholder="Enter your last name"
++                  value={values.lastName}
++                  onChange={handleLastNameChange}
++                  onBlur={() => setFieldTouched("lastName", true)}
++                  error={
++                    touched.lastName && errors.lastName
++                      ? errors.lastName
++                      : undefined
++                  }
++                />
++              </div>
++
++              {/* Username Field (Auto-generated and readonly) */}
++              {/* <FormInput
++                label="Username"
++                placeholder="Auto-generated username"
++                value={values.username}
++                disabled={true}
++                className="bg-gray-50"
++              /> */}
++
++              {/* Other Form Fields */}
++              <div className="space-y-4">
++                <FormInput
++                  label="Email Address"
++                  placeholder="Enter your email address"
++                  type="email"
++                  value={values.email}
++                  onChange={(e) => setFieldValue("email", e.target.value)}
++                  onBlur={() => setFieldTouched("email", true)}
++                  error={
++                    touched.email && errors.email ? errors.email : undefined
++                  }
++                />
++
++                {/* <PhoneNumberInput
++                  label="Phone Number"
++                  required={true}
++                  value={values.phoneNumber}
++                  onChange={(phone: string) =>
++                    setFieldValue("phoneNumber", phone)
++                  }
++                  placeholder="Enter your phone number"
++                  error={
++                    touched.phoneNumber && errors.phoneNumber
++                      ? errors.phoneNumber
++                      : undefined
++                  }
++                /> */}
++
++                {/* <FormSelect
++                  options={userTypeOptions}
++                  label="Account Type"
++                  value={values.accountType}
++                  onValueChange={(value) => setFieldValue("accountType", value)}
++                  placeholder="Choose type"
++                  className="w-full"
++                  error={
++                    touched.accountType && errors.accountType
++                      ? errors.accountType
++                      : undefined
++                  }
++                /> */}
++
++                {/* Password Field with Strength Indicator */}
++                <div>
++                  <FormInput
++                    type="password"
++                    label="Password"
++                    placeholder="Enter your password"
++                    showPasswordToggle={true}
++                    value={values.password}
++                    onChange={(e) => setFieldValue("password", e.target.value)}
++                    onBlur={() => setFieldTouched("password", true)}
++                    error={
++                      touched.password && errors.password
++                        ? errors.password
++                        : undefined
++                    }
++                  />
++                  <PasswordStrengthIndicator password={values.password} />
++                </div>
++
++                <FormInput
++                  type="password"
++                  label="Confirm Password"
++                  placeholder="Confirm your password"
++                  showPasswordToggle={true}
++                  value={values.confirmPassword}
++                  onChange={(e) =>
++                    setFieldValue("confirmPassword", e.target.value)
++                  }
++                  onBlur={() => setFieldTouched("confirmPassword", true)}
++                  error={
++                    touched.confirmPassword && errors.confirmPassword
++                      ? errors.confirmPassword
++                      : undefined
++                  }
++                />
++              </div>
++
++              {/* Terms and Conditions */}
++              {/* <div className="flex items-start space-x-3 pt-2">
++                <Checkbox
++                  id="terms"
++                  checked={values.termsAccepted}
++                  onCheckedChange={(checked) =>
++                    setFieldValue("termsAccepted", checked)
++                  }
++                  className="mt-1 flex-shrink-0"
++                />
++                <div className="space-y-1">
++                  <label
++                    htmlFor="terms"
++                    className="text-sm font-medium text-foreground cursor-pointer leading-relaxed"
++                  >
++                    I have read and accepted{" "}
++                    <Link
++                      href="#"
++                      className="text-primary-950 hover:underline transition-colors duration-300"
++                    >
++                      Terms and Conditions
++                    </Link>
++                  </label>
++                  {touched.termsAccepted && errors.termsAccepted && (
++                    <p className="text-red-500 text-xs mt-1">
++                      {errors.termsAccepted}
++                    </p>
++                  )}
++                </div>
++              </div> */}
++
++              {/* Sign Up Button */}
++              <div className="pt-2">
++                <Button
++                  type="submit"
++                  loading={isLoading}
++                  className="w-full py-3 text-base font-medium disabled:opacity-50 disabled:cursor-not-allowed"
++                  disabled={!isValid || Object.keys(touched).length === 0}
++                >
++                  {isLoading ? "Creating Account..." : "Create Account"}
++                </Button>
++              </div>
++            </Form>
++          );
++        }}
++      </Formik>
+ 
+       {/* Sign In Link */}
+       <div className="text-center">
+         <p className="text-sm sm:text-base text-gray-400">
+           Already Have an Account?{" "}
+-          <Link 
+-            href="/auth" 
++          <Link
++            href="/auth"
+             className="text-primary-950 hover:underline font-medium transition-all duration-200"
+           >
+             Sign In
+@@ -139,4 +343,4 @@ function SignupPageSection() {
+   );
+ }
+ 
+-export default SignupPageSection;
+\ No newline at end of file
++export default SignupPageSection;
+diff --git a/src/app/(PageSections)/Landing/SinglePageSection.tsx b/src/app/(PageSections)/Landing/SinglePageSection.tsx
+index 94e9e01..dcb0bd0 100644
+--- a/src/app/(PageSections)/Landing/SinglePageSection.tsx
++++ b/src/app/(PageSections)/Landing/SinglePageSection.tsx
+@@ -1,3 +1,5 @@
++"use client";
++
+ import HeroSection from "@/components/shared/Hero/HeroSection";
+ import React from "react";
+ import TimeCard from "./sections/EventSections/TimeCard";
+@@ -5,64 +7,95 @@ import TicketSection from "./sections/EventSections/TicketSection";
+ import MarathonRouteSection from "./sections/EventSections/MarathonRouteSection";
+ import ContactusBanner from "@/components/shared/Banner/ContactusBanner";
+ import RelatedInformation from "./sections/EventSections/RelatedInformation";
+-
+-const cards = [
+-  {
+-    title: "Our Guidelines",
+-    img: "/images/hand.svg",
+-  },
+-  {
+-    title: "Marathon Winners",
+-    img: "/images/hand.svg",
+-  },
+-  {
+-    title: "Marathon Gallery",
+-    img: "/images/house.svg",
+-  },
+-  {
+-    title: "Extra Bookings",
+-    img: "/images/in-out.svg",
+-  },
+-  {
+-    title: "Sponsor This Event",
+-    img: "/images/in-out.svg",
+-  },
+-];
++import { useParams, useRouter } from "next/navigation";
++import { slugify } from "@/lib/utils";
+ 
+ function SingleEventPageSection() {
++  const router = useRouter();
++  const params = useParams();
++
++  const cards = [
++    {
++      title: "Our Guidelines",
++      img: "/images/hand.svg",
++      link: `${slugify(params.id as string)}/guidelines`,
++    },
++    {
++      title: "Marathon Winners",
++      img: "/images/hand.svg",
++      link: `${slugify(params.id as string)}/winners`,
++    },
++    {
++      title: "Marathon Gallery",
++      img: "/images/house.svg",
++      link: `/gallery/${slugify(params.id as string)}`,
++    },
++    {
++      title: "Extra Bookings",
++      img: "/images/in-out.svg",
++      link: `${slugify(params.id as string)}/extras`,
++    },
++    {
++      title: "Sponsor This Event",
++      img: "/images/in-out.svg",
++      link: `/sponsor/${slugify(params.id as string)}`,
++    },
++  ];
++
+   const heroData = {
+     title: "NBC Dodoma Marathon 2025",
+     description:
+       "Empower your project with our comprehensive wireframe kits designed to meet the needs of any platform",
+     backgroundImage: "/images/hero.jpg",
++    ctaText1: "Event Guidelines",
++    cta1Action: () => {
++      router.push(`${slugify(params.id as string)}/guidelines`);
++    },
+   };
+   return (
+-    <div>
++    <div className="space-y-10">
+       <HeroSection {...heroData} />
+       <div className="container mx-auto py-10">
+         <div className="gap-5">
+           <div className="w-auto">
+             <h3 className="section-title">Event Details</h3>
+-            <div className="max-w-4xl  mx-auto">
++            <div className="max-w-6xl  mx-auto">
+               <p className="section-sub-title mb-4">
+-                A visual guide could be a wireframe, creative composition,
+-                or information architecture. A device that enables collaboration
+-                will lessen the chance of work having to be completely redone. A
+-                manager could create a visual guide for the team to complete the
+-                build-out.A visual guide could be a wireframe, creative
+-                composition, or information architecture. A visual guide could
+-                be a wireframe, creative composition, or information
+-                architecture. A device that enables collaboration will lessen
+-                the chance of work having to be completely redone. A manager
+-                could create a visual guide for the team to complete the
+-                build-out.A visual guide could be a wireframe, creative
+-                composition, or information architecture.
++                NBC Dodoma Marathon has become a cornerstone in Tanzania’s
++                healthcare landscape, driving meaningful and lasting change with
++                a primary focus on maternal health and the development of
++                healthcare professionals. Over the past five years, this event
++                has proven to be a critical platform for raising funds to
++                support essential initiatives, such as cervical cancer awareness
++                and maternal healthcare services. This year, we are expanding
++                our focus to address the growing demand for specialized care,
++                particularly in the fields of autism and Down syndrome. In
++                partnership with the Benjamin Mkapa Foundation and the Ministry
++                of Health, we are introducing scholarships for special care
++                nurses. This initiative seeks to fill a critical gap in the
++                healthcare sector by training professionals to address
++                developmental disabilities, a field that has historically been
++                underserved due to lack of awareness and qualified personnel.
++                Our commitment to maternal health improvement is rooted in the
++                belief that access to skilled care—whether through midwifery or
++                pediatric services—is essential to reducing maternal mortality
++                and morbidity. Through funding scholarships for both midwifery
++                and special care nursing, we are ensuring that Tanzania has a
++                robust and well-trained workforce to support women and children
++                during their most vulnerable moments.
+               </p>
+               <TimeCard />
+             </div>
+           </div>
+         </div>
+       </div>
++      <div>
++        <RelatedInformation
++          // title="Other Related Information"
++          // description=" Let us know how we can help you today!"
++          cards={cards}
++        />
++      </div>
+       <div>
+         <TicketSection />
+       </div>
+@@ -72,11 +105,11 @@ function SingleEventPageSection() {
+       <div>
+         <ContactusBanner />
+       </div>
+-      <RelatedInformation
++      {/* <RelatedInformation
+         title="Other Related Information"
+         description=" Let us know how we can help you today!"
+         cards={cards}
+-      />
++      /> */}
+     </div>
+   );
+ }
+diff --git a/src/app/(PageSections)/Landing/sections/EventSections/MarathonRouteSection.tsx b/src/app/(PageSections)/Landing/sections/EventSections/MarathonRouteSection.tsx
+index 6c4ee2e..15f5b65 100644
+--- a/src/app/(PageSections)/Landing/sections/EventSections/MarathonRouteSection.tsx
++++ b/src/app/(PageSections)/Landing/sections/EventSections/MarathonRouteSection.tsx
+@@ -2,6 +2,7 @@
+ import { RouteMap } from "@/components/shared/MarathonRoutes/RouteMap";
+ import { RouteSelector } from "@/components/shared/MarathonRoutes/RouteSelector";
+ import { useRouteFilters } from "@/hooks/useRouteFilters";
++import { title } from "process";
+ import React, { useState } from "react";
+ 
+ const routeData = [
+@@ -11,30 +12,42 @@ const routeData = [
+     label: "5 Kilometers",
+     difficulty: "easy",
+     terrain: "road",
++    description: "NBC Dodoma Marathon 2025",
++    price:"45000",
+     duration: "short",
++    image:"/images/ticket-1.png"
+   },
+   {
+     id: "10km",
+     distance: 10,
+     label: "10 Kilometers",
+     difficulty: "moderate",
++    description: "NBC Dodoma Marathon 2025",
+     terrain: "mixed",
++    price:"45000",
+     duration: "medium",
++    image:"/images/ticket-2.png"
+   },
+   {
+     id: "21km",
+     distance: 21,
+     label: "21 Kilometers",
+     difficulty: "challenging",
++    description: "NBC Dodoma Marathon 2025",
+     terrain: "mixed",
++    price:"45000",
+     duration: "long",
++    image:"/images/ticket-3.png"
+   },
+   {
+     id: "41km",
+     distance: 41,
+     label: "41 Kilometers",
+     difficulty: "challenging",
++    description: "NBC Dodoma Marathon 2025",
+     terrain: "trail",
++    price:"45000",
++    image:"/images/ticket-4.png",
+     duration: "long",
+   },
+ ];
+diff --git a/src/app/(PageSections)/Landing/sections/EventSections/RelatedInformation.tsx b/src/app/(PageSections)/Landing/sections/EventSections/RelatedInformation.tsx
+index fca8a7d..136a07b 100644
+--- a/src/app/(PageSections)/Landing/sections/EventSections/RelatedInformation.tsx
++++ b/src/app/(PageSections)/Landing/sections/EventSections/RelatedInformation.tsx
+@@ -1,54 +1,55 @@
+-"use client"
++"use client";
+ 
+-import React from 'react'
+-import Image from 'next/image';
++import React from "react";
++import Image from "next/image";
+ import { motion } from "motion/react";
++import { useRouter } from "next/navigation";
+ 
+ type RelatedInformationProps = {
+-    title: string;
+-    description:string
+-    cards: { img: string; title: string }[];
+-  };
++  title?: string;
++  description?: string;
++  cards: { img: string; title: string; link?: string }[];
++};
+ 
++function RelatedInformation({
++  // title,
++  // description,
++  cards,
++}: RelatedInformationProps) {
++  const router = useRouter();
+ 
+-function RelatedInformation({ title,description, cards }: RelatedInformationProps) {
+   return (
+-    <motion.div className="container mx-auto py-24 text-center">
+-    <h1 className="section-title">
+-     {title}
+-    </h1>
+-    <p className="section-subtitle">
+-      {description}
+-    </p>
+-    
+-     <div className='px-24'>
+-     <div className="flex flex-col lg:flex-row gap-6 justify-center mt-4 ">
+-        {cards.map((card, idx) => (
+-          <div
+-            key={idx}
+-            className="group rounded-md px-5 py-6 shadow-md flex flex-col justify-center items-center gap-5 cursor-pointer
++    <motion.div className="container mx-auto  text-center">
++      {/* <h1 className="section-title">{title}</h1>
++      <p className="section-subtitle">{description}</p> */}
++
++      <div className="px-24">
++        <div className="flex flex-col lg:flex-row gap-6 justify-center mt-4 ">
++          {cards.map((card, idx) => (
++            <div
++              onClick={() => card.link && router.push(card.link)}
++              key={idx}
++              className="group rounded-md px-5 py-6 shadow-md flex flex-col justify-center items-center gap-5 cursor-pointer
+               text-[#262556] bg-gradient-to-b from-[rgba(188,196,220,0.8)] to-transparent
+               transition-all duration-300
+               hover:scale-105 hover:!bg-[#262556] hover:bg-none hover:text-white w-full lg:w-[250px] hover:shadow-lg hover:shadow-gray-300/50"
+-          >
+-            <div className="flex justify-center">
+-              <Image
+-                src={card.img.startsWith('/') ? card.img : `/${card.img}`}
+-                alt={card.title}
+-                width={60}
+-                height={60}
+-                className="transition-all duration-300 group-hover:filter group-hover:brightness-0 group-hover:invert"
+-              />
++            >
++              <div className="flex justify-center">
++                <Image
++                  src={card.img.startsWith("/") ? card.img : `/${card.img}`}
++                  alt={card.title}
++                  width={60}
++                  height={60}
++                  className="transition-all duration-300 group-hover:filter group-hover:brightness-0 group-hover:invert"
++                />
++              </div>
++              <div className="mt-4 font-[600]">{card.title}</div>
+             </div>
+-            <div className="mt-4 font-[600]">{card.title}</div>
+-          </div>
+-        ))}
++          ))}
++        </div>
+       </div>
+-
+-     </div>
+-    
+-  </motion.div>
+-  )
++    </motion.div>
++  );
+ }
+ 
+-export default RelatedInformation
++export default RelatedInformation;
+diff --git a/src/app/(PageSections)/Landing/sections/EventSections/TicketSection.tsx b/src/app/(PageSections)/Landing/sections/EventSections/TicketSection.tsx
+index 3582cee..659135f 100644
+--- a/src/app/(PageSections)/Landing/sections/EventSections/TicketSection.tsx
++++ b/src/app/(PageSections)/Landing/sections/EventSections/TicketSection.tsx
+@@ -1,8 +1,9 @@
+ "use client";
+ 
+ import { Button } from "@/components/ui/button";
++import { useModal } from "@/hooks/useModal";
+ import Image from "next/image";
+-import { useRouter, useParams } from 'next/navigation'; // Added useParams
++import { useRouter, useParams } from "next/navigation"; // Added useParams
+ import React from "react";
+ 
+ function TicketSection() {
+@@ -10,27 +11,58 @@ function TicketSection() {
+   const router = useRouter();
+   const params = useParams(); // Get URL parameters
+   const eventId = params.id; // Get the event ID from URL
++  const { openModal, closeModal } = useModal();
++
++  const handleOpenModal = () => {
++    openModal(
++      <div className="space-y-6">
++        <div className="flex items-center gap-3 overflow-x-hidden justify-center">
++          <Button variant="outline" className="w-5/12"
++          onClick={()=>{
++            router.push(`${eventId}/registration`)
++            closeModal()
++          }}
++          
++          
++          >Continue As A Guest</Button>
++          <Button variant="outline" className="w-5/12" onClick={()=>{
++            router.push("/auth/signup")
++            closeModal()
++          }}>Sign up</Button>
++        </div>
++        <div>
++          <Button className="w-full " onClick={()=>{
++            router.push("/auth")
++            closeModal()
++          }}>Sign in</Button>
++        </div>
++      </div>,
++      "How do you want to continue",
++      "lg",
++      "Please Choose How You Want To Continue"
++    ); 
++  };
+ 
+   const tickets = [
+     {
+       image: "/images/ticket-1.png",
+       price: "TZS 45000",
+-      buyTicket: () => router.push(`${eventId}/registration`), // Navigate to event-specific registration
++      buyTicket: handleOpenModal, // Navigate to event-specific registration
+     },
+     {
+       image: "/images/ticket-2.png",
+       price: "TZS 45000",
+-      buyTicket: () => router.push(`${eventId}/registration`),
++      buyTicket: handleOpenModal,
+     },
+     {
+       image: "/images/ticket-3.png",
+       price: "TZS 45000",
+-      buyTicket: () => router.push(`${eventId}/registration`),
++      buyTicket: handleOpenModal,
+     },
+     {
+       image: "/images/ticket-4.png",
+       price: "TZS 45000",
+-      buyTicket: () => router.push(`/events/${eventId}/registration`),
++      buyTicket: handleOpenModal,
+     },
+   ];
+ 
+@@ -80,4 +112,4 @@ function TicketSection() {
+   );
+ }
+ 
+-export default TicketSection;
+\ No newline at end of file
++export default TicketSection;
+diff --git a/src/app/(Pages)/auth/signup/page.tsx b/src/app/(Pages)/auth/signup/page.tsx
+index 9f22c1a..17817d8 100644
+--- a/src/app/(Pages)/auth/signup/page.tsx
++++ b/src/app/(Pages)/auth/signup/page.tsx
+@@ -1,10 +1,13 @@
+ import SignupPageSection from "@/app/(PageSections)/Auth/SignupPageSection";
++import { UsersProvider } from "@/providers/users.provider";
+ import React from "react";
+ 
+ function Signup() {
+   return (
+     <div>
+-      <SignupPageSection />
++      <UsersProvider>
++        <SignupPageSection />
++      </UsersProvider>
+     </div>
+   );
+ }
+diff --git a/src/app/(Pages)/dashboard/events/page.tsx b/src/app/(Pages)/dashboard/events/page.tsx
+index 58e4bdb..4ad5312 100644
+--- a/src/app/(Pages)/dashboard/events/page.tsx
++++ b/src/app/(Pages)/dashboard/events/page.tsx
+@@ -1,13 +1,12 @@
+-import React from 'react'
++import EventPageSection from "@/app/(PageSections)/Dashboard/EventPageSection/EventPageSection";
++import React from "react";
+ 
+ function Events() {
+   return (
+     <div>
+-      
+-      <h1>Events</h1>
+-      <p>View and manage your events here.</p>
++      <EventPageSection />
+     </div>
+-  )
++  );
+ }
+ 
+-export default Events
++export default Events;
+diff --git a/src/app/(Pages)/dashboard/insurance/layout.tsx b/src/app/(Pages)/dashboard/insurance/layout.tsx
+index 620911d..2ecdcf7 100644
+--- a/src/app/(Pages)/dashboard/insurance/layout.tsx
++++ b/src/app/(Pages)/dashboard/insurance/layout.tsx
+@@ -20,7 +20,10 @@ const tabs = [
+   ];
+   return (
+     <div>
+-      <CustomLinks basePath={basePath} tabs={tabs} />
++      <CustomLinks basePath={basePath} tabs={tabs} 
++      description="Apply for insurance, track applications, and manage claims"
++      title="Insurance Services"
++      />
+ 
+       {children}
+     </div>
+diff --git a/src/app/(Pages)/dashboard/layout.tsx b/src/app/(Pages)/dashboard/layout.tsx
+index 9760eda..9d064ea 100644
+--- a/src/app/(Pages)/dashboard/layout.tsx
++++ b/src/app/(Pages)/dashboard/layout.tsx
+@@ -1,6 +1,7 @@
+ import { dashboardRoutes } from "@/data/DashboardRoutes";
+ import type { Metadata } from "next";
+ import DashboardClientLayout from "./DashboardClientLayout";
++import {AuthGuard} from "@/components/guards/AuthGuard";
+ 
+ export const metadata: Metadata = {
+   title: "Dashboard",
+@@ -13,8 +14,10 @@ export default function DashboardLayout({
+   children: React.ReactNode;
+ }) {
+   return (
++    <AuthGuard requireAuth={true}>
+     <DashboardClientLayout navigationData={dashboardRoutes}>
+       {children}
+     </DashboardClientLayout>
++    </AuthGuard>
+   );
+ }
+diff --git a/src/app/layout.tsx b/src/app/layout.tsx
+index f8ef561..79afc22 100644
+--- a/src/app/layout.tsx
++++ b/src/app/layout.tsx
+@@ -1,6 +1,8 @@
+ import type { Metadata } from "next";
+ import "./globals.css";
+-
++import { Toaster } from "@/components/ui/toaster";
++import { AuthProvider } from "@/providers/auth.provider";
++import ModalProvider from "@/contexts/ModalContext";
+ 
+ export const metadata: Metadata = {
+   title: {
+@@ -22,7 +24,12 @@ export default function RootLayout({
+         <meta name="viewport" content="width=device-width, initial-scale=1" />
+       </head>
+       <body>
+-        {children}
++        <AuthProvider>
++          <ModalProvider>
++            <Toaster />
++            {children}
++          </ModalProvider>
++        </AuthProvider>
+       </body>
+     </html>
+   );
+diff --git a/src/components/layout/CustomLinks.tsx b/src/components/layout/CustomLinks.tsx
+index f42bbac..80da869 100644
+--- a/src/components/layout/CustomLinks.tsx
++++ b/src/components/layout/CustomLinks.tsx
+@@ -1,4 +1,4 @@
+-"use client"
++"use client";
+ 
+ import Link from "next/link";
+ import { usePathname } from "next/navigation";
+@@ -8,27 +8,33 @@ interface Tab {
+   label: string;
+ }
+ 
+-interface CustomLinksProp{
+-    basePath: string;
+-    tabs:Tab[]
++interface CustomLinksProp {
++  basePath: string;
++  title?: string;
++  description?: string;
++  tabs: Tab[];
+ }
+ 
+-const CustomLinks: React.FC<CustomLinksProp> = ({basePath,tabs}) => {
++const CustomLinks: React.FC<CustomLinksProp> = ({
++  basePath,
++  tabs,
++  title,
++  description,
++}) => {
+   const pathname = usePathname();
+-  
++
+   const isActive = (href: string) => {
+     // Build the full path for comparison
+-  
++
+     const fullPath = href === "/" ? basePath : `${basePath}/${href}`;
+     return pathname === fullPath;
+   };
+ 
+-
+   return (
+     <div className={`w-full space-y-5`}>
+       <div>
+-        <h1 className="text-xl font-semibold">Insurance Services</h1>
+-        <p className="text-sm text-gray-500">Apply for insurance, track applications, and manage claims</p>
++        <h1 className="text-xl font-semibold">{title}</h1>
++        <p className="text-sm text-gray-500">{description}</p>
+       </div>
+       <div className="border-b border-gray-200 mb-6 sm:mb-8">
+         <nav className="-mb-px flex flex-wrap sm:space-x-5">
+@@ -36,7 +42,11 @@ const CustomLinks: React.FC<CustomLinksProp> = ({basePath,tabs}) => {
+             const active = isActive(link.id);
+             return (
+               <Link
+-                href={link.id === "/" ? "/dashboard/insurance" : `/dashboard/insurance/${link.id}`}
++                href={
++                  link.id === "/"
++                    ? "/dashboard/insurance"
++                    : `/dashboard/insurance/${link.id}`
++                }
+                 className={`capitalize py-2 transition-all ease-in duration-300 whitespace-nowrap
+                 hover:text-primary-950 hover:border-b-[2px] hover:border-primary-950
+                 text-xs 
+@@ -62,4 +72,4 @@ const CustomLinks: React.FC<CustomLinksProp> = ({basePath,tabs}) => {
+   );
+ };
+ 
+-export default CustomLinks;
+\ No newline at end of file
++export default CustomLinks;
+diff --git a/src/components/shared/Hero/HeroSection.tsx b/src/components/shared/Hero/HeroSection.tsx
+index cf6fcc6..2331d0e 100644
+--- a/src/components/shared/Hero/HeroSection.tsx
++++ b/src/components/shared/Hero/HeroSection.tsx
+@@ -9,8 +9,10 @@ interface HeroSectionProps {
+   description?: string;
+   height?: string;
+   backgroundImage: string;
+-  buttonText?: string;
+-  buttonAction?: () => void;
++  ctaText1?: string;
++  cta1Action?: () => void;
++  ctaText2?: string;
++  cta2Action?: () => void;
+ }
+ 
+ function HeroSection({
+@@ -18,8 +20,10 @@ function HeroSection({
+   description,
+   height = "60vh",
+   backgroundImage,
+-  buttonText,
+-  buttonAction = () => {},
++  ctaText1,
++  cta1Action = () => {},
++  ctaText2,
++  cta2Action = () => {},
+ }: HeroSectionProps) {
+   return (
+     <div
+@@ -50,14 +54,25 @@ function HeroSection({
+             </p>
+           )}
+ 
+-          {buttonText && (
++          {ctaText1 && (
+             <div
+             // initial={{ opacity: 0, y: 20 }}
+             // animate={{ opacity: 1, y: 0 }}
+             // transition={{ delay: 1 }}
+             >
+-              <Button variant="outline" size="md" onClick={buttonAction}>
+-                {buttonText}
++              <Button variant="outline" size="md" onClick={cta1Action}>
++                {ctaText1}
++              </Button>
++            </div>
++          )}
++                 {ctaText2 && (
++            <div
++            // initial={{ opacity: 0, y: 20 }}
++            // animate={{ opacity: 1, y: 0 }}
++            // transition={{ delay: 1 }}
++            >
++              <Button variant="outline" size="md" onClick={cta2Action}>
++                {ctaText2}
+               </Button>
+             </div>
+           )}
+diff --git a/src/components/shared/MarathonRoutes/RouteSelector.tsx b/src/components/shared/MarathonRoutes/RouteSelector.tsx
+index b31a0ea..42d6848 100644
+--- a/src/components/shared/MarathonRoutes/RouteSelector.tsx
++++ b/src/components/shared/MarathonRoutes/RouteSelector.tsx
+@@ -1,12 +1,17 @@
+-"use client"
++"use client";
+ 
+-import { useState } from 'react';
+-import { cn } from '@/lib/utils';
++import { useState } from "react";
++import { cn } from "@/lib/utils";
++import { Badge } from "@/components/ui/badge";
++import Image from "next/image";
+ 
+ export interface Route {
+   id: string;
+   distance: number;
+   label: string;
++  description: string;
++  price: string;
++  image: string;
+   isSelected?: boolean;
+ }
+ 
+@@ -17,28 +22,28 @@ interface RouteSelectorProps {
+   className?: string;
+ }
+ 
+-export const RouteSelector = ({ 
+-  routes, 
+-  selectedRoute, 
++export const RouteSelector = ({
++  routes,
++  selectedRoute,
+   onRouteSelect,
+-  className 
++  className,
+ }: RouteSelectorProps) => {
+   const [hoveredRoute, setHoveredRoute] = useState<string | null>(null);
+ 
+   return (
+-    <div className={cn("bg-card rounded-lg p-6  fade-in border" , className)}>
++    <div className={cn("bg-card rounded-lg p-6  fade-in border", className)}>
+       <h2 className="text-xl font-semibold text-primary-950 mb-6">
+         Select Route
+       </h2>
+-      
++
+       <div className="space-y-2">
+         {routes.map((route, index) => (
+           <div
+             key={route.id}
+             className={cn(
+-              "route-item p-4 rounded-lg border transition-all duration-300 cursor-pointer",
+-              selectedRoute === route.id 
+-                ? "route-selected border-primary-950" 
++              "route-item py-4 px-2 rounded-lg border transition-all duration-300 cursor-pointer",
++              selectedRoute === route.id
++                ? "route-selected border-primary-950 bg-primary-950"
+                 : "border-border hover:border-primary-950/50",
+               "slide-up"
+             )}
+@@ -48,22 +53,53 @@ export const RouteSelector = ({
+             onMouseLeave={() => setHoveredRoute(null)}
+           >
+             <div className="flex items-center justify-between">
+-              <span className={cn(
+-                "font-medium transition-colors",
+-                selectedRoute === route.id 
+-                  ? "text-primary-950" 
+-                  : "text-foreground"
+-              )}>
+-                {route.label}
+-              </span>
+-              
++              <div className="flex items-center gap-2">
++                <div>
++                  <Image
++                    src={route.image}
++                    width={80}
++                    alt="ticket"
++                    height={80}
++                  />
++                </div>
++                <div>
++                  <span
++                    className={cn(
++                      "font-semibold transition-colors",
++                      selectedRoute === route.id
++                        ? "text-white"
++                        : "text-primary-950"
++                    )}
++                  >
++                    {route.label}
++                  </span>
++                  <p
++                    className={cn(
++                      "text-sm transition-colors",
++                      selectedRoute === route.id
++                        ? "text-white"
++                        : "text-primary-950"
++                    )}
++                  >
++                    {route.description}
++                  </p>
++                  <Badge
++                    variant={selectedRoute === route.id ? "default" : "outline"}
++                  >
++                    {route.price}
++                  </Badge>
++                </div>
++              </div>
++
+               {(selectedRoute === route.id || hoveredRoute === route.id) && (
+-                <div className={cn(
+-                  "w-2 h-2 rounded-full transition-all duration-300",
+-                  selectedRoute === route.id 
+-                    ? "bg-primary-foreground" 
+-                    : "bg-primary"
+-                )} />
++                <div
++                  className={cn(
++                    "w-2 h-2 rounded-full transition-all duration-300",
++                    selectedRoute === route.id
++                      ? "bg-primary-foreground"
++                      : "bg-primary"
++                  )}
++                />
+               )}
+             </div>
+           </div>
+@@ -71,4 +107,4 @@ export const RouteSelector = ({
+       </div>
+     </div>
+   );
+-};
+\ No newline at end of file
++};
+diff --git a/src/data/DashboardRoutes.ts b/src/data/DashboardRoutes.ts
+index 40f231b..a5e2c3c 100644
+--- a/src/data/DashboardRoutes.ts
++++ b/src/data/DashboardRoutes.ts
+@@ -25,6 +25,11 @@ export const dashboardRoutes: NavigationItemData[] = [
+     iconName: "LayoutDashboard",
+     href: "/dashboard",
+   },
++  {
++    label: "Events",
++    iconName: "CalendarDays",
++    href: "/dashboard/events",
++  },
+   {
+     label: "Profile",
+     iconName: "Contact",
+@@ -40,11 +45,7 @@ export const dashboardRoutes: NavigationItemData[] = [
+     iconName: "Shield",
+     href: "/dashboard/insurance",
+   },
+-  {
+-    label: "Events",
+-    iconName: "CalendarDays",
+-    href: "/dashboard/events",
+-  },
++
+   {
+     label: "Groups",
+     iconName: "Users",
+diff --git a/src/hooks/useRouteFilters.ts b/src/hooks/useRouteFilters.ts
+index 0cc3f9b..dc825e0 100644
+--- a/src/hooks/useRouteFilters.ts
++++ b/src/hooks/useRouteFilters.ts
+@@ -7,6 +7,9 @@ interface Route {
+   difficulty?: string;
+   terrain?: string;
+   duration?: string;
++  image?:string;
++  description?:string
++price?:string
+ }
+ 
+ export const useRouteFilters = (routes: Route[]) => {
+diff --git a/src/lib/api/base-api.ts b/src/lib/api/base-api.ts
+index eabaf74..ca5d434 100644
+--- a/src/lib/api/base-api.ts
++++ b/src/lib/api/base-api.ts
+@@ -1,33 +1,9 @@
+ import axios, { AxiosResponse } from "axios";
+ 
+-import { ApiError, ApiResponse, RequestConfig } from "@/types/api";
++import { ApiErrorI, ApiResponseI, RequestConfigI } from "@/types/api";
+ import { ApiInterceptors } from "./interceptor";
+ import { errorMessage, successMessage } from "@/utils/notification";
+ 
+-interface SwalFireOptions {
+-  title?: string;
+-  text?: string;
+-  icon?: 'warning' | 'error' | 'success' | 'info' | 'question';
+-  showCancelButton?: boolean;
+-  confirmButtonColor?: string;
+-  confirmButtonText?: string;
+-  cancelButtonText?: string;
+-}
+-
+-interface SwalResult {
+-  isConfirmed: boolean;
+-}
+-
+-interface SwalStatic {
+-  fire(options: SwalFireOptions): Promise<SwalResult>;
+-}
+-
+-declare global {
+-  interface Window {
+-    Swal: SwalStatic;
+-  }
+-}
+-
+ export class BaseApiService {
+   protected interceptors: ApiInterceptors;
+   private readonly preConditionStatus = 428;
+@@ -49,29 +25,15 @@ export class BaseApiService {
+   }
+ 
+   private async confirmDelete(message: string): Promise<boolean> {
+-    if (typeof window === 'undefined' || !window.Swal) {
++    if (typeof window === 'undefined') {
+       return true;
+     }
+ 
+-    const result = await window.Swal.fire({
+-      title: "Are you sure?",
+-      text: message,
+-      icon: "warning",
+-      showCancelButton: true,
+-      confirmButtonColor: "#DD6B55",
+-      confirmButtonText: "Yes, proceed!",
+-      cancelButtonText: "No, cancel!",
+-    });
+-
+-    const container = document.querySelector(".swal2-container");
+-    if (container) {
+-      (container as HTMLElement).style.zIndex = "99999";
+-    }
+-
+-    return result.isConfirmed;
++    // Use native browser confirm for now, or implement a custom modal
++    return window.confirm(`Are you sure? ${message}`);
+   }
+ 
+-  private handleFailure(error: ApiError): { error: string; path?: string } {
++  private handleFailure(error: ApiErrorI): { error: string; path?: string } {
+     if (!error.response) {
+       return { error: "Request failed, no response from server" };
+     }
+@@ -107,23 +69,31 @@ export class BaseApiService {
+     return { error: errorMsg };
+   }
+ 
+-  async get<T = unknown>(url: string, config?: RequestConfig): Promise<ApiResponse<T>> {
++  private handleTokenExpiration(): void {
++    const currentPath = window.location.pathname;
++    if (currentPath.startsWith('/dashboard')) {
++      sessionStorage.setItem('redirectAfterLogin', currentPath);
++    }
++    // Then proceed with logout
++  }
++
++  async get<T = unknown>(url: string, config?: RequestConfigI): Promise<ApiResponseI<T>> {
+     try {
+-      const response: AxiosResponse<ApiResponse<T>> = await axios.get(url, {
++      const response: AxiosResponse<ApiResponseI<T>> = await axios.get(url, {
+         params: config?.params,
+         headers: config?.headers,
+         timeout: config?.timeout,
+       });
+       return response.data;
+     } catch (error: unknown) {
+-      this.handleFailure(error as ApiError);
++      this.handleFailure(error as ApiErrorI);
+       throw error;
+     }
+   }
+ 
+-  async post<T = unknown>(url: string, data: unknown, message?: string, config?: RequestConfig): Promise<ApiResponse<T>> {
++  async post<T = unknown>(url: string, data: unknown, message?: string, config?: RequestConfigI): Promise<ApiResponseI<T>> {
+     try {
+-      const response: AxiosResponse<ApiResponse<T>> = await axios.post(url, data, {
++      const response: AxiosResponse<ApiResponseI<T>> = await axios.post(url, data, {
+         headers: config?.headers,
+         timeout: config?.timeout,
+       });
+@@ -134,17 +104,17 @@ export class BaseApiService {
+       
+       return response.data;
+     } catch (error: unknown) {
+-      if ((error as ApiError).response?.status === this.preConditionStatus) {
+-        return "preCondition" as unknown as ApiResponse<T>;
++      if ((error as ApiErrorI).response?.status === this.preConditionStatus) {
++        return "preCondition" as unknown as ApiResponseI<T>;
+       }
+-      this.handleFailure(error as ApiError);
++      this.handleFailure(error as ApiErrorI);
+       throw error;
+     }
+   }
+ 
+-  async put<T = unknown>(url: string, data: unknown, message?: string, config?: RequestConfig): Promise<ApiResponse<T>> {
++  async put<T = unknown>(url: string, data: unknown, message?: string, config?: RequestConfigI): Promise<ApiResponseI<T>> {
+     try {
+-      const response: AxiosResponse<ApiResponse<T>> = await axios.put(url, data, {
++      const response: AxiosResponse<ApiResponseI<T>> = await axios.put(url, data, {
+         headers: config?.headers,
+         timeout: config?.timeout,
+       });
+@@ -155,14 +125,14 @@ export class BaseApiService {
+       
+       return response.data;
+     } catch (error: unknown) {
+-      this.handleFailure(error as ApiError);
++      this.handleFailure(error as ApiErrorI);
+       throw error;
+     }
+   }
+ 
+-  async patch<T = unknown>(url: string, data: unknown, message?: string, config?: RequestConfig): Promise<ApiResponse<T>> {
++  async patch<T = unknown>(url: string, data: unknown, message?: string, config?: RequestConfigI): Promise<ApiResponseI<T>> {
+     try {
+-      const response: AxiosResponse<ApiResponse<T>> = await axios.patch(url, data, {
++      const response: AxiosResponse<ApiResponseI<T>> = await axios.patch(url, data, {
+         headers: config?.headers,
+         timeout: config?.timeout,
+       });
+@@ -173,16 +143,16 @@ export class BaseApiService {
+       
+       return response.data;
+     } catch (error: unknown) {
+-      this.handleFailure(error as ApiError);
++      this.handleFailure(error as ApiErrorI);
+       throw error;
+     }
+   }
+ 
+-  async delete<T = unknown>(url: string, message?: string, config?: RequestConfig): Promise<ApiResponse<T> | false> {
++  async delete<T = unknown>(url: string, message?: string, config?: RequestConfigI): Promise<ApiResponseI<T> | false> {
+     try {
+       const shouldDelete = await this.confirmDelete(message || "This action cannot be undone.");
+       if (shouldDelete) {
+-        const response: AxiosResponse<ApiResponse<T>> = await axios.delete(url, {
++        const response: AxiosResponse<ApiResponseI<T>> = await axios.delete(url, {
+           headers: config?.headers,
+           timeout: config?.timeout,
+         });
+@@ -195,16 +165,16 @@ export class BaseApiService {
+       }
+       return false;
+     } catch (error: unknown) {
+-      this.handleFailure(error as ApiError);
++      this.handleFailure(error as ApiErrorI);
+       throw error;
+     }
+   }
+ 
+-  async deletePost<T = unknown>(url: string, message?: string, config?: RequestConfig): Promise<ApiResponse<T> | false> {
++  async deletePost<T = unknown>(url: string, message?: string, config?: RequestConfigI): Promise<ApiResponseI<T> | false> {
+     try {
+       const shouldDelete = await this.confirmDelete(message || "This action cannot be undone.");
+       if (shouldDelete) {
+-        const response: AxiosResponse<ApiResponse<T>> = await axios.post(url, {}, {
++        const response: AxiosResponse<ApiResponseI<T>> = await axios.post(url, {}, {
+           headers: config?.headers,
+           timeout: config?.timeout,
+         });
+@@ -217,7 +187,7 @@ export class BaseApiService {
+       }
+       return false;
+     } catch (error: unknown) {
+-      this.handleFailure(error as ApiError);
++      this.handleFailure(error as ApiErrorI);
+       throw error;
+     }
+   }
+diff --git a/src/lib/api/interceptor.ts b/src/lib/api/interceptor.ts
+index 4c1af73..8371b32 100644
+--- a/src/lib/api/interceptor.ts
++++ b/src/lib/api/interceptor.ts
+@@ -64,6 +64,7 @@ export class ApiInterceptors {
+     axios.interceptors.response.use(
+       (response: AxiosResponse) => response,
+       async (error: AxiosError) => {
++        console.log('API Error:', error);
+         if (error.response?.status === 401) {
+           this.setAuthToken(null);
+           if (typeof window !== 'undefined') {
+diff --git a/src/types/api.ts b/src/types/api.ts
+index 822c306..1bc2203 100644
+--- a/src/types/api.ts
++++ b/src/types/api.ts
+@@ -1,25 +1,26 @@
+-export interface ApiResponse<T = unknown> {
+-    data: T;
+-    status_code?: number;
+-    message?: string;
+-  }
+-  
+-  export interface ApiError {
+-    response?: {
+-      status?: number;
+-      data?: {
+-        message?: string;
+-        errors?: {
+-          error?: string;
+-          redirect?: string;
+-        };
++export interface ApiResponseI<T = unknown> {
++  data: T;
++  status_code?: number;
++  id_token: string;
++  message?: string;
++}
++
++export interface ApiErrorI {
++  response?: {
++    status?: number;
++    data?: {
++      message?: string;
++      errors?: {
++        error?: string;
++        redirect?: string;
+       };
+     };
+-    message?: string;
+-  }
+-  
+-  export interface RequestConfig {
+-    headers?: Record<string, string>;
+-    params?: Record<string, string | number | boolean>;
+-    timeout?: number;
+-  }
+\ No newline at end of file
++  };
++  message?: string;
++}
++
++export interface RequestConfigI {
++  headers?: Record<string, string>;
++  params?: Record<string, string | number | boolean>;
++  timeout?: number;
++}
+diff --git a/src/utils/notification.ts b/src/utils/notification.ts
+index 49a9f54..2ce663b 100644
+--- a/src/utils/notification.ts
++++ b/src/utils/notification.ts
+@@ -1,4 +1,5 @@
+-import Swal from 'sweetalert2';
++/* eslint-disable @typescript-eslint/no-explicit-any */
++import { toast } from "@/hooks/use-toast";
+ 
+ interface ToastOptions {
+   position?: 'top' | 'top-start' | 'top-end' | 'center' | 'center-start' | 'center-end' | 'bottom' | 'bottom-start' | 'bottom-end';
+@@ -7,6 +8,12 @@ interface ToastOptions {
+   showConfirmButton?: boolean;
+   toast?: boolean;
+   icon?: 'success' | 'error' | 'warning' | 'info' | 'question';
++  showProgressBar?: boolean;
++  action?: {
++    label: string;
++    onClick: () => void;
++    altText?: string;
++  };
+ }
+ 
+ /**
+@@ -15,31 +22,19 @@ interface ToastOptions {
+  * @param options - Optional configuration for the notification
+  */
+ export function successMessage(message: string, options?: ToastOptions): void {
+-  if (typeof window === 'undefined' || !Swal) {
++  if (typeof window === 'undefined') {
+     console.log('Success:', message);
+     return;
+   }
+ 
+-  const defaultOptions: ToastOptions = {
+-    position: 'top-end',
+-    timer: 3000,
+-    timerProgressBar: true,
+-    showConfirmButton: false,
+-    toast: true,
+-    icon: 'success'
+-  };
+-
+-  const finalOptions = { ...defaultOptions, ...options };
+-
+-  Swal.fire({
++  toast({
+     title: message,
+-    icon: finalOptions.icon,
+-    position: finalOptions.position,
+-    timer: finalOptions.timer,
+-    timerProgressBar: finalOptions.timerProgressBar,
+-    showConfirmButton: finalOptions.showConfirmButton,
+-    toast: finalOptions.toast
+-  });
++    variant: "default",
++    duration: options?.timer || 3000,
++    customVariant: "success",
++    showProgressBar: options?.showProgressBar,
++    action: options?.action,
++  } as any);
+ }
+ 
+ /**
+@@ -48,31 +43,19 @@ export function successMessage(message: string, options?: ToastOptions): void {
+  * @param options - Optional configuration for the notification
+  */
+ export function errorMessage(message: string, options?: ToastOptions): void {
+-  if (typeof window === 'undefined' || !Swal) {
++  if (typeof window === 'undefined') {
+     console.error('Error:', message);
+     return;
+   }
+ 
+-  const defaultOptions: ToastOptions = {
+-    position: 'top-end',
+-    timer: 5000,
+-    timerProgressBar: true,
+-    showConfirmButton: false,
+-    toast: true,
+-    icon: 'error'
+-  };
+-
+-  const finalOptions = { ...defaultOptions, ...options };
+-
+-  Swal.fire({
++  toast({
+     title: message,
+-    icon: finalOptions.icon,
+-    position: finalOptions.position,
+-    timer: finalOptions.timer,
+-    timerProgressBar: finalOptions.timerProgressBar,
+-    showConfirmButton: finalOptions.showConfirmButton,
+-    toast: finalOptions.toast
+-  });
++    variant: "destructive",
++    duration: options?.timer || 5000,
++    customVariant: "error",
++    showProgressBar: options?.showProgressBar,
++    action: options?.action,
++  } as any);
+ }
+ 
+ /**
+@@ -81,31 +64,19 @@ export function errorMessage(message: string, options?: ToastOptions): void {
+  * @param options - Optional configuration for the notification
+  */
+ export function warningMessage(message: string, options?: ToastOptions): void {
+-  if (typeof window === 'undefined' || !Swal) {
++  if (typeof window === 'undefined') {
+     console.warn('Warning:', message);
+     return;
+   }
+ 
+-  const defaultOptions: ToastOptions = {
+-    position: 'top-end',
+-    timer: 4000,
+-    timerProgressBar: true,
+-    showConfirmButton: false,
+-    toast: true,
+-    icon: 'warning'
+-  };
+-
+-  const finalOptions = { ...defaultOptions, ...options };
+-
+-  Swal.fire({
++  toast({
+     title: message,
+-    icon: finalOptions.icon,
+-    position: finalOptions.position,
+-    timer: finalOptions.timer,
+-    timerProgressBar: finalOptions.timerProgressBar,
+-    showConfirmButton: finalOptions.showConfirmButton,
+-    toast: finalOptions.toast
+-  });
++    variant: "default",
++    duration: options?.timer || 4000,
++    customVariant: "warning",
++    showProgressBar: options?.showProgressBar,
++    action: options?.action,
++  } as any);
+ }
+ 
+ /**
+@@ -114,29 +85,17 @@ export function warningMessage(message: string, options?: ToastOptions): void {
+  * @param options - Optional configuration for the notification
+  */
+ export function infoMessage(message: string, options?: ToastOptions): void {
+-  if (typeof window === 'undefined' || !Swal) {
++  if (typeof window === 'undefined') {
+     console.info('Info:', message);
+     return;
+   }
+ 
+-  const defaultOptions: ToastOptions = {
+-    position: 'top-end',
+-    timer: 3000,
+-    timerProgressBar: true,
+-    showConfirmButton: false,
+-    toast: true,
+-    icon: 'info'
+-  };
+-
+-  const finalOptions = { ...defaultOptions, ...options };
+-
+-  Swal.fire({
++  toast({
+     title: message,
+-    icon: finalOptions.icon,
+-    position: finalOptions.position,
+-    timer: finalOptions.timer,
+-    timerProgressBar: finalOptions.timerProgressBar,
+-    showConfirmButton: finalOptions.showConfirmButton,
+-    toast: finalOptions.toast
+-  });
++    variant: "default",
++    duration: options?.timer || 3000,
++    customVariant: "info",
++    showProgressBar: options?.showProgressBar,
++    action: options?.action,
++  } as any);
+ }
+\ No newline at end of file
