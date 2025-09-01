@@ -1,176 +1,1645 @@
-import axios, { AxiosResponse, AxiosError } from "axios";
-import { errorMessage, successMessage } from "../utils/notification.js";
 
-interface ApiResponse<T = any> {
-  data: T;
-  status_code?: number;
-  message?: string;
-}
-
-interface ApiError {
-  response?: {
-    status?: number;
-    data?: {
-      message?: string;
-      errors?: {
-        error?: string;
-        redirect?: string;
-      };
-    };
-  };
-  message?: string;
-}
-
-class Api {
-  private handleSuccess: (message: string) => void;
-  private preCondt: number;
-
-  constructor() {
-    this.handleSuccess = (message: string) => successMessage(message);
-    this.preCondt = 428;
-
-    this.confirmDelete = this.confirmDelete.bind(this);
-    this.get = this.get.bind(this);
-    this.post = this.post.bind(this);
-    this.put = this.put.bind(this);
-    this.delete = this.delete.bind(this);
-    this.deletePost = this.deletePost.bind(this);
-  }
-
-  private async confirmDelete(message: string): Promise<boolean> {
-    const result = await window.Swal.fire({
-      title: "Are you sure??",
-      text: message,
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#DD6B55",
-      confirmButtonText: "Yes, proceed!",
-      cancelButtonText: "No, cancel!",
-      customClass: { container: "" },
-    });
-
-    // Optionally set z-index after showing the modal
-    const container = document.querySelector(".swal2-container");
-    if (container) {
-      (container as HTMLElement).style.zIndex = "99999";
-    }
-
-    return result.isConfirmed;
-  }
-
-  private handleFailure(error: ApiError): { error: string; path?: string } {
-    if (!error.response) {
-      console.error("Network error or no response received:", error.message);
-      return { error: "Request failed, no response from server" };
-    }
-
-    const errorData = error.response.data;
-    const errorMsg = errorData?.message?.trim() || "An error occurred!";
-    let redirectPath = errorData?.errors?.redirect;
-
-    if (typeof redirectPath === "string" && redirectPath.startsWith("\\")) {
-      redirectPath = redirectPath.replace(/\\/g, "");
-    }
-
-    const redirectMessages = [
-      "Forbidden. Admin access required.",
-      "Forbidden - You do not have permission to access this resource.",
-    ];
-
-    if (redirectPath && redirectMessages.some((msg: any) => errorMsg?.includes(msg))) {
-      setTimeout(() => {
-        window.location.assign(redirectPath);
-      }, 100);
-      return { error: "Redirecting", path: redirectPath };
-    }
-
-    try {
-      errorMessage(error.response?.data?.errors?.error || errorMsg);
-    } catch (e: any) {
-      console.error("Error while calling errorMessage:", e);
-    }
-
-    return { error: errorMsg };
-  }
-
-  async post<T = any>(url: string, data: any, message?: string): Promise<ApiResponse<T>> {
-    try {
-      const response:any = await axios.post<ApiResponse<T>>(url, data);
-      if (message) {
-        this.handleSuccess(message);
-      }
-      return response.data;
-    } catch (error: any) {
-      if ((error as ApiError).response?.status === this.preCondt) {
-        return "preCondition" as any;
-      }
-      this.handleFailure(error as ApiError);
-      throw error;
-    }
-  }
-
-  async get<T = any>(url: string, params?: any): Promise<ApiResponse<T>> {
-    const statusError = 300;
-    try {
-      const response:any = await axios.get<ApiResponse<T>>(url, { params });
-      return response.data;
-    } catch (error: any) {
-      this.handleFailure(error as ApiError);
-      const apiError = error as ApiError;
-      const response = apiError.response;
-      if (response && response.status !== undefined && response.status > statusError) {
-        throw error;
-      }
-      throw error;
-    }
-  }
-
-  async put<T = any>(url: string, data: any, message?: string): Promise<ApiResponse<T>> {
-    try {
-      const response = await axios.put<ApiResponse<T>>(url, data);
-      if (message) {
-        this.handleSuccess(message);
-      }
-      return response.data;
-    } catch (error: any) {
-      this.handleFailure(error as ApiError);
-      throw error;
-    }
-  }
-
-  async delete<T = any>(url: string, message?: string): Promise<ApiResponse<T> | false> {
-    try {
-      const shouldDelete = await this.confirmDelete(message || "");
-      if (shouldDelete) {
-        const response = await axios.delete<ApiResponse<T>>(url);
-        if (response.data.message) {
-          this.handleSuccess(response.data.message);
-        }
-        return response.data;
-      }
-      return false;
-    } catch (error: any) {
-      this.handleFailure(error as ApiError);
-      throw error;
-    }
-  }
-
-  async deletePost<T = any>(url: string, message?: string): Promise<ApiResponse<T> | false> {
-    try {
-      const shouldDelete = await this.confirmDelete(message || "");
-      if (shouldDelete) {
-        const response = await axios.post<ApiResponse<T>>(url);
-        if (response.data.message) {
-          this.handleSuccess(response.data.message);
-        }
-        return response.data;
-      }
-      return false;
-    } catch (error: any) {
-      this.handleFailure(error as ApiError);
-      throw error;
-    }
-  }
-}
-
-export const api = new Api();
+diff --git a/src/app/(PageSections)/Dashboard/MarketPlacePageSection/CheckoutPageSection.tsx b/src/app/(PageSections)/Dashboard/MarketPlacePageSection/CheckoutPageSection.tsx
+index 02992c0..944ee3a 100644
+--- a/src/app/(PageSections)/Dashboard/MarketPlacePageSection/CheckoutPageSection.tsx
++++ b/src/app/(PageSections)/Dashboard/MarketPlacePageSection/CheckoutPageSection.tsx
+@@ -7,6 +7,7 @@ import { OrderSummary } from "@/components/shop/checkout/OrderSummary";
+ import { PaymentOptions } from "@/components/shop/checkout/PaymentOptions";
+ import {Button} from "@/components/ui/button";
+ import { ArrowRight } from "lucide-react";
++import { useRouter } from "next/navigation";
+ import { useMemo, useState } from "react";
+ 
+ const initialItems: CartItemData[] = [
+@@ -17,6 +18,7 @@ const initialItems: CartItemData[] = [
+ function CheckoutPageSection() {
+   const [items] = useState<CartItemData[]>(initialItems);
+   const [payment, setPayment] = useState<string>('card');
++  const router = useRouter()
+ 
+   const subTotal = useMemo(() => items.reduce((s, i) => s + i.price * i.quantity, 0), [items]);
+   const discount = 12_000;
+@@ -39,7 +41,7 @@ function CheckoutPageSection() {
+           <BillingForm />
+           <PaymentOptions value={payment} onChange={setPayment} />
+           <div className="flex justify-end">
+-            <Button variant="default" className="group">
++            <Button variant="default" className="group" onClick={() => router.push('checkout/place-order')}>
+               Place Order
+               <ArrowRight className="transition-transform group-hover:translate-x-0.5" />
+             </Button>
+diff --git a/src/app/(PageSections)/Landing/sections/HomeSections/CallToAction.tsx b/src/app/(PageSections)/Landing/sections/HomeSections/CallToAction.tsx
+index fe1564c..51c8d1b 100644
+--- a/src/app/(PageSections)/Landing/sections/HomeSections/CallToAction.tsx
++++ b/src/app/(PageSections)/Landing/sections/HomeSections/CallToAction.tsx
+@@ -127,18 +127,19 @@ function CallToAction() {
+       // icon:  <MessageSquare className="w-5 h-5" />
+       
+     },
+-    {
+-      label: "FAQ",
+-      value: "faq",
+-      content:  <Faq />,
+-      // icon: <HelpCircle className="w-5 h-5" />
+-    },
+     {
+       label: "Suggestion Box",
+       value: "suggestionbox",
+       content:  <SuggestionBox />,
+       // icon: <HelpCircle className="w-5 h-5" />
+     },
++    {
++      label: "FAQ",
++      value: "faq",
++      content:  <Faq />,
++      // icon: <HelpCircle className="w-5 h-5" />
++    },
++ 
+    
+   ];
+ 
+diff --git a/src/app/(Pages)/(Landing)/events/[id]/page.tsx b/src/app/(Pages)/(Landing)/events/[id]/page.tsx
+index c12d503..5b852c4 100644
+--- a/src/app/(Pages)/(Landing)/events/[id]/page.tsx
++++ b/src/app/(Pages)/(Landing)/events/[id]/page.tsx
+@@ -1,12 +1,12 @@
+-import SingleEventPageSection from '@/app/(PageSections)/Landing/SinglePageSection'
+-import React from 'react'
++import SingleEventPageSection from "@/app/(PageSections)/Landing/SinglePageSection";
++import React from "react";
+ 
+ function SingleEvent() {
+   return (
+     <div>
+       <SingleEventPageSection />
+     </div>
+-  )
++  );
+ }
+ 
+-export default SingleEvent
++export default SingleEvent;
+diff --git a/src/app/(Pages)/(Landing)/events/[id]/registration/page.tsx b/src/app/(Pages)/(Landing)/events/[id]/registration/page.tsx
+index 8a2cc63..9891159 100644
+--- a/src/app/(Pages)/(Landing)/events/[id]/registration/page.tsx
++++ b/src/app/(Pages)/(Landing)/events/[id]/registration/page.tsx
+@@ -1,12 +1,12 @@
+-import RegistrationPageSection from '@/app/(PageSections)/Landing/RegistrationPageSection'
+-import React from 'react'
++import RegistrationPageSection from "@/app/(PageSections)/Landing/RegistrationPageSection";
++import React from "react";
+ 
+ function EventRegistration() {
+   return (
+     <div>
+       <RegistrationPageSection />
+     </div>
+-  )
++  );
+ }
+ 
+-export default EventRegistration
++export default EventRegistration;
+diff --git a/src/app/(Pages)/(Landing)/gallery/page.tsx b/src/app/(Pages)/(Landing)/gallery/page.tsx
+index 7038bba..dbaee7b 100644
+--- a/src/app/(Pages)/(Landing)/gallery/page.tsx
++++ b/src/app/(Pages)/(Landing)/gallery/page.tsx
+@@ -1,12 +1,12 @@
+-import GalleryPageSection from '@/app/(PageSections)/Landing/GalleryPageSection'
+-import React from 'react'
++import GalleryPageSection from "@/app/(PageSections)/Landing/GalleryPageSection";
++import React from "react";
+ 
+ function Gallery() {
+   return (
+     <div>
+       <GalleryPageSection />
+     </div>
+-  )
++  );
+ }
+ 
+-export default Gallery
++export default Gallery;
+diff --git a/src/app/(Pages)/(Landing)/market-place/cart/page.tsx b/src/app/(Pages)/(Landing)/market-place/cart/page.tsx
+index 3f87e1e..9ee8cec 100644
+--- a/src/app/(Pages)/(Landing)/market-place/cart/page.tsx
++++ b/src/app/(Pages)/(Landing)/market-place/cart/page.tsx
+@@ -1,12 +1,12 @@
+-import CartPageSection from '@/app/(PageSections)/Dashboard/MarketPlacePageSection/CartPageSection'
+-import React from 'react'
++import CartPageSection from "@/app/(PageSections)/Dashboard/MarketPlacePageSection/CartPageSection";
++import React from "react";
+ 
+ function Cart() {
+   return (
+-    <div className='py-10 container mx-auto'>
+-       <CartPageSection />
++    <div className="py-10 container mx-auto">
++      <CartPageSection />
+     </div>
+-  )
++  );
+ }
+ 
+-export default Cart
++export default Cart;
+diff --git a/src/app/(Pages)/(Landing)/market-place/page.tsx b/src/app/(Pages)/(Landing)/market-place/page.tsx
+index db6bb71..0143a6e 100644
+--- a/src/app/(Pages)/(Landing)/market-place/page.tsx
++++ b/src/app/(Pages)/(Landing)/market-place/page.tsx
+@@ -1,12 +1,12 @@
+-import MarketPlacePageSection from '@/app/(PageSections)/Dashboard/MarketPlacePageSection/MarketPlacePageSection'
+-import React from 'react'
++import MarketPlacePageSection from "@/app/(PageSections)/Dashboard/MarketPlacePageSection/MarketPlacePageSection";
++import React from "react";
+ 
+ function MarketPlace() {
+   return (
+-    <div className='container mx-auto py-10'>
++    <div className="container mx-auto py-10">
+       <MarketPlacePageSection />
+     </div>
+-  )
++  );
+ }
+ 
+-export default MarketPlace
++export default MarketPlace;
+diff --git a/src/app/(Pages)/(Landing)/market-place/products/[id]/page.tsx b/src/app/(Pages)/(Landing)/market-place/products/[id]/page.tsx
+index 49cb4f9..f6317d3 100644
+--- a/src/app/(Pages)/(Landing)/market-place/products/[id]/page.tsx
++++ b/src/app/(Pages)/(Landing)/market-place/products/[id]/page.tsx
+@@ -1,12 +1,12 @@
+-import SingleProductPageSection from '@/app/(PageSections)/Dashboard/MarketPlacePageSection/SingleProductPageSection'
+-import React from 'react'
++import SingleProductPageSection from "@/app/(PageSections)/Dashboard/MarketPlacePageSection/SingleProductPageSection";
++import React from "react";
+ 
+ function SingleProduct() {
+   return (
+-    <div className='py-10 container mx-auto'>
+-    <SingleProductPageSection />
++    <div className="py-10 container mx-auto">
++      <SingleProductPageSection />
+     </div>
+-  )
++  );
+ }
+ 
+-export default SingleProduct
++export default SingleProduct;
+diff --git a/src/app/(Pages)/(Landing)/market-place/products/page.tsx b/src/app/(Pages)/(Landing)/market-place/products/page.tsx
+index 483fecb..e1ad520 100644
+--- a/src/app/(Pages)/(Landing)/market-place/products/page.tsx
++++ b/src/app/(Pages)/(Landing)/market-place/products/page.tsx
+@@ -1,12 +1,12 @@
+-import AllProductsPageSection from '@/app/(PageSections)/Dashboard/MarketPlacePageSection/AllProductsPageSection'
+-import React from 'react'
++import AllProductsPageSection from "@/app/(PageSections)/Dashboard/MarketPlacePageSection/AllProductsPageSection";
++import React from "react";
+ 
+ function Products() {
+   return (
+-    <div className='py-10 container mx-auto'>
+-   <AllProductsPageSection />
++    <div className="py-10 container mx-auto">
++      <AllProductsPageSection />
+     </div>
+-  )
++  );
+ }
+ 
+-export default Products
++export default Products;
+diff --git a/src/app/(Pages)/(Landing)/page.tsx b/src/app/(Pages)/(Landing)/page.tsx
+index a445c82..fb18d60 100644
+--- a/src/app/(Pages)/(Landing)/page.tsx
++++ b/src/app/(Pages)/(Landing)/page.tsx
+@@ -1,12 +1,9 @@
+ import HomePageSection from "@/app/(PageSections)/Landing/HomePageSection";
+-import HeroSlider, { HeroSliderI } from "@/components/shared/Hero/HeroSlider";
+-
+-export default function Home() {
+ 
+ 
++export default function Home() {
+   return (
+     <div>
+-     
+       <HomePageSection />
+       {/* <MarathonRegistration /> */}
+     </div>
+diff --git a/src/app/(Pages)/(Landing)/partners/page.tsx b/src/app/(Pages)/(Landing)/partners/page.tsx
+index d4709a5..6840da4 100644
+--- a/src/app/(Pages)/(Landing)/partners/page.tsx
++++ b/src/app/(Pages)/(Landing)/partners/page.tsx
+@@ -1,12 +1,12 @@
+-import PartnerPageSection from '@/app/(PageSections)/Landing/PartnerPageSection'
+-import React from 'react'
++import PartnerPageSection from "@/app/(PageSections)/Landing/PartnerPageSection";
++import React from "react";
+ 
+ function Partners() {
+   return (
+     <div>
+       <PartnerPageSection />
+     </div>
+-  )
++  );
+ }
+ 
+-export default Partners
++export default Partners;
+diff --git a/src/app/(Pages)/auth/page.tsx b/src/app/(Pages)/auth/page.tsx
+index 9d4e5c8..16f8a8f 100644
+--- a/src/app/(Pages)/auth/page.tsx
++++ b/src/app/(Pages)/auth/page.tsx
+@@ -1,12 +1,12 @@
+-import LoginPageSection from '@/app/(PageSections)/Auth/LoginPageSection'
+-import React from 'react'
++import LoginPageSection from "@/app/(PageSections)/Auth/LoginPageSection";
++import React from "react";
+ 
+ function Auth() {
+   return (
+     <div>
+       <LoginPageSection />
+     </div>
+-  )
++  );
+ }
+ 
+-export default Auth
++export default Auth;
+diff --git a/src/app/(Pages)/auth/signup/page.tsx b/src/app/(Pages)/auth/signup/page.tsx
+index bf51f6d..9f22c1a 100644
+--- a/src/app/(Pages)/auth/signup/page.tsx
++++ b/src/app/(Pages)/auth/signup/page.tsx
+@@ -1,12 +1,12 @@
+-import SignupPageSection from '@/app/(PageSections)/Auth/SignupPageSection'
+-import React from 'react'
++import SignupPageSection from "@/app/(PageSections)/Auth/SignupPageSection";
++import React from "react";
+ 
+ function Signup() {
+   return (
+     <div>
+       <SignupPageSection />
+     </div>
+-  )
++  );
+ }
+ 
+-export default Signup
++export default Signup;
+diff --git a/src/app/(Pages)/dashboard/DashboardClientLayout.tsx b/src/app/(Pages)/dashboard/DashboardClientLayout.tsx
+index 424afcf..5fa39f4 100644
+--- a/src/app/(Pages)/dashboard/DashboardClientLayout.tsx
++++ b/src/app/(Pages)/dashboard/DashboardClientLayout.tsx
+@@ -2,8 +2,9 @@
+ 
+ import Sidebar from "@/components/layout/Sidebar";
+ import { Button } from "@/components/ui/button";
++import { FormInput } from "@/components/ui/form-input";
+ import { NavigationItemData } from "@/data/DashboardRoutes";
+-import { Menu } from "lucide-react";
++import { Bell, Menu, MessageSquareMore, Search, User } from "lucide-react";
+ import { useState } from "react";
+ 
+ interface DashboardClientProps {
+@@ -42,7 +43,7 @@ export default function DashboardClientLayout({
+         }}
+       />
+       <main className="flex flex-col flex-1 min-w-0 overflow-hidden">
+-        <div className="border-b py-2 px-1 sticky top-0 z-[9999999] bg-white flex-shrink-0">
++        <div className="border-b p-4 sticky top-0 z-[9999999] bg-white flex items-center gap-3 " >
+           <Button
+             variant="ghost"
+             className="hidden lg:flex h-8 w-8 p-0 shrink-0"
+@@ -50,6 +51,52 @@ export default function DashboardClientLayout({
+           >
+             <Menu className="w-4 h-4" />
+           </Button>
++
++
++
++
++          <div className="flex justify-between  w-full items-center">
++          <div>
++            {/* Search area  */}
++            <div className="">
++              <FormInput
++                type="search"
++                placeholder="Search..."
++                className="w-full"
++                leftIcon={<Search className="h-4 w-4 text-gray-500" />}
++              />
++            </div>
++          </div>
++          <div className="">
++            <div className="flex items-center space-x-4">
++              <div>
++                <Button className="w-8 h-8" variant="outline" size="icon">
++                  <MessageSquareMore />
++                </Button>
++              </div>
++              <div>
++                <Button  className="w-8 h-8" variant="outline" size="icon">
++                  <Bell />
++                </Button>
++              </div>
++              <div>
++                <div className="flex space-x-1">
++                  <div>
++                    <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center p-2 text-nbc-dark-950">
++                      <User className="w-5 h-5" />
++                    </div>
++                  </div>
++                  <div className="text-xs mt-1">
++                    <p className="font-[600]">John Deo</p>
++                    <p>john@gmail.com</p>
++                  </div>
++                </div>
++              </div>
++            </div>
++          </div>
++        </div>
++
++
+         </div>
+         <div className="flex-1 px-7 py-5 overflow-y-auto">
+           {children}
+diff --git a/src/app/(Pages)/dashboard/market-place/cart/page.tsx b/src/app/(Pages)/dashboard/market-place/cart/page.tsx
+index 8fb094b..0bec7b0 100644
+--- a/src/app/(Pages)/dashboard/market-place/cart/page.tsx
++++ b/src/app/(Pages)/dashboard/market-place/cart/page.tsx
+@@ -1,12 +1,12 @@
+-import CartPageSection from '@/app/(PageSections)/Dashboard/MarketPlacePageSection/CartPageSection'
+-import React from 'react'
++import CartPageSection from "@/app/(PageSections)/Dashboard/MarketPlacePageSection/CartPageSection";
++import React from "react";
+ 
+ function Cart() {
+   return (
+     <div>
+       <CartPageSection />
+     </div>
+-  )
++  );
+ }
+ 
+-export default Cart
++export default Cart;
+diff --git a/src/app/(Pages)/dashboard/market-place/products/[id]/page.tsx b/src/app/(Pages)/dashboard/market-place/products/[id]/page.tsx
+index 38c2887..579ace3 100644
+--- a/src/app/(Pages)/dashboard/market-place/products/[id]/page.tsx
++++ b/src/app/(Pages)/dashboard/market-place/products/[id]/page.tsx
+@@ -1,12 +1,12 @@
+-import SingleProductPageSection from '@/app/(PageSections)/Dashboard/MarketPlacePageSection/SingleProductPageSection'
+-import React from 'react'
++import SingleProductPageSection from "@/app/(PageSections)/Dashboard/MarketPlacePageSection/SingleProductPageSection";
++import React from "react";
+ 
+ function SingleProduct() {
+   return (
+-    <div >
++    <div>
+       <SingleProductPageSection />
+     </div>
+-  )
++  );
+ }
+ 
+-export default SingleProduct
++export default SingleProduct;
+diff --git a/src/components/layout/Sidebar.tsx b/src/components/layout/Sidebar.tsx
+index 9a6cae1..ca449bc 100644
+--- a/src/components/layout/Sidebar.tsx
++++ b/src/components/layout/Sidebar.tsx
+@@ -22,6 +22,8 @@ import {
+   BookUser,
+   NotebookPen,
+   ShoppingBag,
++  MessagesSquare,
++  Shield,
+ } from "lucide-react";
+ import { cn } from "@/lib/utils";
+ import Link from "next/link";
+@@ -39,7 +41,9 @@ const iconMap = {
+   Users,
+   BookUser,
+   NotebookPen,
+-  ShoppingBag
++  ShoppingBag,
++  MessagesSquare,
++  Shield
+   // Add more icons as needed
+ } as const;
+ 
+diff --git a/src/components/shared/registration/GroupRegistration.tsx b/src/components/shared/registration/GroupRegistration.tsx
+index 2814955..b82797f 100644
+--- a/src/components/shared/registration/GroupRegistration.tsx
++++ b/src/components/shared/registration/GroupRegistration.tsx
+@@ -161,6 +161,12 @@ export function GroupRegistration({
+ 
+             {/* Phone Number */}
+             <div className="">
++
++
++
++
++
++              
+               <PhoneNumberInput 
+                 label="Representative Phone"
+                 value={formData.representativePhone}
+diff --git a/src/components/shared/registration/MarathonRegistration.tsx b/src/components/shared/registration/MarathonRegistration.tsx
+index 566db90..1e90694 100644
+--- a/src/components/shared/registration/MarathonRegistration.tsx
++++ b/src/components/shared/registration/MarathonRegistration.tsx
+@@ -105,30 +105,32 @@ export function MarathonRegistration() {
+                 <p className="text-gray-500 text-sm">
+                   Fill the required info in this template and upload it
+                 </p>
+-          <div className="space-y-6">
+-          <div className="border bg-gray-100 !cursor-pointer flex items-center gap-4 w-fit px-4 py-2 rounded-md mt-4 hover:bg-gray-200 transition">
++                <div className="space-y-6">
++                  <div className="border bg-gray-100 !cursor-pointer flex items-center gap-4 w-fit px-4 py-2 rounded-md mt-4 hover:bg-gray-200 transition">
++                    <div>
++                      <File className="text-secondary-950" />
++                    </div>
++                    <div>
++                      <h1 className="text-primary-950 font-medium">
++                        Group Participants Details Template
++                      </h1>
++                      <p className="text-sm text-gray-500 ">300KB</p>
++                    </div>
++                  </div>
+                   <div>
+-                    <File className="text-secondary-950" />
++                    <ImageUploader
++                      value=""
++                      onChange={(imageUrl: string) => {
++                        console.log("Image uploaded:", imageUrl);
++                      }}
++                      className="mb-4"
++                      showTitle={false}
++                    />
+                   </div>
+                   <div>
+-                    <h1 className="text-primary-950 font-medium">Group Participants Details Template</h1>
+-                    <p className="text-sm text-gray-500 ">300KB</p>
+-                  </div >
+-                </div>
+-                <div>
+-                      <ImageUploader
+-                          value=""
+-                          onChange={(imageUrl: string) => {
+-                            console.log("Image uploaded:", imageUrl);
+-                          }}
+-                          className="mb-4"
+-                          showTitle={false}
+-                        />
+-                </div>
+-                <div>
+-                  <Button className="w-full">Upload Participants</Button>
++                    <Button className="w-full">Upload Participants</Button>
++                  </div>
+                 </div>
+-          </div>
+               </div>
+             </div>
+           </TabsContent>
+diff --git a/src/components/shared/registration/ParticipantDetails.tsx b/src/components/shared/registration/ParticipantDetails.tsx
+index 5f7a0e3..b6e4c5d 100644
+--- a/src/components/shared/registration/ParticipantDetails.tsx
++++ b/src/components/shared/registration/ParticipantDetails.tsx
+@@ -6,6 +6,15 @@ import { MarathonButton } from "@/components/ui/marathon-button";
+ import { FormInput } from "@/components/ui/form-input";
+ import { FormSelect } from "@/components/ui/form-select";
+ import { Button } from "@/components/ui/button";
++import PhoneNumberInput from "@/components/ui/phone-number-input";
++import FormDatePicker from "@/components/ui/form-date-picker";
++import {
++  dateToCalendarDate,
++  dateValueToDate,
++} from "@/utils/DateValueConversion";
++import { getLocalTimeZone, today } from "@internationalized/date";
++import { Formik, Form, FieldArray, FormikProps } from "formik";
++import * as Yup from "yup";
+ 
+ interface ParticipantDetailsProps {
+   onNext: (data: ParticipantData[]) => void;
+@@ -19,11 +28,7 @@ export interface ParticipantData {
+   lastName: string;
+   phoneNumber: string;
+   gender: string;
+-  dateOfBirth: {
+-    year: string;
+-    month: string;
+-    day: string;
+-  };
++  dateOfBirth: Date | undefined;
+   nationality: string;
+   eventCategory: string;
+   tshirtSize: string;
+@@ -31,7 +36,43 @@ export interface ParticipantData {
+   merchandiseCenter: string;
+ }
+ 
+-// Fixed: Remove empty string values and use undefined/null for placeholder behavior
++interface FormValues {
++  participants: ParticipantData[];
++}
++
++// Validation schema
++const participantSchema = Yup.object().shape({
++  firstName: Yup.string()
++    .trim()
++    .required("First name is required")
++    .min(2, "First name must be at least 2 characters"),
++  lastName: Yup.string()
++    .trim()
++    .required("Last name is required")
++    .min(2, "Last name must be at least 2 characters"),
++  phoneNumber: Yup.string()
++    .trim()
++    .required("Phone number is required")
++    .matches(/^\+?[1-9]\d{1,14}$/, "Please enter a valid phone number"),
++  gender: Yup.string().required("Gender is required"),
++  dateOfBirth: Yup.date()
++    .required("Date of birth is required")
++    .max(new Date(), "Date of birth cannot be in the future"),
++  nationality: Yup.string().required("Nationality is required"),
++  eventCategory: Yup.string().required("Event category is required"),
++  tshirtSize: Yup.string().required("T-shirt size is required"),
++  emergencyContact: Yup.string()
++    .trim()
++    .required("Emergency contact is required")
++    .matches(/^\+?[1-9]\d{1,14}$/, "Please enter a valid emergency contact number"),
++  merchandiseCenter: Yup.string().required("Collection center is required"),
++});
++
++const validationSchema = Yup.object().shape({
++  participants: Yup.array().of(participantSchema).min(1, "At least one participant is required"),
++});
++
++// Options arrays remain the same
+ const genderOptions = [
+   { value: "male", label: "Male" },
+   { value: "female", label: "Female" },
+@@ -68,147 +109,61 @@ const nationalityOptions = [
+   { value: "other", label: "Other" },
+ ];
+ 
+-export function ParticipantDetails({ onNext, onBack, className }: ParticipantDetailsProps) {
+-  const [participants, setParticipants] = useState<ParticipantData[]>([
+-    {
+-      id: "1",
+-      firstName: "",
+-      lastName: "",
+-      phoneNumber: "",
+-      gender: "",
+-      dateOfBirth: { year: "", month: "", day: "" },
+-      nationality: "",
+-      eventCategory: "",
+-      tshirtSize: "",
+-      emergencyContact: "",
+-      merchandiseCenter: "",
+-    },
+-  ]);
+-
+-  const [errors, setErrors] = useState<Record<string, Record<string, string>>>({});
++const createEmptyParticipant = (): ParticipantData => ({
++  id: Date.now().toString(),
++  firstName: "",
++  lastName: "",
++  phoneNumber: "",
++  gender: "",
++  dateOfBirth: undefined,
++  nationality: "",
++  eventCategory: "",
++  tshirtSize: "",
++  emergencyContact: "",
++  merchandiseCenter: "",
++});
++
++export function ParticipantDetails({
++  onNext,
++  onBack,
++  className,
++}: ParticipantDetailsProps) {
+   const [loading, setLoading] = useState(false);
+ 
+-  const addParticipant = () => {
+-    const newParticipant: ParticipantData = {
+-      id: Date.now().toString(),
+-      firstName: "",
+-      lastName: "",
+-      phoneNumber: "",
+-      gender: "",
+-      dateOfBirth: { year: "", month: "", day: "" },
+-      nationality: "",
+-      eventCategory: "",
+-      tshirtSize: "",
+-      emergencyContact: "",
+-      merchandiseCenter: "",
+-    };
+-    setParticipants([...participants, newParticipant]);
++  const initialValues: FormValues = {
++    participants: [createEmptyParticipant()],
+   };
+ 
+-  const removeParticipant = (id: string) => {
+-    if (participants.length > 1) {
+-      setParticipants(participants.filter(p => p.id !== id));
+-      setErrors(prev => {
+-        const newErrors = { ...prev };
+-        delete newErrors[id];
+-        return newErrors;
+-      });
+-    }
+-  };
+-
+-  const updateParticipant = (id: string, field: string, value: string) => {
+-    setParticipants(prev =>
+-      prev.map(participant =>
+-        participant.id === id
+-          ? { ...participant, [field]: value }
+-          : participant
+-      )
+-    );
+-
+-    // Clear errors for this field
+-    if (errors[id]?.[field]) {
+-      setErrors(prev => {
+-        const newErrors = { ...prev };
+-        if (newErrors[id]) {
+-          const updatedParticipantErrors = { ...newErrors[id] };
+-          delete updatedParticipantErrors[field];
+-          newErrors[id] = updatedParticipantErrors;
+-        }
+-        return newErrors;
+-      });
+-    }
++  const handleSubmit = async (values: FormValues) => {
++    setLoading(true);
++    await new Promise((resolve) => setTimeout(resolve, 1000));
++    setLoading(false);
++    onNext(values.participants);
+   };
+ 
+-  const updateDateOfBirth = (id: string, field: string, value: string) => {
+-    setParticipants(prev =>
+-      prev.map(participant =>
+-        participant.id === id
+-          ? {
+-              ...participant,
+-              dateOfBirth: { ...participant.dateOfBirth, [field]: value },
+-            }
+-          : participant
+-      )
+-    );
++  const getFieldError = (
++    formik: FormikProps<FormValues>,
++    participantIndex: number,
++    fieldName: keyof ParticipantData
++  ): string | undefined => {
++    // const fieldPath = `participants.${participantIndex}.${fieldName}`;
++    const isTouched = formik.touched.participants?.[participantIndex]?.[fieldName];
++    const participantErrors = formik.errors.participants?.[participantIndex];
++    const error = participantErrors && typeof participantErrors === 'object' 
++      ? (participantErrors as Record<string, string>)[fieldName] as string
++      : undefined;
++    
++    return isTouched && error ? error : undefined;
+   };
+ 
+-  const validateParticipants = () => {
+-    const newErrors: Record<string, Record<string, string>> = {};
+-    let isValid = true;
+-
+-    participants.forEach(participant => {
+-      const participantErrors: Record<string, string> = {};
+-
+-      if (!participant.firstName.trim()) {
+-        participantErrors.firstName = "First name is required";
+-      }
+-      if (!participant.lastName.trim()) {
+-        participantErrors.lastName = "Last name is required";
+-      }
+-      if (!participant.phoneNumber.trim()) {
+-        participantErrors.phoneNumber = "Phone number is required";
+-      }
+-      if (!participant.gender) {
+-        participantErrors.gender = "Gender is required";
+-      }
+-      if (!participant.nationality.trim()) {
+-        participantErrors.nationality = "Nationality is required";
+-      }
+-      if (!participant.eventCategory) {
+-        participantErrors.eventCategory = "Event category is required";
+-      }
+-      if (!participant.tshirtSize) {
+-        participantErrors.tshirtSize = "T-shirt size is required";
+-      }
+-      if (!participant.emergencyContact.trim()) {
+-        participantErrors.emergencyContact = "Emergency contact is required";
+-      }
+-      if (!participant.merchandiseCenter) {
+-        participantErrors.merchandiseCenter = "Collection center is required";
+-      }
+-
+-      if (Object.keys(participantErrors).length > 0) {
+-        newErrors[participant.id] = participantErrors;
+-        isValid = false;
+-      }
+-    });
+-
+-    setErrors(newErrors);
+-    return isValid;
+-  };
+-
+-  const handleSubmit = async (e: React.FormEvent) => {
+-    e.preventDefault();
+-
+-    if (!validateParticipants()) {
+-      return;
+-    }
+-
+-    setLoading(true);
+-    await new Promise(resolve => setTimeout(resolve, 1000));
+-    setLoading(false);
+-    
+-    onNext(participants);
++  const handleFieldChange = (
++    formik: FormikProps<FormValues>,
++    participantIndex: number,
++    fieldName: keyof ParticipantData,
++    value: string | Date | undefined
++  ) => {
++    formik.setFieldValue(`participants.${participantIndex}.${fieldName}`, value);
++    formik.setFieldTouched(`participants.${participantIndex}.${fieldName}`, true);
+   };
+ 
+   return (
+@@ -222,222 +177,234 @@ export function ParticipantDetails({ onNext, onBack, className }: ParticipantDet
+         </p>
+       </div>
+ 
+-      <form onSubmit={handleSubmit} className="space-y-6">
+-        {participants.map((participant, index) => (
+-          <Card key={participant.id} className="overflow-hidden animate-scale-in">
+-            <CardHeader className="bg-marathon-gray-light/50 border-b">
+-              <div className="flex items-center justify-between">
+-                <CardTitle className="text-lg">
+-                  Participant {index + 1}
+-                </CardTitle>
+-                {participants.length > 1 && (
+-                  <MarathonButton
+-                    variant="outline"
+-                    size="sm"
+-                    type="button"
+-                    onClick={() => removeParticipant(participant.id)}
+-                    className="text-destructive border-destructive hover:bg-destructive"
+-                  >
+-                    <Trash2 className="h-4 w-4" />
+-                  </MarathonButton>
+-                )}
+-              </div>
+-            </CardHeader>
+-
+-            <CardContent className="p-6">
+-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+-                {/* Name Fields */}
+-                <FormInput
+-                  label="First Name"
+-                  placeholder="Enter your first name"
+-                  required
+-                  value={participant.firstName}
+-                  onChange={(e) => updateParticipant(participant.id, "firstName", e.target.value)}
+-                  error={errors[participant.id]?.firstName}
+-                />
+-
+-                <FormInput
+-                  label="Last Name"
+-                  placeholder="Enter your last name"
+-                  required
+-                  value={participant.lastName}
+-                  onChange={(e) => updateParticipant(participant.id, "lastName", e.target.value)}
+-                  error={errors[participant.id]?.lastName}
+-                />
+-
+-                {/* Phone and Gender */}
+-                <div className="grid grid-cols-3 gap-2">
+-                  <FormInput
+-                    label="Phone Number"
+-                    value="+255"
+-                    readOnly
+-                    className="bg-marathon-gray-light col-span-1"
+-                  />
+-                  <FormInput
+-                    label="&nbsp;"
+-                    placeholder="Phone number"
+-                    required
+-                    value={participant.phoneNumber}
+-                    onChange={(e) => updateParticipant(participant.id, "phoneNumber", e.target.value)}
+-                    error={errors[participant.id]?.phoneNumber}
+-                    className="col-span-2"
+-                  />
+-                </div>
+-
+-                <FormSelect
+-                  label="Gender"
+-                  placeholder="Select your gender"
+-                  required
+-                  options={genderOptions}
+-                  value={participant.gender}
+-                  onValueChange={(value) => updateParticipant(participant.id, "gender", value)}
+-                  error={errors[participant.id]?.gender}
+-                />
+-
+-                {/* Date of Birth */}
+-                <div className="md:col-span-2">
+-                  <label className="text-sm font-medium text-foreground mb-2 block">
+-                    Date of birth <span className="text-destructive">*</span>
+-                  </label>
+-                  <div className="grid grid-cols-3 gap-2">
+-                    <FormInput
+-                      placeholder="Year"
+-                      value={participant.dateOfBirth.year}
+-                      onChange={(e) => updateDateOfBirth(participant.id, "year", e.target.value)}
+-                    />
+-                    <FormInput
+-                      placeholder="Month"
+-                      value={participant.dateOfBirth.month}
+-                      onChange={(e) => updateDateOfBirth(participant.id, "month", e.target.value)}
+-                    />
+-                    <FormInput
+-                      placeholder="Day"
+-                      value={participant.dateOfBirth.day}
+-                      onChange={(e) => updateDateOfBirth(participant.id, "day", e.target.value)}
+-                    />
++      <Formik
++        initialValues={initialValues}
++        validationSchema={validationSchema}
++        onSubmit={handleSubmit}
++        enableReinitialize
++      >
++        {(formik) => (
++          <Form className="space-y-6">
++            <FieldArray name="participants">
++              {({ push, remove }) => (
++                <>
++                  {formik.values.participants.map((participant, index) => (
++                    <Card
++                      key={participant.id}
++                      className="overflow-hidden animate-scale-in"
++                    >
++                      <CardHeader className="bg-marathon-gray-light/50 border-b">
++                        <div className="flex items-center justify-between">
++                          <CardTitle className="text-lg">
++                            Participant {index + 1}
++                          </CardTitle>
++                          {formik.values.participants.length > 1 && (
++                            <MarathonButton
++                              variant="outline"
++                              size="sm"
++                              type="button"
++                              onClick={() => remove(index)}
++                              className="text-destructive border-destructive hover:bg-destructive"
++                            >
++                              <Trash2 className="h-4 w-4" />
++                            </MarathonButton>
++                          )}
++                        </div>
++                      </CardHeader>
++
++                      <CardContent className="p-6">
++                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
++                          {/* Name Fields */}
++                          <FormInput
++                            label="First Name"
++                            placeholder="Enter your first name"
++                            required
++                            value={participant.firstName}
++                            onChange={(e) =>
++                              handleFieldChange(formik, index, "firstName", e.target.value)
++                            }
++                            onBlur={() => formik.setFieldTouched(`participants.${index}.firstName`, true)}
++                            error={getFieldError(formik, index, "firstName")}
++                          />
++
++                          <FormInput
++                            label="Last Name"
++                            placeholder="Enter your last name"
++                            required
++                            value={participant.lastName}
++                            onChange={(e) =>
++                              handleFieldChange(formik, index, "lastName", e.target.value)
++                            }
++                            onBlur={() => formik.setFieldTouched(`participants.${index}.lastName`, true)}
++                            error={getFieldError(formik, index, "lastName")}
++                          />
++
++                          {/* Phone and Gender */}
++                          <div className="">
++                            <PhoneNumberInput
++                              label="Phone Number"
++                              placeholder="Enter Phone Number"
++                              required={true}
++                              value={participant.phoneNumber}
++                              onChange={(phone: string) =>
++                                handleFieldChange(formik, index, "phoneNumber", phone)
++                              }
++                              error={getFieldError(formik, index, "phoneNumber")}
++                            />
++                          </div>
++
++                          <FormSelect
++                            label="Gender"
++                            placeholder="Select your gender"
++                            required
++                            options={genderOptions}
++                            value={participant.gender}
++                            onValueChange={(value) =>
++                              handleFieldChange(formik, index, "gender", value)
++                            }
++                            error={getFieldError(formik, index, "gender")}
++                          />
++
++                          {/* Date of Birth */}
++                          <div className="">
++                            <FormDatePicker
++                              label="Date of Birth"
++                              required={true}
++                              value={dateToCalendarDate(participant.dateOfBirth)}
++                              onChange={(dateValue) => {
++                                const jsDate = dateValueToDate(dateValue);
++                                handleFieldChange(formik, index, "dateOfBirth", jsDate);
++                              }}
++                              error={getFieldError(formik, index, "dateOfBirth")}
++                              maxValue={today(getLocalTimeZone())}
++                              className="w-full"
++                              id="dateOfBirth"
++                            />
++                          </div>
++
++                          {/* Nationality and Category */}
++                          <FormSelect
++                            label="Nationality"
++                            placeholder="Select Nationality"
++                            required
++                            options={nationalityOptions}
++                            value={participant.nationality}
++                            onValueChange={(value) =>
++                              handleFieldChange(formik, index, "nationality", value)
++                            }
++                            error={getFieldError(formik, index, "nationality")}
++                          />
++
++                          <FormSelect
++                            label="Event Category"
++                            placeholder="Select category"
++                            required
++                            options={categoryOptions}
++                            value={participant.eventCategory}
++                            onValueChange={(value) =>
++                              handleFieldChange(formik, index, "eventCategory", value)
++                            }
++                            error={getFieldError(formik, index, "eventCategory")}
++                          />
++
++                          {/* T-shirt Size */}
++                          <FormSelect
++                            label="T-shirt Size"
++                            placeholder="Select size"
++                            required
++                            options={sizeOptions}
++                            value={participant.tshirtSize}
++                            onValueChange={(value) =>
++                              handleFieldChange(formik, index, "tshirtSize", value)
++                            }
++                            error={getFieldError(formik, index, "tshirtSize")}
++                          />
++
++                          {/* Emergency Contact */}
++                          <div className="">
++                            <PhoneNumberInput
++                              label="Emergency contact number"
++                              placeholder="Enter Emergency contact number"
++                              required={true}
++                              value={participant.emergencyContact}
++                              onChange={(phone: string) =>
++                                handleFieldChange(formik, index, "emergencyContact", phone)
++                              }
++                              error={getFieldError(formik, index, "emergencyContact")}
++                            />
++                          </div>
++
++                          {/* Collection Center */}
++                          <FormSelect
++                            label="Merchandise Collection Center"
++                            placeholder="Select Collection Center"
++                            required
++                            options={centerOptions}
++                            value={participant.merchandiseCenter}
++                            onValueChange={(value) =>
++                              handleFieldChange(formik, index, "merchandiseCenter", value)
++                            }
++                            error={getFieldError(formik, index, "merchandiseCenter")}
++                          />
++                        </div>
++                      </CardContent>
++                    </Card>
++                  ))}
++
++                  {/* Add Participant Button */}
++                  <div className="flex justify-center">
++                    <Button
++                      variant="outline"
++                      type="button"
++                      onClick={() => push(createEmptyParticipant())}
++                      className="gap-2"
++                    >
++                      <Plus className="h-4 w-4" />
++                      Add Another Participant
++                    </Button>
+                   </div>
++                </>
++              )}
++            </FieldArray>
++
++            {/* Added Participants Summary */}
++            <Card className="bg-marathon-blue-light border-marathon-blue/20">
++              <CardHeader>
++                <CardTitle className="text-lg text-marathon-blue">
++                  Added Participants ({formik.values.participants.length})
++                </CardTitle>
++              </CardHeader>
++              <CardContent>
++                <div className="space-y-2">
++                  {formik.values.participants.map((participant, index) => (
++                    <div
++                      key={participant.id}
++                      className="flex items-center justify-between py-2 border-b border-marathon-blue/10 last:border-0"
++                    >
++                      <span className="text-sm text-marathon-blue">
++                        Participant {index + 1}:{" "}
++                        {participant.firstName || "Not entered"}{" "}
++                        {participant.lastName || ""}
++                      </span>
++                    </div>
++                  ))}
+                 </div>
+-
+-                {/* Nationality and Category */}
+-                <FormSelect
+-                  label="Nationality"
+-                  placeholder="Select Nationality"
+-                  required
+-                  options={nationalityOptions}
+-                  value={participant.nationality}
+-                  onValueChange={(value) => updateParticipant(participant.id, "nationality", value)}
+-                  error={errors[participant.id]?.nationality}
+-                />
+-
+-                <FormSelect
+-                  label="Event Category"
+-                  placeholder="Select category"
+-                  required
+-                  options={categoryOptions}
+-                  value={participant.eventCategory}
+-                  onValueChange={(value) => updateParticipant(participant.id, "eventCategory", value)}
+-                  error={errors[participant.id]?.eventCategory}
+-                />
+-
+-                {/* T-shirt Size */}
+-                <FormSelect
+-                  label="T-shirt Size"
+-                  placeholder="Select size"
+-                  required
+-                  options={sizeOptions}
+-                  value={participant.tshirtSize}
+-                  onValueChange={(value) => updateParticipant(participant.id, "tshirtSize", value)}
+-                  error={errors[participant.id]?.tshirtSize}
+-                />
+-
+-                {/* Emergency Contact */}
+-                <div className="grid grid-cols-3 gap-2">
+-                  <FormInput
+-                    label="Emergency Contact"
+-                    value="+255"
+-                    readOnly
+-                    className="bg-marathon-gray-light col-span-1"
+-                  />
+-                  <FormInput
+-                    label="&nbsp;"
+-                    placeholder="Emergency contact number"
+-                    required
+-                    value={participant.emergencyContact}
+-                    onChange={(e) => updateParticipant(participant.id, "emergencyContact", e.target.value)}
+-                    error={errors[participant.id]?.emergencyContact}
+-                    className="col-span-2"
+-                  />
+-                </div>
+-
+-                {/* Collection Center */}
+-                <FormSelect
+-                  label="Merchandise Collection Center"
+-                  placeholder="Select Collection Center"
+-                  required
+-                  options={centerOptions}
+-                  value={participant.merchandiseCenter}
+-                  onValueChange={(value) => updateParticipant(participant.id, "merchandiseCenter", value)}
+-                  error={errors[participant.id]?.merchandiseCenter}
+-                />
+-              </div>
+-            </CardContent>
+-          </Card>
+-        ))}
+-
+-        {/* Add Participant Button */}
+-        <div className="flex justify-center">
+-          <Button
+-            variant="outline"
+-            type="button"
+-            onClick={addParticipant}
+-            className="gap-2"
+-          >
+-            <Plus className="h-4 w-4" />
+-            Add Another Participant
+-          </Button>
+-        </div>
+-
+-        {/* Added Participants Summary */}
+-        <Card className="bg-marathon-blue-light border-marathon-blue/20">
+-          <CardHeader>
+-            <CardTitle className="text-lg text-marathon-blue">
+-              Added Participants ({participants.length})
+-            </CardTitle>
+-          </CardHeader>
+-          <CardContent>
+-            <div className="space-y-2">
+-              {participants.map((participant, index) => (
+-                <div key={participant.id} className="flex items-center justify-between py-2 border-b border-marathon-blue/10 last:border-0">
+-                  <span className="text-sm text-marathon-blue">
+-                    Participant {index + 1}: {participant.firstName || "Not entered"} {participant.lastName || ""}
+-                  </span>
+-                </div>
+-              ))}
++              </CardContent>
++            </Card>
++
++            {/* Form Actions */}
++            <div className="flex justify-between">
++              <Button variant="outline" type="button" onClick={onBack}>
++                Back
++              </Button>
++
++              <Button type="submit" loading={loading}>
++                Add Participant
++              </Button>
+             </div>
+-          </CardContent>
+-        </Card>
+-
+-        {/* Form Actions */}
+-        <div className="flex justify-between">
+-          <Button
+-            variant="outline"
+-            type="button"
+-            onClick={onBack}
+-       
+-          >
+-            Back
+-          </Button>
+-
+-          <Button
+-            type="submit"
+-       
+-            loading={loading}
+-          
+-          >
+-            Add Participant
+-          </Button>
+-        </div>
+-      </form>
++          </Form>
++        )}
++      </Formik>
+     </div>
+   );
+ }
+\ No newline at end of file
+diff --git a/src/components/shared/registration/RegistrationForm.tsx b/src/components/shared/registration/RegistrationForm.tsx
+index 1edb9f8..7048b37 100644
+--- a/src/components/shared/registration/RegistrationForm.tsx
++++ b/src/components/shared/registration/RegistrationForm.tsx
+@@ -14,7 +14,7 @@ interface RegistrationData {
+   lastName: string;
+   email: string;
+   phone: string;
+-  dateOfBirth: string;
++  dateOfBirth: Date | undefined; // Changed from string to Date | undefined
+   gender: string;
+   city: string;
+   zipCode: string;
+@@ -34,7 +34,7 @@ const RegistrationForm = () => {
+       lastName: "",
+       email: "",
+       phone: "",
+-      dateOfBirth: "",
++      dateOfBirth: undefined, // Changed from "" to undefined
+       gender: "",
+       city: "",
+       zipCode: "",
+@@ -85,7 +85,7 @@ const RegistrationForm = () => {
+         lastName: "",
+         email: "",
+         phone: "",
+-        dateOfBirth: "",
++        dateOfBirth: undefined, // Changed from "" to undefined
+         gender: "",
+         city: "",
+         zipCode: "",
+@@ -107,7 +107,11 @@ const RegistrationForm = () => {
+     setCategory(category);
+   };
+ 
+-  const handleInputChange = (field: keyof RegistrationData, value: string) => {
++  // Updated function signature to match RegistrationStep expectations
++  const handleInputChange = (
++    field: keyof RegistrationData,
++    value: string | Date | undefined
++  ) => {
+     setRegistrations((prev) =>
+       prev.map((reg, index) =>
+         index === currentStep - 1 ? { ...reg, [field]: value } : reg
+@@ -117,6 +121,18 @@ const RegistrationForm = () => {
+ 
+   const validateCurrentStep = () => {
+     const currentReg = registrations[currentStep - 1];
++
++    // Updated validation to handle Date | undefined for dateOfBirth
++    const isFieldValid = (field: keyof RegistrationData) => {
++      if (field === "dateOfBirth") {
++        return currentReg[field] !== undefined;
++      }
++      return (
++        typeof currentReg[field] === "string" &&
++        (currentReg[field] as string).trim() !== ""
++      );
++    };
++
+     const requiredFields: (keyof RegistrationData)[] = [
+       "firstName",
+       "lastName",
+@@ -131,7 +147,7 @@ const RegistrationForm = () => {
+       "emergencyPhone",
+     ];
+ 
+-    return requiredFields.every((field) => currentReg[field].trim() !== "");
++    return requiredFields.every(isFieldValid);
+   };
+ 
+   const handleNext = () => {
+@@ -163,6 +179,17 @@ const RegistrationForm = () => {
+     // For future steps, validate all steps up to the target
+     for (let step = 1; step < targetStep; step++) {
+       const stepData = registrations[step - 1];
++
++      const isFieldValid = (field: keyof RegistrationData) => {
++        if (field === "dateOfBirth") {
++          return stepData[field] !== undefined;
++        }
++        return (
++          typeof stepData[field] === "string" &&
++          (stepData[field] as string).trim() !== ""
++        );
++      };
++
+       const requiredFields: (keyof RegistrationData)[] = [
+         "firstName",
+         "lastName",
+@@ -177,9 +204,7 @@ const RegistrationForm = () => {
+         "emergencyPhone",
+       ];
+ 
+-      const isStepValid = requiredFields.every(
+-        (field) => stepData[field].trim() !== ""
+-      );
++      const isStepValid = requiredFields.every(isFieldValid);
+       if (!isStepValid) {
+         alert(
+           `Please complete step ${step} before proceeding to step ${targetStep}.`
+@@ -243,7 +268,7 @@ const RegistrationForm = () => {
+           </div>
+         </div>
+       </div>
+-  
++      <div></div>
+       {category === "individual" && (
+         <Card className="py-5 ">
+           <CardContent className="space-y-8">
+@@ -262,19 +287,33 @@ const RegistrationForm = () => {
+               registrationData={currentRegistration}
+               tickets={tickets}
+               onInputChange={handleInputChange}
++              formik={
++                {
++                  errors: {},
++                  touched: {},
++                  setFieldTouched: () => {},
++                } as never
++              } // Mock formik object
+             />
+ 
+             {/* Navigation Buttons */}
+-            <div className="flex justify-between items-center pt-6 border-t">
+-              <Button
+-                variant="outline"
+-                onClick={handlePrevious}
+-                disabled={currentStep === 1}
+-                className="flex items-center gap-2"
+-              >
+-                <ChevronLeft className="w-4 h-4" />
+-                Previous
+-              </Button>
++            <div
++              className={`flex  items-center pt-6 border-t
++              ${currentStep === 1 ? "justify-end" : "justify-between"}
++              
++              `}
++            >
++              {currentStep > 1 && (
++                <Button
++                  variant="outline"
++                  onClick={handlePrevious}
++                  disabled={currentStep === 1}
++                  className="flex items-center gap-2"
++                >
++                  <ChevronLeft className="w-4 h-4" />
++                  Previous
++                </Button>
++              )}
+ 
+               <div className="flex space-x-4">
+                 <Button variant="outline">Save as Draft</Button>
+diff --git a/src/components/shared/registration/RegistrationStep.tsx b/src/components/shared/registration/RegistrationStep.tsx
+index ae3163a..bc72195 100644
+--- a/src/components/shared/registration/RegistrationStep.tsx
++++ b/src/components/shared/registration/RegistrationStep.tsx
+@@ -1,13 +1,20 @@
+ import { FormInput } from "@/components/ui/form-input";
+ import TicketCard from "./TicketCard";
+ import { FormSelect } from "@/components/ui/form-select";
++import FormDatePicker, {
++  dateToCalendarDate,
++} from "@/components/ui/form-date-picker";
++import { dateValueToDate } from "@/utils/DateValueConversion";
++import { today, getLocalTimeZone } from "@internationalized/date";
++import { FormikProps } from "formik";
++import PhoneNumberInput from "@/components/ui/phone-number-input";
+ 
+-interface RegistrationData {
++export interface RegistrationData {
+   firstName: string;
+   lastName: string;
+   email: string;
+   phone: string;
+-  dateOfBirth: string;
++  dateOfBirth: Date | undefined;
+   gender: string;
+   city: string;
+   zipCode: string;
+@@ -26,7 +33,11 @@ interface RegistrationStepProps {
+     image: string;
+     description: string;
+   }>;
+-  onInputChange: (field: keyof RegistrationData, value: string) => void;
++  onInputChange: (
++    field: keyof RegistrationData,
++    value: string | Date | undefined
++  ) => void;
++  formik: FormikProps<RegistrationData>;
+ }
+ 
+ const RegistrationStep = ({
+@@ -34,7 +45,10 @@ const RegistrationStep = ({
+   registrationData,
+   tickets,
+   onInputChange,
++  formik,
+ }: RegistrationStepProps) => {
++  const { errors, touched, setFieldTouched } = formik;
++
+   return (
+     <div className="space-y-8">
+       <div className="text-center">
+@@ -58,6 +72,12 @@ const RegistrationStep = ({
+             required
+             value={registrationData.firstName}
+             onChange={(event) => onInputChange("firstName", event.target.value)}
++            onBlur={() => setFieldTouched("firstName", true)}
++            error={
++              touched.firstName && errors.firstName
++                ? String(errors.firstName)
++                : undefined
++            }
+           />
+           <FormInput
+             label="Last Name"
+@@ -65,6 +85,12 @@ const RegistrationStep = ({
+             required
+             value={registrationData.lastName}
+             onChange={(event) => onInputChange("lastName", event.target.value)}
++            onBlur={() => setFieldTouched("lastName", true)}
++            error={
++              touched.lastName && errors.lastName
++                ? String(errors.lastName)
++                : undefined
++            }
+           />
+           <FormInput
+             label="Email Address"
+@@ -73,33 +99,55 @@ const RegistrationStep = ({
+             required
+             value={registrationData.email}
+             onChange={(event) => onInputChange("email", event.target.value)}
++            onBlur={() => setFieldTouched("email", true)}
++            error={
++              touched.email && errors.email ? String(errors.email) : undefined
++            }
+           />
+-          <FormInput
++          {/* <FormInput
+             label="Phone Number"
+             placeholder="Enter phone number"
+             type="tel"
+             required
+             value={registrationData.phone}
+             onChange={(event) => onInputChange("phone", event.target.value)}
++            onBlur={() => setFieldTouched("phone", true)}
++            error={
++              touched.phone && errors.phone ? String(errors.phone) : undefined
++            }
++          /> */}
++
++          <PhoneNumberInput
++            label="Phone Number"
++            required={true}
++            value={registrationData.phone}
++            onChange={(phone: string) => onInputChange("phone", phone)}
++            placeholder="Enter your phone number"
++            error={
++              touched.phone && errors.phone ? String(errors.phone) : undefined
++            }
+           />
+-          <FormInput
++
++          <FormDatePicker
+             label="Date of Birth"
+-            placeholder="MM/DD/YYYY"
+-            required
+-            value={registrationData.dateOfBirth}
+-            onChange={(event) =>
+-              onInputChange("dateOfBirth", event.target.value)
++            required={true}
++            value={dateToCalendarDate(registrationData.dateOfBirth)}
++            onChange={(dateValue) => {
++              const jsDate = dateValueToDate(dateValue);
++              onInputChange("dateOfBirth", jsDate);
++            }}
++            onBlur={() => formik.setFieldTouched("dateOfBirth", true)}
++            error={
++              formik.touched.dateOfBirth && formik.errors.dateOfBirth
++                ? String(formik.errors.dateOfBirth)
++                : undefined
+             }
++            maxValue={today(getLocalTimeZone())}
++            // description="Select your date of birth"
++            className="w-full"
++            id="dateOfBirth"
+           />
+-          {/* <FormField
+-            label="Gender"
+-            placeholder="Select gender"
+-            type="select"
+-            options={["Male", "Female", "Other"]}
+-            required
+-            value={registrationData.gender}
+-            onChange={(event) => onInputChange("gender", e.target.value)}
+-          /> */}
++
+           <FormSelect
+             label="Gender"
+             options={[
+@@ -109,6 +157,12 @@ const RegistrationStep = ({
+             required={true}
+             value={registrationData.gender}
+             onValueChange={(value: string) => onInputChange("gender", value)}
++            // onBlur={() => setFieldTouched("gender", true)}
++            error={
++              touched.gender && errors.gender
++                ? String(errors.gender)
++                : undefined
++            }
+           />
+         </div>
+       </div>
+@@ -142,14 +196,23 @@ const RegistrationStep = ({
+             required
+             value={registrationData.city}
+             onChange={(event) => onInputChange("city", event.target.value)}
++            onBlur={() => setFieldTouched("city", true)}
++            error={
++              touched.city && errors.city ? String(errors.city) : undefined
++            }
+           />
+ 
+           <FormInput
+             label="Zip Code"
+             placeholder="Enter zip code"
+-            required
+             value={registrationData.zipCode}
+             onChange={(event) => onInputChange("zipCode", event.target.value)}
++            onBlur={() => setFieldTouched("zipCode", true)}
++            error={
++              touched.zipCode && errors.zipCode
++                ? String(errors.zipCode)
++                : undefined
++            }
+           />
+         </div>
+       </div>
+@@ -168,15 +231,24 @@ const RegistrationStep = ({
+             onChange={(event) =>
+               onInputChange("emergencyContact", event.target.value)
+             }
++            onBlur={() => setFieldTouched("emergencyContact", true)}
++            error={
++              touched.emergencyContact && errors.emergencyContact
++                ? String(errors.emergencyContact)
++                : undefined
++            }
+           />
+-          <FormInput
++
++          <PhoneNumberInput
+             label="Emergency Phone"
+             placeholder="Enter emergency contact phone"
+-            type="tel"
+-            required
++            required={true}
+             value={registrationData.emergencyPhone}
+-            onChange={(event) =>
+-              onInputChange("emergencyPhone", event.target.value)
++            onChange={(phone: string) => onInputChange("emergencyPhone", phone)}
++            error={
++              touched.emergencyPhone && errors.emergencyPhone
++                ? String(errors.emergencyPhone)
++                : undefined
+             }
+           />
+         </div>
+diff --git a/src/data/DashboardRoutes.ts b/src/data/DashboardRoutes.ts
+index bcb68b3..40f231b 100644
+--- a/src/data/DashboardRoutes.ts
++++ b/src/data/DashboardRoutes.ts
+@@ -30,6 +30,16 @@ export const dashboardRoutes: NavigationItemData[] = [
+     iconName: "Contact",
+     href: "/dashboard/profile",
+   },
++  {
++    label: "Feedback",
++    iconName: "MessagesSquare",
++    href: "/dashboard/feedback",
++  },
++  {
++    label: "Insurance",
++    iconName: "Shield",
++    href: "/dashboard/insurance",
++  },
+   {
+     label: "Events",
+     iconName: "CalendarDays",
+diff --git a/tsconfig.json b/tsconfig.json
+index 5fabbce..ec7e174 100644
+--- a/tsconfig.json
++++ b/tsconfig.json
+@@ -22,6 +22,12 @@
+       "@/*": ["./src/*"]
+     }
+   },
+-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "src/app/(Pages)/(Landing)/events/[id]/registration"],
++  "include": [
++    "next-env.d.ts",
++    "**/*.ts",
++    "**/*.tsx",
++    ".next/types/**/*.ts",
++    "src/app/(Pages)/(Landing)/events/[id]/registration"
++  ],
+   "exclude": ["node_modules"]
+ }
