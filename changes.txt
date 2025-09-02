@@ -1,1 +1,387 @@
 
+diff --git a/src/app/(PageSections)/Auth/LoginPageSection.tsx b/src/app/(PageSections)/Auth/LoginPageSection.tsx
+index 1a2f334..320f6b6 100644
+--- a/src/app/(PageSections)/Auth/LoginPageSection.tsx
++++ b/src/app/(PageSections)/Auth/LoginPageSection.tsx
+@@ -41,7 +41,7 @@ function LoginPageSection() {
+   };
+ 
+   return (
+-    <div className="w-full space-y-6">
++    <div className="w-full space-y-6 bg-white rounded-lg px-10 pb-7 shadow">
+       {/* Logo Section */}
+       <div className="flex justify-center items-center">
+         <Image
+diff --git a/src/app/(PageSections)/Auth/SignupPageSection.tsx b/src/app/(PageSections)/Auth/SignupPageSection.tsx
+index 24953b4..d0974e4 100644
+--- a/src/app/(PageSections)/Auth/SignupPageSection.tsx
++++ b/src/app/(PageSections)/Auth/SignupPageSection.tsx
+@@ -106,7 +106,7 @@ function SignupPageSection() {
+   };
+ 
+   return (
+-    <div className="w-full space-y-6">
++    <div className="w-full space-y-6  bg-white rounded-lg px-10 pb-7 shadow" >
+       {/* Logo Section */}
+       <div className="flex justify-center items-center">
+         <Image
+diff --git a/src/app/(PageSections)/Dashboard/EventPageSection/EventPageSection.tsx b/src/app/(PageSections)/Dashboard/EventPageSection/EventPageSection.tsx
+index 298853f..032bcf5 100644
+--- a/src/app/(PageSections)/Dashboard/EventPageSection/EventPageSection.tsx
++++ b/src/app/(PageSections)/Dashboard/EventPageSection/EventPageSection.tsx
+@@ -1,5 +1,6 @@
+ import DetailedCard from "@/components/shared/Card/DetailedCard";
+ import React from "react";
++import EventFiltering from "./components/EventFiltering";
+ 
+ function EventPageSection() {
+   const events = [
+@@ -46,12 +47,17 @@ function EventPageSection() {
+     },
+   ];
+   return (
+-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 mb-8">
+-      {events.map((event, index) => (
+-        <div key={index}>
+-          <DetailedCard {...event} />
+-        </div>
+-      ))}
++    <div className="space-y-8">
++      <div>
++        <EventFiltering />
++      </div>
++      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 mb-8">
++        {events.map((event, index) => (
++          <div key={index}>
++            <DetailedCard {...event} />
++          </div>
++        ))}
++      </div>
+     </div>
+   );
+ }
+diff --git a/src/app/(Pages)/auth/layout.tsx b/src/app/(Pages)/auth/layout.tsx
+index e03fb7d..acd1521 100644
+--- a/src/app/(Pages)/auth/layout.tsx
++++ b/src/app/(Pages)/auth/layout.tsx
+@@ -2,37 +2,63 @@ import React from "react";
+ 
+ function layout({ children }: { children: React.ReactNode }) {
+   return (
+-    <div className="min-h-screen flex flex-col lg:flex-row items-center justify-center">
+-      {/* Left Side - Hero Section */}
+-      <div
+-        className="w-full hidden lg:w-1/2 min-h-[40vh] lg:min-h-screen lg:flex flex-col items-center justify-center text-white relative"
+-        style={{
+-          backgroundImage:
+-            "linear-gradient(-225deg, rgba(221, 10, 20, 0.3), rgba(33, 58, 137, 0.9)), url(/images/marathon-hero.png)",
+-          backgroundSize: "cover",
+-          backgroundPosition: "center",
+-          backgroundRepeat: "no-repeat",
+-        }}
+-      >
+-        <div className="px-6 sm:px-8 md:px-10 lg:px-12 xl:px-16 text-center ">
+-          <h1 className="heading-1 text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold mb-4 leading-tight">
+-            Your Gateway to Events
+-          </h1>
+-          <p className="body-medium text-sm sm:text-base md:text-lg opacity-90 leading-relaxed">
+-            Sign in or create an account to manage your events, register as a
+-            participant, and stay connected with upcoming activities.
+-          </p>
+-        </div>
+-      </div>
++    // <div className="min-h-screen flex flex-col lg:flex-row items-center justify-center">
++    //   {/* Left Side - Hero Section */}
++    //   <div
++    //     className="w-full hidden lg:w-1/2 min-h-[40vh] lg:min-h-screen lg:flex flex-col items-center justify-center text-white relative"
++    //     style={{
++    //       backgroundImage:
++    //         "linear-gradient(-225deg, rgba(221, 10, 20, 0.3), rgba(33, 58, 137, 0.9)), url(/images/marathon-hero.png)",
++    //       backgroundSize: "cover",
++    //       backgroundPosition: "center",
++    //       backgroundRepeat: "no-repeat",
++    //     }}
++    //   >
++    //     <div className="px-6 sm:px-8 md:px-10 lg:px-12 xl:px-16 text-center ">
++    //       <h1 className="heading-1 text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold mb-4 leading-tight">
++    //         Your Gateway to Events
++    //       </h1>
++    //       <p className="body-medium text-sm sm:text-base md:text-lg opacity-90 leading-relaxed">
++    //         Sign in or create an account to manage your events, register as a
++    //         participant, and stay connected with upcoming activities.
++    //       </p>
++    //     </div>
++    //   </div>
++
++    //   {/* Right Side - Form Section */}
++    //   <div className="w-full lg:w-1/2 flex items-center justify-center bg-white min-h-[60vh] lg:min-h-screen">
++    //     <div className="w-full max-w-2xl px-6 sm:px-8 py-8 lg:py-12">
++    //       {children}
++    //     </div>
++    //   </div>
++    // </div>
+ 
+-      {/* Right Side - Form Section */}
+-      <div className="w-full lg:w-1/2 flex items-center justify-center bg-white min-h-[60vh] lg:min-h-screen">
+-        <div className="w-full max-w-2xl px-6 sm:px-8 py-8 lg:py-12">
+-          {children}
++    <div
++      className="min-h-screen m-w-screen "
++      style={{
++        backgroundImage:
++          "linear-gradient(-225deg, rgba(221, 10, 20, 0.3), rgba(33, 58, 137, 0.9)), url(/images/marathon-hero.png)",
++        backgroundSize: "cover",
++        backgroundPosition: "center",
++        backgroundRepeat: "no-repeat",
++      }}
++    >
++      <div className="flex justify-center items-center  min-h-screen gap-5 px-10">
++        <div className="text-white w-full">
++          <div className="text-center ">
++            <h1 className="heading-1 text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold mb-4 leading-tight">
++              Your Gateway to Events
++            </h1>
++            <p className="body-medium text-sm sm:text-base md:text-lg opacity-90 leading-relaxed">
++              Sign in or create an account to manage your events, register as a
++              participant, and stay connected with upcoming activities.
++            </p>
++          </div>
+         </div>
++        <div className="w-1/2 ">{children}</div>
+       </div>
+     </div>
+   );
+ }
+ 
+-export default layout;
+\ No newline at end of file
++export default layout;
+diff --git a/src/app/(Pages)/dashboard/DashboardClientLayout.tsx b/src/app/(Pages)/dashboard/DashboardClientLayout.tsx
+index 5fa39f4..0d74cb4 100644
+--- a/src/app/(Pages)/dashboard/DashboardClientLayout.tsx
++++ b/src/app/(Pages)/dashboard/DashboardClientLayout.tsx
+@@ -4,7 +4,9 @@ import Sidebar from "@/components/layout/Sidebar";
+ import { Button } from "@/components/ui/button";
+ import { FormInput } from "@/components/ui/form-input";
+ import { NavigationItemData } from "@/data/DashboardRoutes";
++import { useAuth } from "@/hooks/use-auth";
+ import { Bell, Menu, MessageSquareMore, Search, User } from "lucide-react";
++import Image from "next/image";
+ import { useState } from "react";
+ 
+ interface DashboardClientProps {
+@@ -18,6 +20,8 @@ export default function DashboardClientLayout({
+ }: DashboardClientProps) {
+   const [isCollapsed, setIsCollapsed] = useState(false);
+ 
++  const { user } = useAuth();
++
+   const toggleCollapsed = () => {
+     setIsCollapsed(!isCollapsed);
+   };
+@@ -43,7 +47,7 @@ export default function DashboardClientLayout({
+         }}
+       />
+       <main className="flex flex-col flex-1 min-w-0 overflow-hidden">
+-        <div className="border-b p-4 sticky top-0 z-[9999999] bg-white flex items-center gap-3 " >
++        <div className="border-b p-4 sticky top-0 z-[9999999] bg-white flex items-center gap-3 ">
+           <Button
+             variant="ghost"
+             className="hidden lg:flex h-8 w-8 p-0 shrink-0"
+@@ -52,56 +56,67 @@ export default function DashboardClientLayout({
+             <Menu className="w-4 h-4" />
+           </Button>
+ 
+-
+-
+-
+           <div className="flex justify-between  w-full items-center">
+-          <div>
+-            {/* Search area  */}
+-            <div className="">
+-              <FormInput
+-                type="search"
+-                placeholder="Search..."
+-                className="w-full"
+-                leftIcon={<Search className="h-4 w-4 text-gray-500" />}
+-              />
+-            </div>
+-          </div>
+-          <div className="">
+-            <div className="flex items-center space-x-4">
+-              <div>
+-                <Button className="w-8 h-8" variant="outline" size="icon">
+-                  <MessageSquareMore />
+-                </Button>
+-              </div>
+-              <div>
+-                <Button  className="w-8 h-8" variant="outline" size="icon">
+-                  <Bell />
+-                </Button>
++            <div>
++              {/* Search area  */}
++              <div className="">
++                <FormInput
++                  type="search"
++                  placeholder="Search..."
++                  className="w-full"
++                  leftIcon={<Search className="h-4 w-4 text-gray-500" />}
++                />
+               </div>
+-              <div>
+-                <div className="flex space-x-1">
+-                  <div>
+-                    <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center p-2 text-nbc-dark-950">
+-                      <User className="w-5 h-5" />
++            </div>
++            <div className="">
++              <div className="flex items-center space-x-4">
++                <div>
++                  <Button className="w-8 h-8" variant="outline" size="icon">
++                    <MessageSquareMore />
++                  </Button>
++                </div>
++                <div>
++                  <Button className="w-8 h-8" variant="outline" size="icon">
++                    <Bell />
++                  </Button>
++                </div>
++                <div>
++                  <div className="flex space-x-1">
++                    <div>
++                      <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center p-2 text-nbc-dark-950">
++                        {user?.avatar ? (
++                          <>
++                          <Image
++                            src={user?.avatar}
++                            alt="User Avatar"
++                            width={40}
++                            height={40}
++                            className="w-6 h-6 rounded-full object-cover"
++                          />
++                          
++                          
++                          </>
++                        ) : (
++                          <>
++                            <User className="w-5 h-5" />
++                          </>
++                        )}
++                      </div>
++                    </div>
++                    <div className="text-xs mt-1">
++                      <p className="font-[600]">
++                        {user?.firstName + " " + user?.lastName}
++                      </p>
++                      <p>{user?.email}</p>
+                     </div>
+-                  </div>
+-                  <div className="text-xs mt-1">
+-                    <p className="font-[600]">John Deo</p>
+-                    <p>john@gmail.com</p>
+                   </div>
+                 </div>
+               </div>
+             </div>
+           </div>
+         </div>
+-
+-
+-        </div>
+-        <div className="flex-1 px-7 py-5 overflow-y-auto">
+-          {children}
+-        </div>
++        <div className="flex-1 px-7 py-5 overflow-y-auto">{children}</div>
+       </main>
+     </div>
+   );
+-}
+\ No newline at end of file
++}
+diff --git a/src/components/guards/AuthGuard.tsx b/src/components/guards/AuthGuard.tsx
+index 2426134..430cd79 100644
+--- a/src/components/guards/AuthGuard.tsx
++++ b/src/components/guards/AuthGuard.tsx
+@@ -19,21 +19,20 @@ export const AuthGuard: React.FC<AuthGuardProps> = ({
+   const router = useRouter();
+   const pathname = usePathname();
+ 
+-  console.log("AuthGuard - isAuthenticated:", isAuthenticated, "isLoading:", isLoading, "pathname:", pathname);
+   useEffect(() => {
+     if (!isLoading) {
+       if (requireAuth && !isAuthenticated) {
+         // Store the attempted URL to redirect after login
+         // Only store dashboard routes, not auth routes
+-        if (pathname.startsWith('/dashboard')) {
+-          sessionStorage.setItem('redirectAfterLogin', pathname);
++        if (pathname.startsWith("/dashboard")) {
++          sessionStorage.setItem("redirectAfterLogin", pathname);
+         }
+         router.push(redirectTo);
+       } else if (!requireAuth && isAuthenticated) {
+         // If user is logged in but trying to access auth pages, redirect to dashboard
+-        const savedRedirect = sessionStorage.getItem('redirectAfterLogin');
+-        if (savedRedirect && savedRedirect.startsWith('/dashboard')) {
+-          sessionStorage.removeItem('redirectAfterLogin');
++        const savedRedirect = sessionStorage.getItem("redirectAfterLogin");
++        if (savedRedirect && savedRedirect.startsWith("/dashboard")) {
++          sessionStorage.removeItem("redirectAfterLogin");
+           router.push(savedRedirect);
+         } else {
+           router.push("/dashboard");
+@@ -62,4 +61,4 @@ export const AuthGuard: React.FC<AuthGuardProps> = ({
+   }
+ 
+   return <>{children}</>;
+-};
+\ No newline at end of file
++};
+diff --git a/src/components/layout/CustomLinks.tsx b/src/components/layout/CustomLinks.tsx
+index 80da869..830f9f8 100644
+--- a/src/components/layout/CustomLinks.tsx
++++ b/src/components/layout/CustomLinks.tsx
+@@ -44,8 +44,8 @@ const CustomLinks: React.FC<CustomLinksProp> = ({
+               <Link
+                 href={
+                   link.id === "/"
+-                    ? "/dashboard/insurance"
+-                    : `/dashboard/insurance/${link.id}`
++                    ? basePath
++                    : `${basePath}/${link.id}`
+                 }
+                 className={`capitalize py-2 transition-all ease-in duration-300 whitespace-nowrap
+                 hover:text-primary-950 hover:border-b-[2px] hover:border-primary-950
+diff --git a/src/providers/auth.provider.tsx b/src/providers/auth.provider.tsx
+index 7555e9a..d27bd4e 100644
+--- a/src/providers/auth.provider.tsx
++++ b/src/providers/auth.provider.tsx
+@@ -37,6 +37,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
+         // Optionally verify token by fetching fresh user data
+         try {
+           const freshUser = await authService.getProfile();
++         
+           setUser(freshUser);
+           localStorage.setItem("user", JSON.stringify(freshUser));
+         } catch (error) {
+diff --git a/src/services/auth.service.ts b/src/services/auth.service.ts
+index 0d5a978..d3f949f 100644
+--- a/src/services/auth.service.ts
++++ b/src/services/auth.service.ts
+@@ -14,7 +14,7 @@ class AuthService extends BaseApiService {
+     LOGOUT: "/auth/logout",
+     REFRESH: "/auth/refresh",
+     CHANGE_PASSWORD: "/auth/change-password",
+-    PROFILE: "authenticate",
++    PROFILE: "account",
+   };
+ 
+   async login(data: LoginDataI): Promise<{ id_token: string }> {
+@@ -91,7 +91,7 @@ class AuthService extends BaseApiService {
+   async getProfile(): Promise<UserI> {
+     try {
+       const response = await this.get(this.AUTH_ENDPOINTS.PROFILE);
+-      return response.data;
++      return response as UserI;
+     } catch (error) {
+       console.error("Get profile error:", error);
+       throw error;
