@@ -385,3 +385,472 @@ index 0d5a978..d3f949f 100644
      } catch (error) {
        console.error("Get profile error:", error);
        throw error;
+
+
+
+diff --git a/src/app/(PageSections)/Auth/SignupPageSection.tsx b/src/app/(PageSections)/Auth/SignupPageSection.tsx
+index d0974e4..721b3df 100644
+--- a/src/app/(PageSections)/Auth/SignupPageSection.tsx
++++ b/src/app/(PageSections)/Auth/SignupPageSection.tsx
+@@ -93,6 +93,8 @@ function SignupPageSection() {
+       lastName: values.lastName,
+       email: values.email,
+       password: values.password,
++      // confirmPassword: values.confirmPassword,
++      // termsAccepted: true,
+     };
+ 
+     // console.log("Form submitted:", data);
+diff --git a/src/app/(PageSections)/Landing/GuidelinesPageSection.tsx b/src/app/(PageSections)/Landing/GuidelinesPageSection.tsx
+index 7b5a71d..101b543 100644
+--- a/src/app/(PageSections)/Landing/GuidelinesPageSection.tsx
++++ b/src/app/(PageSections)/Landing/GuidelinesPageSection.tsx
+@@ -1,4 +1,3 @@
+-import Component from "@/components/comp-485";
+ import HeroSection from "@/components/shared/Hero/HeroSection";
+ import React from "react";
+ 
+diff --git a/src/app/(PageSections)/Landing/sections/EventSections/MarathonRouteSection.tsx b/src/app/(PageSections)/Landing/sections/EventSections/MarathonRouteSection.tsx
+index 15f5b65..c109eb3 100644
+--- a/src/app/(PageSections)/Landing/sections/EventSections/MarathonRouteSection.tsx
++++ b/src/app/(PageSections)/Landing/sections/EventSections/MarathonRouteSection.tsx
+@@ -1,54 +1,49 @@
+ "use client";
+ import { RouteMap } from "@/components/shared/MarathonRoutes/RouteMap";
+-import { RouteSelector } from "@/components/shared/MarathonRoutes/RouteSelector";
++import {
++  RouteI,
++  RouteSelector,
++} from "@/components/shared/MarathonRoutes/RouteSelector";
+ import { useRouteFilters } from "@/hooks/useRouteFilters";
+-import { title } from "process";
++
+ import React, { useState } from "react";
+ 
+-const routeData = [
++const routeData: RouteI[] = [
+   {
+     id: "5km",
+     distance: 5,
+     label: "5 Kilometers",
+-    difficulty: "easy",
+-    terrain: "road",
+     description: "NBC Dodoma Marathon 2025",
+-    price:"45000",
+-    duration: "short",
+-    image:"/images/ticket-1.png"
++    price: "45000",
++    image: "/images/ticket-1.png",
+   },
+   {
+     id: "10km",
+     distance: 10,
+     label: "10 Kilometers",
+-    difficulty: "moderate",
++
+     description: "NBC Dodoma Marathon 2025",
+-    terrain: "mixed",
+-    price:"45000",
+-    duration: "medium",
+-    image:"/images/ticket-2.png"
++
++    price: "45000",
++
++    image: "/images/ticket-2.png",
+   },
+   {
+     id: "21km",
+     distance: 21,
+     label: "21 Kilometers",
+-    difficulty: "challenging",
++
+     description: "NBC Dodoma Marathon 2025",
+-    terrain: "mixed",
+-    price:"45000",
+-    duration: "long",
+-    image:"/images/ticket-3.png"
++    price: "45000",
++    image: "/images/ticket-3.png",
+   },
+   {
+     id: "41km",
+     distance: 41,
+     label: "41 Kilometers",
+-    difficulty: "challenging",
+-    description: "NBC Dodoma Marathon 2025",
+-    terrain: "trail",
+-    price:"45000",
+-    image:"/images/ticket-4.png",
+-    duration: "long",
++ description: "NBC Dodoma Marathon 2025",
++    price: "45000",
++    image: "/images/ticket-4.png",
+   },
+ ];
+ 
+@@ -67,7 +62,7 @@ function MarathonRouteSection() {
+           {/* Left Sidebar */}
+           <div className="lg:col-span-1 space-y-6 overflow-y-auto">
+             <RouteSelector
+-              routes={filteredRoutes}
++              routes={filteredRoutes.filter((route): route is RouteI => route.description !== undefined)}
+               selectedRoute={selectedRoute}
+               onRouteSelect={handleRouteSelect}
+             />
+@@ -86,14 +81,14 @@ function MarathonRouteSection() {
+                     id: fallback.id,
+                     name: fallback.label,
+                     distance: fallback.distance,
+-                    terrain: fallback.terrain,
++                    // terrain: fallback.terrain,
+                   };
+                 }
+                 return {
+                   id: found.id,
+                   name: found.label,
+                   distance: found.distance,
+-                  terrain: found.terrain,
++                  // terrain: found.terrain,
+                 };
+               })()}
+               className="h-full"
+diff --git a/src/app/(PageSections)/Landing/sections/HomeSections/Parts/Faq.tsx b/src/app/(PageSections)/Landing/sections/HomeSections/Parts/Faq.tsx
+index 5cdc6fb..6294bb2 100644
+--- a/src/app/(PageSections)/Landing/sections/HomeSections/Parts/Faq.tsx
++++ b/src/app/(PageSections)/Landing/sections/HomeSections/Parts/Faq.tsx
+@@ -25,10 +25,10 @@ export interface SideTabConfig {
+ 
+ 
+ 
+-interface TabComponentProps {
+-  articles: Article[];
+-  loading: boolean;
+-}
++// interface TabComponentProps {
++//   articles: Article[];
++//   loading: boolean;
++// }
+ 
+ const tabs: SideTabConfig[] = [
+   { name: "General", component: GeneralQuestions },
+diff --git a/src/app/(Pages)/dashboard/DashboardClientLayout.tsx b/src/app/(Pages)/dashboard/DashboardClientLayout.tsx
+index 0d74cb4..0abc34a 100644
+--- a/src/app/(Pages)/dashboard/DashboardClientLayout.tsx
++++ b/src/app/(Pages)/dashboard/DashboardClientLayout.tsx
+@@ -7,7 +7,7 @@ import { NavigationItemData } from "@/data/DashboardRoutes";
+ import { useAuth } from "@/hooks/use-auth";
+ import { Bell, Menu, MessageSquareMore, Search, User } from "lucide-react";
+ import Image from "next/image";
+-import { useState } from "react";
++import { useEffect, useState } from "react";
+ 
+ interface DashboardClientProps {
+   children: React.ReactNode;
+@@ -20,7 +20,11 @@ export default function DashboardClientLayout({
+ }: DashboardClientProps) {
+   const [isCollapsed, setIsCollapsed] = useState(false);
+ 
+-  const { user } = useAuth();
++  const { user, getProfile } = useAuth();
++
++  useEffect(() => {
++    getProfile();
++  }, []);
+ 
+   const toggleCollapsed = () => {
+     setIsCollapsed(!isCollapsed);
+@@ -86,15 +90,13 @@ export default function DashboardClientLayout({
+                       <div className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center p-2 text-nbc-dark-950">
+                         {user?.avatar ? (
+                           <>
+-                          <Image
+-                            src={user?.avatar}
+-                            alt="User Avatar"
+-                            width={40}
+-                            height={40}
+-                            className="w-6 h-6 rounded-full object-cover"
+-                          />
+-                          
+-                          
++                            <Image
++                              src={user?.avatar}
++                              alt="User Avatar"
++                              width={40}
++                              height={40}
++                              className="w-6 h-6 rounded-full object-cover"
++                            />
+                           </>
+                         ) : (
+                           <>
+diff --git a/src/components/comp-485.tsx b/src/components/comp-485.tsx
+index caabb82..32865f8 100644
+--- a/src/components/comp-485.tsx
++++ b/src/components/comp-485.tsx
+@@ -720,7 +720,7 @@ export default function Component() {
+   )
+ }
+ 
+-function RowActions({ row }: { row: Row<Item> }) {
++function RowActions({  }: { row?: Row<Item> }) {
+   return (
+     <DropdownMenu>
+       <DropdownMenuTrigger asChild>
+diff --git a/src/components/shared/MarathonRoutes/RouteMap.tsx b/src/components/shared/MarathonRoutes/RouteMap.tsx
+index 73a7180..a5da638 100644
+--- a/src/components/shared/MarathonRoutes/RouteMap.tsx
++++ b/src/components/shared/MarathonRoutes/RouteMap.tsx
+@@ -7,7 +7,7 @@ interface RouteMapProps {
+     id: string;
+     name: string;
+     distance: number;
+-    terrain: string;
++    // terrain: string;
+     // Add more fields as needed based on your route data structure
+   };
+   className?: string;
+diff --git a/src/components/shared/MarathonRoutes/RouteSelector.tsx b/src/components/shared/MarathonRoutes/RouteSelector.tsx
+index 42d6848..00c42ef 100644
+--- a/src/components/shared/MarathonRoutes/RouteSelector.tsx
++++ b/src/components/shared/MarathonRoutes/RouteSelector.tsx
+@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
+ import { Badge } from "@/components/ui/badge";
+ import Image from "next/image";
+ 
+-export interface Route {
++export interface RouteI {
+   id: string;
+   distance: number;
+   label: string;
+@@ -16,7 +16,7 @@ export interface Route {
+ }
+ 
+ interface RouteSelectorProps {
+-  routes: Route[];
++  routes: RouteI[];
+   selectedRoute: string;
+   onRouteSelect: (routeId: string) => void;
+   className?: string;
+diff --git a/src/lib/api/interceptor.ts b/src/lib/api/interceptor.ts
+index 8371b32..0eea3af 100644
+--- a/src/lib/api/interceptor.ts
++++ b/src/lib/api/interceptor.ts
+@@ -64,12 +64,12 @@ export class ApiInterceptors {
+     axios.interceptors.response.use(
+       (response: AxiosResponse) => response,
+       async (error: AxiosError) => {
+-        console.log('API Error:', error);
+-        if (error.response?.status === 401) {
++      
++        if (error.response?.status === 402) {
+           this.setAuthToken(null);
+           if (typeof window !== 'undefined') {
+             localStorage.removeItem('auth_token');
+-            window.location.href = '/login';
++            window.location.href = '/auth';
+           }
+         }
+ 
+diff --git a/src/providers/auth.provider.tsx b/src/providers/auth.provider.tsx
+index d27bd4e..a690b04 100644
+--- a/src/providers/auth.provider.tsx
++++ b/src/providers/auth.provider.tsx
+@@ -15,7 +15,8 @@ import { errorMessage, successMessage } from "@/utils/notification";
+ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
+   children,
+ }) => {
+-  const [user, setUser] = useState<UserI | null>(null);
++  const [user, setUser] = useState<UserI | null >(null);
++  const [error,setError] = useState("")
+   const [token, setToken] = useState<string | null>(null);
+   const [isLoading, setIsLoading] = useState(true);
+   const router = useRouter();
+@@ -31,14 +32,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
+     //   const storedUser = authService.getStoredUser();
+       if (storedToken) {
+         setToken(storedToken);
+-        console.log("initializeAuth - storedToken:", storedToken,);
++
+         authService.setAuthToken(storedToken);
+ 
+         // Optionally verify token by fetching fresh user data
+         try {
+-          const freshUser = await authService.getProfile();
++          const freshUserResponse = await authService.getProfile();
++          // Extract user data from response.data if it exists
++          const freshUser = freshUserResponse?.data || freshUserResponse;
+          
+-          setUser(freshUser);
++          setUser(freshUser as UserI);
+           localStorage.setItem("user", JSON.stringify(freshUser));
+         } catch (error) {
+           // Token might be expired, clear auth data
+@@ -54,6 +57,21 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
+       setIsLoading(false);
+     }
+   };
++  const getProfile =async ()=>{
++    try {
++        const freshUserResponse = await authService.getProfile();
++        
++        const freshUser = freshUserResponse?.data || freshUserResponse;
++       
++        setUser(freshUser as UserI);
++        localStorage.setItem("user", JSON.stringify(freshUser));
++      } catch (error) {
++        // Token might be expired, clear auth data
++        // await logout();
++
++       console.log("Initialization of auth failed:", error);
++      }
++  }
+ 
+   const login = async (data: LoginDataI): Promise<void> => {
+     try {
+@@ -74,7 +92,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
+         router.push("/dashboard");
+       }
+     } catch (error: unknown) {
+-      errorMessage(error.message || "Login failed");
++      const message = error instanceof Error ? error.message : "Login failed";
++    
++      setError(message)
++      errorMessage(message);
+       throw error;
+     } finally {
+       setIsLoading(false);
+@@ -126,11 +147,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
+     }
+   };
+ 
+-  const refreshUser = async (): Promise<void> => {
++  const refreshUser = async () => {
+     try {
+       if (token) {
+-        const freshUser = await authService.getProfile();
+-        setUser(freshUser);
++        const freshUserResponse = await authService.getProfile();
++        // Extract user data from response.data if it exists
++        const freshUser = freshUserResponse?.data || freshUserResponse;
++        setUser(freshUser as UserI);
+         localStorage.setItem("user", JSON.stringify(freshUser));
+       }
+     } catch (error) {
+@@ -144,8 +167,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({
+     token,
+     isAuthenticated: !!token,
+     isLoading,
++    error,
+     login,
+     register,
++getProfile,
+     logout,
+     changePassword,
+     refreshUser,
+diff --git a/src/services/auth.service.ts b/src/services/auth.service.ts
+index d3f949f..446c8b8 100644
+--- a/src/services/auth.service.ts
++++ b/src/services/auth.service.ts
+@@ -88,10 +88,10 @@ class AuthService extends BaseApiService {
+     }
+   }
+ 
+-  async getProfile(): Promise<UserI> {
++  async getProfile() {
+     try {
+       const response = await this.get(this.AUTH_ENDPOINTS.PROFILE);
+-      return response as UserI;
++      return response;
+     } catch (error) {
+       console.error("Get profile error:", error);
+       throw error;
+@@ -101,7 +101,7 @@ class AuthService extends BaseApiService {
+   async refreshToken(): Promise<string> {
+     try {
+       const response = await this.post(this.AUTH_ENDPOINTS.REFRESH, {});
+-      const newToken = response.data.token;
++      const newToken = response.id_token;
+ 
+       if (newToken) {
+         this.setAuthToken(newToken);
+diff --git a/src/services/user.service.ts b/src/services/user.service.ts
+index 40221da..7540406 100644
+--- a/src/services/user.service.ts
++++ b/src/services/user.service.ts
+@@ -1,12 +1,12 @@
+ import { BaseApiService } from "@/lib/api/base-api";
+ import { ApiResponseI } from "@/types/api";
+-import { CreateUserDataI, UserI } from "@/types/user";
++import { CreateUserDataI, UpdateUserDataI, UserI } from "@/types/user";
+ 
+ class UserService extends BaseApiService {
+   private readonly endpoint = "register";
+ 
+   async getUsers(
+-    filters?: any
++    filters?: {sortBy?: string; order?: 'asc' | 'desc'; page?: number; limit?: number; search?: string}
+   ): Promise<ApiResponseI<{ users: UserI[]; total: number; pages: number }>> {
+     try {
+       return this.get(`${this.endpoint}`, { params: filters });
+@@ -34,7 +34,7 @@ class UserService extends BaseApiService {
+     }
+   }
+ 
+-  async updateUser(id: number, userData: any): Promise<ApiResponseI<UserI>> {
++  async updateUser(id: number, userData: UpdateUserDataI): Promise<ApiResponseI<UserI>> {
+     try {
+       return this.put(
+         `${this.endpoint}/${id}`,
+@@ -47,7 +47,7 @@ class UserService extends BaseApiService {
+     }
+   }
+ 
+-  async deleteUser(id: number): Promise<ApiResponseI<any> | false> {
++  async deleteUser(id: number) {
+     try {
+       return this.delete(
+         `${this.endpoint}/${id}`,
+diff --git a/src/types/auth.ts b/src/types/auth.ts
+index ee42fb8..96cc8c9 100644
+--- a/src/types/auth.ts
++++ b/src/types/auth.ts
+@@ -10,9 +10,9 @@ export interface RegisterDataI {
+   lastName: string;
+   email: string;
+   password: string;
+-  confirmPassword: string;
++  // confirmPassword: string;
+   phone?: string;
+-  termsAccepted: boolean;
++  // termsAccepted: boolean;
+ }
+ 
+ export interface ChangePasswordDataI {
+@@ -47,6 +47,8 @@ export interface AuthContextI {
+   token: string | null;
+   isAuthenticated: boolean;
+   isLoading: boolean;
++  error:string
++  getProfile:() => Promise<void>;
+   login: (data: LoginDataI) => Promise<void>;
+   register: (data: RegisterDataI) => Promise<void>;
+   logout: () => Promise<void>;
+diff --git a/src/types/user.ts b/src/types/user.ts
+index 2446487..bd9fa2c 100644
+--- a/src/types/user.ts
++++ b/src/types/user.ts
+@@ -16,6 +16,15 @@ export interface CreateUserDataI {
+   password: string;
+ }
+ 
++
++export interface UpdateUserDataI {
++  login?: string;
++  firstName?: string;
++  lastName?: string;
++  email?: string;
++  password?: string;
++}
++
+ //   export interface UpdateUserData {
+ //     name?: string;
+ //     email?: string;
