@@ -21,4 +21,4 @@
 }
 
 
-Refactoring the application's routing structure to improve modularity, adding support for OTP input functionality, enhancing modal and sidebar components, and updating API service handling.
+The user dashboard of a web application to include new insurance-related features, improve the profile management section, and make various UI and dependency updates
