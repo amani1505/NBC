@@ -1,9 +1,1 @@
-Todays work done are :-         1. Tracking Order interface ———Done         2. Role based Access control (RBAC) For the portal ————— Done         3. View Registered group  and users of the portal interface (For Admin) —————— Done         4. Sponsor and sponsor tier CRUD Operation (For Admin)     ——————— Front-end Done but connection For an API Needs clarification  with @ANDREW MALISA (NBC)         5. Start Crud Operation For Events ——- Work in progress
-        6.  Session Management issues ————— I Work in Progress
-	⁃	User when idle
-	⁃	Managing processing errors
 
-For Tomorrow  Work to be done
-         1. Continue with Event Crud Operations (UI ) - For Admin
-         2. Discount Settings Crud (UI ) —— For admin
-         3. Winners Crud (UI) ——— For Admin
