@@ -44,7 +44,7 @@ export interface MenuItem {
 export interface ActionButton {
   label: string;
   href?: string;
-  variant: "primary" | "secondary" | "ghost";
+  variant: "primary" | "secondary" | "ghost" | "outline";
   icon?: string;
   items?: { label: string; href: string }[];
 }
@@ -188,18 +188,18 @@ export const navigationData: MenuItem[] = [
               description: "Home financing solutions",
               parentCategory: "Loans",
               hasNested: true,
-              nestedItems: [
-                {
-                  label: "Fixed Rate Mortgage",
-                  href: "/personal/loans/mortgage/fixed",
-                  description: "Stable interest rates for predictable payments",
-                },
-                {
-                  label: "Variable Rate Mortgage",
-                  href: "/personal/loans/mortgage/variable",
-                  description: "Flexible rates with potential savings",
-                },
-              ],
+              // nestedItems: [
+              //   {
+              //     label: "Fixed Rate Mortgage",
+              //     href: "/personal/loans/mortgage/fixed",
+              //     description: "Stable interest rates for predictable payments",
+              //   },
+              //   {
+              //     label: "Variable Rate Mortgage",
+              //     href: "/personal/loans/mortgage/variable",
+              //     description: "Flexible rates with potential savings",
+              //   },
+              // ],
             },
             {
               label: "Home Purchase Loan",
@@ -244,48 +244,60 @@ export const navigationData: MenuItem[] = [
               href: "/personal/insurance/motor",
               description: "Complete vehicle protection coverage",
               parentCategory: "Insurance",
-              hasNested: true,
-              nestedItems: [
-                {
-                  label: "Comprehensive Coverage",
-                  href: "/personal/insurance/motor/comprehensive",
-                  description: "Full protection for your vehicle",
-                },
-                {
-                  label: "Third-Party Coverage",
-                  href: "/personal/insurance/motor/third-party",
-                  description: "Basic liability protection",
-                },
-              ],
+              // hasNested: true,
+              // nestedItems: [
+              //   {
+              //     label: "Comprehensive Coverage",
+              //     href: "/personal/insurance/motor/comprehensive",
+              //     description: "Full protection for your vehicle",
+              //   },
+              //   {
+              //     label: "Third-Party Coverage",
+              //     href: "/personal/insurance/motor/third-party",
+              //     description: "Basic liability protection",
+              //   },
+              // ],
             },
           ],
           "Ways To Bank": [
             {
-              label: "Online Banking",
+              label: "NBC Mobile Banking (*150*55#)",
               href: "/personal/ways-to-bank/online",
               description: "Bank from anywhere, anytime",
               parentCategory: "Ways To Bank",
             },
             {
-              label: "Mobile App",
+              label: "NBC App & Internet Banking",
               href: "/personal/ways-to-bank/mobile",
               description: "Banking on the go with our mobile app",
               parentCategory: "Ways To Bank",
             },
             {
-              label: "ATM Services",
+              label: "ATM Network",
               href: "/personal/ways-to-bank/atm",
               description: "24/7 ATM access nationwide",
               parentCategory: "Ways To Bank",
             },
             {
-              label: "Branch Banking",
+              label: "NBC Agent Banking",
               href: "/personal/ways-to-bank/branch",
               description: "Visit our branches for personalized service",
               parentCategory: "Ways To Bank",
             },
             {
-              label: "Phone Banking",
+              label: "SMS & E-Statement",
+              href: "/personal/ways-to-bank/phone",
+              description: "Banking services over the phone",
+              parentCategory: "Ways To Bank",
+            },
+            {
+              label: "NBC Card",
+              href: "/personal/ways-to-bank/phone",
+              description: "Banking services over the phone",
+              parentCategory: "Ways To Bank",
+            },
+            {
+              label: "NBC POS",
               href: "/personal/ways-to-bank/phone",
               description: "Banking services over the phone",
               parentCategory: "Ways To Bank",
@@ -320,7 +332,7 @@ export const navigationData: MenuItem[] = [
         ],
         thirdLevelContent: {
           Accounts: {
-            imageUrl: "/images/personal-accounts.jpg",
+            imageUrl: "/images/individual-hero.jpg",
             altText: "Personal Accounts",
             description: "Choose from our comprehensive range of personal banking accounts designed to meet your financial needs.",
             keyFeatures: [
@@ -334,7 +346,7 @@ export const navigationData: MenuItem[] = [
             buttonLink: "/personal/accounts",
           },
           Loans: {
-            imageUrl: "/images/personal-loans.jpg",
+            imageUrl: "/images/loan-hero.png",
             altText: "Personal Loans",
             description: "Flexible financing solutions to help you achieve your personal and financial goals.",
             keyFeatures: [
@@ -348,7 +360,7 @@ export const navigationData: MenuItem[] = [
             buttonLink: "/personal/loans",
           },
           Insurance: {
-            imageUrl: "/images/personal-insurance.jpg",
+            imageUrl: "/images/insurance-hero.png",
             altText: "Personal Insurance",
             description: "Comprehensive insurance solutions to protect you, your family, and your assets.",
             keyFeatures: [
@@ -362,7 +374,7 @@ export const navigationData: MenuItem[] = [
             buttonLink: "/personal/insurance",
           },
           "Ways To Bank": {
-            imageUrl: "/images/ways-to-bank.jpg",
+            imageUrl: "/images/individual-hero.jpg",
             altText: "Ways To Bank",
             description: "Multiple convenient channels to access your banking services anytime, anywhere.",
             keyFeatures: [
@@ -376,7 +388,7 @@ export const navigationData: MenuItem[] = [
             buttonLink: "/personal/ways-to-bank",
           },
           "NBC Individual Current Account": {
-            imageUrl: "/images/individual-current-account.jpg",
+            imageUrl: "/images/individual-hero.jpg",
             altText: "NBC Individual Current Account",
             description: "Our flagship individual current account with competitive benefits.",
             keyFeatures: [
@@ -1904,14 +1916,24 @@ export const actionButtons: ActionButton[] = [
     ],
   },
   {
+    label: "Internet Banking",
+    variant: "outline",
+    // icon: "User",
+    // items: [
+    //   { label: "Internet Banking", href: "/login/personal" },
+    //   { label: "Business Banking", href: "/login/business" },
+    //   { label: "Corporate Banking", href: "/login/corporate" },
+    // ],
+  },
+  {
     label: "Login",
     variant: "primary",
     icon: "User",
-    items: [
-      { label: "Personal Banking", href: "/login/personal" },
-      { label: "Business Banking", href: "/login/business" },
-      { label: "Corporate Banking", href: "/login/corporate" },
-    ],
+    // items: [
+    //   { label: "Internet Banking", href: "/login/personal" },
+    //   { label: "Business Banking", href: "/login/business" },
+    //   { label: "Corporate Banking", href: "/login/corporate" },
+    // ],
   },
 ];
 
