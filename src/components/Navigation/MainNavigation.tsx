@@ -21,8 +21,11 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useNavigation } from "@/hooks/useNavigation";
 import { useState } from "react";
-import { quickLinks, type SubMenuItem, type ThirdLevelItem } from "@/data/navigationData";
-
+import {
+  quickLinks,
+  type SubMenuItem,
+  type ThirdLevelItem,
+} from "@/data/navigationData";
 
 export default function MainNavigation() {
   const {
@@ -40,8 +43,12 @@ export default function MainNavigation() {
   } = useNavigation();
 
   const [hoveredCategory, setHoveredCategory] = useState<string | null>(null);
-  const [hoveredSubCategory, setHoveredSubCategory] = useState<string | null>(null);
-  const [expandedAccordions, setExpandedAccordions] = useState<Set<string>>(new Set());
+  const [hoveredSubCategory, setHoveredSubCategory] = useState<string | null>(
+    null
+  );
+  const [expandedAccordions, setExpandedAccordions] = useState<Set<string>>(
+    new Set()
+  );
 
   const closeAllDropdowns = () => {
     setActiveThirdLevel(null);
@@ -65,7 +72,10 @@ export default function MainNavigation() {
   };
 
   const renderIcon = (iconName: string, className = "h-4 w-4") => {
-    const icons: Record<string, React.ComponentType<React.SVGProps<SVGSVGElement>>> = {
+    const icons: Record<
+      string,
+      React.ComponentType<React.SVGProps<SVGSVGElement>>
+    > = {
       MapPin,
       Globe,
       User,
@@ -80,7 +90,9 @@ export default function MainNavigation() {
     if (!activeThirdLevel) return null;
     for (const item of navigationItems) {
       if (item.subItems) {
-        const subItem = item.subItems.find((sub) => sub.label === activeThirdLevel);
+        const subItem = item.subItems.find(
+          (sub) => sub.label === activeThirdLevel
+        );
         if (subItem?.thirdLevelItems) {
           return {
             parentItem: item,
@@ -125,30 +137,34 @@ export default function MainNavigation() {
                   {thirdLevelContent.subItem.label}
                 </h3>
                 <div className="space-y-1 overflow-y-auto max-h-[480px] pr-2 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
-                  {thirdLevelContent.items.map((item: ThirdLevelItem, idx: number) => (
-                    <div
-                      key={idx}
-                      className="relative"
-                      onMouseEnter={() => {
-                        setHoveredCategory(item.label);
-                        setHoveredSubCategory(null);
-                      }}
-                    >
-                      <Link
-                        to={item.href}
-                        onClick={closeAllDropdowns}
-                        className="group flex items-center justify-between p-3 rounded-lg hover:bg-white hover:shadow-sm transition-all duration-200 text-gray-700 hover:text-gray-900"
+                  {thirdLevelContent.items.map(
+                    (item: ThirdLevelItem, idx: number) => (
+                      <div
+                        key={idx}
+                        className="relative"
+                        onMouseEnter={() => {
+                          setHoveredCategory(item.label);
+                          setHoveredSubCategory(null);
+                        }}
                       >
-                        <div>
-                          <div className="font-medium">{item.label}</div>
-                          {item.description && (
-                            <div className="text-sm text-gray-500 mt-1">{item.description}</div>
-                          )}
-                        </div>
-                        <ChevronRight className="h-4 w-4 opacity-0 group-hover:opacity-100 transition-opacity" />
-                      </Link>
-                    </div>
-                  ))}
+                        <Link
+                          to={item.href}
+                          onClick={closeAllDropdowns}
+                          className="group flex items-center justify-between p-3 rounded-lg hover:bg-white hover:shadow-sm transition-all duration-200 text-gray-700 hover:text-gray-900"
+                        >
+                          <div>
+                            <div className="font-medium">{item.label}</div>
+                            {item.description && (
+                              <div className="text-sm text-gray-500 mt-1">
+                                {item.description}
+                              </div>
+                            )}
+                          </div>
+                          <ChevronRight className="h-4 w-4 opacity-0 group-hover:opacity-100 transition-opacity" />
+                        </Link>
+                      </div>
+                    )
+                  )}
                 </div>
               </div>
             </div>
@@ -163,62 +179,97 @@ export default function MainNavigation() {
                   <div className="flex-1 overflow-y-auto max-h-[480px] pr-2 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100">
                     <div className="space-y-2">
                       {getCategorizedItems(thirdLevelContent.subItem)
-                        .filter((category) => category.label === hoveredCategory)
+                        .filter(
+                          (category) => category.label === hoveredCategory
+                        )
                         .map((category, idx) => (
                           <div key={idx} className="rounded-lg overflow-hidden">
-                            {category.items.map((subItem: ThirdLevelItem, subIdx: number) => (
-                              <div key={subIdx}>
-                                {subItem.hasNested && subItem.nestedItems ? (
-                                  <button
-                                    className="group flex items-center justify-between p-3 w-full text-left transition-all duration-200 hover:bg-gray-50 rounded-lg"
-                                    onClick={() => toggleAccordion(`${category.label}-${subItem.label}`)}
-                                    onMouseEnter={() => setHoveredSubCategory(subItem.label)}
-                                  >
-                                    <div className="flex-1">
-                                      <div className="font-medium text-gray-700 group-hover:text-gray-900">{subItem.label}</div>
-                                      <div className="text-sm text-gray-500 mt-1">{subItem.nestedItems.length} options available</div>
-                                    </div>
-                                    {expandedAccordions.has(`${category.label}-${subItem.label}`) ? (
-                                      <Minus className="h-4 w-4" />
-                                    ) : (
-                                      <Plus className="h-4 w-4" />
-                                    )}
-                                  </button>
-                                ) : (
-                                  <Link
-                                    to={subItem.href || "#"}
-                                    onClick={closeAllDropdowns}
-                                    className="group/nested flex items-center justify-between p-3 rounded hover:bg-white hover:shadow-sm transition-all duration-150 cursor-pointer"
-                                    onMouseEnter={() => setHoveredSubCategory(subItem.label)}
-                                  >
-                                    <div className="flex-1">
-                                      <div className="text-sm font-medium text-gray-700 group-hover/nested:text-gray-900">{subItem.label}</div>
-                                      {subItem.description && (
-                                        <div className="text-xs text-gray-500 mt-0.5">{subItem.description}</div>
+                            {category.items.map(
+                              (subItem: ThirdLevelItem, subIdx: number) => (
+                                <div key={subIdx}>
+                                  {subItem.hasNested && subItem.nestedItems ? (
+                                    <button
+                                      className="group flex items-center justify-between p-3 w-full text-left transition-all duration-200 hover:bg-gray-50 rounded-lg"
+                                      onClick={() =>
+                                        toggleAccordion(
+                                          `${category.label}-${subItem.label}`
+                                        )
+                                      }
+                                      onMouseEnter={() =>
+                                        setHoveredSubCategory(subItem.label)
+                                      }
+                                    >
+                                      <div className="flex-1">
+                                        <div className="font-medium text-gray-700 group-hover:text-gray-900">
+                                          {subItem.label}
+                                        </div>
+                                        <div className="text-sm text-gray-500 mt-1">
+                                          {subItem.nestedItems.length} options
+                                          available
+                                        </div>
+                                      </div>
+                                      {expandedAccordions.has(
+                                        `${category.label}-${subItem.label}`
+                                      ) ? (
+                                        <Minus className="h-4 w-4" />
+                                      ) : (
+                                        <Plus className="h-4 w-4" />
+                                      )}
+                                    </button>
+                                  ) : (
+                                    <Link
+                                      to={subItem.href || "#"}
+                                      onClick={closeAllDropdowns}
+                                      className="group/nested flex items-center justify-between p-3 rounded hover:bg-white hover:shadow-sm transition-all duration-150 cursor-pointer"
+                                      onMouseEnter={() =>
+                                        setHoveredSubCategory(subItem.label)
+                                      }
+                                    >
+                                      <div className="flex-1">
+                                        <div className="text-sm font-medium text-gray-700 group-hover/nested:text-gray-900">
+                                          {subItem.label}
+                                        </div>
+                                        {subItem.description && (
+                                          <div className="text-xs text-gray-500 mt-0.5">
+                                            {subItem.description}
+                                          </div>
+                                        )}
+                                      </div>
+                                      <ChevronRight className="h-3 w-3 opacity-0 group-hover/nested:opacity-100 transition-opacity text-gray-400" />
+                                    </Link>
+                                  )}
+                                  {subItem.hasNested && subItem.nestedItems && (
+                                    <div
+                                      className={`pl-4 space-y-2 ${
+                                        expandedAccordions.has(
+                                          `${category.label}-${subItem.label}`
+                                        )
+                                          ? "block"
+                                          : "hidden"
+                                      }`}
+                                    >
+                                      {subItem.nestedItems.map(
+                                        (nestedItem, nestedIdx) => (
+                                          <Link
+                                            key={nestedIdx}
+                                            to={nestedItem.href}
+                                            onClick={closeAllDropdowns}
+                                            className="block text-xs text-gray-600 hover:text-gray-900 p-2 rounded hover:bg-white"
+                                            onMouseEnter={() =>
+                                              setHoveredSubCategory(
+                                                nestedItem.label
+                                              )
+                                            }
+                                          >
+                                            {nestedItem.label}
+                                          </Link>
+                                        )
                                       )}
                                     </div>
-                                    <ChevronRight className="h-3 w-3 opacity-0 group-hover/nested:opacity-100 transition-opacity text-gray-400" />
-                                  </Link>
-                                )}
-                                {subItem.hasNested && subItem.nestedItems && (
-                                  <div
-                                    className={`pl-4 space-y-2 ${expandedAccordions.has(`${category.label}-${subItem.label}`) ? "block" : "hidden"}`}
-                                  >
-                                    {subItem.nestedItems.map((nestedItem, nestedIdx) => (
-                                      <Link
-                                        key={nestedIdx}
-                                        to={nestedItem.href}
-                                        onClick={closeAllDropdowns}
-                                        className="block text-xs text-gray-600 hover:text-gray-900 p-2 rounded hover:bg-white"
-                                        onMouseEnter={() => setHoveredSubCategory(nestedItem.label)}
-                                      >
-                                        {nestedItem.label}
-                                      </Link>
-                                    ))}
-                                  </div>
-                                )}
-                              </div>
-                            ))}
+                                  )}
+                                </div>
+                              )
+                            )}
                           </div>
                         ))}
                     </div>
@@ -229,24 +280,42 @@ export default function MainNavigation() {
 
             {/* Third Column: Details on Hover */}
             <div className="bg-white">
-              {hoveredSubCategory && thirdLevelContent.content?.[hoveredSubCategory] ? (
+              {hoveredSubCategory &&
+              thirdLevelContent.content?.[hoveredSubCategory] ? (
                 <div className="p-6">
-                  <h4 className="text-lg font-semibold text-gray-900 mb-4">{hoveredSubCategory}</h4>
+                  <h4 className="text-lg font-semibold text-gray-900 mb-4">
+                    {hoveredSubCategory}
+                  </h4>
                   <div className="space-y-4">
                     <img
-                      src={thirdLevelContent.content[hoveredSubCategory].imageUrl}
-                      alt={thirdLevelContent.content[hoveredSubCategory].altText}
+                      src={
+                        thirdLevelContent.content[hoveredSubCategory].imageUrl
+                      }
+                      alt={
+                        thirdLevelContent.content[hoveredSubCategory].altText
+                      }
                       className="w-full h-40 object-cover rounded-lg"
                       onError={(e) => {
-                        const altText = thirdLevelContent.content[hoveredSubCategory].altText || "Image not found";
+                        const altText =
+                          thirdLevelContent?.content?.[hoveredSubCategory]
+                            .altText || "Image not found";
                         e.currentTarget.src = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='160' viewBox='0 0 300 160'%3E%3Crect width='300' height='160' fill='%23f3f4f6'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='Arial, sans-serif' font-size='14' fill='%236b7280'%3E${altText}%3C/text%3E%3C/svg%3E`;
                       }}
                     />
-                    <p className="text-gray-600 text-sm mb-4">{thirdLevelContent.content[hoveredSubCategory].description}</p>
+                    <p className="text-gray-600 text-sm mb-4">
+                      {
+                        thirdLevelContent.content[hoveredSubCategory]
+                          .description
+                      }
+                    </p>
                     <div>
-                      <h5 className="font-medium text-gray-900 mb-2">Key Features</h5>
+                      <h5 className="font-medium text-gray-900 mb-2">
+                        Key Features
+                      </h5>
                       <ul className="text-sm text-gray-600 space-y-1">
-                        {thirdLevelContent.content[hoveredSubCategory].keyFeatures.map((feature, idx) => (
+                        {thirdLevelContent.content[
+                          hoveredSubCategory
+                        ].keyFeatures.map((feature, idx) => (
                           <li key={idx}>• {feature}</li>
                         ))}
                       </ul>
@@ -260,30 +329,49 @@ export default function MainNavigation() {
                       icon={ChevronRight}
                       iconPosition="right"
                     >
-                      <Link to={thirdLevelContent.content[hoveredSubCategory].buttonLink}>
-                        {thirdLevelContent.content[hoveredSubCategory].buttonText}
+                      <Link
+                        to={
+                          thirdLevelContent.content[hoveredSubCategory]
+                            .buttonLink
+                        }
+                      >
+                        {
+                          thirdLevelContent.content[hoveredSubCategory]
+                            .buttonText
+                        }
                       </Link>
                     </Button>
                   </div>
                 </div>
-              ) : hoveredCategory && thirdLevelContent.content?.[hoveredCategory] ? (
+              ) : hoveredCategory &&
+                thirdLevelContent.content?.[hoveredCategory] ? (
                 <div className="p-6">
-                  <h4 className="text-lg font-semibold text-gray-900 mb-4">{hoveredCategory}</h4>
+                  <h4 className="text-lg font-semibold text-gray-900 mb-4">
+                    {hoveredCategory}
+                  </h4>
                   <div className="space-y-4">
                     <img
                       src={thirdLevelContent.content[hoveredCategory].imageUrl}
                       alt={thirdLevelContent.content[hoveredCategory].altText}
                       className="w-full h-40 object-cover rounded-lg"
                       onError={(e) => {
-                        const altText = thirdLevelContent.content[hoveredCategory].altText || "Image not found";
+                        const altText =
+                          thirdLevelContent?.content?.[hoveredCategory]
+                            .altText || "Image not found";
                         e.currentTarget.src = `data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='160' viewBox='0 0 300 160'%3E%3Crect width='300' height='160' fill='%23f3f4f6'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='Arial, sans-serif' font-size='14' fill='%236b7280'%3E${altText}%3C/text%3E%3C/svg%3E`;
                       }}
                     />
-                    <p className="text-gray-600 text-sm mb-4">{thirdLevelContent.content[hoveredCategory].description}</p>
+                    <p className="text-gray-600 text-sm mb-4">
+                      {thirdLevelContent.content[hoveredCategory].description}
+                    </p>
                     <div>
-                      <h5 className="font-medium text-gray-900 mb-2">Key Features</h5>
+                      <h5 className="font-medium text-gray-900 mb-2">
+                        Key Features
+                      </h5>
                       <ul className="text-sm text-gray-600 space-y-1">
-                        {thirdLevelContent.content[hoveredCategory].keyFeatures.map((feature, idx) => (
+                        {thirdLevelContent.content[
+                          hoveredCategory
+                        ].keyFeatures.map((feature, idx) => (
                           <li key={idx}>• {feature}</li>
                         ))}
                       </ul>
@@ -297,7 +385,11 @@ export default function MainNavigation() {
                       icon={ChevronRight}
                       iconPosition="right"
                     >
-                      <Link to={thirdLevelContent.content[hoveredCategory].buttonLink}>
+                      <Link
+                        to={
+                          thirdLevelContent.content[hoveredCategory].buttonLink
+                        }
+                      >
                         {thirdLevelContent.content[hoveredCategory].buttonText}
                       </Link>
                     </Button>
@@ -305,10 +397,16 @@ export default function MainNavigation() {
                 </div>
               ) : (
                 <div className="p-6">
-                  <h4 className="text-lg font-semibold text-gray-900 mb-4">{thirdLevelContent.subItem.label} Overview</h4>
+                  <h4 className="text-lg font-semibold text-gray-900 mb-4">
+                    {thirdLevelContent.subItem.label} Overview
+                  </h4>
                   <div className="space-y-4">
                     <img
-                      src={thirdLevelContent.subItem.thirdLevelContent?.[thirdLevelContent.subItem.label]?.imageUrl || "/images/default-solution.jpg"}
+                      src={
+                        thirdLevelContent.subItem.thirdLevelContent?.[
+                          thirdLevelContent.subItem.label
+                        ]?.imageUrl || "/images/default-solution.jpg"
+                      }
                       alt={thirdLevelContent.subItem.label}
                       className="w-full h-40 object-cover rounded-lg"
                       onError={(e) => {
@@ -316,13 +414,19 @@ export default function MainNavigation() {
                       }}
                     />
                     <p className="text-gray-600 text-sm">
-                      {thirdLevelContent.subItem.thirdLevelContent?.[thirdLevelContent.subItem.label]?.description ||
+                      {thirdLevelContent.subItem.thirdLevelContent?.[
+                        thirdLevelContent.subItem.label
+                      ]?.description ||
                         `Explore our ${thirdLevelContent.subItem.label.toLowerCase()} solutions tailored to your needs.`}
                     </p>
                     <div>
-                      <h5 className="font-medium text-gray-900 mb-2">Key Features</h5>
+                      <h5 className="font-medium text-gray-900 mb-2">
+                        Key Features
+                      </h5>
                       <ul className="text-sm text-gray-600 space-y-1">
-                        {thirdLevelContent.subItem.thirdLevelContent?.[thirdLevelContent.subItem.label]?.keyFeatures?.map((feature, idx) => (
+                        {thirdLevelContent.subItem.thirdLevelContent?.[
+                          thirdLevelContent.subItem.label
+                        ]?.keyFeatures?.map((feature, idx) => (
                           <li key={idx}>• {feature}</li>
                         )) || (
                           <>
@@ -355,7 +459,9 @@ export default function MainNavigation() {
           <div className="border-t border-gray-200 bg-gray-50">
             <div className="container mx-auto px-6 py-4">
               <div className="flex items-center gap-6">
-                <span className="text-gray-500 font-medium text-sm">Quick Links:</span>
+                <span className="text-gray-500 font-medium text-sm">
+                  Quick Links:
+                </span>
                 <div className="flex gap-6">
                   {quickLinks.map((link, idx) => (
                     <Link
@@ -378,7 +484,13 @@ export default function MainNavigation() {
           <div className="flex items-center justify-between h-16">
             <div className="flex items-center">
               <div className="flex-shrink-0 py-10">
-                <img src="/images/logo.svg" alt="NBC Logo" width={90} height={100} className="z-[10000000]" />
+                <img
+                  src="/images/logo.svg"
+                  alt="NBC Logo"
+                  width={90}
+                  height={100}
+                  className="z-[10000000]"
+                />
               </div>
             </div>
             <div className="hidden lg:flex items-center space-x-4 gap-5">
@@ -387,8 +499,12 @@ export default function MainNavigation() {
                 return (
                   <div
                     key={index}
-                    className={`relative group/item cursor-pointer ${hasThirdLevel ? "has-third-level" : ""}`}
-                    onMouseEnter={() => !item.hasDropdown && setActiveThirdLevel(null)}
+                    className={`relative group/item cursor-pointer ${
+                      hasThirdLevel ? "has-third-level" : ""
+                    }`}
+                    onMouseEnter={() =>
+                      !item.hasDropdown && setActiveThirdLevel(null)
+                    }
                   >
                     {item.hasDropdown ? (
                       <div className="relative">
@@ -421,7 +537,10 @@ export default function MainNavigation() {
                                         to={subItem.href ?? "#"}
                                         onClick={closeAllDropdowns}
                                         className={`text-nav-text hover:text-nav-text-hover transition-colors duration-150 font-medium whitespace-nowrap flex items-center h-12 space-x-1 relative hover:after:w-full after:absolute after:bottom-0 after:left-0 after:h-0.5 after:bg-nbc-dark-700 after:transition-all after:duration-200 ${
-                                          subItem.href && isActiveLink(subItem.href) ? "after:w-full" : "after:w-0"
+                                          subItem.href &&
+                                          isActiveLink(subItem.href)
+                                            ? "after:w-full"
+                                            : "after:w-0"
                                         }`}
                                       >
                                         <span>{subItem.label}</span>
@@ -430,7 +549,10 @@ export default function MainNavigation() {
                                     ) : (
                                       <button
                                         className={`text-nav-text hover:text-nav-text-hover transition-colors duration-150 font-medium whitespace-nowrap flex items-center h-12 space-x-1 relative hover:after:w-full after:absolute after:bottom-0 after:left-0 after:h-0.5 after:bg-nbc-dark-700 after:transition-all after:duration-200 ${
-                                          subItem.href && isActiveLink(subItem.href) ? "after:w-full" : "after:w-0"
+                                          subItem.href &&
+                                          isActiveLink(subItem.href)
+                                            ? "after:w-full"
+                                            : "after:w-0"
                                         }`}
                                       >
                                         <span>{subItem.label}</span>
@@ -442,7 +564,10 @@ export default function MainNavigation() {
                                       to={subItem.href ?? "#"}
                                       onClick={closeAllDropdowns}
                                       className={`text-nav-text hover:text-nav-text-hover transition-colors duration-150 font-medium whitespace-nowrap flex items-center h-12 relative hover:after:w-full after:absolute after:bottom-0 after:left-0 after:h-0.5 after:bg-nbc-dark-700 after:transition-all after:duration-200 ${
-                                        subItem.href && isActiveLink(subItem.href) ? "after:w-full" : "after:w-0"
+                                        subItem.href &&
+                                        isActiveLink(subItem.href)
+                                          ? "after:w-full"
+                                          : "after:w-0"
                                       }`}
                                     >
                                       {subItem.label}
@@ -470,9 +595,13 @@ export default function MainNavigation() {
                                     onClick={closeAllDropdowns}
                                     className="block p-3 rounded-md hover:bg-accent transition-colors duration-150"
                                   >
-                                    <div className="font-medium text-nav-text">{subItem.label}</div>
+                                    <div className="font-medium text-nav-text">
+                                      {subItem.label}
+                                    </div>
                                     {subItem.description && (
-                                      <div className="text-sm text-muted-foreground mt-1">{subItem.description}</div>
+                                      <div className="text-sm text-muted-foreground mt-1">
+                                        {subItem.description}
+                                      </div>
                                     )}
                                   </Link>
                                 ))}
@@ -486,7 +615,9 @@ export default function MainNavigation() {
                         to={item.href ?? "/"}
                         onClick={closeAllDropdowns}
                         className={`text-nav-text hover:text-nav-text-hover transition-colors duration-200 font-medium py-2 relative hover:after:w-full after:absolute after:bottom-0 after:left-0 after:h-0.5 after:bg-nbc-dark-700 after:transition-all after:duration-200 ${
-                          item.href && isActiveLink(item.href) ? "after:w-full" : "after:w-0"
+                          item.href && isActiveLink(item.href)
+                            ? "after:w-full"
+                            : "after:w-0"
                         }`}
                       >
                         {item.label}
@@ -498,20 +629,32 @@ export default function MainNavigation() {
             </div>
             <div className="hidden lg:flex items-center space-x-4">
               {actionButtons
-                .filter((btn) => btn.label !== "Login")
+                .filter(
+                  (btn) =>
+                    btn.label !== "Login" && btn.label !== "Internet Banking"
+                )
                 .map((actionButton) => (
                   <div key={actionButton.label}>
                     {actionButton.items ? (
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
-                          <Button variant={actionButton.variant} size="sm" icon={ChevronDown} iconPosition="right">
-                            {actionButton.icon && renderIcon(actionButton.icon, "h-4 w-4 mr-2")}
+                          <Button
+                            variant={actionButton.variant}
+                            size="sm"
+                            icon={ChevronDown}
+                            iconPosition="right"
+                          >
+                            {actionButton.icon &&
+                              renderIcon(actionButton.icon, "h-4 w-4 mr-2")}
                             {actionButton.label}
                           </Button>
                         </DropdownMenuTrigger>
                         <DropdownMenuContent className="z-[10000000]">
                           {actionButton.items.map((item) => (
-                            <DropdownMenuItem key={item.label} onClick={closeAllDropdowns}>
+                            <DropdownMenuItem
+                              key={item.label}
+                              onClick={closeAllDropdowns}
+                            >
                               <Link to={item.href}>{item.label}</Link>
                             </DropdownMenuItem>
                           ))}
@@ -524,8 +667,13 @@ export default function MainNavigation() {
                         className="text-nav-text hover:text-nav-text-hover"
                         asChild
                       >
-                        <Link to={actionButton.href ?? "#"} onClick={closeAllDropdowns} className="flex items-center">
-                          {actionButton.icon && renderIcon(actionButton.icon, "h-4 w-4 mr-2")}
+                        <Link
+                          to={actionButton.href ?? "#"}
+                          onClick={closeAllDropdowns}
+                          className="flex items-center"
+                        >
+                          {actionButton.icon &&
+                            renderIcon(actionButton.icon, "h-4 w-4 mr-2")}
                           {actionButton.label}
                         </Link>
                       </Button>
@@ -541,10 +689,32 @@ export default function MainNavigation() {
                 />
               </div>
               {actionButtons
-                .filter((btn) => btn.label === "Login")
+                .filter(
+                  (btn) =>
+                    btn.label === "Login" || btn.label === "Internet Banking"
+                )
                 .map((actionButton) => (
-                  <div key={actionButton.label}>
-                    <DropdownMenu>
+                  <div key={actionButton.label} className="not-group">
+                    <Link
+                      to={"/"}
+                      className={`flex py-1.5 px-3 items-center rounded-md transition-colors duration-300 ${
+                        actionButton.label === "Login"
+                          ? "bg-nbc-dark-950 text-white hover:bg-nbc-dark-800 "
+                          : "border border-nbc-dark-950 hover:bg-nbc-dark-950 hover:text-white"
+                      }`} // Ensure it's above group effects
+                      style={{ isolation: "isolate" }} // CSS isolation
+                      onMouseEnter={(e: any) => e.stopPropagation()} // Prevent event bubbling
+                      onMouseLeave={(e: any) => e.stopPropagation()}
+
+                      // icon={ChevronDown}
+                      // iconPosition="right"
+                    >
+                      {actionButton.icon &&
+                        renderIcon(actionButton.icon, "h-4 w-4 mr-2")}
+                      {actionButton.label}
+                    </Link>
+
+                    {/* <DropdownMenu>
                       <DropdownMenuTrigger asChild>
                         <Button variant={actionButton.variant} size="sm" icon={ChevronDown} iconPosition="right">
                           {actionButton.icon && renderIcon(actionButton.icon, "h-4 w-4 mr-2")}
@@ -558,7 +728,7 @@ export default function MainNavigation() {
                           </DropdownMenuItem>
                         ))}
                       </DropdownMenuContent>
-                    </DropdownMenu>
+                    </DropdownMenu> */}
                   </div>
                 ))}
             </div>
@@ -568,7 +738,11 @@ export default function MainNavigation() {
                 onClick={toggleMobileMenu}
                 aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
               >
-                {isMobileMenuOpen ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
+                {isMobileMenuOpen ? (
+                  <X className="h-6 w-6" />
+                ) : (
+                  <Menu className="h-6 w-6" />
+                )}
               </Button>
             </div>
           </div>
@@ -586,87 +760,141 @@ export default function MainNavigation() {
                           onClick={() => toggleAccordion(item.label)}
                         >
                           {item.label}
-                          {expandedAccordions.has(item.label) ? <Minus className="h-4 w-4" /> : <Plus className="h-4 w-4" />}
+                          {expandedAccordions.has(item.label) ? (
+                            <Minus className="h-4 w-4" />
+                          ) : (
+                            <Plus className="h-4 w-4" />
+                          )}
                         </button>
-                        {expandedAccordions.has(item.label) && item.subItems && (
-                          <div className="pl-4 space-y-2 mt-2">
-                            {item.subItems.map((subItem, subIndex) => (
-                              <div key={subIndex}>
-                                {subItem.hasThirdLevel ? (
-                                  <div>
-                                    <button
-                                      className="flex items-center justify-between w-full text-nav-text text-sm py-2"
-                                      onClick={() => toggleAccordion(`${item.label}-${subItem.label}`)}
-                                    >
-                                      {subItem.label}
-                                      {expandedAccordions.has(`${item.label}-${subItem.label}`) ? (
-                                        <Minus className="h-4 w-4" />
-                                      ) : (
-                                        <Plus className="h-4 w-4" />
-                                      )}
-                                    </button>
-                                    {expandedAccordions.has(`${item.label}-${subItem.label}`) && subItem.categories && (
-                                      <div className="pl-4 space-y-2 mt-2">
-                                        {Object.entries(subItem.categories).map(([categoryName, categoryItems], catIndex) => (
-                                          <div key={catIndex}>
-                                            <button
-                                              className="flex items-center justify-between w-full text-nav-text text-sm py-2"
-                                              onClick={() => toggleAccordion(`${item.label}-${subItem.label}-${categoryName}`)}
-                                            >
-                                              {categoryName}
-                                              {expandedAccordions.has(`${item.label}-${subItem.label}-${categoryName}`) ? (
-                                                <Minus className="h-4 w-4" />
-                                              ) : (
-                                                <Plus className="h-4 w-4" />
-                                              )}
-                                            </button>
-                                            {expandedAccordions.has(`${item.label}-${subItem.label}-${categoryName}`) && (
-                                              <div className="pl-4 space-y-2 mt-2">
-                                                {categoryItems.map((thirdLevelItem: ThirdLevelItem, thirdIndex: number) => (
-                                                  <div key={thirdIndex}>
-                                                    <Link
-                                                      to={thirdLevelItem.href}
-                                                      onClick={closeAllDropdowns}
-                                                      className="block text-sm text-gray-600 hover:text-nbc-dark-950"
-                                                    >
-                                                      {thirdLevelItem.label}
-                                                    </Link>
-                                                    {thirdLevelItem.hasNested && thirdLevelItem.nestedItems && (
-                                                      <div className="pl-4 space-y-2 mt-2">
-                                                        {thirdLevelItem.nestedItems.map((nestedItem, nestedIndex) => (
-                                                          <Link
-                                                            key={nestedIndex}
-                                                            to={nestedItem.href}
-                                                            onClick={closeAllDropdowns}
-                                                            className="block text-xs text-gray-600 hover:text-nbc-dark-950"
-                                                          >
-                                                            {nestedItem.label}
-                                                          </Link>
-                                                        ))}
-                                                      </div>
+                        {expandedAccordions.has(item.label) &&
+                          item.subItems && (
+                            <div className="pl-4 space-y-2 mt-2">
+                              {item.subItems.map((subItem, subIndex) => (
+                                <div key={subIndex}>
+                                  {subItem.hasThirdLevel ? (
+                                    <div>
+                                      <button
+                                        className="flex items-center justify-between w-full text-nav-text text-sm py-2"
+                                        onClick={() =>
+                                          toggleAccordion(
+                                            `${item.label}-${subItem.label}`
+                                          )
+                                        }
+                                      >
+                                        {subItem.label}
+                                        {expandedAccordions.has(
+                                          `${item.label}-${subItem.label}`
+                                        ) ? (
+                                          <Minus className="h-4 w-4" />
+                                        ) : (
+                                          <Plus className="h-4 w-4" />
+                                        )}
+                                      </button>
+                                      {expandedAccordions.has(
+                                        `${item.label}-${subItem.label}`
+                                      ) &&
+                                        subItem.categories && (
+                                          <div className="pl-4 space-y-2 mt-2">
+                                            {Object.entries(
+                                              subItem.categories
+                                            ).map(
+                                              (
+                                                [categoryName, categoryItems],
+                                                catIndex
+                                              ) => (
+                                                <div key={catIndex}>
+                                                  <button
+                                                    className="flex items-center justify-between w-full text-nav-text text-sm py-2"
+                                                    onClick={() =>
+                                                      toggleAccordion(
+                                                        `${item.label}-${subItem.label}-${categoryName}`
+                                                      )
+                                                    }
+                                                  >
+                                                    {categoryName}
+                                                    {expandedAccordions.has(
+                                                      `${item.label}-${subItem.label}-${categoryName}`
+                                                    ) ? (
+                                                      <Minus className="h-4 w-4" />
+                                                    ) : (
+                                                      <Plus className="h-4 w-4" />
                                                     )}
-                                                  </div>
-                                                ))}
-                                              </div>
+                                                  </button>
+                                                  {expandedAccordions.has(
+                                                    `${item.label}-${subItem.label}-${categoryName}`
+                                                  ) && (
+                                                    <div className="pl-4 space-y-2 mt-2">
+                                                      {categoryItems.map(
+                                                        (
+                                                          thirdLevelItem: ThirdLevelItem,
+                                                          thirdIndex: number
+                                                        ) => (
+                                                          <div key={thirdIndex}>
+                                                            <Link
+                                                              to={
+                                                                thirdLevelItem.href
+                                                              }
+                                                              onClick={
+                                                                closeAllDropdowns
+                                                              }
+                                                              className="block text-sm text-gray-600 hover:text-nbc-dark-950"
+                                                            >
+                                                              {
+                                                                thirdLevelItem.label
+                                                              }
+                                                            </Link>
+                                                            {thirdLevelItem.hasNested &&
+                                                              thirdLevelItem.nestedItems && (
+                                                                <div className="pl-4 space-y-2 mt-2">
+                                                                  {thirdLevelItem.nestedItems.map(
+                                                                    (
+                                                                      nestedItem,
+                                                                      nestedIndex
+                                                                    ) => (
+                                                                      <Link
+                                                                        key={
+                                                                          nestedIndex
+                                                                        }
+                                                                        to={
+                                                                          nestedItem.href
+                                                                        }
+                                                                        onClick={
+                                                                          closeAllDropdowns
+                                                                        }
+                                                                        className="block text-xs text-gray-600 hover:text-nbc-dark-950"
+                                                                      >
+                                                                        {
+                                                                          nestedItem.label
+                                                                        }
+                                                                      </Link>
+                                                                    )
+                                                                  )}
+                                                                </div>
+                                                              )}
+                                                          </div>
+                                                        )
+                                                      )}
+                                                    </div>
+                                                  )}
+                                                </div>
+                                              )
                                             )}
                                           </div>
-                                        ))}
-                                      </div>
-                                    )}
-                                  </div>
-                                ) : (
-                                  <Link
-                                    to={subItem.href ?? "#"}
-                                    onClick={closeAllDropdowns}
-                                    className="block text-sm text-gray-600 hover:text-nbc-dark-950 py-2"
-                                  >
-                                    {subItem.label}
-                                  </Link>
-                                )}
-                              </div>
-                            ))}
-                          </div>
-                        )}
+                                        )}
+                                    </div>
+                                  ) : (
+                                    <Link
+                                      to={subItem.href ?? "#"}
+                                      onClick={closeAllDropdowns}
+                                      className="block text-sm text-gray-600 hover:text-nbc-dark-950 py-2"
+                                    >
+                                      {subItem.label}
+                                    </Link>
+                                  )}
+                                </div>
+                              ))}
+                            </div>
+                          )}
                       </div>
                     ) : (
                       <Link
@@ -693,17 +921,24 @@ export default function MainNavigation() {
                         <div>
                           <button
                             className="flex items-center justify-between w-full text-nav-text text-sm py-2"
-                            onClick={() => toggleAccordion(`action-${actionButton.label}`)}
+                            onClick={() =>
+                              toggleAccordion(`action-${actionButton.label}`)
+                            }
                           >
-                            {actionButton.icon && renderIcon(actionButton.icon, "h-4 w-4 mr-2")}
+                            {actionButton.icon &&
+                              renderIcon(actionButton.icon, "h-4 w-4 mr-2")}
                             {actionButton.label}
-                            {expandedAccordions.has(`action-${actionButton.label}`) ? (
+                            {expandedAccordions.has(
+                              `action-${actionButton.label}`
+                            ) ? (
                               <Minus className="h-4 w-4" />
                             ) : (
                               <Plus className="h-4 w-4" />
                             )}
                           </button>
-                          {expandedAccordions.has(`action-${actionButton.label}`) && (
+                          {expandedAccordions.has(
+                            `action-${actionButton.label}`
+                          ) && (
                             <div className="pl-4 space-y-2 mt-2">
                               {actionButton.items.map((item, itemIndex) => (
                                 <Link
@@ -724,7 +959,8 @@ export default function MainNavigation() {
                           onClick={closeAllDropdowns}
                           className="flex items-center text-sm text-gray-600 hover:text-nbc-dark-950 py-2"
                         >
-                          {actionButton.icon && renderIcon(actionButton.icon, "h-4 w-4 mr-2")}
+                          {actionButton.icon &&
+                            renderIcon(actionButton.icon, "h-4 w-4 mr-2")}
                           {actionButton.label}
                         </Link>
                       )}
@@ -733,7 +969,9 @@ export default function MainNavigation() {
                 </div>
                 <div className="pt-4 border-t border-gray-200">
                   <div className="flex flex-col gap-2">
-                    <span className="text-gray-500 font-medium text-sm">Quick Links:</span>
+                    <span className="text-gray-500 font-medium text-sm">
+                      Quick Links:
+                    </span>
                     {quickLinks.map((link, idx) => (
                       <Link
                         key={idx}
