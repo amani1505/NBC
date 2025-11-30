@@ -1,1 +1,1010 @@
 
+export const PRODUCT_SCHEMA = [
+  {
+    "id": "clothing-schema",
+    "name": "Clothing Product Schema",
+    "description": "JSON schema for clothing products",
+    "schema": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Clothing Product",
+      "type": "object",
+      "required": ["name", "type", "price", "category", "mainImage", "inStock", "gender", "material", "sizes", "colors", "careInstructions"],
+      "properties": {
+        "name": {"type": "string", "minLength": 1, "maxLength": 200},
+        "description": {"type": "string", "minLength": 10, "maxLength": 5000},
+        "type": {"const": "clothing"},
+        "price": {
+          "type": "object",
+          "required": ["amount", "currency"],
+          "properties": {
+            "amount": {"type": "number", "minimum": 0},
+            "currency": {"type": "string"},
+            "discount": {
+              "type": "object",
+              "required": ["percentage", "validUntil"],
+              "properties": {
+                "percentage": {"type": "number", "minimum": 0, "maximum": 100},
+                "validUntil": {"type": "string", "format": "date"}
+              }
+            }
+          }
+        },
+        "category": {"type": "string", "minLength": 1, "maxLength": 100},
+        "tags": {"type": "array", "minItems": 1, "maxItems": 20, "items": {"type": "string", "minLength": 1, "maxLength": 50}, "uniqueItems": true},
+        "brand": {"type": "string", "minLength": 1, "maxLength": 100},
+        "mainImage": {"type": "string", "format": "uri"},
+        "images": {
+          "type": "array",
+          "minItems": 0,
+          "maxItems": 10,
+          "items": {"type": "string", "format": "uri"}
+        },
+        "inStock": {"type": "boolean"},
+        "quantity": {"type": "integer", "minimum": 0},
+        "availableFrom": {"type": "string", "format": "date"},
+        "gender": {"type": "string", "enum": ["men", "women", "unisex", "boys", "girls", "kids"]},
+        "ageGroup": {"type": "string", "enum": ["adult", "teen", "child", "infant"]},
+        "material": {
+          "type": "object",
+          "required": ["composition"],
+          "properties": {
+            "composition": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "object",
+                "required": ["fabric", "percentage"],
+                "properties": {
+                  "fabric": {"type": "string", "minLength": 1},
+                  "percentage": {"type": "number", "minimum": 0, "maximum": 100}
+                }
+              }
+            },
+            "lining": {"type": "string"}
+          }
+        },
+        "sizes": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["size", "measurements", "inStock", "sku"],
+            "properties": {
+              "size": {"type": "string", "minLength": 1},
+              "measurements": {
+                "type": "object",
+                "required": ["unit"],
+                "properties": {
+                  "chest": {"type": "number", "minimum": 0},
+                  "waist": {"type": "number", "minimum": 0},
+                  "hips": {"type": "number", "minimum": 0},
+                  "length": {"type": "number", "minimum": 0},
+                  "sleeve": {"type": "number", "minimum": 0},
+                  "inseam": {"type": "number", "minimum": 0},
+                  "unit": {"type": "string", "enum": ["cm", "in"]}
+                }
+              },
+              "inStock": {"type": "boolean"},
+              "quantity": {"type": "integer", "minimum": 0},
+              "sku": {"type": "string", "minLength": 1, "pattern": "^[A-Z0-9-]+$"}
+            }
+          }
+        },
+        "colors": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["name", "hexCode", "available"],
+            "properties": {
+              "name": {"type": "string", "minLength": 1},
+              "hexCode": {"type": "string", "pattern": "^#[0-9A-Fa-f]{6}$"},
+              "available": {"type": "boolean"}
+            }
+          }
+        },
+        "fit": {"type": "string", "enum": ["slim", "regular", "loose", "oversized", "tailored"]},
+        "careInstructions": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+        "season": {"type": "array", "items": {"type": "string", "enum": ["spring", "summer", "fall", "winter", "all-season"]}}
+      }
+    }
+  },
+  {
+    "id": "footwear-schema",
+    "name": "Footwear Product Schema",
+    "description": "JSON schema for footwear products",
+    "schema": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Footwear Product",
+      "type": "object",
+      "required": ["name", "type", "price", "category", "mainImage", "inStock", "gender", "material", "sizes", "colors", "soleMaterial"],
+      "properties": {
+        "name": {"type": "string", "minLength": 1, "maxLength": 200},
+        "description": {"type": "string", "minLength": 10, "maxLength": 5000},
+        "type": {"const": "footwear"},
+        "price": {
+          "type": "object",
+          "required": ["amount", "currency"],
+          "properties": {
+            "amount": {"type": "number", "minimum": 0},
+            "currency": {"type": "string"},
+            "discount": {
+              "type": "object",
+              "required": ["percentage", "validUntil"],
+              "properties": {
+                "percentage": {"type": "number", "minimum": 0, "maximum": 100},
+                "validUntil": {"type": "string", "format": "date"}
+              }
+            }
+          }
+        },
+        "category": {"type": "string", "minLength": 1, "maxLength": 100},
+        "tags": {"type": "array", "minItems": 1, "maxItems": 20, "items": {"type": "string", "minLength": 1, "maxLength": 50}, "uniqueItems": true},
+        "brand": {"type": "string", "minLength": 1, "maxLength": 100},
+        "mainImage": {"type": "string", "format": "uri"},
+        "images": {
+          "type": "array",
+          "minItems": 0,
+          "maxItems": 10,
+          "items": {"type": "string", "format": "uri"}
+        },
+        "inStock": {"type": "boolean"},
+        "quantity": {"type": "integer", "minimum": 0},
+        "availableFrom": {"type": "string", "format": "date"},
+        "gender": {"type": "string", "enum": ["men", "women", "unisex", "boys", "girls", "kids"]},
+        "footwearType": {"type": "string", "enum": ["sneakers", "boots", "sandals", "heels", "flats", "loafers", "athletic", "casual", "formal"]},
+        "material": {
+          "type": "object",
+          "required": ["upper"],
+          "properties": {
+            "upper": {"type": "string", "minLength": 1},
+            "lining": {"type": "string"},
+            "insole": {"type": "string"}
+          }
+        },
+        "sizes": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["size", "inStock", "sku"],
+            "properties": {
+              "size": {"type": "string", "minLength": 1},
+              "sizeSystem": {"type": "string", "enum": ["US", "UK", "EU", "CM"]},
+              "width": {"type": "string", "enum": ["narrow", "medium", "wide", "extra-wide"]},
+              "inStock": {"type": "boolean"},
+              "quantity": {"type": "integer", "minimum": 0},
+              "sku": {"type": "string", "minLength": 1, "pattern": "^[A-Z0-9-]+$"}
+            }
+          }
+        },
+        "colors": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["name", "hexCode", "available"],
+            "properties": {
+              "name": {"type": "string", "minLength": 1},
+              "hexCode": {"type": "string", "pattern": "^#[0-9A-Fa-f]{6}$"},
+              "available": {"type": "boolean"}
+            }
+          }
+        },
+        "soleMaterial": {"type": "string", "minLength": 1},
+        "heelHeight": {
+          "type": "object",
+          "properties": {
+            "value": {"type": "number", "minimum": 0},
+            "unit": {"type": "string", "enum": ["cm", "in"]}
+          }
+        },
+        "closure": {"type": "string", "enum": ["lace-up", "slip-on", "velcro", "buckle", "zipper"]}
+      }
+    }
+  },
+  {
+    "id": "electronics-schema",
+    "name": "Electronics Product Schema",
+    "description": "JSON schema for electronics products",
+    "schema": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Electronics Product",
+      "type": "object",
+      "required": ["name", "type", "price", "category", "mainImage", "inStock", "manufacturer", "model", "specifications", "warranty"],
+      "properties": {
+        "name": {"type": "string", "minLength": 1, "maxLength": 200},
+        "description": {"type": "string", "minLength": 10, "maxLength": 5000},
+        "type": {"const": "electronics"},
+        "price": {
+          "type": "object",
+          "required": ["amount", "currency"],
+          "properties": {
+            "amount": {"type": "number", "minimum": 0},
+            "currency": {"type": "string"},
+            "discount": {
+              "type": "object",
+              "required": ["percentage", "validUntil"],
+              "properties": {
+                "percentage": {"type": "number", "minimum": 0, "maximum": 100},
+                "validUntil": {"type": "string", "format": "date"}
+              }
+            }
+          }
+        },
+        "category": {"type": "string", "minLength": 1, "maxLength": 100},
+        "tags": {"type": "array", "minItems": 1, "maxItems": 20, "items": {"type": "string", "minLength": 1, "maxLength": 50}, "uniqueItems": true},
+        "brand": {"type": "string", "minLength": 1, "maxLength": 100},
+        "mainImage": {"type": "string", "format": "uri"},
+        "images": {
+          "type": "array",
+          "minItems": 0,
+          "maxItems": 10,
+          "items": {"type": "string", "format": "uri"}
+        },
+        "inStock": {"type": "boolean"},
+        "quantity": {"type": "integer", "minimum": 0},
+        "availableFrom": {"type": "string", "format": "date"},
+        "manufacturer": {
+          "type": "object",
+          "required": ["name", "country"],
+          "properties": {
+            "name": {"type": "string", "minLength": 1},
+            "country": {"type": "string", "minLength": 2}
+          }
+        },
+        "model": {"type": "string", "minLength": 1},
+        "specifications": {
+          "type": "object",
+          "required": ["processor", "memory"],
+          "properties": {
+            "processor": {"type": "string"},
+            "memory": {"type": "string"},
+            "storage": {"type": "string"},
+            "display": {"type": "string"},
+            "battery": {"type": "string"},
+            "connectivity": {"type": "array", "items": {"type": "string"}}
+          }
+        },
+        "warranty": {
+          "type": "object",
+          "required": ["duration", "type"],
+          "properties": {
+            "duration": {"type": "integer", "minimum": 0},
+            "unit": {"type": "string", "enum": ["months", "years"]},
+            "type": {"type": "string", "enum": ["manufacturer", "extended", "limited"]},
+            "coverage": {"type": "string"}
+          }
+        },
+        "colors": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["name", "available", "sku"],
+            "properties": {
+              "name": {"type": "string", "minLength": 1},
+              "hexCode": {"type": "string", "pattern": "^#[0-9A-Fa-f]{6}$"},
+              "available": {"type": "boolean"},
+              "sku": {"type": "string", "pattern": "^[A-Z0-9-]+$"}
+            }
+          }
+        },
+        "dimensions": {
+          "type": "object",
+          "properties": {
+            "length": {"type": "number", "minimum": 0},
+            "width": {"type": "number", "minimum": 0},
+            "height": {"type": "number", "minimum": 0},
+            "unit": {"type": "string", "enum": ["cm", "in", "m"]}
+          }
+        },
+        "weight": {
+          "type": "object",
+          "properties": {
+            "value": {"type": "number", "minimum": 0},
+            "unit": {"type": "string", "enum": ["kg", "g", "lb", "oz"]}
+          }
+        }
+      }
+    }
+  },
+  {
+    "id": "books-schema",
+    "name": "Books Product Schema",
+    "description": "JSON schema for book products",
+    "schema": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Books Product",
+      "type": "object",
+      "required": ["name", "type", "price", "category", "mainImage", "inStock", "author", "publisher", "isbn", "format", "language", "pages"],
+      "properties": {
+        "name": {"type": "string", "minLength": 1, "maxLength": 200},
+        "description": {"type": "string", "minLength": 10, "maxLength": 5000},
+        "type": {"const": "books"},
+        "price": {
+          "type": "object",
+          "required": ["amount", "currency"],
+          "properties": {
+            "amount": {"type": "number", "minimum": 0},
+            "currency": {"type": "string"},
+            "discount": {
+              "type": "object",
+              "required": ["percentage", "validUntil"],
+              "properties": {
+                "percentage": {"type": "number", "minimum": 0, "maximum": 100},
+                "validUntil": {"type": "string", "format": "date"}
+              }
+            }
+          }
+        },
+        "category": {"type": "string", "minLength": 1, "maxLength": 100},
+        "tags": {"type": "array", "minItems": 1, "maxItems": 20, "items": {"type": "string", "minLength": 1, "maxLength": 50}, "uniqueItems": true},
+        "brand": {"type": "string", "minLength": 1, "maxLength": 100},
+        "mainImage": {"type": "string", "format": "uri"},
+        "images": {
+          "type": "array",
+          "minItems": 0,
+          "maxItems": 10,
+          "items": {"type": "string", "format": "uri"}
+        },
+        "inStock": {"type": "boolean"},
+        "quantity": {"type": "integer", "minimum": 0},
+        "availableFrom": {"type": "string", "format": "date"},
+        "author": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+        "publisher": {
+          "type": "object",
+          "required": ["name", "publicationDate"],
+          "properties": {
+            "name": {"type": "string", "minLength": 1},
+            "publicationDate": {"type": "string", "format": "date"}
+          }
+        },
+        "isbn": {"type": "string", "pattern": "^(97(8|9))?\\d{9}(\\d|X)$"},
+        "format": {"type": "string", "enum": ["hardcover", "paperback", "ebook", "audiobook"]},
+        "language": {"type": "string", "minLength": 2},
+        "pages": {"type": "integer", "minimum": 1},
+        "edition": {"type": "string"},
+        "dimensions": {
+          "type": "object",
+          "properties": {
+            "length": {"type": "number", "minimum": 0},
+            "width": {"type": "number", "minimum": 0},
+            "thickness": {"type": "number", "minimum": 0},
+            "unit": {"type": "string", "enum": ["cm", "in"]}
+          }
+        }
+      }
+    }
+  },
+  {
+    "id": "food-schema",
+    "name": "Food Product Schema",
+    "description": "JSON schema for food products",
+    "schema": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Food Product",
+      "type": "object",
+      "required": ["name", "type", "price", "category", "mainImage", "inStock", "ingredients", "nutritionFacts", "expiryDate", "allergens", "storage"],
+      "properties": {
+        "name": {"type": "string", "minLength": 1, "maxLength": 200},
+        "description": {"type": "string", "minLength": 10, "maxLength": 5000},
+        "type": {"const": "food"},
+        "price": {
+          "type": "object",
+          "required": ["amount", "currency"],
+          "properties": {
+            "amount": {"type": "number", "minimum": 0},
+            "currency": {"type": "string"},
+            "discount": {
+              "type": "object",
+              "required": ["percentage", "validUntil"],
+              "properties": {
+                "percentage": {"type": "number", "minimum": 0, "maximum": 100},
+                "validUntil": {"type": "string", "format": "date"}
+              }
+            }
+          }
+        },
+        "category": {"type": "string", "minLength": 1, "maxLength": 100},
+        "tags": {"type": "array", "minItems": 1, "maxItems": 20, "items": {"type": "string", "minLength": 1, "maxLength": 50}, "uniqueItems": true},
+        "brand": {"type": "string", "minLength": 1, "maxLength": 100},
+        "mainImage": {"type": "string", "format": "uri"},
+        "images": {
+          "type": "array",
+          "minItems": 0,
+          "maxItems": 10,
+          "items": {"type": "string", "format": "uri"}
+        },
+        "inStock": {"type": "boolean"},
+        "quantity": {"type": "integer", "minimum": 0},
+        "availableFrom": {"type": "string", "format": "date"},
+        "ingredients": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+        "nutritionFacts": {
+          "type": "object",
+          "required": ["servingSize", "calories"],
+          "properties": {
+            "servingSize": {"type": "string", "minLength": 1},
+            "servingsPerContainer": {"type": "number", "minimum": 0},
+            "calories": {"type": "number", "minimum": 0},
+            "totalFat": {"type": "string"},
+            "saturatedFat": {"type": "string"},
+            "transFat": {"type": "string"},
+            "cholesterol": {"type": "string"},
+            "sodium": {"type": "string"},
+            "totalCarbohydrate": {"type": "string"},
+            "dietaryFiber": {"type": "string"},
+            "sugars": {"type": "string"},
+            "protein": {"type": "string"}
+          }
+        },
+        "expiryDate": {"type": "string", "format": "date"},
+        "allergens": {
+          "type": "array",
+          "items": {"type": "string", "enum": ["milk", "eggs", "fish", "shellfish", "tree-nuts", "peanuts", "wheat", "soybeans", "none"]}
+        },
+        "storage": {
+          "type": "object",
+          "required": ["instructions"],
+          "properties": {
+            "instructions": {"type": "string", "minLength": 5},
+            "temperature": {"type": "string"}
+          }
+        },
+        "weight": {
+          "type": "object",
+          "required": ["value", "unit"],
+          "properties": {
+            "value": {"type": "number", "minimum": 0, "exclusiveMinimum": true},
+            "unit": {"type": "string", "enum": ["kg", "g", "lb", "oz", "ml", "l"]}
+          }
+        }
+      }
+    }
+  },
+  {
+    "id": "cosmetics-schema",
+    "name": "Cosmetics Product Schema",
+    "description": "JSON schema for cosmetics products",
+    "schema": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Cosmetics Product",
+      "type": "object",
+      "required": ["name", "type", "price", "category", "mainImage", "inStock", "ingredients", "skinType", "volume", "expiryMonths"],
+      "properties": {
+        "name": {"type": "string", "minLength": 1, "maxLength": 200},
+        "description": {"type": "string", "minLength": 10, "maxLength": 5000},
+        "type": {"const": "cosmetics"},
+        "price": {
+          "type": "object",
+          "required": ["amount", "currency"],
+          "properties": {
+            "amount": {"type": "number", "minimum": 0},
+            "currency": {"type": "string"},
+            "discount": {
+              "type": "object",
+              "required": ["percentage", "validUntil"],
+              "properties": {
+                "percentage": {"type": "number", "minimum": 0, "maximum": 100},
+                "validUntil": {"type": "string", "format": "date"}
+              }
+            }
+          }
+        },
+        "category": {"type": "string", "minLength": 1, "maxLength": 100},
+        "tags": {"type": "array", "minItems": 1, "maxItems": 20, "items": {"type": "string", "minLength": 1, "maxLength": 50}, "uniqueItems": true},
+        "brand": {"type": "string", "minLength": 1, "maxLength": 100},
+        "mainImage": {"type": "string", "format": "uri"},
+        "images": {
+          "type": "array",
+          "minItems": 0,
+          "maxItems": 10,
+          "items": {"type": "string", "format": "uri"}
+        },
+        "inStock": {"type": "boolean"},
+        "quantity": {"type": "integer", "minimum": 0},
+        "availableFrom": {"type": "string", "format": "date"},
+        "ingredients": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+        "skinType": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"type": "string", "enum": ["normal", "dry", "oily", "combination", "sensitive", "all"]}
+        },
+        "volume": {
+          "type": "object",
+          "required": ["value", "unit"],
+          "properties": {
+            "value": {"type": "number", "minimum": 0, "exclusiveMinimum": true},
+            "unit": {"type": "string", "enum": ["ml", "l", "g", "oz"]}
+          }
+        },
+        "expiryMonths": {"type": "integer", "minimum": 1},
+        "spf": {"type": "integer", "minimum": 0},
+        "crueltyFree": {"type": "boolean"},
+        "vegan": {"type": "boolean"},
+        "scent": {"type": "string"}
+      }
+    }
+  },
+  {
+    "id": "furniture-schema",
+    "name": "Furniture Product Schema",
+    "description": "JSON schema for furniture products",
+    "schema": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Furniture Product",
+      "type": "object",
+      "required": ["name", "type", "price", "category", "mainImage", "inStock", "material", "dimensions", "weight", "assembly", "colors"],
+      "properties": {
+        "name": {"type": "string", "minLength": 1, "maxLength": 200},
+        "description": {"type": "string", "minLength": 10, "maxLength": 5000},
+        "type": {"const": "furniture"},
+        "price": {
+          "type": "object",
+          "required": ["amount", "currency"],
+          "properties": {
+            "amount": {"type": "number", "minimum": 0},
+            "currency": {"type": "string"},
+            "discount": {
+              "type": "object",
+              "required": ["percentage", "validUntil"],
+              "properties": {
+                "percentage": {"type": "number", "minimum": 0, "maximum": 100},
+                "validUntil": {"type": "string", "format": "date"}
+              }
+            }
+          }
+        },
+        "category": {"type": "string", "minLength": 1, "maxLength": 100},
+        "tags": {"type": "array", "minItems": 1, "maxItems": 20, "items": {"type": "string", "minLength": 1, "maxLength": 50}, "uniqueItems": true},
+        "brand": {"type": "string", "minLength": 1, "maxLength": 100},
+        "mainImage": {"type": "string", "format": "uri"},
+        "images": {
+          "type": "array",
+          "minItems": 0,
+          "maxItems": 10,
+          "items": {"type": "string", "format": "uri"}
+        },
+        "inStock": {"type": "boolean"},
+        "quantity": {"type": "integer", "minimum": 0},
+        "availableFrom": {"type": "string", "format": "date"},
+        "material": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+        "dimensions": {
+          "type": "object",
+          "required": ["length", "width", "height", "unit"],
+          "properties": {
+            "length": {"type": "number", "minimum": 0, "exclusiveMinimum": true},
+            "width": {"type": "number", "minimum": 0, "exclusiveMinimum": true},
+            "height": {"type": "number", "minimum": 0, "exclusiveMinimum": true},
+            "unit": {"type": "string", "enum": ["cm", "in", "m"]}
+          }
+        },
+        "weight": {
+          "type": "object",
+          "required": ["value", "unit"],
+          "properties": {
+            "value": {"type": "number", "minimum": 0, "exclusiveMinimum": true},
+            "unit": {"type": "string", "enum": ["kg", "g", "lb"]}
+          }
+        },
+        "assembly": {
+          "type": "object",
+          "required": ["required", "difficulty"],
+          "properties": {
+            "required": {"type": "boolean"},
+            "difficulty": {"type": "string", "enum": ["easy", "moderate", "difficult"]},
+            "estimatedTime": {"type": "string"}
+          }
+        },
+        "colors": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["name", "available"],
+            "properties": {
+              "name": {"type": "string", "minLength": 1},
+              "hexCode": {"type": "string", "pattern": "^#[0-9A-Fa-f]{6}$"},
+              "available": {"type": "boolean"}
+            }
+          }
+        },
+        "maxWeight": {
+          "type": "object",
+          "properties": {
+            "value": {"type": "number", "minimum": 0},
+            "unit": {"type": "string", "enum": ["kg", "lb"]}
+          }
+        },
+        "warranty": {
+          "type": "object",
+          "properties": {
+            "duration": {"type": "integer", "minimum": 0},
+            "unit": {"type": "string", "enum": ["months", "years"]}
+          }
+        }
+      }
+    }
+  },
+  {
+    "id": "jewelry-schema",
+    "name": "Jewelry Product Schema",
+    "description": "JSON schema for jewelry products",
+    "schema": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Jewelry Product",
+      "type": "object",
+      "required": ["name", "type", "price", "category", "mainImage", "inStock", "material", "jewelryType", "gemstone"],
+      "properties": {
+        "name": {"type": "string", "minLength": 1, "maxLength": 200},
+        "description": {"type": "string", "minLength": 10, "maxLength": 5000},
+        "type": {"const": "jewelry"},
+        "price": {
+          "type": "object",
+          "required": ["amount", "currency"],
+          "properties": {
+            "amount": {"type": "number", "minimum": 0},
+            "currency": {"type": "string"},
+            "discount": {
+              "type": "object",
+              "required": ["percentage", "validUntil"],
+              "properties": {
+                "percentage": {"type": "number", "minimum": 0, "maximum": 100},
+                "validUntil": {"type": "string", "format": "date"}
+              }
+            }
+          }
+        },
+        "category": {"type": "string", "minLength": 1, "maxLength": 100},
+        "tags": {"type": "array", "minItems": 1, "maxItems": 20, "items": {"type": "string", "minLength": 1, "maxLength": 50}, "uniqueItems": true},
+        "brand": {"type": "string", "minLength": 1, "maxLength": 100},
+        "mainImage": {"type": "string", "format": "uri"},
+        "images": {
+          "type": "array",
+          "minItems": 0,
+          "maxItems": 10,
+          "items": {"type": "string", "format": "uri"}
+        },
+        "inStock": {"type": "boolean"},
+        "quantity": {"type": "integer", "minimum": 0},
+        "availableFrom": {"type": "string", "format": "date"},
+        "jewelryType": {"type": "string", "enum": ["ring", "necklace", "bracelet", "earrings", "pendant", "brooch", "anklet"]},
+        "material": {
+          "type": "object",
+          "required": ["metal", "purity"],
+          "properties": {
+            "metal": {"type": "string", "enum": ["gold", "silver", "platinum", "titanium", "stainless-steel", "brass"]},
+            "purity": {"type": "string"}
+          }
+        },
+        "gemstone": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["type", "weight"],
+            "properties": {
+              "type": {"type": "string", "minLength": 1},
+              "weight": {
+                "type": "object",
+                "required": ["value", "unit"],
+                "properties": {
+                  "value": {"type": "number", "minimum": 0},
+                  "unit": {"type": "string", "enum": ["carat", "g"]}
+                }
+              },
+              "color": {"type": "string"},
+              "clarity": {"type": "string"}
+            }
+          }
+        },
+        "sizes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["size", "inStock"],
+            "properties": {
+              "size": {"type": "string", "minLength": 1},
+              "inStock": {"type": "boolean"},
+              "quantity": {"type": "integer", "minimum": 0}
+            }
+          }
+        },
+        "weight": {
+          "type": "object",
+          "required": ["value", "unit"],
+          "properties": {
+            "value": {"type": "number", "minimum": 0, "exclusiveMinimum": true},
+            "unit": {"type": "string", "enum": ["g", "oz"]}
+          }
+        },
+        "certification": {"type": "string"}
+      }
+    }
+  },
+  {
+    "id": "digital-schema",
+    "name": "Digital Product Schema",
+    "description": "JSON schema for digital products",
+    "schema": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Digital Product",
+      "type": "object",
+      "required": ["name", "type", "price", "category", "mainImage", "inStock", "fileFormat", "fileSize", "downloadUrl", "license"],
+      "properties": {
+        "name": {"type": "string", "minLength": 1, "maxLength": 200},
+        "description": {"type": "string", "minLength": 10, "maxLength": 5000},
+        "type": {"const": "digital"},
+        "price": {
+          "type": "object",
+          "required": ["amount", "currency"],
+          "properties": {
+            "amount": {"type": "number", "minimum": 0},
+            "currency": {"type": "string"},
+            "discount": {
+              "type": "object",
+              "required": ["percentage", "validUntil"],
+              "properties": {
+                "percentage": {"type": "number", "minimum": 0, "maximum": 100},
+                "validUntil": {"type": "string", "format": "date"}
+              }
+            }
+          }
+        },
+        "category": {"type": "string", "minLength": 1, "maxLength": 100},
+        "tags": {"type": "array", "minItems": 1, "maxItems": 20, "items": {"type": "string", "minLength": 1, "maxLength": 50}, "uniqueItems": true},
+        "brand": {"type": "string", "minLength": 1, "maxLength": 100},
+        "mainImage": {"type": "string", "format": "uri"},
+        "images": {
+          "type": "array",
+          "minItems": 0,
+          "maxItems": 10,
+          "items": {"type": "string", "format": "uri"}
+        },
+        "inStock": {"type": "boolean"},
+        "quantity": {"type": "integer", "minimum": 0},
+        "availableFrom": {"type": "string", "format": "date"},
+        "fileFormat": {"type": "string", "minLength": 1, "maxLength": 50},
+        "fileSize": {
+          "type": "object",
+          "required": ["value", "unit"],
+          "properties": {
+            "value": {"type": "number", "minimum": 0, "exclusiveMinimum": true},
+            "unit": {"type": "string", "enum": ["KB", "MB", "GB"]}
+          }
+        },
+        "downloadUrl": {"type": "string", "format": "uri", "pattern": "^https?://"},
+        "license": {
+          "type": "object",
+          "required": ["type"],
+          "properties": {
+            "type": {"type": "string", "enum": ["single", "multi", "unlimited"]},
+            "validityPeriod": {"type": ["integer", "null"], "minimum": 1}
+          }
+        },
+        "compatibility": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}},
+        "version": {"type": "string", "minLength": 1, "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"}
+      }
+    }
+  },
+  {
+    "id": "service-schema",
+    "name": "Service Product Schema",
+    "description": "JSON schema for service products",
+    "schema": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Service Product",
+      "type": "object",
+      "required": ["name", "type", "price", "category", "mainImage", "inStock", "duration", "location", "provider", "booking"],
+      "properties": {
+        "name": {"type": "string", "minLength": 1, "maxLength": 200},
+        "description": {"type": "string", "minLength": 10, "maxLength": 5000},
+        "type": {"const": "service"},
+        "price": {
+          "type": "object",
+          "required": ["amount", "currency"],
+          "properties": {
+            "amount": {"type": "number", "minimum": 0},
+            "currency": {"type": "string"},
+            "discount": {
+              "type": "object",
+              "required": ["percentage", "validUntil"],
+              "properties": {
+                "percentage": {"type": "number", "minimum": 0, "maximum": 100},
+                "validUntil": {"type": "string", "format": "date"}
+              }
+            }
+          }
+        },
+        "category": {"type": "string", "minLength": 1, "maxLength": 100},
+        "tags": {"type": "array", "minItems": 1, "maxItems": 20, "items": {"type": "string", "minLength": 1, "maxLength": 50}, "uniqueItems": true},
+        "brand": {"type": "string", "minLength": 1, "maxLength": 100},
+        "mainImage": {"type": "string", "format": "uri"},
+        "images": {
+          "type": "array",
+          "minItems": 0,
+          "maxItems": 10,
+          "items": {"type": "string", "format": "uri"}
+        },
+        "inStock": {"type": "boolean"},
+        "quantity": {"type": "integer", "minimum": 0},
+        "availableFrom": {"type": "string", "format": "date"},
+        "duration": {
+          "type": "object",
+          "required": ["value", "unit"],
+          "properties": {
+            "value": {"type": "number", "minimum": 0, "exclusiveMinimum": true},
+            "unit": {"type": "string", "enum": ["hours", "days", "weeks", "months"]}
+          }
+        },
+        "location": {
+          "type": "object",
+          "required": ["type"],
+          "properties": {
+            "type": {"type": "string", "enum": ["onsite", "remote", "hybrid"]},
+            "address": {
+              "type": "object",
+              "required": ["city", "country"],
+              "properties": {
+                "street": {"type": "string", "minLength": 1},
+                "city": {"type": "string", "minLength": 1},
+                "state": {"type": "string", "minLength": 1},
+                "country": {"type": "string", "minLength": 2},
+                "postalCode": {"type": "string", "minLength": 1}
+              }
+            }
+          }
+        },
+        "provider": {
+          "type": "object",
+          "required": ["name"],
+          "properties": {
+            "name": {"type": "string", "minLength": 1, "maxLength": 200},
+            "rating": {"type": "number", "minimum": 0, "maximum": 5},
+            "certifications": {"type": "array", "items": {"type": "string", "minLength": 1}}
+          }
+        },
+        "booking": {
+          "type": "object",
+          "required": ["requiresAppointment"],
+          "properties": {
+            "requiresAppointment": {"type": "boolean"},
+            "availableSlots": {"type": "array", "items": {"type": "string", "format": "date"}}
+          }
+        }
+      }
+    }
+  },
+  {
+    "id": "subscription-schema",
+    "name": "Subscription Product Schema",
+    "description": "JSON schema for subscription products",
+    "schema": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Subscription Product",
+      "type": "object",
+      "required": ["name", "type", "price", "category", "mainImage", "inStock", "billingCycle", "features", "autoRenew"],
+      "properties": {
+        "name": {"type": "string", "minLength": 1, "maxLength": 200},
+        "description": {"type": "string", "minLength": 10, "maxLength": 5000},
+        "type": {"const": "subscription"},
+        "price": {
+          "type": "object",
+          "required": ["amount", "currency"],
+          "properties": {
+            "amount": {"type": "number", "minimum": 0},
+            "currency": {"type": "string"},
+            "discount": {
+              "type": "object",
+              "required": ["percentage", "validUntil"],
+              "properties": {
+                "percentage": {"type": "number", "minimum": 0, "maximum": 100},
+                "validUntil": {"type": "string", "format": "date"}
+              }
+            }
+          }
+        },
+        "category": {"type": "string", "minLength": 1, "maxLength": 100},
+        "tags": {"type": "array", "minItems": 1, "maxItems": 20, "items": {"type": "string", "minLength": 1, "maxLength": 50}, "uniqueItems": true},
+        "brand": {"type": "string", "minLength": 1, "maxLength": 100},
+        "mainImage": {"type": "string", "format": "uri"},
+        "images": {
+          "type": "array",
+          "minItems": 0,
+          "maxItems": 10,
+          "items": {"type": "string", "format": "uri"}
+        },
+        "inStock": {"type": "boolean"},
+        "quantity": {"type": "integer", "minimum": 0},
+        "availableFrom": {"type": "string", "format": "date"},
+        "billingCycle": {"type": "string", "enum": ["daily", "weekly", "monthly", "quarterly", "yearly"]},
+        "trialPeriod": {
+          "type": "object",
+          "required": ["duration", "unit"],
+          "properties": {
+            "duration": {"type": "integer", "minimum": 1},
+            "unit": {"type": "string", "enum": ["days", "weeks", "months"]}
+          }
+        },
+        "features": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["name", "included"],
+            "properties": {
+              "name": {"type": "string", "minLength": 1, "maxLength": 200},
+              "included": {"type": "boolean"},
+              "limit": {"type": ["integer", "null"], "minimum": 0}
+            }
+          }
+        },
+        "autoRenew": {"type": "boolean"},
+        "cancellationPolicy": {"type": "string", "minLength": 10, "maxLength": 1000}
+      }
+    }
+  },
+  {
+    "id": "bundle-schema",
+    "name": "Bundle Product Schema",
+    "description": "JSON schema for bundle products",
+    "schema": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Bundle Product",
+      "type": "object",
+      "required": ["name", "type", "price", "category", "mainImage", "inStock", "items", "savings"],
+      "properties": {
+        "name": {"type": "string", "minLength": 1, "maxLength": 200},
+        "description": {"type": "string", "minLength": 10, "maxLength": 5000},
+        "type": {"const": "bundle"},
+        "price": {
+          "type": "object",
+          "required": ["amount", "currency"],
+          "properties": {
+            "amount": {"type": "number", "minimum": 0},
+            "currency": {"type": "string"},
+            "discount": {
+              "type": "object",
+              "required": ["percentage", "validUntil"],
+              "properties": {
+                "percentage": {"type": "number", "minimum": 0, "maximum": 100},
+                "validUntil": {"type": "string", "format": "date"}
+              }
+            }
+          }
+        },
+        "category": {"type": "string", "minLength": 1, "maxLength": 100},
+        "tags": {"type": "array", "minItems": 1, "maxItems": 20, "items": {"type": "string", "minLength": 1, "maxLength": 50}, "uniqueItems": true},
+        "brand": {"type": "string", "minLength": 1, "maxLength": 100},
+        "mainImage": {"type": "string", "format": "uri"},
+        "images": {
+          "type": "array",
+          "minItems": 0,
+          "maxItems": 10,
+          "items": {"type": "string", "format": "uri"}
+        },
+        "inStock": {"type": "boolean"},
+        "quantity": {"type": "integer", "minimum": 0},
+        "availableFrom": {"type": "string", "format": "date"},
+        "items": {
+          "type": "array",
+          "minItems": 2,
+          "items": {
+            "type": "object",
+            "required": ["productId", "quantity"],
+            "properties": {
+              "productId": {"type": "string", "minLength": 1},
+              "quantity": {"type": "integer", "minimum": 1}
+            }
+          }
+        },
+        "savings": {
+          "type": "object",
+          "required": ["amount", "percentage"],
+          "properties": {
+            "amount": {"type": "number", "minimum": 0},
+            "percentage": {"type": "number", "minimum": 0, "maximum": 100}
+          }
+        }
+      }
+    }
+  }
+] as const
