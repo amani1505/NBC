@@ -6,6 +6,9 @@ FROM base AS deps
 RUN apk add --no-cache libc6-compat
 WORKDIR /app
 
+# Fix for npm "Exit handler never called" crash on Alpine (memory exhaustion)
+ENV NODE_OPTIONS="--max-old-space-size=2048"
+
 # Install dependencies based on the preferred package manager
 COPY package.json yarn.lock* package-lock.json* pnpm-lock.yaml* .npmrc* ./
 RUN \
@@ -20,10 +23,12 @@ RUN \
 FROM base AS builder
 WORKDIR /app
 
+# Fix for npm/node memory issues during build on Alpine
+ENV NODE_OPTIONS="--max-old-space-size=2048"
+
 # Add ARG and ENV here for build time
 ARG NEXT_PUBLIC_API_BASE_URL
 ENV NEXT_PUBLIC_API_BASE_URL=$NEXT_PUBLIC_API_BASE_URL
-
 
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
@@ -48,8 +53,6 @@ ARG NEXT_PUBLIC_API_BASE_URL
 ENV NEXT_PUBLIC_API_BASE_URL=$NEXT_PUBLIC_API_BASE_URL
 ARG NEXT_PUBLIC_CHANNEL_API_KEY
 ENV NEXT_PUBLIC_CHANNEL_API_KEY=$NEXT_PUBLIC_CHANNEL_API_KEY
-
-
 
 ENV NODE_ENV=production
 # Uncomment the following line in case you want to disable telemetry during runtime.
