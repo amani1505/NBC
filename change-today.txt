@@ -1,2132 +1,1653 @@
-
-diff --git a/src/app/(PageSections)/Dashboard/EventPageSection/components/EventForm.tsx b/src/app/(PageSections)/Dashboard/EventPageSection/components/EventForm.tsx
-index 49e719c..2d29833 100644
---- a/src/app/(PageSections)/Dashboard/EventPageSection/components/EventForm.tsx
-+++ b/src/app/(PageSections)/Dashboard/EventPageSection/components/EventForm.tsx
-@@ -83,6 +83,7 @@ export const EventForm: React.FC<EventFormProps> = ({
-             errors={errors.basicInfo}
-             isPartnerContact={isPartnerContact}
-             partnerId={partnerId}
-+            onBeforeNavigate={forceSave}
-           />
-         );
-       case 1:
-@@ -135,10 +136,13 @@ export const EventForm: React.FC<EventFormProps> = ({
-   const validationSummary = getValidationSummary();
+diff --git a/src/app/(PageSections)/Account/Orders/OrderDetailPagesection.tsx b/src/app/(PageSections)/Account/Orders/OrderDetailPagesection.tsx
+index 8f8a668..73d3711 100644
+--- a/src/app/(PageSections)/Account/Orders/OrderDetailPagesection.tsx
++++ b/src/app/(PageSections)/Account/Orders/OrderDetailPagesection.tsx
+@@ -1,37 +1,173 @@
+ "use client";
  
-   // Check if account validation is required and valid for registration step
--  const isAccountValidationRequired =
--    currentStep === 2 && formData.registration.paymentAccountNumber;
--  const isAccountValid =
--    !isAccountValidationRequired || validationResult?.isValid === true;
-+  // Payment account number is always required on registration step and must be validated
-+  const isOnRegistrationStep = currentStep === 2;
-+  const hasPaymentAccountNumber = !!formData.registration.paymentAccountNumber?.trim();
-+  const isAccountValidated = validationResult?.isValid === true;
-+
-+  // Account is valid only if: has payment account number AND it's been validated successfully
-+  const isAccountValid = !isOnRegistrationStep || (hasPaymentAccountNumber && isAccountValidated);
- 
-   // Override step validity for registration step to include account validation
-   const isCurrentStepValid =
-@@ -207,15 +211,17 @@ export const EventForm: React.FC<EventFormProps> = ({
-           <ValidationSummary
-             isValid={validationSummary.isValid && isAccountValid}
-             missingFields={
--              !isAccountValid && currentStep === 2
-+              isOnRegistrationStep && !isAccountValid
-                 ? [
-                     ...validationSummary.missingFields,
--                    "Payment Account Number (must be validated)",
-+                    !hasPaymentAccountNumber
-+                      ? "Payment Account Number"
-+                      : "Payment Account Number (click validate button to verify)",
-                   ]
-                 : validationSummary.missingFields
-             }
-             missingCount={
--              !isAccountValid && currentStep === 2
-+              isOnRegistrationStep && !isAccountValid
-                 ? validationSummary.missingCount + 1
-                 : validationSummary.missingCount
-             }
-@@ -264,8 +270,10 @@ export const EventForm: React.FC<EventFormProps> = ({
-                   disabled={!isCurrentStepValid || isLoading}
-                   className="bg-primary hover:bg-primary-hover text-primary-foreground flex items-center space-x-2 disabled:opacity-50"
-                   title={
--                    currentStep === 2 && !isAccountValid
--                      ? "Please validate the payment account number"
-+                    isOnRegistrationStep && !isAccountValid
-+                      ? !hasPaymentAccountNumber
-+                        ? "Please enter a payment account number"
-+                        : "Please validate the payment account number by clicking the validate button"
-                       : undefined
-                   }
-                 >
-diff --git a/src/app/(PageSections)/Dashboard/EventPageSection/components/event-form/steps/BasicInfoStep.tsx b/src/app/(PageSections)/Dashboard/EventPageSection/components/event-form/steps/BasicInfoStep.tsx
-index 6d8ee3a..725562f 100644
---- a/src/app/(PageSections)/Dashboard/EventPageSection/components/event-form/steps/BasicInfoStep.tsx
-+++ b/src/app/(PageSections)/Dashboard/EventPageSection/components/event-form/steps/BasicInfoStep.tsx
-@@ -13,6 +13,9 @@ import { ConvertUnderscoreToSpace } from "@/utils/ConvertUnderscoreToSpace";
- import { EventTypeI } from "@/types/event";
- import { usePartner } from "@/hooks/usePartner";
- import { PartnerI } from "@/types/partner";
-+import { useModal } from "@/hooks/useModal";
+-
+-import { mockOrders } from "@/data/mockOrders";
++import { useEffect, useState } from "react";
 +import { useRouter } from "next/navigation";
-+import { EventTypeModal } from "@/components/modals/EventTypeModal";
- 
- export interface BasicInfoData {
-   eventTypeId: string;
-@@ -20,6 +23,8 @@ export interface BasicInfoData {
-   eventDate: string;
-   endDate: string;
-   location: string;
-+  latitude: number;
-+  longitude: number;
-   eventTime: string;
-   partnerId: string;
- }
-@@ -30,6 +35,7 @@ interface BasicInfoStepProps {
-   errors?: Partial<BasicInfoData>;
-   isPartnerContact?: boolean;
-   partnerId?: string;
-+  onBeforeNavigate?: () => void; // Called before navigating away to save form data
- }
- 
- export const BasicInfoStep: React.FC<BasicInfoStepProps> = ({
-@@ -38,13 +44,24 @@ export const BasicInfoStep: React.FC<BasicInfoStepProps> = ({
-   errors = {},
-   isPartnerContact = false,
-   partnerId,
-+  onBeforeNavigate,
- }) => {
-+  const router = useRouter();
-+  const { openModal, closeModal } = useModal();
-+
-   const updateField =
-     (field: keyof BasicInfoData) =>
-     (event: React.ChangeEvent<HTMLInputElement>) => {
-       onChange({ [field]: event.target.value });
-     };
- 
-+  const updateNumberField =
-+    (field: keyof BasicInfoData) =>
-+    (event: React.ChangeEvent<HTMLInputElement>) => {
-+      const value = event.target.value;
-+      onChange({ [field]: value === "" ? 0 : parseFloat(value) });
-+    };
-+
-   // Separate handler for UniversalSelect that handles string | string[] values
-   const updateSelectField =
-     (field: keyof BasicInfoData) => (value: string | string[]) => {
-@@ -53,9 +70,63 @@ export const BasicInfoStep: React.FC<BasicInfoStepProps> = ({
-       onChange({ [field]: stringValue });
-     };
- 
--  const { findAllEventType, eventTypes } = useEvent();
-+  const { findAllEventType, eventTypes, createEventType, updateEventType, deleteEventType } = useEvent();
-   const { findAllPartners, partners } = usePartner();
- 
-+  // Event Type Modal handlers (only for admin)
-+  const handleOpenCreateEventTypeModal = () => {
-+    openModal(
-+      <EventTypeModal
-+        mode="create"
-+        onSave={async (eventTypeData) => {
-+          const createData = eventTypeData as { name: string; description: string; active: boolean };
-+          await createEventType(createData);
-+          closeModal();
-+        }}
-+        onCancel={closeModal}
-+        isAdmin={!isPartnerContact}
-+      />,
-+      "Create New Event Type",
-+      "md",
-+      "Add a new event type to the system"
-+    );
-+  };
-+
-+  const handleOpenEditEventTypeModal = (eventType: EventTypeI) => {
-+    openModal(
-+      <EventTypeModal
-+        mode="edit"
-+        eventType={eventType}
-+        onSave={async (eventTypeData) => {
-+          // Cast to update type which includes id
-+          const updateData = eventTypeData as { id: string | number; name: string; description: string; active: boolean };
-+          await updateEventType(eventType.id, updateData);
-+          closeModal();
-+        }}
-+        onDelete={async (id) => {
-+          await deleteEventType(id);
-+          // Clear selection if the deleted event type was selected
-+          if (data.eventTypeId === id.toString()) {
-+            onChange({ eventTypeId: "" });
-+          }
-+          closeModal();
-+        }}
-+        onCancel={closeModal}
-+        isAdmin={!isPartnerContact}
-+      />,
-+      "Edit Event Type",
-+      "md",
-+      "Update or delete this event type"
-+    );
-+  };
-+
-+  // Navigate to create partner page
-+  const handleNavigateToCreatePartner = () => {
-+    // Save form data before navigating
-+    onBeforeNavigate?.();
-+    router.push("/dashboard/partners?action=create");
-+  };
-+
-   // Special handler for date picker that converts DateValue to string
-   const updateDateField =
-     (field: keyof BasicInfoData) => (date: DateValue | null) => {
-@@ -120,6 +191,7 @@ export const BasicInfoStep: React.FC<BasicInfoStepProps> = ({
-       eventTypes.data?.map((eventType: EventTypeI) => ({
-         value: eventType.id.toString(), // Use id as value
-         label: ConvertUnderscoreToSpace(eventType.name), // Use name for label
-+        originalData: eventType, // Keep original data for edit
-       })) || []
-     );
-   }, [eventTypes.data]);
-@@ -145,16 +217,30 @@ export const BasicInfoStep: React.FC<BasicInfoStepProps> = ({
-           placeholder="Select event type"
-           options={convertedEventType}
-           value={data.eventTypeId}
--          onValueChange={updateSelectField("eventTypeId")} // Use the correct handler
-+          onValueChange={updateSelectField("eventTypeId")}
-           required
--          error={errors.eventName}
-+          error={errors.eventTypeId}
-           searchable
-           key={`eventType-${convertedEventType.length}-${data.eventTypeId}`}
--          // addButtonText="Add Event Type"
--          // onAddNewClick={() => {
--          //   console.log("Clicked");
--          // }}
--          // allowAddNew
-+          addButtonText="Add Event Type"
-+          onAddNewClick={!isPartnerContact ? handleOpenCreateEventTypeModal : undefined}
-+          allowAddNew={!isPartnerContact}
-+          showOptionActions={!isPartnerContact}
-+          onEditOption={!isPartnerContact ? (option) => {
-+            if (option.originalData) {
-+              handleOpenEditEventTypeModal(option.originalData);
-+            }
-+          } : undefined}
-+          onDeleteOption={!isPartnerContact ? (option) => {
-+            if (option.originalData) {
-+              deleteEventType(option.originalData.id).then(() => {
-+                // Clear selection if the deleted event type was selected
-+                if (data.eventTypeId === option.value) {
-+                  onChange({ eventTypeId: "" });
-+                }
-+              });
-+            }
-+          } : undefined}
-         />
- 
-         {!isPartnerContact && (
-@@ -169,6 +255,8 @@ export const BasicInfoStep: React.FC<BasicInfoStepProps> = ({
-             searchable
-             key={`partner-${convertedPartners.length}-${data.partnerId}`}
-             addButtonText="Add Partner"
-+            onAddNewClick={handleNavigateToCreatePartner}
-+            allowAddNew
-           />
-         )}
-       </div>
-@@ -194,6 +282,30 @@ export const BasicInfoStep: React.FC<BasicInfoStepProps> = ({
-         />
-       </div>
- 
-+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-+        <FormInput
-+          label="Latitude"
-+          description="The latitude coordinate of the event location."
-+          placeholder="-6.1630"
-+          type="number"
-+          step="any"
-+          value={data.latitude === 0 ? "" : data.latitude.toString()}
-+          onChange={updateNumberField("latitude")}
-+          error={errors.latitude as string}
-+        />
-+
-+        <FormInput
-+          label="Longitude"
-+          description="The longitude coordinate of the event location."
-+          placeholder="35.7516"
-+          type="number"
-+          step="any"
-+          value={data.longitude === 0 ? "" : data.longitude.toString()}
-+          onChange={updateNumberField("longitude")}
-+          error={errors.longitude as string}
-+        />
-+      </div>
-+
-       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-         <FormDatePicker
-           label="Event Start Date"
-diff --git a/src/app/(PageSections)/Dashboard/EventPageSection/components/event-form/steps/MediaStep.tsx b/src/app/(PageSections)/Dashboard/EventPageSection/components/event-form/steps/MediaStep.tsx
-index ca04101..e3e74b7 100644
---- a/src/app/(PageSections)/Dashboard/EventPageSection/components/event-form/steps/MediaStep.tsx
-+++ b/src/app/(PageSections)/Dashboard/EventPageSection/components/event-form/steps/MediaStep.tsx
-@@ -1,9 +1,8 @@
- import { FormInput } from "@/components/ui/form-input";
- import { ImageUploader } from "@/components/ui/ImageUploader";
- import { useMedia } from "@/hooks/useMedia";
--import React, { useState, useEffect } from "react";
--import { Plus, X} from "lucide-react";
--
-+import React, { useState, useEffect, useRef } from "react";
-+import { Plus, X } from "lucide-react";
- import { MediaDataI } from "@/types/media";
- import { ApiResponseI } from "@/types/api";
+ import {
+-  BadgeCheck,
+   ChevronLeft,
++  Copy,
++  Check,
+   CreditCard,
+   Info,
+   MessageCircle,
+-  MoreVertical,
+   ShoppingBag,
+   User,
+ } from "lucide-react";
+-import { useParams, useRouter } from "next/navigation";
+ import OrderProgressTracker from "./components/OrderProgressTracker";
+ import ProductItemCard from "./components/ProductItemCard";
+-import Image from "next/image";
  import { Button } from "@/components/ui/button";
-@@ -43,12 +42,14 @@ export const MediaStep: React.FC<MediaStepProps> = ({
-   forceSave,
- }) => {
-   const { upload } = useMedia();
-+  const [videoError,setVideoError] = useState("")
-   const [uploadingFields, setUploadingFields] = useState<
-     Record<string, boolean>
-   >({});
-+  const videoRef = useRef<HTMLVideoElement>(null);
- 
-   // State to manage video input method
--  const [, setVideoInputMethod] = useState<'url' | 'upload'>('url');
-+  const [, setVideoInputMethod] = useState<"url" | "upload">("url");
- 
-   const [otherImageFields, setOtherImageFields] = useState<UploadField[]>(
-     () => {
-@@ -68,7 +69,7 @@ export const MediaStep: React.FC<MediaStepProps> = ({
-               isUploading: false,
-             },
-           ];
--    }
-+    },
-   );
- 
-   // Sync otherImageFields with parent data when it changes externally
-@@ -87,7 +88,7 @@ export const MediaStep: React.FC<MediaStepProps> = ({
-             file: null,
-             url,
-             isUploading: false,
--          }))
-+          })),
-         );
-       }
-     }
-@@ -97,17 +98,18 @@ export const MediaStep: React.FC<MediaStepProps> = ({
-   useEffect(() => {
-     // Auto-detect method based on URL pattern - only youtube/vimeo are considered external platforms
-     if (data.videoUrl) {
--      const isExternalPlatform = data.videoUrl.includes('youtube') || 
--                                data.videoUrl.includes('youtu.be') || 
--                                data.videoUrl.includes('vimeo');
--      setVideoInputMethod(isExternalPlatform ? 'url' : 'upload');
-+      const isExternalPlatform =
-+        data.videoUrl.includes("youtube") ||
-+        data.videoUrl.includes("youtu.be") ||
-+        data.videoUrl.includes("vimeo");
-+      setVideoInputMethod(isExternalPlatform ? "url" : "upload");
-     }
-   }, [data.videoUrl]);
- 
-   // Handle single file upload with immediate state update and save
-   const handleFileUpload = async (
-     field: keyof MediaData,
--    file: File | null
-+    file: File | null,
-   ) => {
-     if (!file) {
-       onChange({ [field]: "" });
-@@ -125,7 +127,7 @@ export const MediaStep: React.FC<MediaStepProps> = ({
-       const response: ApiResponseI<MediaDataI> = await upload(
-         formData,
-         bucketName,
--        false
-+        false,
-       );
- 
-       if (response?.data?.urls?.view) {
-@@ -158,9 +160,17 @@ export const MediaStep: React.FC<MediaStepProps> = ({
-     }
- 
-     // Validate video file
--    const validVideoTypes = ['video/mp4', 'video/webm', 'video/ogg', 'video/mov', 'video/avi'];
-+    const validVideoTypes = [
-+      "video/mp4",
-+      "video/webm",
-+      "video/ogg",
-+      "video/mov",
-+      "video/avi",
-+    ];
-     if (!validVideoTypes.includes(file.type)) {
--      return { error: "Please upload a valid video file (MP4, WebM, OGG, MOV, AVI)" };
-+      return {
-+        error: "Please upload a valid video file (MP4, WebM, OGG, MOV, AVI)",
-+      };
-     }
- 
-     // Check file size (e.g., 500MB limit)
-@@ -178,7 +188,7 @@ export const MediaStep: React.FC<MediaStepProps> = ({
-       const response: ApiResponseI<MediaDataI> = await upload(
-         formData,
-         bucketName,
--        false
-+        false,
-       );
- 
-       if (response?.data?.urls?.view) {
-@@ -222,7 +232,7 @@ export const MediaStep: React.FC<MediaStepProps> = ({
-       const response: ApiResponseI<MediaDataI> = await upload(
-         formData,
-         bucketName,
--        false
-+        false,
-       );
- 
-       if (response?.data?.urls?.view) {
-@@ -306,7 +316,7 @@ export const MediaStep: React.FC<MediaStepProps> = ({
-     };
- 
-   // Handle video input method change
--  const handleVideoMethodChange = (method: 'url' | 'upload') => {
-+  const handleVideoMethodChange = (method: "url" | "upload") => {
-     setVideoInputMethod(method);
-     // Clear videoUrl when switching methods
-     onChange({ videoUrl: "" });
-@@ -419,7 +429,7 @@ export const MediaStep: React.FC<MediaStepProps> = ({
-       <div className="space-y-6">
-         <div className="space-y-4">
-           <h3 className="text-lg font-semibold">Event Video</h3>
--          
-+
-           {/* Video Input Method Toggle */}
-           {/* <div className="flex gap-2 p-1 bg-gray-100 rounded-lg w-fit">
-             <button
-@@ -499,46 +509,40 @@ export const MediaStep: React.FC<MediaStepProps> = ({
-                     />
-                   </div>
-                 )} */}
--                {/* {errors.videoUrl && videoInputMethod === 'upload' && (
-+            {/* {errors.videoUrl && videoInputMethod === 'upload' && (
-                   <p className="text-sm text-red-600 mt-1">{errors.videoUrl}</p>
-                 )} *
-               </div>
-             )} */}
- 
 -
--
--
--
--
--
--  <div className="space-y-2">
--                <label className="block text-sm font-medium text-gray-700">
--                  Upload Video File
--                </label>
--                <p className="text-sm text-gray-500">
--                  Upload a video file (MP4, WebM, OGG, MOV, AVI) - Max 500MB
--                </p>
--                <div className="relative">
--                  <input
--                    type="file"
--                    accept="video/*"
--                    onChange={(e) => {
--                      const file = e.target.files?.[0] || null;
--                      handleVideoFileUpload(file);
--                    }}
--                    className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-blue-50 file:text-primary-800 hover:file:bg-blue-100 border border-gray-300 rounded-md"
--                    disabled={uploadingFields.videoUrl}
--                  />
--                  {uploadingFields.videoUrl && (
--                    <div className="absolute inset-0 bg-white bg-opacity-75 flex items-center justify-center rounded-md">
--                      <div className="flex items-center gap-2 text-sm text-primary-900">
--                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary-900"></div>
--                        Uploading video...
--                      </div>
-+            <div className="space-y-2">
-+              <label className="block text-sm font-medium text-gray-700">
-+                Upload Video File
-+              </label>
-+              <p className="text-sm text-gray-500">
-+                Upload a video file (MP4, WebM, OGG, MOV, AVI) - Max 500MB
-+              </p>
-+              <div className="relative">
-+                <input
-+                  type="file"
-+                  accept="video/*"
-+                  onChange={(e) => {
-+                    const file = e.target.files?.[0] || null;
-+                    handleVideoFileUpload(file);
-+                  }}
-+                  className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-medium file:bg-blue-50 file:text-primary-800 hover:file:bg-blue-100 border border-gray-300 rounded-md"
-+                  disabled={uploadingFields.videoUrl}
-+                />
-+                {uploadingFields.videoUrl && (
-+                  <div className="absolute inset-0 bg-white bg-opacity-75 flex items-center justify-center rounded-md">
-+                    <div className="flex items-center gap-2 text-sm text-primary-900">
-+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary-900"></div>
-+                      Uploading video...
-                     </div>
--                  )}
--                </div>
--                {/* {data.videoUrl && videoInputMethod === 'upload' && (
-+                  </div>
-+                )}
-+              </div>
-+              {/* {data.videoUrl && videoInputMethod === 'upload' && (
-                   <div className="mt-2 p-2 bg-green-50 border border-green-200 rounded-md">
-                     <p className="text-sm text-green-700">
-                       ✓ Video uploaded successfully
-@@ -550,11 +554,10 @@ export const MediaStep: React.FC<MediaStepProps> = ({
-                     />
-                   </div>
-                 )} */}
--                {/* {errors.videoUrl && videoInputMethod === 'upload' && (
-+              {/* {errors.videoUrl && videoInputMethod === 'upload' && (
-                   <p className="text-sm text-red-600 mt-1">{errors.videoUrl}</p>
-                 )} */}
--              </div>
--
-+            </div>
+-const DEFAULT_ORDER_KEY = "27102025HS";
++import { Skeleton } from "@/components/ui/skeleton";
++import { useCheckout } from "@/hooks/useCheckout";
++import { usePayment } from "@/hooks/usePayment";
++import type { OrderProgressStatusI } from "@/types/order";
  
-             <FormInput
-               label="Video Caption"
-@@ -566,8 +569,9 @@ export const MediaStep: React.FC<MediaStepProps> = ({
-             />
-           </div>
- 
-+        
-           {/* Show current video preview if URL is provided */}
--          {data.videoUrl && (
-+       {data.videoUrl && (
-             <div className="mt-4">
-               <p className="text-sm text-gray-600 mb-2">Video Preview:</p>
-               {data.videoUrl.includes('youtube') || data.videoUrl.includes('youtu.be') ? (
-@@ -579,24 +583,66 @@ export const MediaStep: React.FC<MediaStepProps> = ({
-                   <p className="text-gray-500 text-sm">Vimeo Video - Preview not available</p>
-                 </div>
-               ) : (
--                // For all other videos (uploaded or direct video file URLs)
--                <video
--                  src={data.videoUrl}
--                  controls
--                  controlsList="nodownload"
--                  className="w-full max-w-md aspect-video bg-black rounded-lg"
--                  preload="metadata"
--                  onError={(e) => {
--                    console.error('Video loading error:', e);
--                    e.currentTarget.style.display = 'none';
--                    const errorDiv = document.createElement('div');
--                    errorDiv.className = 'aspect-video w-full max-w-md bg-red-50 border border-red-200 rounded-lg flex items-center justify-center';
--                    errorDiv.innerHTML = '<p class="text-red-500 text-sm">Unable to load video. Please check the video URL.</p>';
--                    e.currentTarget.parentNode?.appendChild(errorDiv);
--                  }}
--                >
--                  <p className="text-gray-500 text-sm">Your browser does not support the video tag.</p>
--                </video>
-+                <div className="space-y-3">
-+                  {videoError && (
-+                    <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
-+                      <p className="text-red-700 text-sm font-medium mb-2">❌ Video Loading Error</p>
-+                      <p className="text-red-600 text-xs mb-3">{videoError}</p>
-+                      <div className="space-y-2 text-xs text-red-600">
-+                        <p className="font-medium">Possible solutions:</p>
-+                        <ul className="list-disc list-inside space-y-1 ml-2">
-+                          <li>Ask your backend team to enable CORS headers for video streaming</li>
-+                          <li>Use a proxy server to bypass CORS restrictions</li>
-+                          <li>Deploy your frontend to the same domain as the API</li>
-+                        </ul>
-+                      </div>
-+                      <a
-+                        href={data.videoUrl}
-+                        target="_blank"
-+                        rel="noopener noreferrer"
-+                        className="inline-block mt-3 px-3 py-1.5 bg-red-600 text-white rounded text-xs hover:bg-red-700 transition-colors"
-+                      >
-+                        Open Video in New Tab
-+                      </a>
-+                    </div>
-+                  )}
-+                  
-+                  <video
-+                    ref={videoRef}
-+                    src={data.videoUrl}
-+                    controls
-+                    controlsList="nodownload"
-+                    crossOrigin="anonymous"
-+                    className="w-full max-w-md aspect-video bg-black rounded-lg"
-+                    preload="metadata"
-+                    onError={(e) => {
-+                      console.error('Video loading error:', e);
-+                      const errorMessage = e.currentTarget.error?.message || 'Unknown error';
-+                      setVideoError(
-+                        `Failed to load video. This is likely a CORS (Cross-Origin) issue. The video works in a new tab but cannot be embedded due to server security settings. Error: ${errorMessage}`
-+                      );
-+                    }}
-+                    onLoadedMetadata={() => {
-+                      setVideoError(""); // Clear error if video loads successfully
-+                    }}
-+                  >
-+                    <p className="text-gray-500 text-sm">Your browser does not support the video tag.</p>
-+                  </video>
-+
-+                  {!videoError && (
-+                    <p className="text-xs text-gray-500">
-+                      If the video doesn&apos;t load, please.{' '}
-+                      <a
-+                        href={data.videoUrl}
-+                        target="_blank"
-+                        rel="noopener noreferrer"
-+                        className="text-blue-600 hover:underline"
-+                      >
-+                        Open in new tab
-+                      </a>
-+                    </p>
-+                  )}
-+                </div>
-               )}
-             </div>
-           )}
-@@ -618,4 +664,4 @@ export const MediaStep: React.FC<MediaStepProps> = ({
-       )} */}
-     </div>
-   );
--};
-\ No newline at end of file
-+};
-diff --git a/src/app/(PageSections)/Dashboard/PartnerManagementPageSection/PartnerManagementPageSection.tsx b/src/app/(PageSections)/Dashboard/PartnerManagementPageSection/PartnerManagementPageSection.tsx
-index c21e2a4..eb21dbd 100644
---- a/src/app/(PageSections)/Dashboard/PartnerManagementPageSection/PartnerManagementPageSection.tsx
-+++ b/src/app/(PageSections)/Dashboard/PartnerManagementPageSection/PartnerManagementPageSection.tsx
-@@ -1,5 +1,5 @@
- "use client";
--import React, { useEffect, useState } from "react";
-+import React, { useEffect, useState, useCallback } from "react";
- import DataTable from "@/components/shared/Datatable/DataTable";
- import { ColumnDef, Row } from "@tanstack/react-table";
- import { cn } from "@/lib/utils";
-@@ -11,6 +11,7 @@ import { PartnerProvider } from "@/providers/partner.provider";
- import { AuthenticatedImage } from "@/components/ui/AuthenticatedImage";
- import Link from "next/link";
- import { MediaProvider } from "@/providers/media.provider";
-+import { useSearchParams, useRouter } from "next/navigation";
- 
- const PartnerLogo = ({ logoUrl }: { logoUrl: string }) => {
-   const [imgSrc] = useState(logoUrl || "/images/image-placeholder.png");
-@@ -120,19 +121,33 @@ const partnerColumns: ColumnDef<PartnerI>[] = [
- function PartnerManagementPageSection() {
-   const { openModal, closeModal } = useModal();
-   const { partners, findAllPartners, deletePartner, isLoading } = usePartner();
-+  const searchParams = useSearchParams();
-+  const router = useRouter();
- 
--  const handleAddPartner = () => {
-+  const handleAddPartner = useCallback(() => {
-     openModal(
-       <PartnerProvider>
-         <MediaProvider>
--          <CreatePartnerForm closeModal={closeModal} />
-+          <CreatePartnerForm closeModal={() => {
-+            closeModal();
-+            // Clear the action param from URL after closing
-+            router.replace("/dashboard/partners");
-+          }} />
-         </MediaProvider>
-       </PartnerProvider>,
-       "Create New Partner",
-       "xl",
-       "Fill in the details to create a new partner"
-     );
--  };
-+  }, [openModal, closeModal, router]);
-+
-+  // Auto-open create modal if action=create is in URL
-+  useEffect(() => {
-+    const action = searchParams.get("action");
-+    if (action === "create") {
-+      handleAddPartner();
-+    }
-+  }, [searchParams, handleAddPartner]);
- 
-   const handleEditPartner = (partner: PartnerI) => {
-     openModal(
-diff --git a/src/app/(PageSections)/Landing/HomePageSection.tsx b/src/app/(PageSections)/Landing/HomePageSection.tsx
-index c365d43..3f05dac 100644
---- a/src/app/(PageSections)/Landing/HomePageSection.tsx
-+++ b/src/app/(PageSections)/Landing/HomePageSection.tsx
-@@ -34,13 +34,13 @@ function HomePageSection() {
-           <EventDetailsModal videoUrl="/videos/discover.mp4" />
-         </EventProvider>,
-         "Discover Dodoma",
--        "xl"
-+        "xl",
-       );
-     } else if (title === "How To Register") {
-       openModal(
-         <HowToRegister videoUrl="/videos/how-to-register-video.mp4" />,
-         "How To Register",
--        "xl"
-+        "xl",
-       );
-     } else if (title === "A note from MD") {
-       openModal(<ChairmanWord />, "A note from MD", "xl");
-@@ -103,33 +103,18 @@ function HomePageSection() {
-       },
-     },
-   ];
--
--  const hero = {
--    videoUrl: mainEvent.data?.videoUrl || "/videos/hero-bg.mp4",
--    logoUrl: mainEvent.data?.logoUrl || "/images/dodoma-marathon.svg",
--    title: mainEvent.data?.title || "",
--    description: mainEvent.data?.eventIntroEn || "",
--    year: mainEvent.data?.eventDate || new Date(),
--    countdownDate: mainEvent.data?.eventDate || "",
--    cta1: "Register",
--    cta1Action() {
--      router.push(`events/${mainEvent.data?.id}/registration`);
--    },
--    cta2Action() {
--      router.push(`events/${mainEvent.data?.id}`);
--    },
--    cta2: "Learn More",
--    heroCards,
--  };
--
-+console.log(mainEvent)
-   // Transform data for HeroSlider when no video is available
--  const heroSlides: HeroSliderI[] = mainEvent.data?.imageUrls
--    ? mainEvent.data.imageUrls.map((imageUrl: string, index: number) => ({
--        id: `slide-${index}`,
-+  const heroSlide: HeroSliderI = mainEvent.data?.imageUrls 
-+    ? {
-+        id:String(mainEvent.data?.id || "main-event") ,
-         title: mainEvent.data?.title || "",
--        subtitle: new Date(mainEvent.data?.eventDate || "").getFullYear().toString(),
-+        subtitle: mainEvent.data?.eventDate
-+          ? new Date(mainEvent.data.eventDate).getFullYear().toString()
-+          : "",
-         description: mainEvent.data?.eventIntroEn || "",
--        backgroundImage: imageUrl,
-+        backgroundImage:
-+          mainEvent.data?.imageUrls?.[0] || "/images/hero-bg.jpg",
-         logoUrl: mainEvent.data?.logoUrl || "/images/dodoma-marathon.svg",
-         cta1: "Register",
-         cta2: "Learn More",
-@@ -137,18 +122,20 @@ function HomePageSection() {
-         heroCards,
-         countdownDate: mainEvent.data?.eventDate || "",
-         countdownLabel: "Event Starts In",
--        cta1Action() {
-+        cta1Action: () => {
-           router.push(`events/${mainEvent.data?.id}/registration`);
-         },
--        cta2Action() {
-+        cta2Action: () => {
-           router.push(`events/${mainEvent.data?.id}`);
-         },
--      }))
--    : [
-+      }
-+    : 
-         {
-           id: "default-slide",
-           title: mainEvent.data?.title || "",
--          subtitle: new Date(mainEvent.data?.eventDate || "").getFullYear().toString(),
-+          subtitle: new Date(mainEvent.data?.eventDate || "")
-+            .getFullYear()
-+            .toString(),
-           description: mainEvent.data?.eventIntroEn || "",
-           backgroundImage: "/images/hero-bg.jpg",
-           logoUrl: mainEvent.data?.logoUrl || "/images/dodoma-marathon.svg",
-@@ -164,18 +151,19 @@ function HomePageSection() {
-           cta2Action() {
-             router.push(`events/${mainEvent.data?.id}`);
-           },
--        },
--      ];
-+        }
-+      
- 
-   return (
-     <>
--      <div className="snap-start">
-+      <HeroSlider heroSlide={heroSlide} />
-+      {/* <div className="snap-start">
-         {mainEvent.data?.videoUrl ? (
-           <HeroVideo hero={hero} />
-         ) : (
-           <HeroSlider heroSlides={heroSlides} />
-         )}
--      </div>
-+      </div> */}
-       <div className="container mx-auto space-y-10 ">
-         <EventFilters />
-         <UpcomingEvents />
-diff --git a/src/app/(PageSections)/Landing/SinglePageSection.tsx b/src/app/(PageSections)/Landing/SinglePageSection.tsx
-index a77c0ad..7df8117 100644
---- a/src/app/(PageSections)/Landing/SinglePageSection.tsx
-+++ b/src/app/(PageSections)/Landing/SinglePageSection.tsx
-@@ -24,7 +24,7 @@ import {
- function SingleEventPageSection() {
-   const router = useRouter();
-   const params = useParams();
--  const { event, findSingleEvent } = useEvent();
-+  const { event, findSingleEvent, eventType, findSingleEventType } = useEvent();
-   const { eventTickets, findEventTickets } = useTicket();
-   const { galleries, findGalleriesByEvent } = useEventGallery();
- 
-@@ -36,14 +36,23 @@ function SingleEventPageSection() {
-     }
-   }, [params.id]);
- 
-+  useEffect(() => {
-+    if (event?.data?.eventTypeId) {
-+      findSingleEventType(event?.data?.eventTypeId);
-+    }
-+  }, [event?.data?.eventTypeId]);
-+
-+  const isCompletedMarathon =
-+    eventType?.data?.name === "marathon" && event?.data?.status === "COMPLETED";
-   // Calculate total images across all galleries
-   const totalGalleryImages = React.useMemo(() => {
-     if (!galleries.data || galleries.data.length === 0) return 0;
-     return galleries.data.reduce((total, gallery) => {
-       const galleryImageCount = gallery.images?.length || 0;
--      const groupImageCount = gallery.groups?.reduce((groupTotal, group) => {
--        return groupTotal + (group.images?.length || 0);
--      }, 0) || 0;
-+      const groupImageCount =
-+        gallery.groups?.reduce((groupTotal, group) => {
-+          return groupTotal + (group.images?.length || 0);
-+        }, 0) || 0;
-       return total + galleryImageCount + groupImageCount;
-     }, 0);
-   }, [galleries.data]);
-@@ -54,13 +63,22 @@ function SingleEventPageSection() {
-       icon: <FileText className="w-10 h-10" />,
-       link: `${slugify(params.id as string)}/guidelines`,
-     },
-+
-+    ...(isCompletedMarathon
-+      ? [
-+          {
-+            title: "Marathon Winners",
-+            icon: <Trophy className="w-10 h-10" />,
-+            link: `${slugify(params.id as string)}/winners`,
-+          },
-+        ]
-+      : []),
-+
-     {
--      title: "Marathon Winners",
--      icon: <Trophy className="w-10 h-10" />,
--      link: `${slugify(params.id as string)}/winners`,
--    },
--    {
--      title: totalGalleryImages > 0 ? `Gallery (${totalGalleryImages} photos)` : "Event Gallery",
-+      title:
-+        totalGalleryImages > 0
-+          ? `Gallery (${totalGalleryImages} photos)`
-+          : "Event Gallery",
-       icon: <Images className="w-10 h-10" />,
-       link: `/gallery/${params.id}`,
-     },
-@@ -80,7 +98,12 @@ function SingleEventPageSection() {
-     {
-       label: "Register for Event ",
-       value: "tickets",
--      content: <TicketSection tickets={eventTickets.data || []} />,
-+      content: (
-+        <TicketSection
-+          tickets={eventTickets.data || []}
-+          eventStatus={event?.data?.status || "PUBLISHED"}
-+        />
-+      ),
-     },
-     {
-       label: "Make a Donation",
-diff --git a/src/app/(PageSections)/Landing/sections/EventSections/TicketSection.tsx b/src/app/(PageSections)/Landing/sections/EventSections/TicketSection.tsx
-index 3a9f8c5..b72cd09 100644
---- a/src/app/(PageSections)/Landing/sections/EventSections/TicketSection.tsx
-+++ b/src/app/(PageSections)/Landing/sections/EventSections/TicketSection.tsx
-@@ -6,12 +6,14 @@ import { TicketI } from "@/types/ticket";
- import { AuthenticatedImage } from "@/components/ui/AuthenticatedImage";
- import { useRouter, useParams } from "next/navigation";
- import React from "react";
-+import { EventStatus } from "@/types/event";
- 
- interface TicketingProp {
-   tickets: TicketI[];
-+  eventStatus: EventStatus
- }
- 
--function TicketSection({ tickets }: TicketingProp) {
-+function TicketSection({ tickets, eventStatus }: TicketingProp) {
-   const bg = "/images/kiganjani-bg.svg";
-   const router = useRouter();
-   const params = useParams();
-@@ -26,7 +28,9 @@ function TicketSection({ tickets }: TicketingProp) {
-             variant="outline"
-             className="w-5/12"
-             onClick={() => {
--              router.push(`${eventId}/registration${ticketData?.id ? `?ticketId=${ticketData.id}` : ''}`);
-+              router.push(
-+                `${eventId}/registration${ticketData?.id ? `?ticketId=${ticketData.id}` : ""}`,
-+              );
-               closeModal();
-             }}
-           >
-@@ -57,12 +61,10 @@ function TicketSection({ tickets }: TicketingProp) {
-       </div>,
-       "How do you want to continue",
-       "lg",
--      "Please Choose How You Want To Continue"
-+      "Please Choose How You Want To Continue",
-     );
-   };
- 
--
--
-   return (
-     <div
-       className="bg-primary-700 flex flex-col items-center justify-center py-30"
-@@ -80,7 +82,10 @@ function TicketSection({ tickets }: TicketingProp) {
-       <div>
-         <div className="flex items-center justify-between  w-full gap-20">
-           {tickets?.map((ticket, index) => (
--            <div key={ticket.id || index} className="flex-col flex items-center space-y-3  justify-center  w-50 ">
-+            <div
-+              key={ticket.id || index}
-+              className="flex-col flex items-center space-y-3  justify-center  w-50 "
-+            >
-               <div>
-                 <AuthenticatedImage
-                   src={ticket.imageUrl || "/images/ticket-3.png"}
-@@ -100,6 +105,7 @@ function TicketSection({ tickets }: TicketingProp) {
-                   onClick={() => handleOpenModal(ticket)}
-                   className=""
-                   variant={"secondary"}
-+                  disabled={eventStatus === "COMPLETED"}
-                 >
-                   Buy Ticket
-                 </Button>
-@@ -112,4 +118,4 @@ function TicketSection({ tickets }: TicketingProp) {
-   );
- }
- 
--export default TicketSection;
-\ No newline at end of file
-+export default TicketSection;
-diff --git a/src/components/layout/UserMenuDropdown.tsx b/src/components/layout/UserMenuDropdown.tsx
-index 4eb9489..3b9dacf 100644
---- a/src/components/layout/UserMenuDropdown.tsx
-+++ b/src/components/layout/UserMenuDropdown.tsx
-@@ -89,6 +89,7 @@ const UserMenuDropdown: React.FC<UserMenuDropdownProps> = ({ className,links })
-                 className="w-8 h-8 rounded-full object-cover"
-                 width={32}
-                 height={32}
-+                unoptimized
-               />
-             ) : (
-               <User className="w-4 h-4 text-primary-600" />
-@@ -116,6 +117,7 @@ const UserMenuDropdown: React.FC<UserMenuDropdownProps> = ({ className,links })
-                     className="w-10 h-10 rounded-full object-cover"
-                     width={40}
-                     height={40}
-+                    unoptimized
-                   />
-                 ) : (
-                   <User className="w-5 h-5 text-primary-600" />
-diff --git a/src/components/shared/Card/ImageCard.tsx b/src/components/shared/Card/ImageCard.tsx
-index ce77a19..31666f2 100644
---- a/src/components/shared/Card/ImageCard.tsx
-+++ b/src/components/shared/Card/ImageCard.tsx
-@@ -1,10 +1,11 @@
- "use client";
- 
--import { AuthenticatedImage } from "@/components/ui/AuthenticatedImage";
-+// import { AuthenticatedImage } from "@/components/ui/AuthenticatedImage";
- import React, { useState, useEffect } from "react";
- import { cn } from "@/lib/utils";
--import { Calendar, MapPinCheck, ChevronRight } from "lucide-react";
-+import { Calendar, MapPinCheck } from "lucide-react";
- import { formatDate } from "@/utils/format-date";
-+import Image from "next/image";
- 
- export interface ImageCardI {
-   id: string | number;
-@@ -41,7 +42,7 @@ function ImageCard({
-   useEffect(() => {
-     setLocalExpanded(isExpanded);
-   }, [isExpanded]);
--
-+console.log("Image Card",event.image)
-   useEffect(() => {
-     const handleResize = () => {
-       const width = window.innerWidth;
-@@ -108,7 +109,7 @@ function ImageCard({
-     >
-       {/* Image Section */}
-       <div className="relative w-full h-full overflow-hidden">
--        <AuthenticatedImage
-+        <Image
-           src={event.image}
-           alt={event.title}
-           className={`h-full w-full object-cover object-center transition-transform duration-700 ${
-diff --git a/src/components/shared/Hero/HeroSlider.tsx b/src/components/shared/Hero/HeroSlider.tsx
-index c2372e9..5e0a3ec 100644
---- a/src/components/shared/Hero/HeroSlider.tsx
-+++ b/src/components/shared/Hero/HeroSlider.tsx
-@@ -1,33 +1,8 @@
- "use client";
--import { AuthenticatedImage } from "@/components/ui/AuthenticatedImage";
-+import Image from "next/image";
- import { useEffect, useState, useRef } from "react";
--import { Button } from "../../ui/button";
--import { ChevronDown, ChevronLeft, ChevronRight } from "lucide-react";
--import { useAuthenticatedBackgroundImage } from "@/hooks/useAuthenticatedBackgroundImage";
--
--// Background Slide Component with Authentication
--const BackgroundSlide: React.FC<{ imageUrl: string; index: number }> = ({
--  imageUrl,
--  index,
--}) => {
--  const { authenticatedUrl, loading } = useAuthenticatedBackgroundImage(imageUrl);
--
--  return (
--    <div
--      className="min-w-full h-full bg-cover bg-center relative"
--      style={{
--        backgroundImage: loading
--          ? "linear-gradient(to right, rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.9))"
--          : `linear-gradient(to right, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.5) 50%, rgba(0, 0, 0, 0.3) 100%), url(${authenticatedUrl})`,
--        backgroundPosition: "center center",
--        backgroundSize: "cover",
--      }}
--      aria-label={`Hero Background Image ${index + 1}`}
--      role="img"
--      aria-roledescription="Hero Section Background"
--    />
--  );
--};
-+import { Button } from "@/components/ui/button";
-+import { ChevronDown, ChevronLeft, ChevronRight, Play } from "lucide-react";
- 
- interface HeroCardI {
-   id: string;
-@@ -38,6 +13,11 @@ interface HeroCardI {
-   onClick: (title: string) => void;
- }
- 
-+interface MediaItem {
-+  url: string;
-+  type: "image" | "video" | "loading";
+ function formatAmount(amount: number, currency: string) {
+-  return `${currency}${amount.toLocaleString()}`;
++  return `${currency} ${amount.toLocaleString()}`;
 +}
 +
- export type HeroSliderI = {
-   id: string;
-   title: string;
-@@ -49,8 +29,8 @@ export type HeroSliderI = {
-   cta2?: string;
-   thumbnails: string[];
-   heroCards?: HeroCardI[];
--  countdownDate?: string; // ISO date string for countdown target
--  countdownLabel?: string; // Label for countdown (e.g., "Event Starts In", "Registration Ends In")
-+  countdownDate?: string;
-+  countdownLabel?: string;
-   cta1Action?: () => void;
-   cta2Action?: () => void;
- };
-@@ -65,21 +45,18 @@ type CountdownTime = {
- type HeroProps = {
-   height?: string;
-   autoplayInterval?: number;
--  heroSlides: HeroSliderI[];
-+  heroSlide: HeroSliderI;
- };
++function mapOrderStatus(apiStatus: string): OrderProgressStatusI {
++  switch (apiStatus) {
++    case "PENDING":
++    case "ON_HOLD":
++      return "order_placed";
++    case "CONFIRMED":
++    case "PROCESSING":
++      return "packing";
++    case "SHIPPED":
++      return "delivering";
++    case "DELIVERED":
++      return "completed";
++    case "CANCELLED":
++    case "REFUNDED":
++    case "FAILED":
++      return "order_placed";
++    default:
++      return "order_placed";
++  }
+ }
  
- function HeroSlider({
-   height = "min-h-[100vh] sm:min-h-[92.8vh]",
--  autoplayInterval = 3000,
--  heroSlides,
-+  autoplayInterval = 5000,
-+  heroSlide,
- }: HeroProps) {
-   const [currentSlide, setCurrentSlide] = useState(0);
--  const [previewOpen, setPreviewOpen] = useState(false);
--  const [, setPreviewIndex] = useState(0);
-   const [isTransitioning, setIsTransitioning] = useState(false);
-   const [isAutoplayPaused, setIsAutoplayPaused] = useState(false);
-   const [isMounted, setIsMounted] = useState(false);
--  const [, setProgressKey] = useState(0);
-   const [touchStart, setTouchStart] = useState<number | null>(null);
-   const [touchEnd, setTouchEnd] = useState<number | null>(null);
-   const [countdownTime, setCountdownTime] = useState<CountdownTime>({
-@@ -90,13 +67,43 @@ function HeroSlider({
-   });
-   const intervalRef = useRef<NodeJS.Timeout | null>(null);
-   const countdownRef = useRef<NodeJS.Timeout | null>(null);
-+  const videoRefs = useRef<(HTMLVideoElement | null)[]>([]);
-+  const [mediaItems, setMediaItems] = useState<MediaItem[]>([]);
- 
--  // Handle client-side mounting
-   useEffect(() => {
-     setIsMounted(true);
-   }, []);
- 
--  // Countdown functionality
-+  useEffect(() => {
-+    const detectMediaTypes = async () => {
-+      const detectedMedia: MediaItem[] = await Promise.all(
-+        heroSlide.thumbnails.map(async (url) => {
-+          try {
-+            const response = await fetch(url, {
-+              method: "HEAD",
-+            });
-+            const contentType = response.headers.get("content-type") || "";
-+
-+            if (contentType.startsWith("video/")) {
-+              return { url, type: "video" as const };
-+            } else {
-+              return { url, type: "image" as const };
-+            }
-+          } catch (error) {
-+            console.error("Error detecting media type:", error);
-+            return { url, type: "image" as const };
-+          }
-+        }),
-+      );
-+
-+      setMediaItems(detectedMedia);
-+    };
-+
-+    if (heroSlide.thumbnails.length > 0) {
-+      detectMediaTypes();
-+    }
-+  }, [heroSlide.thumbnails]);
-+
-   const calculateTimeLeft = (targetDate: string): CountdownTime => {
-     const difference = +new Date(targetDate) - +new Date();
- 
-@@ -112,16 +119,13 @@ function HeroSlider({
-     return { days: 0, hours: 0, minutes: 0, seconds: 0 };
-   };
- 
--  // Update countdown every second
-   useEffect(() => {
--    const currentSlideData = heroSlides[currentSlide];
--
--    if (currentSlideData?.countdownDate && isMounted) {
-+    if (heroSlide?.countdownDate && isMounted) {
-       const updateCountdown = () => {
--        setCountdownTime(calculateTimeLeft(currentSlideData.countdownDate!));
-+        setCountdownTime(calculateTimeLeft(heroSlide.countdownDate!));
-       };
- 
--      updateCountdown(); // Initial calculation
-+      updateCountdown();
-       countdownRef.current = setInterval(updateCountdown, 1000);
-     }
- 
-@@ -130,11 +134,25 @@ function HeroSlider({
-         clearInterval(countdownRef.current);
-       }
-     };
--  }, [currentSlide, heroSlides, isMounted]);
-+  }, [heroSlide, isMounted]);
- 
--  // Auto-play functionality
-   useEffect(() => {
--    if (!isAutoplayPaused && !previewOpen && isMounted) {
-+    videoRefs.current.forEach((video, index) => {
-+      if (video) {
-+        if (index === currentSlide) {
-+          video
-+            .play()
-+            .catch((err) => console.log("Video autoplay prevented:", err));
-+        } else {
-+          video.pause();
-+          video.currentTime = 0;
-+        }
-+      }
+-export default function OrderDetailPageSection() {
+-  const params = useParams();
++function formatDate(dateStr: string): string {
++  try {
++    const date = new Date(dateStr);
++    return date.toLocaleDateString("en-US", {
++      year: "numeric",
++      month: "long",
++      day: "numeric",
 +    });
-+  }, [currentSlide]);
++  } catch {
++    return dateStr;
++  }
++}
++
++function formatTime(dateStr: string): string {
++  try {
++    const date = new Date(dateStr);
++    return date.toLocaleTimeString("en-US", {
++      hour: "2-digit",
++      minute: "2-digit",
++      hour12: true,
++    });
++  } catch {
++    return "";
++  }
++}
++
++function formatPaymentMethod(method: string): string {
++  return method.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
++}
++
++interface OrderDetailPageSectionProps {
++  orderId: string;
++}
++
++export default function OrderDetailPageSection({
++  orderId,
++}: OrderDetailPageSectionProps) {
+   const router = useRouter();
+-  const orderId = params.orderId as string;
++  const { getOrderById, checkoutOrder, isFetchingOrder } = useCheckout();
++  const { getPaymentsByOrder, orderPayments, isFetchingOrderPayments } =
++    usePayment();
++  const [copied, setCopied] = useState(false);
 +
 +  useEffect(() => {
-+    if (!isAutoplayPaused && isMounted && mediaItems.length > 1) {
-       intervalRef.current = setInterval(() => {
-         nextSlide();
-       }, autoplayInterval);
-@@ -148,26 +166,11 @@ function HeroSlider({
-   }, [
-     currentSlide,
-     isAutoplayPaused,
--    previewOpen,
-     autoplayInterval,
-     isMounted,
-+    mediaItems.length,
-   ]);
++    if (orderId) {
++      getOrderById(orderId);
++      getPaymentsByOrder(orderId);
++    }
++  }, [orderId]);
++
++  const payment = orderPayments[0] ?? null;
++
++  const handleCopyControlNumber = async () => {
++    if (!payment?.controlNumber) return;
++    try {
++      await navigator.clipboard.writeText(payment.controlNumber);
++      setCopied(true);
++      setTimeout(() => setCopied(false), 2000);
++    } catch {
++      const textArea = document.createElement("textarea");
++      textArea.value = payment.controlNumber;
++      document.body.appendChild(textArea);
++      textArea.select();
++      document.execCommand("copy");
++      document.body.removeChild(textArea);
++      setCopied(true);
++      setTimeout(() => setCopied(false), 2000);
++    }
++  };
++
++  if (isFetchingOrder || !checkoutOrder) {
++    return (
++      <div className="space-y-3 sm:space-y-4">
++        {/* Back Button */}
++        <button
++          onClick={() => router.push("/account/orders")}
++          className="flex items-center gap-1.5 text-sm text-gray-600 hover:text-gray-900 transition-colors mb-1 sm:mb-2"
++        >
++          <ChevronLeft className="w-4 h-4" />
++          <span>Back to Orders</span>
++        </button>
++
++        <div className="flex flex-col lg:flex-row gap-4 sm:gap-6">
++          <div className="flex-1 space-y-4 sm:space-y-6">
++            <div className="bg-white rounded-xl border border-gray-200 p-3 sm:p-5">
++              <Skeleton className="h-10 w-full" />
++            </div>
++            <div className="bg-white rounded-xl border border-gray-200 p-3 sm:p-5 space-y-3">
++              <Skeleton className="h-6 w-40" />
++              <Skeleton className="h-20 w-full" />
++              <Skeleton className="h-20 w-full" />
++            </div>
++            <div className="bg-white rounded-xl border border-gray-200 p-3 sm:p-5 space-y-3">
++              <Skeleton className="h-6 w-40" />
++              <Skeleton className="h-4 w-full" />
++              <Skeleton className="h-4 w-full" />
++              <Skeleton className="h-4 w-full" />
++              <Skeleton className="h-6 w-48 ml-auto" />
++            </div>
++          </div>
++          <div className="w-full lg:w-[340px] xl:w-[380px] space-y-4 sm:space-y-5 flex-shrink-0">
++            <div className="bg-white rounded-xl border border-gray-200 p-3 sm:p-5 space-y-3">
++              <Skeleton className="h-6 w-32" />
++              <Skeleton className="h-12 w-full" />
++              <Skeleton className="h-16 w-full" />
++            </div>
++            <div className="bg-white rounded-xl border border-gray-200 p-3 sm:p-5 space-y-3">
++              <Skeleton className="h-6 w-40" />
++              <Skeleton className="h-10 w-full" />
++            </div>
++            <div className="bg-white rounded-xl border border-gray-200 p-3 sm:p-5 space-y-3">
++              <Skeleton className="h-6 w-40" />
++              <Skeleton className="h-12 w-full" />
++            </div>
++          </div>
++        </div>
++      </div>
++    );
++  }
  
--  // Reset progress animation when slide changes
--  useEffect(() => {
--    setProgressKey((prev) => prev + 1);
--  }, [currentSlide]);
--
--  // Pause autoplay when modal is open
--  useEffect(() => {
--    if (previewOpen) {
--      setIsAutoplayPaused(true);
--    } else {
--      setIsAutoplayPaused(false);
--    }
--  }, [previewOpen]);
--
--  // Touch handling for mobile swipe
-   const handleTouchStart = (e: React.TouchEvent) => {
-     setTouchEnd(null);
-     setTouchStart(e.targetTouches[0].clientX);
-@@ -196,7 +199,6 @@ function HeroSlider({
-     setIsTransitioning(true);
-     setCurrentSlide(index);
- 
--    // Reset autoplay timer when manually navigating
-     if (intervalRef.current) {
-       clearInterval(intervalRef.current);
-     }
-@@ -205,20 +207,19 @@ function HeroSlider({
-   };
- 
-   const nextSlide = () => {
--    if (isTransitioning) return;
-+    if (isTransitioning || mediaItems.length === 0) return;
-     setIsTransitioning(true);
--    setCurrentSlide((prev) => (prev + 1) % heroSlides.length);
-+    setCurrentSlide((prev) => (prev + 1) % mediaItems.length);
-     setTimeout(() => setIsTransitioning(false), 500);
-   };
- 
-   const prevSlide = () => {
--    if (isTransitioning) return;
-+    if (isTransitioning || mediaItems.length === 0) return;
-     setIsTransitioning(true);
-     setCurrentSlide(
--      (prev) => (prev - 1 + heroSlides.length) % heroSlides.length
-+      (prev) => (prev - 1 + mediaItems.length) % mediaItems.length,
-     );
- 
--    // Reset autoplay timer when manually navigating
-     if (intervalRef.current) {
-       clearInterval(intervalRef.current);
-     }
-@@ -226,11 +227,6 @@ function HeroSlider({
-     setTimeout(() => setIsTransitioning(false), 500);
-   };
- 
--  const openPreview = (index: number) => {
--    setPreviewIndex(index);
--    setPreviewOpen(true);
--  };
--
-   const handleMouseEnter = () => {
-     setIsAutoplayPaused(true);
-   };
-@@ -239,318 +235,233 @@ function HeroSlider({
-     setIsAutoplayPaused(false);
-   };
- 
--  const imageDetails = [
--    {
--      title: "Registration",
--      description: "Sign up for the NBC Dodoma Marathon",
--    },
--    {
--      title: "Training",
--      description: "Comprehensive training programs for all levels",
--    },
--    { title: "Route", description: "Scenic marathon route through Dodoma" },
--    {
--      title: "Finish Line",
--      description: "Cross the finish line and celebrate your achievement",
--    },
--  ];
--
-   const formatNumber = (num: number): string => {
-     return num.toString().padStart(2, "0");
-   };
+-  // In a real app, fetch order data by orderId
+-  const order = mockOrders[orderId] ?? mockOrders[DEFAULT_ORDER_KEY];
++  const order = checkoutOrder;
+   const itemCount = order.items.length;
++  const progressStatus = mapOrderStatus(order.orderStatus);
  
    return (
-     <section
--      className={`relative ${height} flex items- overflow-hidden`}
-+      className={`relative ${height} flex items-center overflow-hidden`}
-       onMouseEnter={handleMouseEnter}
-       onMouseLeave={handleMouseLeave}
-       onTouchStart={handleTouchStart}
-       onTouchMove={handleTouchMove}
-       onTouchEnd={handleTouchEnd}
-     >
--      {/* Sliding Background Images */}
-+      {/* Sliding Background Images/Videos */}
-       <div className="absolute inset-0 z-0">
--        <div
--          className="flex transition-transform duration-500 ease-in-out h-full w-full"
--          style={{ transform: `translateX(-${currentSlide * 100}%)` }}
--        >
--          {heroSlides.map((slide, index) => (
--            <BackgroundSlide
--              key={slide.id}
--              imageUrl={slide.backgroundImage}
--              index={index}
--            />
--          ))}
--        </div>
--      </div>
--
--      {/* Navigation Chevrons - Desktop and Tablet */}
--      {/* <button
--        onClick={prevSlide}
--        disabled={isTransitioning}
--        className="absolute left-2 sm:left-4 top-1/2 transform -translate-y-1/2 z-20 bg-black/20 backdrop-blur-sm hover:bg-black/40 text-white p-2 sm:p-3 rounded-full transition-all duration-300 hover:scale-110 disabled:opacity-50 disabled:cursor-not-allowed hidden sm:flex items-center justify-center"
--        aria-label="Previous slide"
--      >
--        <ChevronLeft className="w-4 h-4 sm:w-6 sm:h-6" />
--      </button> */}
--
--      {/* <button
--        onClick={nextSlide}
--        disabled={isTransitioning}
--        className="absolute right-2 sm:right-4 top-1/2 transform -translate-y-1/2 z-20 bg-black/20 backdrop-blur-sm hover:bg-black/40 text-white p-2 sm:p-3 rounded-full transition-all duration-300 hover:scale-110 disabled:opacity-50 disabled:cursor-not-allowed hidden sm:flex items-center justify-center"
--        aria-label="Next slide"
--      >
--        <ChevronRight className="w-4 h-4 sm:w-6 sm:h-6" />
--      </button> */}
--
--      {/* Hero Content - Matching HeroVideo Layout */}
--      <div className="relative z-10  flex flex-col justify-center  space-y-3 pl-40 pr-10  min-w-full">
--        {/* Sliding Content */}
--        <div className="relative overflow-hidden ">
-+        {mediaItems.length === 0 ? (
-+          <div
-+            className="w-full h-full bg-cover bg-center relative"
-+            style={{
-+              backgroundImage: `linear-gradient(to right, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.5) 50%, rgba(0, 0, 0, 0.3) 100%), url("${heroSlide.backgroundImage}")`,
-+              backgroundPosition: "center center",
-+              backgroundSize: "cover",
-+            }}
-+          />
-+        ) : (
-           <div
--            className="flex transition-transform duration-500 ease-in-out"
-+            className="flex transition-transform duration-500 ease-in-out h-full w-full"
-             style={{ transform: `translateX(-${currentSlide * 100}%)` }}
-           >
--            {heroSlides.map((slide) => (
--              <div key={slide.id} className="min-w-full">
--                {/* Logo Section */}
--                <div className="space-y-6">
--                  <div className="relative">
--                    <AuthenticatedImage
--                      src={slide.logoUrl || "/images/dodoma-marathon.svg"}
--                      alt="event-logo"
--                      width={150}
--                      height={150}
--                      className="relative"
--                      unoptimized
-+            {mediaItems.map((item, index) => (
-+              <div key={index} className="min-w-full h-full relative">
-+                {item.type === "video" ? (
-+                  <div className="relative w-full h-full">
-+                    <video
-+                      ref={(el) => {
-+                        videoRefs.current[index] = el;
-+                      }}
-+                      className="w-full h-full object-cover"
-+                      loop
-+                      muted
-+                      playsInline
-+                    >
-+                      <source src={item.url} type="video/mp4" />
-+                    </video>
-+                    <div
-+                      className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/50 to-black/30"
-+                      style={{ pointerEvents: "none" }}
-                     />
-                   </div>
--
--                  {/* Title and Description */}
--                  <div className="max-w-xl text-white space-y-4">
--                    <h2 className="heading-2 !leading-15">{slide.title}</h2>
--                    <p className="text-[18px] whitespace-pre-line">{slide.description}</p>
--                  </div>
--                </div>
--
--                {/* Countdown Timer */}
--                <div className="mt-2">
--                  {slide.countdownDate && isMounted && (
--                    <div className="animate-fade-in animation-delay-200">
--                      {slide.countdownLabel && (
--                        <p className="text-white/80 text-sm sm:text-base font-medium tracking-wide uppercase">
--                          {slide.countdownLabel}
--                        </p>
--                      )}
--                      <div className="text-white text-[30px] font-bold flex gap-x-3">
--                        <div>{formatNumber(countdownTime.days)}D</div>
--                        <div>:</div>
--                        <div>{formatNumber(countdownTime.hours)}H</div>
--                        <div>:</div>
--                        <div>{formatNumber(countdownTime.minutes)}M</div>
--                        <div>:</div>
--                        <div>{formatNumber(countdownTime.seconds)}S</div>
--                      </div>
--                    </div>
--                  )}
--                </div>
--
--                {/* CTA Buttons */}
--                <div className="flex xs:flex-row sm:flex-row gap-3 sm:gap-4 justify-center lg:justify-start mb-20 mt-6">
--                  <Button
--                    variant="outline"
--                    size="lg"
--                    className="animate-scale-in animation-delay-500 border border-white text-white"
--                    onClick={slide.cta2Action}
--                  >
--                    {slide.cta2}
--                  </Button>
--
--                  <Button
--                    size="lg"
--                    color="primary"
--                    className="animate-scale-in animation-delay-300 !px-6"
--                    onClick={slide.cta1Action}
--                  >
--                    {slide.cta1}
--                    <ChevronRight />
--                  </Button>
--                </div>
-+                ) : (
-+                  <div
-+                    className="w-full h-full bg-cover bg-center relative"
-+                    style={{
-+                      backgroundImage: `linear-gradient(to right, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.5) 50%, rgba(0, 0, 0, 0.3) 100%), url("${item.url}")`,
-+                      backgroundPosition: "center center",
-+                      backgroundSize: "cover",
-+                    }}
-+                    role="img"
-+                    aria-label={`Background ${index + 1}`}
-+                  />
-+                )}
-               </div>
-             ))}
+     <div className="space-y-3 sm:space-y-4">
+@@ -50,7 +186,7 @@ export default function OrderDetailPageSection() {
+         <div className="flex-1 space-y-4 sm:space-y-6">
+           {/* Progress Tracker */}
+           <div className="bg-white rounded-xl border border-gray-200 p-3 sm:p-5">
+-            <OrderProgressTracker status={order.currentStatus} />
++            <OrderProgressTracker status={progressStatus} />
            </div>
-+        )}
-+      </div>
-+
-+      {/* Hero Content */}
-+      <div className="relative z-10 flex flex-col justify-center space-y-3 px-4 sm:px-8 md:pl-16 lg:pl-40 md:pr-8 lg:pr-10 w-full">
-+        {/* Logo Section */}
-+        <div className="space-y-4 sm:space-y-6">
-+          {heroSlide.logoUrl && (
-+            <div className="relative">
-+              <Image
-+                src={heroSlide.logoUrl}
-+                alt="event-logo"
-+                width={120}
-+                height={120}
-+                className="relative w-24 sm:w-32 md:w-36 lg:w-40 h-auto"
-+                unoptimized
-+              />
-+            </div>
-+          )}
-+
-+          {/* Title and Description */}
-+          <div className="max-w-full sm:max-w-xl lg:max-w-2xl text-white space-y-3 sm:space-y-4">
-+            <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold leading-tight">
-+              {heroSlide.title}
-+            </h2>
-+            <p className="text-sm sm:text-base md:text-lg whitespace-pre-line leading-relaxed">
-+              {heroSlide.description}
-+            </p>
-+          </div>
-         </div>
  
--        {/* Hero Cards and QR Code */}
--        <div className="flex justify-between mt-7  w-full">
--          <div className="flex gap-3">
--            {heroSlides[currentSlide].heroCards?.map((heroCard, index) => (
-+        {/* Countdown Timer */}
-+        {heroSlide.countdownDate && isMounted && (
-+          <div className="mt-2 animate-fade-in">
-+            {heroSlide.countdownLabel && (
-+              <p className="text-white/80 text-xs sm:text-sm md:text-base font-medium tracking-wide uppercase mb-1">
-+                {heroSlide.countdownLabel}
-+              </p>
-+            )}
-+            <div className="text-white text-xl sm:text-2xl md:text-3xl font-bold flex gap-x-2 sm:gap-x-3">
-+              <div>{formatNumber(countdownTime.days)}D</div>
-+              <div>:</div>
-+              <div>{formatNumber(countdownTime.hours)}H</div>
-+              <div>:</div>
-+              <div>{formatNumber(countdownTime.minutes)}M</div>
-+              <div>:</div>
-+              <div>{formatNumber(countdownTime.seconds)}S</div>
-+            </div>
-+          </div>
-+        )}
+           {/* Detail Order */}
+@@ -59,30 +195,30 @@ export default function OrderDetailPageSection() {
+               Detail order ({itemCount})
+             </h2>
+ 
+-            {/* Store Info */}
+-            <div className="flex items-center gap-2 mb-3 sm:mb-4">
+-              <div className="w-6 h-6 bg-gray-900 rounded-full flex items-center justify-center">
+-                <span className="text-white text-[9px] font-bold">
+-                  {order.storeName.charAt(0).toUpperCase()}
+-                </span>
+-              </div>
+-              <span className="text-xs sm:text-sm font-medium text-gray-800">
+-                {order.storeName}
+-              </span>
+-              {order.isVerifiedStore && (
+-                <BadgeCheck className="w-4 h-4 text-white fill-green-500" />
+-              )}
+-            </div>
+-
+             {/* Product Items */}
+             <div className="space-y-2 sm:space-y-3">
+-              {order.items.map((item, index) => (
+-                <ProductItemCard
+-                  key={item.id}
+-                  item={item}
+-                  currency={order.currency}
+-                />
+-              ))}
++              {order.items.map((item) => {
++                const attributes = item.attributesSnapshot
++                  ? Object.entries(item.attributesSnapshot).map(
++                      ([key, value]) => ({
++                        label: key,
++                        value: value,
++                      })
++                    )
++                  : [];
 +
-+        {/* CTA Buttons */}
-+        {(heroSlide.cta1 || heroSlide.cta2) && (
-+          <div className="flex xs:flex-row sm:flex-row gap-3 sm:gap-4 justify-center lg:justify-start mb-20 mt-6">
-+            {heroSlide.cta2 && (
-+              <Button
-+                variant="outline"
-+                size="lg"
-+                className="border border-white text-white hover:bg-white/10 text-sm sm:text-base  xs:w-auto"
-+                onClick={heroSlide.cta2Action}
-+              >
-+                {heroSlide.cta2}
-+              </Button>
-+            )}
-+
-+            {heroSlide.cta1 && (
-+              <Button
-+                size="lg"
-+                className="bg-primary text-white hover:bg-primary/90 text-sm sm:text-base  xs:w-auto"
-+                onClick={heroSlide.cta1Action}
-+              >
-+                {heroSlide.cta1}
-+                <ChevronRight className="ml-2 w-4 h-4 sm:w-5 sm:h-5" />
-+              </Button>
-+            )}
-+          </div>
-+        )}
-+
-+        {/* Hero Cards */}
-+        {heroSlide.heroCards && heroSlide.heroCards.length > 0 && (
-+          <div className="flex gap-2 sm:gap-3 mt-4 sm:mt-7 flex-wrap">
-+            {heroSlide.heroCards.map((heroCard, index) => (
-               <div
--                key={index}
--                onClick={() => {
--                  heroCard.onClick(heroCard.title);
--                }}
-+                key={heroCard.id || index}
-+                onClick={() => heroCard.onClick(heroCard.title)}
-+                className="bg-white/10 backdrop-blur-md rounded-lg p-2 sm:p-3 border border-white/20 shadow-2xl hover:bg-white/15 transition-all duration-300 hover:scale-105 w-[120px] sm:w-[140px] md:w-[146px] h-[100px] sm:h-[110px] md:h-[120px] flex flex-col justify-center items-center gap-y-2 cursor-pointer"
-               >
--                <div
--                  className="bg-white/10 backdrop-blur-md rounded-lg sm:rounded p-3 sm:p-3 md:p-1 border border-white/20 shadow-2xl hover:bg-white/15 transition-all duration-300 hover:scale-105 w-[146px] h-[120px] flex flex-col justify-center items-center gap-y-2 cursor-pointer"
--                  onClick={() => openPreview(index)}
--                >
--                  <div className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white tabular-nums">
--                    <AuthenticatedImage
--                      src={heroCard.image}
--                      alt={heroCard.title}
--                      height={heroCard.height}
--                      width={heroCard.width}
--                    />
--                  </div>
--                  <div className="text-white/70 text-[10px] font-medium mt-1 uppercase tracking-wider">
--                    {heroCard.title}
--                  </div>
-+                <div className="text-xl sm:text-2xl md:text-3xl font-bold text-white">
-+                  <Image
-+                    src={heroCard.image}
-+                    alt={heroCard.title}
-+                    height={heroCard.height}
-+                    width={heroCard.width}
-+                    className="w-auto h-auto max-w-full"
++                return (
++                  <ProductItemCard
++                    key={item.orderItemId}
++                    name={item.productNameSnapshot}
++                    image={item.imageUrlSnapshot}
++                    price={item.unitPrice}
++                    quantity={item.quantity}
++                    attributes={attributes}
++                    currency={order.currency}
 +                  />
++                );
++              })}
+             </div>
+           </div>
+ 
+@@ -107,32 +243,35 @@ export default function OrderDetailPageSection() {
+               <div className="flex justify-between items-center text-xs sm:text-sm">
+                 <span className="text-gray-600">Shipping</span>
+                 <span className="text-gray-900 font-medium">
+-                  {order.currency} {order.shipping.toLocaleString()}
++                  {formatAmount(order.shippingCost, order.currency)}
+                 </span>
+               </div>
+ 
+               <div className="flex justify-between items-center text-xs sm:text-sm">
+                 <span className="text-gray-600">Taxes</span>
+-                <span className="text-gray-900 font-medium">Inclusive</span>
+-              </div>
+-
+-              <div className="flex justify-between items-center text-xs sm:text-sm">
+-                <span className="text-gray-600">
+-                  Discount{" "}
+-                  <span className="font-medium">{order.discountPercent}%</span>
+-                </span>
+                 <span className="text-gray-900 font-medium">
+-                  {formatAmount(order.discountAmount, order.currency)}
++                  {order.taxAmount > 0
++                    ? formatAmount(order.taxAmount, order.currency)
++                    : "Inclusive"}
+                 </span>
+               </div>
+ 
++              {order.totalDiscount > 0 && (
++                <div className="flex justify-between items-center text-xs sm:text-sm">
++                  <span className="text-gray-600">Discount</span>
++                  <span className="text-gray-900 font-medium">
++                    -{formatAmount(order.totalDiscount, order.currency)}
++                  </span>
 +                </div>
-+                <div className="text-white/70 text-[9px] sm:text-[10px] font-medium uppercase tracking-wider text-center">
-+                  {heroCard.title}
++              )}
++
+               <div className="border-t border-gray-200 pt-2.5 sm:pt-3">
+                 <div className="flex justify-between items-center">
+                   <span className="text-xs sm:text-sm font-semibold text-gray-900">
+-                    Estimated total
++                    Total
+                   </span>
+                   <span className="text-base sm:text-lg font-bold text-primary-600">
+-                    {formatAmount(order.estimatedTotal, order.currency)}
++                    {formatAmount(order.total, order.currency)}
+                   </span>
                  </div>
                </div>
--            )) || []}
+@@ -142,56 +281,26 @@ export default function OrderDetailPageSection() {
+ 
+         {/* ── Right Column ───────────────────────────────────── */}
+         <div className="w-full lg:w-[340px] xl:w-[380px] space-y-4 sm:space-y-5 flex-shrink-0">
+-          {/* Delivery Arrived Banner */}
+-          {order.hasArrived && (
+-            <div className="rounded-xl border border-gray-200 overflow-hidden bg-gradient-to-b from-primary-950/10 to-white">
+-              <div className="px-4 sm:px-5 pt-4 sm:pt-5 pb-2 flex justify-start">
+-                <Image
+-                  src="/images/delivering-truck.svg"
+-                  alt="Delivering Truck"
+-                  width={700}
+-                  height={700}
+-                  className="w-24 h-24 sm:w-32 sm:h-32"
+-                />
+-              </div>
+-              <div className="px-4 sm:px-5 pb-4 sm:pb-5">
+-                <h3 className="text-sm sm:text-base font-bold text-gray-900 mb-1">
+-                  Your order has arrived.
+-                </h3>
+-                <p className="text-xs sm:text-sm text-gray-500 mb-4 sm:mb-5">
+-                  Make sure the items arrive as you ordered, and then confirm
+-                  delivery to end order.
+-                </p>
+-                <Button
+-                  className="w-full"
+-                  radius="lg"
+-                  size="lg"
+-                  color="primary"
+-                >
+-                  Confirm Delivery
+-                </Button>
+-              </div>
+-            </div>
+-          )}
+-
+           {/* About Order */}
+           <div className="bg-white rounded-xl border border-gray-200 p-3 sm:p-5">
+             <h3 className="text-sm sm:text-base font-bold text-gray-900 mb-3 sm:mb-4">
+               About order
+             </h3>
+ 
+-            {/* Order ID & Arrival */}
++            {/* Order Number */}
+             <div className="flex items-start gap-2.5 sm:gap-3 mb-3 sm:mb-4">
+               <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-lg bg-gray-100 flex items-center justify-center flex-shrink-0">
+                 <ShoppingBag className="w-4 h-4 sm:w-5 sm:h-5 text-gray-600" />
+               </div>
+               <div>
+                 <p className="text-xs sm:text-sm font-semibold text-gray-900">
+-                  ID : #{order.orderId}
+-                </p>
+-                <p className="text-[11px] sm:text-xs text-gray-500 mt-0.5">
+-                  Est. Arrive at {order.estimatedArrival}
++                  Order #{order.orderNumber}
+                 </p>
++                {order.deliveredAt && (
++                  <p className="text-[11px] sm:text-xs text-gray-500 mt-0.5">
++                    Delivered on {formatDate(order.deliveredAt)}
++                  </p>
++                )}
+               </div>
+             </div>
+ 
+@@ -200,13 +309,20 @@ export default function OrderDetailPageSection() {
+               <div className="flex justify-between items-center text-xs sm:text-sm">
+                 <span className="text-gray-500">Current status</span>
+                 <span className="font-medium text-gray-900">
+-                  Waiting confirmation
++                  {order.orderStatus.replace(/_/g, " ")}
++                </span>
++              </div>
++              <div className="flex justify-between items-center text-xs sm:text-sm">
++                <span className="text-gray-500">Payment status</span>
++                <span className="font-medium text-gray-900">
++                  {order.paymentStatus.replace(/_/g, " ")}
+                 </span>
+               </div>
+               <div className="flex justify-between items-center text-xs sm:text-sm">
+                 <span className="text-gray-500">Order at</span>
+                 <span className="font-medium text-gray-900">
+-                  {order.orderDate} at {order.orderTime}
++                  {formatDate(order.createdDate)} at{" "}
++                  {formatTime(order.createdDate)}
+                 </span>
+               </div>
+             </div>
+@@ -222,122 +338,225 @@ export default function OrderDetailPageSection() {
+               Contact Seller
+             </Button>
+ 
+-            {/* Cancel Order */}
+-            <Button
+-              variant="ghost"
+-              className="w-full text-orange-500 hover:text-orange-600 hover:bg-orange-50 font-medium"
+-              radius="lg"
+-              size="lg"
+-            >
+-              Cancel order
+-            </Button>
+-
+-            {/* Info Note */}
+-            <div className="flex items-start gap-2 mt-2.5 sm:mt-3">
+-              <Info className="w-4 h-4 text-gray-400 flex-shrink-0 mt-0.5" />
+-              <p className="text-[11px] sm:text-xs text-gray-500">
+-                Order can be canceled before pickup from the seller store.
+-              </p>
+-            </div>
 -          </div>
 -
--          <div>
--            <AuthenticatedImage
--              src="/images/donate-qr.svg"
--              alt="Donate QR Code"
--              width={100}
--              height={100}
--            />
-+            ))}
-           </div>
--        </div>
-+        )}
-       </div>
- 
--      {/* Scroll Indicator - Responsive positioning */}
--      <div className="absolute bottom-4 right-4 sm:right-8 lg:right-12 z-10 flex flex-col items-center">
--        <span className="text-white/70 text-xs sm:text-sm mb-1">Scroll</span>
--        <div className="w-5 h-8 sm:w-6 sm:h-10 border-2 border-white/30 rounded-full flex justify-center">
--          <div className="w-1 h-2 sm:h-3 bg-white/50 rounded-full mt-1 sm:mt-2 animate-bounce"></div>
-+      {/* Scroll Indicator */}
-+      <div className="absolute bottom-3 sm:bottom-4 right-3 sm:right-8 lg:right-12 z-10 flex flex-col items-center">
-+        <span className="text-white/70 text-[10px] sm:text-xs md:text-sm mb-1">Scroll</span>
-+        <div className="w-4 h-7 sm:w-5 sm:h-8 md:w-6 md:h-10 border-2 border-white/30 rounded-full flex justify-center">
-+          <div className="w-1 h-2 sm:h-2 md:h-3 bg-white/50 rounded-full mt-1 sm:mt-1 md:mt-2 animate-bounce"></div>
-         </div>
--        <ChevronDown className="w-3 h-3 sm:w-4 sm:h-4 text-white/50 animate-bounce mt-1" />
-+        <ChevronDown className="w-3 h-3 sm:w-3 sm:h-3 md:w-4 md:h-4 text-white/50 animate-bounce mt-1" />
-       </div>
- 
--      {/* Mobile/Tablet Slide Indicators */}
--      <div className="absolute bottom-16 xs:bottom-14 sm:bottom-12 md:bottom-10 left-1/2 transform -translate-x-1/2 xl:hidden z-20">
--        <div className="flex space-x-1.5 sm:space-x-2">
--          {heroSlides.map((_, index) => (
--            <button
--              key={index}
--              onClick={() => goToSlide(index)}
--              disabled={isTransitioning}
--              className={`w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full transition-all duration-300 disabled:opacity-50 ${
--                index === currentSlide
--                  ? "bg-white scale-110 sm:scale-125"
--                  : "bg-white/40"
--              }`}
--              aria-label={`Go to slide ${index + 1}`}
--            />
--          ))}
-+      {/* Slide Indicators - Small Dots */}
-+      {mediaItems.length > 1 && (
-+        <div className="hidden md:block absolute bottom-12 sm:bottom-14 md:bottom-16 left-1/2 transform -translate-x-1/2 z-20">
-+          <div className="flex space-x-2 sm:space-x-2.5">
-+            {mediaItems.map((item, index) => (
-+              <button
-+                key={index}
-+                onClick={() => goToSlide(index)}
-+                disabled={isTransitioning}
-+                className={`relative rounded-full transition-all duration-300 disabled:opacity-50 ${
-+                  index === currentSlide
-+                    ? "w-2.5 h-2.5 sm:w-3 sm:h-3 bg-white scale-110"
-+                    : "w-2 h-2 sm:w-2.5 sm:h-2.5 bg-white/40 hover:bg-white/60"
-+                }`}
-+                aria-label={`Go to slide ${index + 1}`}
-+              >
-+                <span className="sr-only">
-+                  {item.type === "video" ? "Video" : "Image"} slide {index + 1}
-+                </span>
-+              </button>
-+            ))}
-+          </div>
-         </div>
--      </div>
--
--      {/* Mobile Navigation Arrows (Touch-friendly) */}
--      <div className="absolute bottom-4 xs:bottom-3 left-1/2 transform -translate-x-1/2 z-20 flex space-x-6 sm:hidden">
--        <button
--          onClick={prevSlide}
--          disabled={isTransitioning}
--          className="bg-black/30 backdrop-blur-sm text-white p-2.5 xs:p-3 rounded-full transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed active:scale-95"
--          aria-label="Previous slide"
--        >
--          <ChevronLeft className="w-4 h-4 xs:w-5 xs:h-5" />
--        </button>
--        <button
--          onClick={nextSlide}
--          disabled={isTransitioning}
--          className="bg-black/30 backdrop-blur-sm text-white p-2.5 xs:p-3 rounded-full transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed active:scale-95"
--          aria-label="Next slide"
--        >
--          <ChevronRight className="w-4 h-4 xs:w-5 xs:h-5" />
--        </button>
--      </div>
--
--      {/* Image Preview Modal */}
--      {/* <ImagePreviewModal
--        images={heroSlides[currentSlide].thumbnails || []}
--        currentIndex={previewIndex}
--        isOpen={previewOpen}
--        onClose={() => setPreviewOpen(false)}
--        imageDetails={imageDetails}
--      /> */}
-+      )}
-+
-+      {/* Navigation Arrows */}
-+      {mediaItems.length > 1 && (
-+        <>
-+          <button
-+            onClick={prevSlide}
-+            disabled={isTransitioning}
-+            className="absolute left-2 sm:left-4 top-1/2 transform -translate-y-1/2 z-20 bg-black/20 backdrop-blur-sm hover:bg-black/40 text-white p-2 sm:p-3 rounded-full transition-all duration-300 hover:scale-110 disabled:opacity-50 disabled:cursor-not-allowed"
-+            aria-label="Previous slide"
-+          >
-+            <ChevronLeft className="w-5 h-5 sm:w-6 sm:h-6" />
-+          </button>
-+
-+          <button
-+            onClick={nextSlide}
-+            disabled={isTransitioning}
-+            className="absolute right-2 sm:right-4 top-1/2 transform -translate-y-1/2 z-20 bg-black/20 backdrop-blur-sm hover:bg-black/40 text-white p-2 sm:p-3 rounded-full transition-all duration-300 hover:scale-110 disabled:opacity-50 disabled:cursor-not-allowed"
-+            aria-label="Next slide"
-+          >
-+            <ChevronRight className="w-5 h-5 sm:w-6 sm:h-6" />
-+          </button>
-+        </>
-+      )}
- 
-       <style jsx>{`
--        .autoplay-progress-bar {
--          width: 0%;
--          animation: autoplay-progress ${autoplayInterval}ms linear;
--          animation-fill-mode: forwards;
--        }
--
--        .autoplay-slide-progress {
--          height: 0%;
--          animation: slide-progress ${autoplayInterval}ms linear;
--          animation-fill-mode: forwards;
--        }
--
--        @keyframes autoplay-progress {
--          from {
--            width: 0%;
--          }
--          to {
--            width: 100%;
--          }
--        }
--
--        @keyframes slide-progress {
--          from {
--            height: 0%;
--          }
--          to {
--            height: 100%;
--          }
--        }
--
--        /* Pause animations when autoplay is paused */
--        ${isAutoplayPaused
--          ? `
--          .autoplay-progress-bar,
--          .autoplay-slide-progress {
--            animation-play-state: paused;
--          }
--        `
--          : ""}
--
--        /* Custom responsive breakpoint for very small screens */
--        @media (max-width: 320px) {
--          .min-w-full h1 {
--            font-size: 1.5rem !important;
--            line-height: 1.2 !important;
--          }
--          .min-w-full p {
--            font-size: 0.875rem !important;
--          }
--        }
--
--        /* Ensure touch targets are accessible */
--        @media (max-width: 640px) {
--          button {
--            min-height: 44px;
--            min-width: 44px;
--          }
--        }
--
--        /* Prevent horizontal scrolling */
--        @media (max-width: 640px) {
--          .overflow-x-auto {
--            scrollbar-width: none; /* Firefox */
--            -ms-overflow-style: none; /* IE/Edge */
--          }
--          .overflow-x-auto::-webkit-scrollbar {
--            display: none; /* Chrome/Safari */
--          }
--        }
--
--        /* Countdown animation */
-         @keyframes fade-in {
-           from {
-             opacity: 0;
-@@ -566,18 +477,15 @@ function HeroSlider({
-           animation: fade-in 0.6s ease-out;
-         }
- 
--        .animation-delay-200 {
--          animation-delay: 200ms;
--        }
--
--        /* Tabular numbers for consistent digit width */
--        .tabular-nums {
--          font-feature-settings: "tnum";
--          font-variant-numeric: tabular-nums;
-+        @media (max-width: 640px) {
-+          button {
-+            min-height: 44px;
-+            min-width: 44px;
-+          }
-         }
-       `}</style>
-     </section>
-   );
- }
- 
--export default HeroSlider;
-+export default HeroSlider;
-\ No newline at end of file
-diff --git a/src/components/ui/ImageUploader.tsx b/src/components/ui/ImageUploader.tsx
-index 4445549..3a64330 100644
---- a/src/components/ui/ImageUploader.tsx
-+++ b/src/components/ui/ImageUploader.tsx
-@@ -4,7 +4,6 @@ import React, { useRef, useCallback, useState, useEffect } from "react";
- import { Button } from "@/components/ui/button";
- import { Upload, X, Loader2, CheckCircle } from "lucide-react";
- import Image from "next/image";
--import { AuthenticatedImage } from "@/components/ui/AuthenticatedImage";
- 
- interface ImageUploaderProps {
-   value?: File | null;
-@@ -195,30 +194,16 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
-   );
- 
-   const renderPreview = () => {
--    // Check if the image is from media service (requires authentication)
--    const isMediaService = displayPreviewUrl?.includes("media-service") ||
--                          displayPreviewUrl?.includes("idiuat.intra.nbc.co.tz");
--
-     return (
-       <div className="relative group">
--        {isMediaService ? (
--          <AuthenticatedImage
--            src={displayPreviewUrl!}
--            alt="Uploaded"
--            className="w-full h-96 object-contain rounded-lg border bg-gray-50"
--            width={500}
--            height={300}
--          />
--        ) : (
--          <Image
--            src={displayPreviewUrl!}
--            alt="Uploaded"
--            className="w-full h-96 object-contain rounded-lg border bg-gray-50"
--            unoptimized
--            width={500}
--            height={300}
--          />
--        )}
-+        <Image
-+          src={displayPreviewUrl!}
-+          alt="Uploaded"
-+          className="w-full h-96 object-contain rounded-lg border bg-gray-50"
-+          unoptimized
-+          width={500}
-+          height={300}
-+        />
- 
-       {/* Loading overlay */}
-       {isUploading && (
-diff --git a/src/components/ui/UniversalSelect.tsx b/src/components/ui/UniversalSelect.tsx
-index 27ec798..aa7d683 100644
---- a/src/components/ui/UniversalSelect.tsx
-+++ b/src/components/ui/UniversalSelect.tsx
-@@ -2,14 +2,16 @@
- import React, { useState, useRef, useEffect } from "react";
- import { Label } from "@/components/ui/label";
- import { Button } from "@/components/ui/button";
-- 
--import { X, Search, Plus, Check, ChevronDown, ChevronUp } from "lucide-react";
-+
-+import { X, Search, Plus, Check, ChevronDown, ChevronUp, Pencil, Trash2 } from "lucide-react";
- import { FormInput } from "./form-input";
- 
- export interface SelectOption {
-   value: string;
-   label: string;
-   disabled?: boolean;
-+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-+  originalData?: any; // Optional original data for edit/delete operations
- }
- 
- interface UniversalSelectProps {
-@@ -22,6 +24,11 @@ interface UniversalSelectProps {
-   onAddOption?: (option: SelectOption) => void;
-   onAddNewClick?: () => void; // New prop for triggering parent action
- 
-+  // Edit/Delete actions for options
-+  onEditOption?: (option: SelectOption) => void;
-+  onDeleteOption?: (option: SelectOption) => void;
-+  showOptionActions?: boolean; // Whether to show edit/delete icons on options
-+
-   // Configuration flags
-   multiple?: boolean;
-   searchable?: boolean;
-@@ -55,6 +62,9 @@ export const UniversalSelect: React.FC<UniversalSelectProps> = ({
-   options,
-   onAddOption,
-   onAddNewClick,
-+  onEditOption,
-+  onDeleteOption,
-+  showOptionActions = false,
-   multiple = false,
-   searchable = false,
-   allowAddNew = false,
-@@ -261,15 +271,52 @@ export const UniversalSelect: React.FC<UniversalSelectProps> = ({
-             return (
-               <div
-                 key={option.value}
--                className={`px-3 py-2 cursor-pointer hover:bg-gray-100 flex items-center justify-between rounded
-+                className={`px-3 py-2 cursor-pointer hover:bg-gray-100 flex items-center justify-between rounded group
-                   ${isSelected ? "bg-primary-950/5 text-primary-950" : ""}
-                   ${isDisabled ? "opacity-50 cursor-not-allowed" : ""}`}
--                onClick={() => !isDisabled && handleSelect(option.value)}
-               >
--                <span className="text-sm capitalize">{option.label}</span>
--                {isSelected && (
--                  <Check size={16} className="text-secondary-950" />
--                )}
-+                <div
-+                  className="flex-1 flex items-center"
-+                  onClick={() => !isDisabled && handleSelect(option.value)}
+-          {/* Payment Method */}
+-          <div className="bg-white rounded-xl border border-gray-200 p-3 sm:p-5">
+-            <h3 className="text-sm sm:text-base font-bold text-gray-900 mb-3 sm:mb-4">
+-              Payment method
+-            </h3>
++            {/* Cancel Order - only show for cancellable statuses */}
++            {["PENDING", "CONFIRMED", "PROCESSING"].includes(
++              order.orderStatus
++            ) && (
++              <>
++                <Button
++                  variant="ghost"
++                  className="w-full text-orange-500 hover:text-orange-600 hover:bg-orange-50 font-medium"
++                  radius="lg"
++                  size="lg"
 +                >
-+                  <span className="text-sm capitalize">{option.label}</span>
++                  Cancel order
++                </Button>
+ 
+-            <div className="flex items-center justify-between">
+-              <div className="flex items-center gap-2.5 sm:gap-3">
+-                <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-red-50 flex items-center justify-center">
+-                  <CreditCard className="w-4 h-4 sm:w-5 sm:h-5 text-red-500" />
+-                </div>
+-                <div>
+-                  <p className="text-xs sm:text-sm font-semibold text-gray-900">
+-                    Credit card
+-                  </p>
++                <div className="flex items-start gap-2 mt-2.5 sm:mt-3">
++                  <Info className="w-4 h-4 text-gray-400 flex-shrink-0 mt-0.5" />
+                   <p className="text-[11px] sm:text-xs text-gray-500">
+-                    {order.paymentMethod.cardholderName}{" "}
+-                    <span className="mx-1">····</span>{" "}
+-                    {order.paymentMethod.lastFour}
++                    Order can be canceled before pickup from the seller store.
+                   </p>
+                 </div>
+-              </div>
+-              <span className="text-[10px] sm:text-xs font-semibold border border-blue-200 text-blue-600 px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-md bg-blue-50">
+-                {order.paymentMethod.type === "mastercard"
+-                  ? "Mastercard"
+-                  : order.paymentMethod.type === "visa"
+-                    ? "Visa"
+-                    : "Card"}
+-              </span>
+-            </div>
++              </>
++            )}
+           </div>
+ 
+-          {/* Shipping Address */}
++          {/* Payment Info */}
+           <div className="bg-white rounded-xl border border-gray-200 p-3 sm:p-5">
+             <h3 className="text-sm sm:text-base font-bold text-gray-900 mb-3 sm:mb-4">
+-              Shipping address
++              Payment info
+             </h3>
+ 
+-            <div className="flex items-start gap-2.5 sm:gap-3">
+-              <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-gray-100 flex items-center justify-center flex-shrink-0">
+-                <User className="w-4 h-4 sm:w-5 sm:h-5 text-gray-600" />
++            {isFetchingOrderPayments ? (
++              <div className="space-y-3">
++                <Skeleton className="h-10 w-full" />
++                <Skeleton className="h-4 w-3/4" />
+               </div>
+-              <div>
+-                <p className="text-xs sm:text-sm font-semibold text-gray-900">
+-                  {order.shippingAddress.name}
+-                </p>
+-                <p className="text-[11px] sm:text-xs text-gray-500 mt-1 leading-relaxed">
+-                  {order.shippingAddress.address}
+-                </p>
+-                <p className="text-[11px] sm:text-xs text-gray-500 mt-1">
+-                  {order.shippingAddress.phone}
++            ) : payment ? (
++              <div className="space-y-3">
++                {/* Payment Method & Status */}
++                <div className="flex items-center gap-2.5 sm:gap-3">
++                  <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-red-50 flex items-center justify-center">
++                    <CreditCard className="w-4 h-4 sm:w-5 sm:h-5 text-red-500" />
++                  </div>
++                  <div className="flex-1 min-w-0">
++                    <p className="text-xs sm:text-sm font-semibold text-gray-900">
++                      {formatPaymentMethod(payment.paymentMethod)}
++                    </p>
++                    <span
++                      className={`inline-flex items-center px-2 py-0.5 rounded-full text-[10px] sm:text-xs font-medium ${
++                        payment.paymentStatus === "PAID"
++                          ? "bg-green-100 text-green-800"
++                          : payment.paymentStatus === "FAILED"
++                            ? "bg-red-100 text-red-800"
++                            : "bg-amber-100 text-amber-800"
++                      }`}
++                    >
++                      {payment.paymentStatus}
++                    </span>
++                  </div>
 +                </div>
-+                <div className="flex items-center gap-1">
-+                  {/* Edit/Delete actions - only visible on hover when showOptionActions is true */}
-+                  {showOptionActions && (onEditOption || onDeleteOption) && (
-+                    <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-+                      {onEditOption && (
-+                        <button
-+                          type="button"
-+                          onClick={(e) => {
-+                            e.stopPropagation();
-+                            onEditOption(option);
-+                          }}
-+                          className="p-1 hover:bg-gray-200 rounded text-gray-500 hover:text-primary-600 transition-colors"
-+                          title="Edit"
-+                        >
-+                          <Pencil size={14} />
-+                        </button>
-+                      )}
-+                      {onDeleteOption && (
-+                        <button
-+                          type="button"
-+                          onClick={(e) => {
-+                            e.stopPropagation();
-+                            onDeleteOption(option);
-+                          }}
-+                          className="p-1 hover:bg-red-100 rounded text-gray-500 hover:text-red-600 transition-colors"
-+                          title="Delete"
-+                        >
-+                          <Trash2 size={14} />
-+                        </button>
-+                      )}
++
++                {/* Control Number */}
++                {payment.controlNumber && (
++                  <div className="bg-gray-50 rounded-lg p-2.5 sm:p-3">
++                    <p className="text-[10px] sm:text-xs text-gray-500 mb-0.5">
++                      Control Number
++                    </p>
++                    <div className="flex items-center gap-2">
++                      <span className="text-xs sm:text-sm font-semibold text-primary-700">
++                        {payment.controlNumber}
++                      </span>
++                      <button
++                        onClick={handleCopyControlNumber}
++                        className="p-1 text-gray-400 hover:text-primary-700 transition-colors flex-shrink-0"
++                        title="Copy control number"
++                      >
++                        {copied ? (
++                          <Check className="w-3.5 h-3.5 text-green-600" />
++                        ) : (
++                          <Copy className="w-3.5 h-3.5" />
++                        )}
++                      </button>
++                    </div>
++                  </div>
++                )}
++
++                {/* Payment Details */}
++                <div className="bg-gray-50 rounded-lg p-2.5 sm:p-3 space-y-2">
++                  <div className="flex justify-between items-center text-xs sm:text-sm">
++                    <span className="text-gray-500">Amount</span>
++                    <span className="font-medium text-gray-900">
++                      {payment.currency} {payment.amount.toLocaleString()}
++                    </span>
++                  </div>
++                  <div className="flex justify-between items-center text-xs sm:text-sm">
++                    <span className="text-gray-500">Amount Paid</span>
++                    <span className="font-medium text-gray-900">
++                      {payment.currency} {payment.amountPaid}
++                    </span>
++                  </div>
++                  {payment.processingFee > 0 && (
++                    <div className="flex justify-between items-center text-xs sm:text-sm">
++                      <span className="text-gray-500">Processing Fee</span>
++                      <span className="font-medium text-gray-900">
++                        {payment.currency}{" "}
++                        {payment.processingFee.toLocaleString()}
++                      </span>
 +                    </div>
 +                  )}
-+                  {isSelected && (
-+                    <Check size={16} className="text-secondary-950 ml-1" />
++                  {payment.customerPhone && (
++                    <div className="flex justify-between items-center text-xs sm:text-sm">
++                      <span className="text-gray-500">Phone</span>
++                      <span className="font-medium text-gray-900">
++                        {payment.customerPhone}
++                      </span>
++                    </div>
++                  )}
++                  {payment.paymentInitiatedAt && (
++                    <div className="flex justify-between items-center text-xs sm:text-sm">
++                      <span className="text-gray-500">Initiated</span>
++                      <span className="font-medium text-gray-900">
++                        {formatDate(payment.paymentInitiatedAt)}
++                      </span>
++                    </div>
++                  )}
++                  {payment.paymentCompletedAt && (
++                    <div className="flex justify-between items-center text-xs sm:text-sm">
++                      <span className="text-gray-500">Completed</span>
++                      <span className="font-medium text-gray-900">
++                        {formatDate(payment.paymentCompletedAt)}
++                      </span>
++                    </div>
 +                  )}
 +                </div>
++              </div>
++            ) : (
++              <div className="flex items-center gap-2.5 sm:gap-3">
++                <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-gray-100 flex items-center justify-center">
++                  <CreditCard className="w-4 h-4 sm:w-5 sm:h-5 text-gray-400" />
++                </div>
++                <p className="text-xs sm:text-sm text-gray-500">
++                  No payment information available
+                 </p>
                </div>
-             );
-           })
-diff --git a/src/contexts/event.context.tsx b/src/contexts/event.context.tsx
-index c256a5b..b196587 100644
---- a/src/contexts/event.context.tsx
-+++ b/src/contexts/event.context.tsx
-@@ -31,6 +31,9 @@ interface EventContextI {
+-            </div>
++            )}
+           </div>
  
-   findAllEventType: () => Promise<void>;
-   findSingleEventType: (id: string) => Promise<void>;
-+  createEventType: (data: { name: string; description: string; active: boolean }) => Promise<void>;
-+  updateEventType: (id: string | number, data: { id: string | number; name: string; description: string; active: boolean }) => Promise<void>;
-+  deleteEventType: (id: string | number) => Promise<void>;
-   findAllEvents: (filterParams?: EventFilters | null) => Promise<void>;
+-          {/* Driver Info */}
+-          {order.driver && (
++          {/* Shipping Address */}
++          {order.shippingAddress && (
+             <div className="bg-white rounded-xl border border-gray-200 p-3 sm:p-5">
+-              <div className="flex items-center justify-between mb-3 sm:mb-4">
+-                <h3 className="text-sm sm:text-base font-bold text-gray-900">Driver</h3>
+-                <button className="text-gray-400 hover:text-gray-600">
+-                  <MoreVertical className="w-5 h-5" />
+-                </button>
+-              </div>
++              <h3 className="text-sm sm:text-base font-bold text-gray-900 mb-3 sm:mb-4">
++                Shipping address
++              </h3>
  
-   findMainEvent: () => Promise<void>;
-diff --git a/src/hooks/useEventForm.ts b/src/hooks/useEventForm.ts
-index 370727b..8c26e59 100644
---- a/src/hooks/useEventForm.ts
-+++ b/src/hooks/useEventForm.ts
-@@ -30,6 +30,8 @@ const INITIAL_FORM_DATA: EventFormData = {
-     eventDate: "",
-     endDate: "",
-     location: "",
-+    latitude: 0,
-+    longitude: 0,
-     eventTime: "",
-   },
-   content: {
-diff --git a/src/providers/event.provider.tsx b/src/providers/event.provider.tsx
-index 028ea7a..f234359 100644
---- a/src/providers/event.provider.tsx
-+++ b/src/providers/event.provider.tsx
-@@ -228,6 +228,39 @@ const findAllEvents = async (filterParams?: EventFilters | null) => {
+-              <div className="flex items-center gap-2.5 sm:gap-3 mb-3 sm:mb-4">
+-                <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-gray-200 flex items-center justify-center flex-shrink-0 overflow-hidden">
+-                  {order.driver.avatar ? (
+-                    <Image
+-                      src={order.driver.avatar}
+-                      alt={order.driver.name}
+-                      width={40}
+-                      height={40}
+-                      className="w-full h-full object-cover"
+-                    />
+-                  ) : (
+-                    <User className="w-4 h-4 sm:w-5 sm:h-5 text-gray-500" />
+-                  )}
++              <div className="flex items-start gap-2.5 sm:gap-3">
++                <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-gray-100 flex items-center justify-center flex-shrink-0">
++                  <User className="w-4 h-4 sm:w-5 sm:h-5 text-gray-600" />
+                 </div>
+                 <div>
+                   <p className="text-xs sm:text-sm font-semibold text-gray-900">
+-                    {order.driver.name}
++                    {order.shippingAddress.fullName}
++                  </p>
++                  <p className="text-[11px] sm:text-xs text-gray-500 mt-1 leading-relaxed">
++                    {[
++                      order.shippingAddress.addressLine1,
++                      order.shippingAddress.addressLine2,
++                      order.shippingAddress.city,
++                      order.shippingAddress.state,
++                      order.shippingAddress.country,
++                    ]
++                      .filter(Boolean)
++                      .join(", ")}
++                  </p>
++                  <p className="text-[11px] sm:text-xs text-gray-500 mt-1">
++                    {order.shippingAddress.phone}
+                   </p>
+-                  <p className="text-[11px] sm:text-xs text-gray-500">{order.driver.phone}</p>
+                 </div>
+               </div>
++            </div>
++          )}
+ 
+-              <Button
+-                variant="outline"
+-                className="w-full"
+-                radius="lg"
+-                size="lg"
+-                color="primary"
+-              >
+-                Contact Driver
+-              </Button>
++          {/* Delivery Selections */}
++          {order.deliverySelections.length > 0 && (
++            <div className="bg-white rounded-xl border border-gray-200 p-3 sm:p-5">
++              <h3 className="text-sm sm:text-base font-bold text-gray-900 mb-3 sm:mb-4">
++                Delivery info
++              </h3>
++
++              <div className="space-y-2.5">
++                {order.deliverySelections.map((selection) => (
++                  <div
++                    key={selection.deliverySelectionId}
++                    className="bg-gray-50 rounded-lg p-2.5 sm:p-3 space-y-1.5"
++                  >
++                    {selection.productName && (
++                      <p className="text-xs sm:text-sm font-medium text-gray-900">
++                        {selection.productName}
++                      </p>
++                    )}
++                    <div className="flex justify-between items-center text-xs sm:text-sm">
++                      <span className="text-gray-500">Mode</span>
++                      <span className="font-medium text-gray-900">
++                        {selection.deliveryMode.replace(/_/g, " ")}
++                      </span>
++                    </div>
++                    <div className="flex justify-between items-center text-xs sm:text-sm">
++                      <span className="text-gray-500">Status</span>
++                      <span className="font-medium text-gray-900">
++                        {selection.status.replace(/_/g, " ")}
++                      </span>
++                    </div>
++                    <div className="flex justify-between items-center text-xs sm:text-sm">
++                      <span className="text-gray-500">Cost</span>
++                      <span className="font-medium text-gray-900">
++                        {formatAmount(selection.totalCost, order.currency)}
++                      </span>
++                    </div>
++                  </div>
++                ))}
++              </div>
+             </div>
+           )}
+         </div>
+diff --git a/src/app/(PageSections)/Account/Orders/components/ProductItemCard.tsx b/src/app/(PageSections)/Account/Orders/components/ProductItemCard.tsx
+index 0cad781..8411645 100644
+--- a/src/app/(PageSections)/Account/Orders/components/ProductItemCard.tsx
++++ b/src/app/(PageSections)/Account/Orders/components/ProductItemCard.tsx
+@@ -1,16 +1,26 @@
+-import { OrderDetailItemI } from "@/types/order";
+ import Image from "next/image";
+ import React from "react";
++import { AuthenticatedImage } from "@/components/ui/AuthenticatedImage";
++
++interface ProductItemCardProps {
++  name: string;
++  image: string;
++  price: number;
++  quantity: number;
++  attributes?: { label: string; value: string }[];
++  currency: string;
++  isSelected?: boolean;
++}
+ 
+ function ProductItemCard({
+-  item,
++  name,
++  image,
++  price,
++  quantity,
++  attributes = [],
+   currency,
+   isSelected = false,
+-}: {
+-  item: OrderDetailItemI;
+-  currency: string;
+-  isSelected?: boolean;
+-}) {
++}: ProductItemCardProps) {
+   return (
+     <div
+       className={`flex gap-2 sm:gap-3 p-2 sm:p-3 rounded-lg border ${
+@@ -21,11 +31,12 @@ function ProductItemCard({
+     >
+       {/* Product Image */}
+       <div className="w-14 h-14 sm:w-16 sm:h-16 md:w-20 md:h-20 rounded-lg overflow-hidden bg-gray-50 flex-shrink-0 flex items-center justify-center">
+-        <Image
+-          src={item.image}
+-          alt={item.name}
++        <AuthenticatedImage
++          src={image}
++          alt={name}
+           width={80}
+           height={80}
++          unoptimized
+           className="w-full h-full object-contain"
+         />
+       </div>
+@@ -33,37 +44,30 @@ function ProductItemCard({
+       {/* Product Info */}
+       <div className="flex-1 min-w-0">
+         {/* Attributes */}
+-        <div className="flex items-center gap-1.5 sm:gap-2 mb-1 flex-wrap">
+-          {item.attributes.map((attr, index) => (
+-            <React.Fragment key={attr.label}>
+-              <span className="text-[10px] sm:text-xs font-medium text-gray-700 bg-gray-100 px-1.5 sm:px-2 py-0.5 rounded">
+-                {attr.label}
+-              </span>
+-              {attr.value === "color" && (
+-                <span className="flex items-center gap-1 text-[10px] sm:text-xs text-gray-500">
+-                  <span className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-gray-300 inline-block" />
+-                  {attr.label}
++        {attributes.length > 0 && (
++          <div className="flex items-center gap-1.5 sm:gap-2 mb-1 flex-wrap">
++            {attributes.map((attr, index) => (
++              <React.Fragment key={index}>
++                <span className="text-[10px] sm:text-xs font-medium text-gray-700 bg-gray-100 px-1.5 sm:px-2 py-0.5 rounded">
++                  {attr.label}: {attr.value}
+                 </span>
+-              )}
+-              {index < item.attributes.length - 1 &&
+-                attr.value !== "color" && null}
+-            </React.Fragment>
+-          ))}
+-        </div>
++              </React.Fragment>
++            ))}
++          </div>
++        )}
+ 
+         {/* Product Name */}
+         <p className="text-[11px] sm:text-xs md:text-sm text-gray-700 line-clamp-2 leading-relaxed">
+-          {item.name}
++          {name}
+         </p>
+ 
+         {/* Price */}
+         <p className="text-xs sm:text-sm font-semibold text-primary-600 mt-0.5 sm:mt-1">
+-          {item.quantity} x {currency}
+-          {item.price.toLocaleString()}
++          {quantity} x {currency} {price.toLocaleString()}
+         </p>
+       </div>
+     </div>
+   );
+ }
+ 
+-export default ProductItemCard
+\ No newline at end of file
++export default ProductItemCard;
+diff --git a/src/app/(PageSections)/PaymentCheckoutPageSection/PaymentCheckoutPageSection.tsx b/src/app/(PageSections)/PaymentCheckoutPageSection/PaymentCheckoutPageSection.tsx
+index 59117e3..f805ad9 100644
+--- a/src/app/(PageSections)/PaymentCheckoutPageSection/PaymentCheckoutPageSection.tsx
++++ b/src/app/(PageSections)/PaymentCheckoutPageSection/PaymentCheckoutPageSection.tsx
+@@ -45,6 +45,7 @@ function PaymentCheckoutPageSection({ orderId }: PaymentCheckoutPageSectionProps
+   const [deliveryType, setDeliveryType] = useState<string>("");
+   const [selectedAddressId, setSelectedAddressId] = useState<string>("");
+   const [selectedCourierId, setSelectedCourierId] = useState<string>("");
++  const [isDeliveryConfirmed, setIsDeliveryConfirmed] = useState(false);
+   const [selectedPaymentMethod, setSelectedPaymentMethod] =
+     useState<string>("");
+   const [appliedCouponCode, setAppliedCouponCode] = useState<string>("");
+@@ -108,9 +109,11 @@ function PaymentCheckoutPageSection({ orderId }: PaymentCheckoutPageSectionProps
+     isFetchingDeliveryModes,
+     isFetchingDeliveryOptions,
+     isSettingOrderAddresses,
++    isSelectingDelivery,
+     getDeliveryModes,
+     getDeliveryOptions,
+     setOrderAddresses,
++    selectDelivery,
+   } = useCheckout();
+ 
+   const {
+@@ -339,7 +342,7 @@ function PaymentCheckoutPageSection({ orderId }: PaymentCheckoutPageSectionProps
+       if (!selectedAddressId) {
+         errors[2].push("Please select a delivery address to continue.");
+       }
+-      if (!selectedCourierId) {
++      if (!selectedCourierId || !isDeliveryConfirmed) {
+         errors[2].push("Please select a delivery courier to continue.");
+       }
+     }
+@@ -358,6 +361,7 @@ function PaymentCheckoutPageSection({ orderId }: PaymentCheckoutPageSectionProps
+     deliveryType,
+     selectedAddressId,
+     selectedCourierId,
++    isDeliveryConfirmed,
+     selectedPaymentMethod,
+     selectedCardId,
+   ]);
+@@ -510,6 +514,41 @@ function PaymentCheckoutPageSection({ orderId }: PaymentCheckoutPageSectionProps
+   const handleSelectAddress = (addressId: string) => {
+     setSelectedAddressId(addressId);
+     setSelectedCourierId("");
++    setIsDeliveryConfirmed(false);
++  };
++
++  // Select a courier and call the delivery/select API
++  const handleCourierSelect = async (courierUuid: string) => {
++    setSelectedCourierId(courierUuid);
++    setIsDeliveryConfirmed(false);
++
++    if (!checkoutOrder || !deliveryOptions) return;
++
++    // Build selections array: find productId for the selected courier UUID
++    const selections: { productId: string; selectedDeliveryRateUuid: string }[] = [];
++    for (const merchant of deliveryOptions.merchantDeliveryOptions) {
++      for (const product of merchant.productOptions) {
++        const match = product.availableOptions.find((o) => o.uuid === courierUuid);
++        if (match) {
++          selections.push({
++            productId: product.productId,
++            selectedDeliveryRateUuid: courierUuid,
++          });
++        }
++      }
++    }
++
++    if (selections.length === 0) return;
++
++    try {
++      await selectDelivery(checkoutOrder.orderId, deliveryType, selections);
++      setIsDeliveryConfirmed(true);
++      successMessage("Delivery option selected successfully");
++    } catch (error) {
++      console.error("Failed to select delivery:", error);
++      errorMessage("Failed to select delivery option. Please try again.");
++      setIsDeliveryConfirmed(false);
++    }
+   };
+ 
+   const handleAddCard = (data: NewCardData) => {
+@@ -554,16 +593,25 @@ function PaymentCheckoutPageSection({ orderId }: PaymentCheckoutPageSectionProps
+ 
+     const mappedPaymentMethod =
+       paymentMethodMap[selectedPaymentMethod] || "CONTROL_NUMBER";
+-    const phone = user?.phoneNumber || user?.phone || customerPhone;
+ 
+-    if (!checkoutOrder || !phone) {
+-      errorMessage("Missing order or phone number");
++    // Resolve phone: user profile → selected address → manual input
++    const selectedAddress = addresses.find((a) => a.addressId === selectedAddressId);
++    const phone =
++      user?.phoneNumber || user?.phone || selectedAddress?.phone || customerPhone;
++
++    if (!orderId) {
++      errorMessage("Missing order information");
++      return;
++    }
++
++    if (!phone) {
++      errorMessage("Phone number is required to process payment");
+       return;
+     }
+ 
+     try {
+       await initiatePayment({
+-        orderId: checkoutOrder.orderId,
++        orderId,
+         paymentMethod: mappedPaymentMethod,
+         customerPhone: phone,
+       });
+@@ -573,7 +621,7 @@ function PaymentCheckoutPageSection({ orderId }: PaymentCheckoutPageSectionProps
+         selectedPaymentMethod === "CONTROL_NUMBER" ||
+         selectedPaymentMethod === "NBC_ACCOUNT"
+       ) {
+-        router.push("/nbc-sokoni/cart/checkout/payment-pending");
++        router.push(`/nbc-sokoni/cart/checkout/payment-pending/${orderId}`);
+       } else {
+         router.push("/nbc-sokoni/cart/checkout/payment-success");
+       }
+@@ -660,8 +708,9 @@ function PaymentCheckoutPageSection({ orderId }: PaymentCheckoutPageSectionProps
+                     <DeliveryCourier
+                       deliveryOptions={deliveryOptions}
+                       selectedCourierId={selectedCourierId}
+-                      onCourierSelect={setSelectedCourierId}
++                      onCourierSelect={handleCourierSelect}
+                       isLoading={isSettingOrderAddresses || isFetchingDeliveryOptions}
++                      isSelecting={isSelectingDelivery}
+                     />
+                   </div>
+                 )}
+diff --git a/src/app/(PageSections)/PaymentCheckoutPageSection/PaymentPendingPageSection.tsx b/src/app/(PageSections)/PaymentCheckoutPageSection/PaymentPendingPageSection.tsx
+index 0ebf8a1..370ffc8 100644
+--- a/src/app/(PageSections)/PaymentCheckoutPageSection/PaymentPendingPageSection.tsx
++++ b/src/app/(PageSections)/PaymentCheckoutPageSection/PaymentPendingPageSection.tsx
+@@ -2,78 +2,50 @@
+ 
+ import { useEffect, useState } from "react";
+ import { useRouter } from "next/navigation";
+-import { Copy, Check, MapPin, Truck } from "lucide-react";
++import { Copy, Check } from "lucide-react";
+ import { usePayment } from "@/hooks/usePayment";
+-import { useOrder } from "@/hooks/useOrder";
+ import { Button } from "@/components/ui/button";
+-import { AuthenticatedImage } from "@/components/ui/AuthenticatedImage";
++import { Skeleton } from "@/components/ui/skeleton";
+ import Image from "next/image";
+ 
+-interface MockPaymentData {
+-  controlNumber: string;
+-  paymentMethod: string;
+-  amount: number;
+-  createdAt: string;
+-  reference: string;
+-  orderNumber: string;
+-  items: { name: string; image: string; price: number; quantity: number }[];
+-  shippingAddress: string;
+-  courier: { name: string; price: number; deliveryTime: string } | null;
++interface PaymentPendingPageSectionProps {
++  orderId: string;
+ }
+ 
+-function PaymentPendingPageSection() {
++function PaymentPendingPageSection({ orderId }: PaymentPendingPageSectionProps) {
+   const router = useRouter();
+-  const { paymentResponse } = usePayment();
+-  const { order } = useOrder();
++  const { orderPayments, isFetchingOrderPayments, getPaymentsByOrder } =
++    usePayment();
+   const [copied, setCopied] = useState(false);
+-  const [mockData, setMockData] = useState<MockPaymentData | null>(null);
+ 
+-  // Load mock data from sessionStorage on mount
+   useEffect(() => {
+-    try {
+-      const stored = sessionStorage.getItem("mockPaymentData");
+-      if (stored) {
+-        setMockData(JSON.parse(stored));
+-      }
+-    } catch {
+-      // ignore parse errors
++    if (orderId) {
++      getPaymentsByOrder(orderId);
+     }
+-  }, []);
++  }, [orderId]);
+ 
+-  // Use real API data if available, otherwise fall back to mock
+-  const controlNumber =
+-    paymentResponse?.controlNumber ||
+-    mockData?.controlNumber ||
+-    "9910402293845023";
+-  const expiresAt = paymentResponse?.paymentInitiatedAt
+-    ? formatExpiry(paymentResponse.paymentInitiatedAt)
+-    : mockData?.createdAt
+-      ? formatExpiry(mockData.createdAt)
+-      : "13:56:01HRS, January 23, 2026";
++  // Use the most recent payment (first in the array)
++  const payment = orderPayments[0] ?? null;
+ 
+-  const totalAmount =
+-    paymentResponse?.amount ||
+-    mockData?.amount ||
+-    0;
+-  const orderNumber =
+-    order?.data?.orderNumber || mockData?.orderNumber || "#ORD-00000000";
+-  const shippingAddress =
+-    order?.data?.customer?.address ||
+-    mockData?.shippingAddress ||
+-    "Dar Es Salaam, Tanzania";
+-  const items = mockData?.items || [];
+-  const firstItem = items[0];
+-  const otherItemsCount = items.length > 1 ? items.length - 1 : 0;
+-  const courier = mockData?.courier;
++  const controlNumber = payment?.controlNumber || "—";
++  const expiresAt = payment?.paymentInitiatedAt
++    ? formatExpiry(payment.paymentInitiatedAt)
++    : "—";
++  const totalAmount = payment?.amount || 0;
++  const orderNumber = payment?.orderNumber || "—";
++  const paymentStatus = payment?.paymentStatus || "UNPAID";
++  const paymentMethod = payment?.paymentMethod || "CONTROL_NUMBER";
++  const currency = payment?.currency || "TZS";
+ 
+   const handleCopy = async () => {
++    if (!payment?.controlNumber) return;
+     try {
+-      await navigator.clipboard.writeText(controlNumber);
++      await navigator.clipboard.writeText(payment.controlNumber);
+       setCopied(true);
+       setTimeout(() => setCopied(false), 2000);
+     } catch {
+       const textArea = document.createElement("textarea");
+-      textArea.value = controlNumber;
++      textArea.value = payment.controlNumber;
+       document.body.appendChild(textArea);
+       textArea.select();
+       document.execCommand("copy");
+@@ -83,6 +55,22 @@ function PaymentPendingPageSection() {
      }
    };
  
-+  const createEventType = async (data: { name: string; description: string; active: boolean }): Promise<void> => {
-+    try {
-+      setCreateLoading(true);
-+      await eventService.createEventType(data);
-+      await findAllEventType();
-+    } catch (error) {
-+      throw error;
-+    } finally {
-+      setCreateLoading(false);
-+    }
-+  };
++  if (isFetchingOrderPayments) {
++    return (
++      <div className="flex flex-col items-center px-3 sm:px-4 pt-8 sm:pt-12 pb-6">
++        <div className="w-full max-w-lg bg-white rounded-xl border border-gray-200 shadow-sm p-4 sm:p-10">
++          <div className="flex justify-center mb-6">
++            <Skeleton className="w-36 h-36 rounded-full" />
++          </div>
++          <Skeleton className="h-8 w-48 mx-auto mb-2" />
++          <Skeleton className="h-4 w-64 mx-auto mb-8" />
++          <Skeleton className="h-24 w-full rounded-lg mb-6" />
++          <Skeleton className="h-20 w-full rounded-lg" />
++        </div>
++      </div>
++    );
++  }
 +
-+  const updateEventType = async (id: string | number, data: { id: string | number; name: string; description: string; active: boolean }): Promise<void> => {
-+    try {
-+      setCreateLoading(true);
-+      await eventService.updateEventType(id, data);
-+      await findAllEventType();
-+    } catch (error) {
-+      throw error;
-+    } finally {
-+      setCreateLoading(false);
-+    }
-+  };
-+
-+  const deleteEventType = async (id: string | number): Promise<void> => {
-+    try {
-+      await eventService.deleteEventType(id);
-+      await findAllEventType();
-+    } catch (error) {
-+      throw error;
-+    }
-+  };
-+
-   const createEvent = async (data: CreateEventI):Promise<void> => {
-     try {
-       setCreateLoading(true);
-@@ -291,6 +324,9 @@ const findAllEvents = async (filterParams?: EventFilters | null) => {
+   return (
+     <div className="flex flex-col items-center px-3 sm:px-4 pt-8 sm:pt-12 pb-6">
+       <div className="w-full max-w-lg bg-white rounded-xl border border-gray-200 shadow-sm p-4 sm:p-10 text-center">
+@@ -112,101 +100,86 @@ function PaymentPendingPageSection() {
+         </p>
  
-         findAllEventType,
-         findSingleEventType,
-+        createEventType,
-+        updateEventType,
-+        deleteEventType,
-         findAllEvents,
-         findMainEvent,
-         findNbcEvents,
-diff --git a/src/services/event.service.ts b/src/services/event.service.ts
-index 4bf22b1..c713f1a 100644
---- a/src/services/event.service.ts
-+++ b/src/services/event.service.ts
-@@ -162,6 +162,44 @@ class EventService extends BaseApiService {
+         {/* Control Number Card */}
+-        <div className="bg-gray-50 rounded-lg border border-gray-200 p-4 flex items-center gap-4">
+-          <div className="w-16 h-16 rounded bg-white flex items-center justify-center flex-shrink-0 border p-1">
+-            <Image
+-              src="/images/gepg.svg"
+-              alt="GePG"
+-              width={32}
+-              height={32}
+-              className="w-full h-full object-contain"
+-              onError={(e) => {
+-                (e.target as HTMLImageElement).style.display = "none";
+-              }}
+-            />
+-          </div>
+-          <div className="flex-1 text-left min-w-0">
+-            <p className="text-xs text-gray-500">Control Number</p>
+-            <div className="flex items-center gap-2">
+-              <span className="text-sm font-semibold text-primary-700 truncate">
+-                {controlNumber}
+-              </span>
+-              <button
+-                onClick={handleCopy}
+-                className="p-1 text-gray-400 hover:text-primary-700 transition-colors flex-shrink-0"
+-                title="Copy control number"
+-              >
+-                {copied ? (
+-                  <Check className="w-4 h-4 text-green-600" />
+-                ) : (
+-                  <Copy className="w-4 h-4" />
+-                )}
+-              </button>
++        {paymentMethod === "CONTROL_NUMBER" && payment?.controlNumber && (
++          <div className="bg-gray-50 rounded-lg border border-gray-200 p-4 flex items-center gap-4">
++            <div className="w-16 h-16 rounded bg-white flex items-center justify-center flex-shrink-0 border p-1">
++              <Image
++                src="/images/gepg.svg"
++                alt="GePG"
++                width={32}
++                height={32}
++                className="w-full h-full object-contain"
++                onError={(e) => {
++                  (e.target as HTMLImageElement).style.display = "none";
++                }}
++              />
+             </div>
+-            <p className="text-xs text-gray-500 mt-0.5">
+-              Expires at: {expiresAt}
+-            </p>
+-          </div>
+-        </div>
+-
+-        {/* Order Details */}
+-        {(firstItem || totalAmount > 0) && (
+-          <div className="mt-6 bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
+-            {/* Product row */}
+-            {firstItem && (
+-              <div className="flex items-center gap-3 p-4">
+-                <div className="w-12 h-12 rounded-lg bg-white border border-gray-100 flex-shrink-0 overflow-hidden flex items-center justify-center p-1">
+-                  <AuthenticatedImage
+-                    src={firstItem.image}
+-                    alt={firstItem.name}
+-                    width={40}
+-                    height={40}
+-                    unoptimized
+-                    className="w-full h-full object-contain"
+-                  />
+-                </div>
+-                <div className="flex-1 text-left min-w-0">
+-                  <p className="text-xs text-gray-500">ID : {orderNumber}</p>
+-                  <p className="text-sm font-medium text-gray-900 truncate">
+-                    {firstItem.name}
+-                    {otherItemsCount > 0 && ` ...and ${otherItemsCount} others`}
+-                  </p>
+-                  <p className="text-sm font-semibold text-primary-700">
+-                    Total : TZS{totalAmount.toLocaleString()}
+-                  </p>
+-                </div>
++            <div className="flex-1 text-left min-w-0">
++              <p className="text-xs text-gray-500">Control Number</p>
++              <div className="flex items-center gap-2">
++                <span className="text-sm font-semibold text-primary-700 truncate">
++                  {controlNumber}
++                </span>
++                <button
++                  onClick={handleCopy}
++                  className="p-1 text-gray-400 hover:text-primary-700 transition-colors flex-shrink-0"
++                  title="Copy control number"
++                >
++                  {copied ? (
++                    <Check className="w-4 h-4 text-green-600" />
++                  ) : (
++                    <Copy className="w-4 h-4" />
++                  )}
++                </button>
+               </div>
+-            )}
+-
+-            {/* Divider */}
+-            <div className="border-t border-dashed border-gray-200" />
+-
+-            {/* Shipping & Courier details */}
+-            <div className="p-4 space-y-3">
+-              {courier && (
+-                <div className="flex items-start gap-2 text-sm">
+-                  <Truck className="w-4 h-4 text-gray-400 flex-shrink-0 mt-0.5" />
+-                  <div className="flex-1 flex items-baseline justify-between gap-2">
+-                    <span className="text-gray-500 flex-shrink-0">Courier</span>
+-                    <span className="text-gray-700 font-medium text-right">
+-                      {courier.name} &middot; {courier.deliveryTime}
+-                    </span>
+-                  </div>
+-                </div>
+-              )}
++              <p className="text-xs text-gray-500 mt-0.5">
++                Expires at: {expiresAt}
++              </p>
++            </div>
++          </div>
++        )}
+ 
+-              <div className="flex items-start gap-2 text-sm">
+-                <MapPin className="w-4 h-4 text-gray-400 flex-shrink-0 mt-0.5" />
+-                <div className="flex-1 flex items-baseline justify-between gap-2">
+-                  <span className="text-gray-500 flex-shrink-0">Shipping to</span>
+-                  <span className="text-gray-700 font-medium text-right">
+-                    {shippingAddress}
+-                  </span>
+-                </div>
++        {/* Payment Summary */}
++        <div className="mt-6 bg-gray-50 rounded-lg border border-gray-200 overflow-hidden">
++          <div className="p-4 space-y-3">
++            <div className="flex items-center justify-between text-sm">
++              <span className="text-gray-500">Order Number</span>
++              <span className="text-gray-900 font-medium">{orderNumber}</span>
++            </div>
++            <div className="flex items-center justify-between text-sm">
++              <span className="text-gray-500">Amount</span>
++              <span className="text-gray-900 font-semibold">
++                {currency} {totalAmount.toLocaleString()}
++              </span>
++            </div>
++            {payment?.processingFee ? (
++              <div className="flex items-center justify-between text-sm">
++                <span className="text-gray-500">Processing Fee</span>
++                <span className="text-gray-900">
++                  {currency} {payment.processingFee.toLocaleString()}
++                </span>
+               </div>
++            ) : null}
++            <div className="flex items-center justify-between text-sm">
++              <span className="text-gray-500">Payment Method</span>
++              <span className="text-gray-900 font-medium">
++                {paymentMethod.replace(/_/g, " ")}
++              </span>
++            </div>
++            <div className="flex items-center justify-between text-sm">
++              <span className="text-gray-500">Status</span>
++              <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-amber-100 text-amber-800">
++                {paymentStatus}
++              </span>
+             </div>
++            {payment?.customerPhone && (
++              <div className="flex items-center justify-between text-sm">
++                <span className="text-gray-500">Phone</span>
++                <span className="text-gray-900">{payment.customerPhone}</span>
++              </div>
++            )}
+           </div>
+-        )}
++        </div>
+       </div>
+ 
+       {/* Bottom Actions */}
+@@ -220,7 +193,7 @@ function PaymentPendingPageSection() {
+             Back to home
+           </Button>
+           <Button
+-            onClick={() => router.push("/dashboard/nbc-sokoni/orders")}
++            onClick={() => router.push("/account/orders")}
+             className="px-6"
+           >
+             View my orders
+diff --git a/src/app/(PageSections)/PaymentCheckoutPageSection/Sections/DeliveryCourier.tsx b/src/app/(PageSections)/PaymentCheckoutPageSection/Sections/DeliveryCourier.tsx
+index ee57e7b..ee13f3a 100644
+--- a/src/app/(PageSections)/PaymentCheckoutPageSection/Sections/DeliveryCourier.tsx
++++ b/src/app/(PageSections)/PaymentCheckoutPageSection/Sections/DeliveryCourier.tsx
+@@ -2,7 +2,7 @@
+ 
+ import { cn } from "@/lib/utils";
+ import { Skeleton } from "@/components/ui/skeleton";
+-import { Package, Truck, Info } from "lucide-react";
++import { Package, Truck, Info, Loader2 } from "lucide-react";
+ import { DeliveryOptionsDataI } from "@/types/checkout";
+ 
+ interface DeliveryCourierProps {
+@@ -10,6 +10,7 @@ interface DeliveryCourierProps {
+   selectedCourierId: string;
+   onCourierSelect: (courierId: string) => void;
+   isLoading?: boolean;
++  isSelecting?: boolean;
+ }
+ 
+ export function DeliveryCourier({
+@@ -17,6 +18,7 @@ export function DeliveryCourier({
+   selectedCourierId,
+   onCourierSelect,
+   isLoading,
++  isSelecting,
+ }: DeliveryCourierProps) {
+   if (isLoading) {
+     return (
+@@ -97,16 +99,19 @@ export function DeliveryCourier({
+                         {product.availableOptions.map((option) => {
+                           const isSelected =
+                             selectedCourierId === option.uuid;
++                          const isDisabled = isSelecting && !isSelected;
+                           return (
+                             <button
+                               key={option.uuid}
+                               type="button"
++                              disabled={isSelecting}
+                               onClick={() => onCourierSelect(option.uuid)}
+                               className={cn(
+                                 "w-full flex items-center gap-3 p-3 rounded-lg border-2 transition-all text-left",
+                                 isSelected
+                                   ? "border-primary-700 bg-primary-50/40"
+-                                  : "border-gray-200 hover:border-gray-300 bg-white hover:shadow-sm"
++                                  : "border-gray-200 hover:border-gray-300 bg-white hover:shadow-sm",
++                                isDisabled && "opacity-50 cursor-not-allowed"
+                               )}
+                             >
+                               <div
+@@ -117,14 +122,18 @@ export function DeliveryCourier({
+                                     : "bg-gray-100"
+                                 )}
+                               >
+-                                <Truck
+-                                  className={cn(
+-                                    "w-4 h-4",
+-                                    isSelected
+-                                      ? "text-primary-700"
+-                                      : "text-gray-500"
+-                                  )}
+-                                />
++                                {isSelected && isSelecting ? (
++                                  <Loader2 className="w-4 h-4 text-primary-700 animate-spin" />
++                                ) : (
++                                  <Truck
++                                    className={cn(
++                                      "w-4 h-4",
++                                      isSelected
++                                        ? "text-primary-700"
++                                        : "text-gray-500"
++                                    )}
++                                  />
++                                )}
+                               </div>
+                               <div className="flex-1 min-w-0">
+                                 <p
+diff --git a/src/app/(Pages)/(Landing)/nbc-sokoni/cart/checkout/payment-pending/page.tsx b/src/app/(Pages)/(Landing)/nbc-sokoni/cart/checkout/payment-pending/page.tsx
+index ca27b06..d443624 100644
+--- a/src/app/(Pages)/(Landing)/nbc-sokoni/cart/checkout/payment-pending/page.tsx
++++ b/src/app/(Pages)/(Landing)/nbc-sokoni/cart/checkout/payment-pending/page.tsx
+@@ -1,8 +1,7 @@
+-import PaymentPendingPageSection from "@/app/(PageSections)/PaymentCheckoutPageSection/PaymentPendingPageSection";
+-import React from "react";
++import { redirect } from "next/navigation";
+ 
+ function PaymentPending() {
+-  return <PaymentPendingPageSection />;
++  redirect("/account/orders");
+ }
+ 
+ export default PaymentPending;
+diff --git a/src/app/(Pages)/account/orders/[orderId]/page.tsx b/src/app/(Pages)/account/orders/[orderId]/page.tsx
+index aa368b9..9ef92ba 100644
+--- a/src/app/(Pages)/account/orders/[orderId]/page.tsx
++++ b/src/app/(Pages)/account/orders/[orderId]/page.tsx
+@@ -1,6 +1,13 @@
+ import React from "react";
+ import OrderDetailPageSection from "@/app/(PageSections)/Account/Orders/OrderDetailPagesection";
+ 
+-export default function OrderDetailPage() {
+-  return <OrderDetailPageSection />;
++interface OrderDetailPageProps {
++  params: Promise<{ orderId: string }>;
+ }
++
++async function OrderDetailPage({ params }: OrderDetailPageProps) {
++  const { orderId } = await params;
++  return <OrderDetailPageSection orderId={orderId} />;
++}
++
++export default OrderDetailPage;
+diff --git a/src/providers/checkout.provider.tsx b/src/providers/checkout.provider.tsx
+index ec286ab..4b7813a 100644
+--- a/src/providers/checkout.provider.tsx
++++ b/src/providers/checkout.provider.tsx
+@@ -3,7 +3,7 @@
+ import React, { useState } from "react";
+ import { CheckoutContext } from "@/contexts/checkout.context";
+ import { checkoutService } from "@/services/checkout.service";
+-import { InitiateCheckoutRequestI, CheckoutOrderI, MyOrdersParamsI, DeliveryOptionsDataI } from "@/types/checkout";
++import { InitiateCheckoutRequestI, CheckoutOrderI, MyOrdersParamsI, DeliveryOptionsDataI, DeliverySelectionItemI } from "@/types/checkout";
+ import { ApiResponseI } from "@/types/api";
+ 
+ export const CheckoutProvider: React.FC<{ children: React.ReactNode }> = ({
+@@ -17,6 +17,7 @@ export const CheckoutProvider: React.FC<{ children: React.ReactNode }> = ({
+   const [isFetchingDeliveryModes, setIsFetchingDeliveryModes] = useState<boolean>(false);
+   const [isFetchingDeliveryOptions, setIsFetchingDeliveryOptions] = useState<boolean>(false);
+   const [isSettingOrderAddresses, setIsSettingOrderAddresses] = useState<boolean>(false);
++  const [isSelectingDelivery, setIsSelectingDelivery] = useState<boolean>(false);
+   const [deliveryModes, setDeliveryModes] = useState<string[]>([]);
+   const [deliveryOptions, setDeliveryOptions] = useState<DeliveryOptionsDataI | null>(null);
+ 
+@@ -113,6 +114,21 @@ export const CheckoutProvider: React.FC<{ children: React.ReactNode }> = ({
+     }
+   };
+ 
++  const selectDelivery = async (orderId: string, mode: string, selections: DeliverySelectionItemI[]) => {
++    try {
++      setIsSelectingDelivery(true);
++      const response = await checkoutService.selectDelivery(orderId, mode, { selections }) as ApiResponseI<CheckoutOrderI>;
++
++      if (!response?.data) {
++        throw new Error("Failed to select delivery option");
++      }
++    } catch (error) {
++      throw error;
++    } finally {
++      setIsSelectingDelivery(false);
++    }
++  };
++
+   const resetCheckout = () => {
+     setCheckoutOrder(null);
+     setDeliveryModes([]);
+@@ -128,6 +144,7 @@ export const CheckoutProvider: React.FC<{ children: React.ReactNode }> = ({
+         isFetchingDeliveryModes,
+         isFetchingDeliveryOptions,
+         isSettingOrderAddresses,
++        isSelectingDelivery,
+         checkoutOrder,
+         myOrders,
+         deliveryModes,
+@@ -138,6 +155,7 @@ export const CheckoutProvider: React.FC<{ children: React.ReactNode }> = ({
+         getDeliveryModes,
+         getDeliveryOptions,
+         setOrderAddresses,
++        selectDelivery,
+         resetCheckout,
+       }}
+     >
+diff --git a/src/providers/payment.provider.tsx b/src/providers/payment.provider.tsx
+index b72d737..baf30df 100644
+--- a/src/providers/payment.provider.tsx
++++ b/src/providers/payment.provider.tsx
+@@ -3,7 +3,7 @@
+ import React, { useState } from "react";
+ import { PaymentContext } from "@/contexts/payment.context";
+ import { paymentService } from "@/services/payment.service";
+-import { InitiatePaymentI, PaymentResponseI, PaymentMethodOptionI } from "@/types/payment";
++import { InitiatePaymentI, PaymentResponseI, PaymentMethodOptionI, OrderPaymentI } from "@/types/payment";
+ import { ApiResponseI } from "@/types/api";
+ 
+ export const PaymentProvider: React.FC<{ children: React.ReactNode }> = ({
+@@ -13,6 +13,8 @@ export const PaymentProvider: React.FC<{ children: React.ReactNode }> = ({
+   const [isFetchingMethods, setIsFetchingMethods] = useState<boolean>(false);
+   const [paymentMethods, setPaymentMethods] = useState<PaymentMethodOptionI[]>([]);
+   const [paymentResponse, setPaymentResponse] = useState<PaymentResponseI | null>(null);
++  const [isFetchingOrderPayments, setIsFetchingOrderPayments] = useState<boolean>(false);
++  const [orderPayments, setOrderPayments] = useState<OrderPaymentI[]>([]);
+ 
+   const getPaymentMethods = async () => {
+     try {
+@@ -29,6 +31,21 @@ export const PaymentProvider: React.FC<{ children: React.ReactNode }> = ({
+     }
+   };
+ 
++  const getPaymentsByOrder = async (orderId: string) => {
++    try {
++      setIsFetchingOrderPayments(true);
++      const response = await paymentService.getPaymentsByOrder(orderId) as ApiResponseI<OrderPaymentI[]>;
++
++      if (response?.data) {
++        setOrderPayments(response.data);
++      }
++    } catch (error) {
++      throw error;
++    } finally {
++      setIsFetchingOrderPayments(false);
++    }
++  };
++
+   const initiatePayment = async (data: InitiatePaymentI) => {
+     try {
+       setIsLoading(true);
+@@ -53,9 +70,12 @@ export const PaymentProvider: React.FC<{ children: React.ReactNode }> = ({
+       value={{
+         isLoading,
+         isFetchingMethods,
++        isFetchingOrderPayments,
+         paymentMethods,
+         paymentResponse,
++        orderPayments,
+         getPaymentMethods,
++        getPaymentsByOrder,
+         initiatePayment,
+         resetPayment,
+       }}
+diff --git a/src/services/checkout.service.ts b/src/services/checkout.service.ts
+index 17d4e28..84d6564 100644
+--- a/src/services/checkout.service.ts
++++ b/src/services/checkout.service.ts
+@@ -1,7 +1,7 @@
+ import { API_PATHS } from "@/lib/api/api-config";
+ import { BaseApiService } from "@/lib/api/base-api";
+ import { ApiResponseI } from "@/types/api";
+-import { InitiateCheckoutRequestI, CheckoutOrderI, MyOrdersParamsI, DeliveryOptionsDataI } from "@/types/checkout";
++import { InitiateCheckoutRequestI, CheckoutOrderI, MyOrdersParamsI, DeliveryOptionsDataI, SelectDeliveryRequestI } from "@/types/checkout";
+ 
+ class CheckoutService extends BaseApiService {
+   async initiateCheckout(data: InitiateCheckoutRequestI) {
+@@ -67,6 +67,19 @@ class CheckoutService extends BaseApiService {
      }
    }
  
-+  async createEventType(data: { name: string; description: string; active: boolean }) {
++  async selectDelivery(orderId: string, mode: string, data: SelectDeliveryRequestI) {
 +    try {
-+      const response = await this.post(
-+        `${API_PATHS.EVENT}event-types`,
++      const response: ApiResponseI<CheckoutOrderI> = await this.post(
++        `${API_PATHS.MARKETPLACE}orders/${orderId}/delivery/select?deliveryMode=${mode}`,
 +        data,
-+        "Successfully created Event Type"
++        "Delivery option selected successfully"
 +      );
 +      return response;
 +    } catch (error) {
-+      throw error;
++      return error;
 +    }
 +  }
 +
-+  async updateEventType(id: string | number, data: { id: string | number; name: string; description: string; active: boolean }) {
+   async setOrderAddresses(orderId: string, shippingAddressId: string, billingAddressId?: string) {
+     try {
+       const params = new URLSearchParams();
+diff --git a/src/services/payment.service.ts b/src/services/payment.service.ts
+index b402993..a6b254a 100644
+--- a/src/services/payment.service.ts
++++ b/src/services/payment.service.ts
+@@ -1,7 +1,7 @@
+ import { API_PATHS } from "@/lib/api/api-config";
+ import { BaseApiService } from "@/lib/api/base-api";
+ import { ApiResponseI } from "@/types/api";
+-import { InitiatePaymentI, PaymentResponseI, PaymentMethodOptionI } from "@/types/payment";
++import { InitiatePaymentI, PaymentResponseI, PaymentMethodOptionI, OrderPaymentI } from "@/types/payment";
+ 
+ class PaymentService extends BaseApiService {
+   async getPaymentMethods() {
+@@ -15,6 +15,17 @@ class PaymentService extends BaseApiService {
+     }
+   }
+ 
++  async getPaymentsByOrder(orderId: string) {
 +    try {
-+      const response = await this.put(
-+        `${API_PATHS.EVENT}event-types/${id}`,
-+        data,
-+        "Successfully updated Event Type"
++      const response: ApiResponseI<OrderPaymentI[]> = await this.get(
++        `${API_PATHS.MARKETPLACE}payments/order/${orderId}`
 +      );
 +      return response;
 +    } catch (error) {
-+      throw error;
++      return error;
 +    }
 +  }
 +
-+  async deleteEventType(id: string | number) {
-+    try {
-+      await this.delete(
-+        `${API_PATHS.EVENT}event-types/${id}`,
-+        "Are you sure you want to delete this event type? This action cannot be undone.",
-+        {}
-+      );
-+    } catch (error) {
-+      throw error;
-+    }
-+  }
+   async initiatePayment(data: InitiatePaymentI) {
+     try {
+       const response: ApiResponseI<PaymentResponseI> = await this.post(
+diff --git a/src/types/checkout.ts b/src/types/checkout.ts
+index f33a100..345da21 100644
+--- a/src/types/checkout.ts
++++ b/src/types/checkout.ts
+@@ -235,6 +235,17 @@ export interface MyOrdersParamsI {
+   sort?: string;
+ }
+ 
++// --- Delivery selection request ---
 +
-   // async findAllEventTypes(
-   //   setEventTypes: (response: ApiResponseI<string[]>) => void,
-   //   type?: string
-diff --git a/src/services/localStorageService.ts b/src/services/localStorageService.ts
-index 5a19515..0760d24 100644
---- a/src/services/localStorageService.ts
-+++ b/src/services/localStorageService.ts
-@@ -89,12 +89,27 @@ export const hasSavedData = (): boolean => {
-  */
- export const hasFormData = (formData: EventFormData): boolean => {
-   return !!(
-+    // Basic info fields
-     formData.basicInfo.eventName ||
-+    formData.basicInfo.eventTypeId ||
-+    formData.basicInfo.partnerId ||
-+    formData.basicInfo.location ||
-+    formData.basicInfo.eventDate ||
-+    formData.basicInfo.endDate ||
-+    formData.basicInfo.eventTime ||
-+    (formData.basicInfo.latitude && formData.basicInfo.latitude !== 0) ||
-+    (formData.basicInfo.longitude && formData.basicInfo.longitude !== 0) ||
-+    // Content fields
-     formData.content.pageHeadingEnglish ||
-+    formData.content.pageHeadingSwahili ||
-+    // Registration fields
-     formData.registration.phone ||
--    formData.media.eventBanner ||        // Check if media URLs exist
--    formData.media.eventLogo ||          // Check if media URLs exist
-+    formData.registration.email ||
-+    // Media fields
-+    formData.media.eventBanner ||
-+    formData.media.eventLogo ||
-     formData.media.videoUrl ||
--    formData.tickets.tickets.length > 0  // Changed from > 4 to > 0
-+    // Tickets
-+    formData.tickets.tickets.length > 0
-   );
- };
-\ No newline at end of file
-diff --git a/src/types/event.ts b/src/types/event.ts
-index a123341..6172779 100644
---- a/src/types/event.ts
-+++ b/src/types/event.ts
-@@ -153,6 +153,8 @@ export interface CompleteEventCreationRequest {
-   basicInfo: {
-     name: string;
-     location: string;
-+    latitude: number;
-+    longitude: number;
-     date: string;
-     endDate: string;
-     time: string;
-diff --git a/src/utils/eventFormUtils.ts b/src/utils/eventFormUtils.ts
-index 1a628ff..1c2eca6 100644
---- a/src/utils/eventFormUtils.ts
-+++ b/src/utils/eventFormUtils.ts
-@@ -317,6 +317,8 @@ export const transformEventToFormData = (event: EventI): EventFormData => {
-       eventDate: event.eventDate || "",
-       endDate: event.eventEndDate || event.eventDate || "", // Use eventEndDate from API
-       location: event.location || "",
-+      latitude: 0,
-+      longitude: 0,
-       eventTime: event.eventTime || "",
-     },
-     content: {
-@@ -363,6 +365,8 @@ export const transformFormDataToCompleteEvent = (
-     basicInfo: {
-       name: formData.basicInfo.eventName,
-       location: formData.basicInfo.location,
-+      latitude: formData.basicInfo.latitude ?? 0,
-+      longitude: formData.basicInfo.longitude ?? 0,
-       date: formData.basicInfo.eventDate,
-       endDate: formData.basicInfo.endDate,
-       time: formData.basicInfo.eventTime,
++export interface DeliverySelectionItemI {
++  productId: string;
++  selectedDeliveryRateUuid: string;
++}
++
++export interface SelectDeliveryRequestI {
++  selections: DeliverySelectionItemI[];
++}
++
+ // --- Context ---
+ 
+ export interface CheckoutContextI {
+@@ -244,6 +255,7 @@ export interface CheckoutContextI {
+   isFetchingDeliveryModes: boolean;
+   isFetchingDeliveryOptions: boolean;
+   isSettingOrderAddresses: boolean;
++  isSelectingDelivery: boolean;
+   checkoutOrder: CheckoutOrderI | null;
+   myOrders: CheckoutOrderI[];
+   deliveryModes: string[];
+@@ -254,5 +266,6 @@ export interface CheckoutContextI {
+   getDeliveryModes: (orderId: string) => Promise<void>;
+   getDeliveryOptions: (orderId: string, mode: string) => Promise<void>;
+   setOrderAddresses: (orderId: string, shippingAddressId: string, billingAddressId?: string) => Promise<void>;
++  selectDelivery: (orderId: string, mode: string, selections: DeliverySelectionItemI[]) => Promise<void>;
+   resetCheckout: () => void;
+ }
+diff --git a/src/types/payment.ts b/src/types/payment.ts
+index 6e68fbd..57af84b 100644
+--- a/src/types/payment.ts
++++ b/src/types/payment.ts
+@@ -37,12 +37,58 @@ export interface PaymentMethodOptionI {
+   requiredFields: string[];
+ }
+ 
++export interface PaymentTransactionI {
++  transactionId: string;
++  paymentId: string;
++  transactionType: string;
++  amount: number;
++  status: string;
++  providerCode?: string;
++  providerReference?: string;
++  transactionDate: string;
++  createdDate: string;
++  description?: string;
++}
++
++export interface OrderPaymentI {
++  paymentId: string;
++  orderId: string;
++  orderNumber: string;
++  paymentMethod: PaymentMethod;
++  paymentProvider?: string;
++  amount: number;
++  currency: string;
++  amountPaid: number;
++  processingFee: number;
++  controlNumber?: string;
++  isExternalControlNumber?: boolean;
++  transactionReference?: string;
++  providerReference?: string;
++  paymentStatus: string;
++  paymentInitiatedAt: string;
++  paymentCompletedAt?: string;
++  paymentFailedAt?: string;
++  customerName?: string;
++  customerEmail?: string;
++  customerPhone?: string;
++  failureReason?: string;
++  metadata?: string;
++  transactions?: PaymentTransactionI[];
++  createdDate: string;
++  lastModifiedDate: string;
++  createdBy?: string;
++  lastModifiedBy?: string;
++}
++
+ export interface PaymentContextI {
+   isLoading: boolean;
+   isFetchingMethods: boolean;
++  isFetchingOrderPayments: boolean;
+   paymentMethods: PaymentMethodOptionI[];
+   paymentResponse: PaymentResponseI | null;
++  orderPayments: OrderPaymentI[];
+   getPaymentMethods: () => Promise<void>;
++  getPaymentsByOrder: (orderId: string) => Promise<void>;
+   initiatePayment: (data: InitiatePaymentI) => Promise<void>;
+   resetPayment: () => void;
+ }
