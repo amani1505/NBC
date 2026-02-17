@@ -1,55 +1,1120 @@
-Here's a concise commit message covering all the changes:
-
----
-
-**feat: migrate order detail and payment pending pages to real API data**
-
-**Order Detail (`OrderDetailPageSection`)**
-- Refactored to accept `orderId` as a prop (passed from page params) instead of reading from `useParams` internally
-- Replaced mock order data with live API calls via `useCheckout` (`getOrderById`) and `usePayment` (`getPaymentsByOrder`)
-- Added `mapOrderStatus` to translate API order statuses to `OrderProgressStatusI` for the progress tracker
-- Added `formatDate`, `formatTime`, `formatPaymentMethod` helpers
-- Replaced static "Payment Method" card with a dynamic "Payment Info" section showing real payment data, control number (with copy-to-clipboard), processing fee, timestamps, and status badges
-- Replaced hardcoded shipping address fields with `shippingAddress` object from API (`fullName`, `addressLine1/2`, `city`, `state`, `country`, `phone`)
-- Added "Delivery Info" section rendering `deliverySelections` (mode, status, cost per product)
-- Conditionally show "Cancel order" button only for `PENDING`, `CONFIRMED`, `PROCESSING` statuses
-- Removed mock driver info, delivery arrived banner, and store verified badge sections
-- Added full skeleton loading state while order is fetching
-
-**ProductItemCard**
-- Converted from accepting an `OrderDetailItemI` object to individual props (`name`, `image`, `price`, `quantity`, `attributes`, `currency`)
-- Replaced `Image` with `AuthenticatedImage` for authenticated image loading
-- Simplified attribute rendering (removed color-swatch special case)
-
-**PaymentPendingPageSection**
-- Refactored to accept `orderId` as a prop and fetch payments via `getPaymentsByOrder`
-- Removed all mock/sessionStorage data fallbacks
-- Replaced product item preview and courier/address rows with a clean payment summary table (order number, amount, processing fee, payment method, status, phone)
-- Control number card now only renders for `CONTROL_NUMBER` payment method
-- Added skeleton loading state
-- Fixed "View my orders" navigation to `/account/orders`
-
-**Checkout — Delivery Selection**
-- Added `isDeliveryConfirmed` state; validation now requires both a selected courier and a confirmed delivery API call before proceeding
-- Replaced `setSelectedCourierId` direct setter with `handleCourierSelect`, which calls `selectDelivery` API, sets confirmation state, and shows success/error toast
-- Wired `isSelecting` prop to `DeliveryCourier` to show a spinner on the active option and disable other options during the API call
-- Fixed phone resolution to fall back to selected address phone before manual input
-- Fixed post-payment redirect for control number / NBC account to include `orderId` in the path
-
-**DeliveryCourier component**
-- Added `isSelecting` prop; renders `Loader2` spinner on the selected option's icon while selecting, and dims/disables other options
-
-**Routing**
-- `/nbc-sokoni/cart/checkout/payment-pending` now redirects to `/account/orders` (no longer a standalone page)
-- `/account/orders/[orderId]/page.tsx` now properly awaits async `params` and passes `orderId` to the section component
-- Added dynamic route `/nbc-sokoni/cart/checkout/payment-pending/[orderId]` for payment pending with real order context
-
-**Services & Providers**
-- `checkoutService.selectDelivery`: new POST to `orders/{orderId}/delivery/select?deliveryMode={mode}`
-- `paymentService.getPaymentsByOrder`: new GET to `payments/order/{orderId}`
-- `CheckoutProvider`: added `isSelectingDelivery` state and `selectDelivery` action
-- `PaymentProvider`: added `isFetchingOrderPayments`, `orderPayments` state and `getPaymentsByOrder` action
-
-**Types**
-- `checkout.ts`: added `DeliverySelectionItemI`, `SelectDeliveryRequestI`; added `isSelectingDelivery` and `selectDelivery` to `CheckoutContextI`
-- `payment.ts`: added `PaymentTransactionI`, `OrderPaymentI`; added `isFetchingOrderPayments`, `orderPayments`, `getPaymentsByOrder` to `PaymentContextI`
+diff --git a/src/app/(PageSections)/Dashboard/BuyersPageSection/BuyersPageSection.tsx b/src/app/(PageSections)/Dashboard/BuyersPageSection/BuyersPageSection.tsx
+index 1dd3303..b3ded92 100644
+--- a/src/app/(PageSections)/Dashboard/BuyersPageSection/BuyersPageSection.tsx
++++ b/src/app/(PageSections)/Dashboard/BuyersPageSection/BuyersPageSection.tsx
+@@ -1,25 +1,26 @@
+ "use client";
+ 
+ import { useBuyer } from "@/hooks/useBuyer";
+-import React, { useEffect } from "react";
+-import BuyerDataTable from "./BuyerDataTable";
++import React, { useEffect, useState } from "react";
+ import { BuyerI } from "@/types/buyers";
+ import { useRouter } from "next/navigation";
++import { Users, AlertTriangle, ShoppingBag, CreditCard, Search, Eye, ChevronDown } from "lucide-react";
+ 
+-// Dummy data for testing
+ const dummyBuyers: BuyerI[] = [
+   {
+     id: 1,
+-    firstName: "John",
+-    lastName: "Doe",
+-    email: "john.doe@email.com",
+-    phone: "+255 712 345 678",
++    firstName: "Amina",
++    lastName: "Hassan",
++    email: "amina.hassan@email.com",
++    phone: "+255712****89",
+     status: "ACTIVE",
+-    createdOn: "2024-01-15T10:30:00Z",
+-    lastLoginDate: "2024-12-10T14:22:00Z",
+-    totalOrders: 45,
+-    totalSpent: 2500000,
+-    address: "123 Main Street, Dar es Salaam",
++    riskStatus: "CLEAR",
++    riskCount: 0,
++    createdOn: "2024-01-10T10:00:00Z",
++    lastLoginDate: "2024-12-10T14:00:00Z",
++    totalOrders: 24,
++    totalSpent: 1450000,
++    address: null,
+     region: { id: 1, name: "Dar es Salaam" },
+     district: { id: 1, name: "Ilala" },
+     profileImage: null,
+@@ -27,128 +28,183 @@ const dummyBuyers: BuyerI[] = [
+   },
+   {
+     id: 2,
+-    firstName: "Jane",
+-    lastName: "Smith",
+-    email: "jane.smith@email.com",
+-    phone: "+255 713 456 789",
++    firstName: "Hassan",
++    lastName: "Juma",
++    email: "hassan.juma@email.com",
++    phone: "+255754****23",
+     status: "ACTIVE",
+-    createdOn: "2024-02-20T08:15:00Z",
+-    lastLoginDate: "2024-12-09T09:45:00Z",
+-    totalOrders: 32,
+-    totalSpent: 1850000,
+-    address: "456 Beach Road, Zanzibar",
+-    region: { id: 2, name: "Zanzibar" },
+-    district: { id: 2, name: "Mjini Magharibi" },
++    riskStatus: "RISK",
++    riskCount: 1,
++    createdOn: "2024-02-15T09:00:00Z",
++    lastLoginDate: "2024-12-09T10:00:00Z",
++    totalOrders: 18,
++    totalSpent: 2340000,
++    address: null,
++    region: { id: 1, name: "Dar es Salaam" },
++    district: { id: 2, name: "Kinondoni" },
+     profileImage: null,
+     isVerified: true,
+   },
+   {
+     id: 3,
+-    firstName: "Michael",
+-    lastName: "Johnson",
+-    email: "michael.j@email.com",
+-    phone: "+255 714 567 890",
+-    status: "INACTIVE",
+-    createdOn: "2024-03-05T16:45:00Z",
+-    lastLoginDate: "2024-09-15T11:30:00Z",
+-    totalOrders: 12,
+-    totalSpent: 750000,
+-    address: "789 Market Street, Arusha",
+-    region: { id: 3, name: "Arusha" },
++    firstName: "Mary",
++    lastName: "Kilonzo",
++    email: "mary.kilonzo@email.com",
++    phone: "+255786****56",
++    status: "ACTIVE",
++    riskStatus: "CLEAR",
++    riskCount: 0,
++    createdOn: "2024-01-20T08:00:00Z",
++    lastLoginDate: "2024-12-08T11:00:00Z",
++    totalOrders: 45,
++    totalSpent: 5670000,
++    address: null,
++    region: { id: 2, name: "Arusha" },
+     district: { id: 3, name: "Arusha City" },
+     profileImage: null,
+-    isVerified: false,
++    isVerified: true,
+   },
+   {
+     id: 4,
+-    firstName: "Sarah",
+-    lastName: "Williams",
+-    email: "sarah.w@email.com",
+-    phone: "+255 715 678 901",
+-    status: "SUSPENDED",
+-    createdOn: "2024-04-10T12:00:00Z",
+-    lastLoginDate: "2024-08-20T08:00:00Z",
+-    totalOrders: 5,
+-    totalSpent: 350000,
+-    address: "321 Lake View, Mwanza",
+-    region: { id: 4, name: "Mwanza" },
++    firstName: "Joseph",
++    lastName: "Mhina",
++    email: "joseph.mhina@email.com",
++    phone: "+255623****78",
++    status: "ACTIVE",
++    riskStatus: "RISK",
++    riskCount: 1,
++    createdOn: "2024-03-05T12:00:00Z",
++    lastLoginDate: "2024-11-20T09:00:00Z",
++    totalOrders: 8,
++    totalSpent: 890000,
++    address: null,
++    region: { id: 3, name: "Mwanza" },
+     district: { id: 4, name: "Nyamagana" },
+     profileImage: null,
+     isVerified: false,
+   },
+   {
+     id: 5,
+-    firstName: "David",
+-    lastName: "Brown",
+-    email: "david.brown@email.com",
+-    phone: "+255 716 789 012",
++    firstName: "Fatima",
++    lastName: "Said",
++    email: "fatima.said@email.com",
++    phone: "+255745****90",
+     status: "ACTIVE",
+-    createdOn: "2024-05-18T09:30:00Z",
+-    lastLoginDate: "2024-12-08T16:15:00Z",
++    riskStatus: "CLEAR",
++    riskCount: 0,
++    createdOn: "2024-02-28T14:00:00Z",
++    lastLoginDate: "2024-12-10T16:00:00Z",
+     totalOrders: 67,
+-    totalSpent: 4200000,
+-    address: "555 Commerce Street, Dodoma",
+-    region: { id: 5, name: "Dodoma" },
+-    district: { id: 5, name: "Dodoma Urban" },
++    totalSpent: 8900000,
++    address: null,
++    region: { id: 4, name: "Zanzibar" },
++    district: { id: 5, name: "Mjini Magharibi" },
+     profileImage: null,
+     isVerified: true,
+   },
+   {
+     id: 6,
+-    firstName: "Emily",
+-    lastName: "Davis",
+-    email: "emily.davis@email.com",
+-    phone: "+255 717 890 123",
+-    status: "ACTIVE",
+-    createdOn: "2024-06-22T14:20:00Z",
+-    lastLoginDate: "2024-12-10T10:00:00Z",
+-    totalOrders: 28,
+-    totalSpent: 1650000,
+-    address: "777 Garden Road, Morogoro",
+-    region: { id: 6, name: "Morogoro" },
+-    district: { id: 6, name: "Morogoro Urban" },
++    firstName: "Peter",
++    lastName: "Nyamwezi",
++    email: "peter.nyamwezi@email.com",
++    phone: "+255678****12",
++    status: "SUSPENDED",
++    riskStatus: "RESTRICTED",
++    riskCount: 2,
++    createdOn: "2024-04-10T10:00:00Z",
++    lastLoginDate: "2024-09-01T08:00:00Z",
++    totalOrders: 12,
++    totalSpent: 1230000,
++    address: null,
++    region: { id: 5, name: "Dodoma" },
++    district: { id: 6, name: "Dodoma Urban" },
+     profileImage: null,
+-    isVerified: true,
++    isVerified: false,
+   },
+   {
+     id: 7,
+-    firstName: "Robert",
+-    lastName: "Miller",
+-    email: "robert.m@email.com",
+-    phone: "+255 718 901 234",
++    firstName: "Grace",
++    lastName: "Mwakasege",
++    email: "grace.mwakasege@email.com",
++    phone: "+255712****34",
+     status: "ACTIVE",
+-    createdOn: "2024-07-08T11:45:00Z",
+-    lastLoginDate: "2024-12-07T13:30:00Z",
+-    totalOrders: 19,
+-    totalSpent: 980000,
+-    address: "999 Industrial Area, Mbeya",
+-    region: { id: 7, name: "Mbeya" },
+-    district: { id: 7, name: "Mbeya City" },
++    riskStatus: "CLEAR",
++    riskCount: 0,
++    createdOn: "2024-05-18T11:00:00Z",
++    lastLoginDate: "2024-12-07T13:00:00Z",
++    totalOrders: 31,
++    totalSpent: 3450000,
++    address: null,
++    region: { id: 1, name: "Dar es Salaam" },
++    district: { id: 7, name: "Temeke" },
+     profileImage: null,
+-    isVerified: false,
++    isVerified: true,
+   },
+   {
+     id: 8,
+-    firstName: "Lisa",
+-    lastName: "Wilson",
+-    email: "lisa.wilson@email.com",
+-    phone: "+255 719 012 345",
+-    status: "INACTIVE",
+-    createdOn: "2024-08-14T07:00:00Z",
+-    lastLoginDate: null,
+-    totalOrders: 0,
+-    totalSpent: 0,
+-    address: "111 New Town, Tanga",
+-    region: { id: 8, name: "Tanga" },
+-    district: { id: 8, name: "Tanga City" },
++    firstName: "Emmanuel",
++    lastName: "Shirima",
++    email: "emmanuel.shirima@email.com",
++    phone: "+255765****67",
++    status: "ACTIVE",
++    riskStatus: "RISK",
++    riskCount: 0,
++    createdOn: "2024-06-22T09:00:00Z",
++    lastLoginDate: "2024-12-05T10:00:00Z",
++    totalOrders: 5,
++    totalSpent: 450000,
++    address: null,
++    region: { id: 6, name: "Mbeya" },
++    district: { id: 8, name: "Mbeya City" },
+     profileImage: null,
+     isVerified: false,
+   },
+ ];
+ 
++const getRiskBadge = (buyer: BuyerI) => {
++  switch (buyer.riskStatus) {
++    case "CLEAR":
++      return (
++        <span className="rounded-full border border-green-400 px-3 py-0.5 text-xs font-medium text-green-600">
++          Clear
++        </span>
++      );
++    case "RISK":
++      return (
++        <div className="flex items-center gap-1">
++          <span className="rounded-full border border-orange-400 px-3 py-0.5 text-xs font-medium text-orange-500">
++            Risk
++          </span>
++          {buyer.riskCount && buyer.riskCount > 0 ? (
++            <span className="rounded-full border border-orange-300 px-2 py-0.5 text-xs text-orange-400">
++              +{buyer.riskCount}
++            </span>
++          ) : null}
++        </div>
++      );
++    case "RESTRICTED":
++      return (
++        <div className="flex items-center gap-1">
++          <span className="rounded-full bg-red-500 px-3 py-0.5 text-xs font-medium text-white">
++            Restricted
++          </span>
++          {buyer.riskCount && buyer.riskCount > 0 ? (
++            <span className="rounded-full border border-red-300 px-2 py-0.5 text-xs text-red-400">
++              +{buyer.riskCount}
++            </span>
++          ) : null}
++        </div>
++      );
++    default:
++      return null;
++  }
++};
++
+ function BuyersPageSection() {
+-  const { buyers, loading, fetchAllBuyers } = useBuyer();
++  const { buyers, loading } = useBuyer();
+   const router = useRouter();
++  const [search, setSearch] = useState("");
++  const [filter, setFilter] = useState("All");
+ 
+   useEffect(() => {
+     // Uncomment below line when API is ready
+@@ -159,19 +215,193 @@ function BuyersPageSection() {
+     router.push(`/dashboard/buyers/${buyer.id}`);
+   };
+ 
+-  // Use dummy data for now, switch to buyers.content when API is ready
+-  const displayBuyers = buyers.content?.length > 0 ? buyers.content : dummyBuyers;
++  const displayBuyers: BuyerI[] =
++    buyers.content?.length > 0 ? buyers.content : dummyBuyers;
++
++  const filteredBuyers = displayBuyers.filter((b) => {
++    const fullName = `${b.firstName} ${b.lastName}`.toLowerCase();
++    const matchesSearch =
++      fullName.includes(search.toLowerCase()) ||
++      b.phone.includes(search) ||
++      b.email.toLowerCase().includes(search.toLowerCase());
++    const matchesFilter =
++      filter === "All" ||
++      (filter === "Clear" && b.riskStatus === "CLEAR") ||
++      (filter === "Risk" && b.riskStatus === "RISK") ||
++      (filter === "Restricted" && b.riskStatus === "RESTRICTED");
++    return matchesSearch && matchesFilter;
++  });
++
++  const totalBuyers = displayBuyers.length;
++  const flaggedBuyers = displayBuyers.filter((b) => b.riskStatus !== "CLEAR").length;
++  const ordersInDispute = displayBuyers.filter((b) => b.riskStatus === "RISK" || b.riskStatus === "RESTRICTED").length;
++  const totalPayments = displayBuyers.reduce((sum, b) => sum + b.totalSpent, 0);
+ 
+   return (
+-    <div>
+-      <BuyerDataTable
+-        buyers={displayBuyers}
+-        loading={loading}
+-        onView={handleViewBuyer}
+-        totalCount={buyers.totalElements || displayBuyers.length}
+-        currentPage={buyers.number || 0}
+-        totalPages={buyers.totalPages || 1}
+-      />
++    <div className="space-y-6">
++      {/* Page Header */}
++      <div>
++        <h1 className="text-2xl font-bold tracking-tight text-gray-900">Buyer Management</h1>
++        <p className="text-sm text-gray-500 mt-1">Monitor and manage platform buyers</p>
++      </div>
++
++      {/* Stats Row */}
++      <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
++        {/* Total Buyers */}
++        <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
++          <div className="flex items-start justify-between">
++            <div>
++              <p className="text-xs text-gray-500">Total Buyers</p>
++              <p className="mt-1 text-2xl font-bold text-gray-900">{totalBuyers}</p>
++            </div>
++            <div className="rounded-lg bg-blue-50 p-2">
++              <Users className="h-5 w-5 text-blue-400" />
++            </div>
++          </div>
++        </div>
++
++        {/* Flagged Buyers */}
++        <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
++          <div className="flex items-start justify-between">
++            <div>
++              <p className="text-xs text-gray-500">Flagged Buyers</p>
++              <p className="mt-1 text-2xl font-bold text-gray-900">{flaggedBuyers}</p>
++            </div>
++            <div className="rounded-lg bg-orange-50 p-2">
++              <AlertTriangle className="h-5 w-5 text-orange-400" />
++            </div>
++          </div>
++        </div>
++
++        {/* Orders in Dispute */}
++        <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
++          <div className="flex items-start justify-between">
++            <div>
++              <p className="text-xs text-gray-500">Orders in Dispute</p>
++              <p className="mt-1 text-2xl font-bold text-gray-900">{ordersInDispute}</p>
++            </div>
++            <div className="rounded-lg bg-red-50 p-2">
++              <ShoppingBag className="h-5 w-5 text-red-400" />
++            </div>
++          </div>
++        </div>
++
++        {/* Total Payments */}
++        <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
++          <div className="flex items-start justify-between">
++            <div>
++              <p className="text-xs text-gray-500">Total Payments</p>
++              <p className="mt-1 text-xl font-bold text-gray-900">
++                {totalPayments.toLocaleString()}
++              </p>
++              <p className="mt-0.5 text-xs text-gray-400">TZS</p>
++            </div>
++            <div className="rounded-lg bg-green-50 p-2">
++              <CreditCard className="h-5 w-5 text-green-500" />
++            </div>
++          </div>
++        </div>
++      </div>
++
++      {/* Search + Filter */}
++      <div className="rounded-xl border border-gray-200 bg-white px-4 py-3 shadow-sm flex items-center gap-3">
++        <Search className="h-4 w-4 text-gray-400 flex-shrink-0" />
++        <input
++          type="text"
++          placeholder="Search by name, phone, or email..."
++          className="flex-1 text-sm text-gray-700 placeholder-gray-400 outline-none bg-transparent"
++          value={search}
++          onChange={(e) => setSearch(e.target.value)}
++        />
++        <div className="flex-shrink-0">
++          <div className="relative">
++            <select
++              value={filter}
++              onChange={(e) => setFilter(e.target.value)}
++              className="appearance-none rounded-lg border border-gray-200 bg-white pl-3 pr-8 py-1.5 text-sm text-gray-700 outline-none cursor-pointer"
++            >
++              <option value="All">All</option>
++              <option value="Clear">Clear</option>
++              <option value="Risk">Risk</option>
++              <option value="Restricted">Restricted</option>
++            </select>
++            <ChevronDown className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
++          </div>
++        </div>
++      </div>
++
++      {/* Buyers Table */}
++      <div className="rounded-xl border border-gray-200 bg-white shadow-sm overflow-hidden">
++        <div className="px-5 py-4 border-b border-gray-100">
++          <h2 className="text-base font-semibold text-gray-900">
++            Buyers ({filteredBuyers.length})
++          </h2>
++        </div>
++
++        {loading ? (
++          <div className="flex items-center justify-center py-16 text-sm text-gray-500">
++            Loading buyers...
++          </div>
++        ) : (
++          <table className="w-full">
++            <thead>
++              <tr className="border-b border-gray-100">
++                <th className="px-5 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
++                  Buyer Name
++                </th>
++                <th className="px-5 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
++                  Phone
++                </th>
++                <th className="px-5 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
++                  Total Orders
++                </th>
++                <th className="px-5 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
++                  Total Spend (TZS)
++                </th>
++                <th className="px-5 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">
++                  Risk
++                </th>
++                <th className="px-5 py-3 text-right text-xs font-medium text-gray-400 uppercase tracking-wider">
++                  Action
++                </th>
++              </tr>
++            </thead>
++            <tbody className="divide-y divide-gray-100">
++              {filteredBuyers.map((buyer) => (
++                <tr key={buyer.id} className="hover:bg-gray-50 transition-colors">
++                  <td className="px-5 py-4 text-sm font-medium text-gray-900">
++                    {buyer.firstName} {buyer.lastName}
++                  </td>
++                  <td className="px-5 py-4 text-sm text-gray-500">{buyer.phone}</td>
++                  <td className="px-5 py-4 text-sm text-gray-700 text-center">
++                    {buyer.totalOrders}
++                  </td>
++                  <td className="px-5 py-4 text-sm text-gray-700">
++                    {buyer.totalSpent.toLocaleString()}
++                  </td>
++                  <td className="px-5 py-4">{getRiskBadge(buyer)}</td>
++                  <td className="px-5 py-4 text-right">
++                    <button
++                      onClick={() => handleViewBuyer(buyer)}
++                      className="text-gray-400 hover:text-gray-700 transition-colors"
++                      aria-label="View buyer"
++                    >
++                      <Eye className="h-4 w-4" />
++                    </button>
++                  </td>
++                </tr>
++              ))}
++              {filteredBuyers.length === 0 && (
++                <tr>
++                  <td colSpan={6} className="px-5 py-12 text-center text-sm text-gray-400">
++                    No buyers found.
++                  </td>
++                </tr>
++              )}
++            </tbody>
++          </table>
++        )}
++      </div>
+     </div>
+   );
+ }
+diff --git a/src/app/(PageSections)/Dashboard/DashboardPageSection/DashboardPageSection.tsx b/src/app/(PageSections)/Dashboard/DashboardPageSection/DashboardPageSection.tsx
+index da76a52..5401f66 100644
+--- a/src/app/(PageSections)/Dashboard/DashboardPageSection/DashboardPageSection.tsx
++++ b/src/app/(PageSections)/Dashboard/DashboardPageSection/DashboardPageSection.tsx
+@@ -1,103 +1,292 @@
+ "use client";
+ 
+-import { DollarSign, Package, ShoppingCart, Users } from "lucide-react";
+ import React from "react";
+-import { StatsCard } from "../sections/StatsCard";
+-import { SalesChart } from "../sections/SalesChart";
+-import { RecentOrders } from "../sections/RecentOrders";
+-import { ActivityFeed } from "../sections/ActivityFeed";
+-import {QuickActions} from '../sections/QuickActions';
+-const stats = [
++import {
++  TrendingUp,
++  ShoppingCart,
++  AlertTriangle,
++  Flame,
++  Store,
++  Clock,
++  CreditCard,
++  Shield,
++  Eye,
++  CheckCircle,
++  Flag,
++  Landmark,
++} from "lucide-react";
++import Link from "next/link";
++
++const recentActivity = [
+   {
+-    title: "Total Revenue",
+-    value: "$45,231.89",
+-    change: "+20.1% from last month",
+-    changeType: "positive" as const,
+-    icon: DollarSign,
+-    iconColor: "bg-success/10 text-success",
++    id: 1,
++    icon: CheckCircle,
++    iconColor: "text-green-500",
++    iconBg: "bg-green-50",
++    description: "Merchant application approved",
++    badge: "merchant approved",
++    badgeColor: "bg-blue-100 text-blue-700",
++    actor: "Kariakoo Electronics",
++    admin: "Admin: John Mwangi",
++    time: "Jan 15, 2024 • 5:32 PM",
+   },
+   {
+-    title: "Orders",
+-    value: "2,350",
+-    change: "+180 this week",
+-    changeType: "positive" as const,
+-    icon: ShoppingCart,
+-    iconColor: "bg-primary/10 text-primary",
++    id: 2,
++    icon: Flag,
++    iconColor: "text-orange-500",
++    iconBg: "bg-orange-50",
++    description: "Buyer flagged for multiple chargebacks",
++    badge: "buyer flagged",
++    badgeColor: "bg-orange-100 text-orange-700",
++    actor: "Hassan Juma",
++    admin: "System",
++    time: "Jan 15, 2024 • 4:45 PM",
+   },
+   {
+-    title: "Products",
+-    value: "12,234",
+-    change: "543 active listings",
+-    changeType: "neutral" as const,
+-    icon: Package,
+-    iconColor: "bg-chart-4/10 text-chart-4",
++    id: 3,
++    icon: CreditCard,
++    iconColor: "text-orange-500",
++    iconBg: "bg-orange-50",
++    description: "Merchant payout frozen pending review",
++    badge: "payout frozen",
++    badgeColor: "bg-orange-100 text-orange-700",
++    actor: "Msasani Fresh Foods",
++    admin: "Admin: Sarah Kimaro",
++    time: "Jan 15, 2024 • 3:20 PM",
+   },
+   {
+-    title: "Customers",
+-    value: "573",
+-    change: "+201 this month",
+-    changeType: "positive" as const,
+-    icon: Users,
+-    iconColor: "bg-warning/10 text-warning",
++    id: 4,
++    icon: Flame,
++    iconColor: "text-blue-400",
++    iconBg: "bg-blue-50",
++    description: "New dispute opened by buyer",
++    badge: "dispute opened",
++    badgeColor: "bg-blue-100 text-blue-700",
++    actor: "Order #NBC-4521",
++    admin: "Buyer: Mary Kilonzo",
++    time: "Jan 15, 2024 • 2:15 PM",
+   },
+ ];
+ 
+-
+ function DashboardPageSection() {
+-  // const { user } = useAuth();
+-  // const userRoles = user?.authorities || [];
+   return (
+-    <>
+-      {" "}
+-      <div className="space-y-6">
+-        {/* Page Header */}
+-        <div>
+-          <h1 className="text-2xl font-bold tracking-tight">Dashboard</h1>
+-          <p className="text-muted-foreground">
+-            Welcome back! Here&apos;s an overview of your store.
+-          </p>
+-        </div>
+-          <div>
+-            <QuickActions />
++    <div className="space-y-6">
++      {/* Page Header */}
++      <div>
++        <h1 className="text-2xl font-bold tracking-tight text-gray-900">Dashboard</h1>
++        <p className="text-sm text-gray-500 mt-1">
++          Platform health, risk, and governance overview
++        </p>
++      </div>
++
++      {/* Stats Row */}
++      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
++        {/* Total GMV */}
++        <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
++          <div className="flex items-start justify-between">
++            <div>
++              <p className="text-sm text-gray-500">Total GMV</p>
++              <p className="mt-1 text-2xl font-bold text-gray-900">458,750,000</p>
++              <p className="mt-1 text-xs text-gray-500">Today: 2,340,000 TZS</p>
++            </div>
++            <div className="rounded-lg bg-blue-50 p-2">
++              <TrendingUp className="h-5 w-5 text-blue-400" />
++            </div>
+           </div>
++        </div>
+ 
+-        {/* Stats Grid */}
+-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+-          {stats.map((stat, index) => (
+-            <div
+-              key={stat.title}
+-              style={{ animationDelay: `${index * 0.05}s` }}
+-            >
+-              <StatsCard {...stat} />
++        {/* Total Orders */}
++        <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
++          <div className="flex items-start justify-between">
++            <div>
++              <p className="text-sm text-gray-500">Total Orders</p>
++              <p className="mt-1 text-2xl font-bold text-gray-900">12,847</p>
++              <p className="mt-1 text-xs text-gray-500">Today: 67</p>
+             </div>
+-          ))}
++            <div className="rounded-lg bg-blue-50 p-2">
++              <ShoppingCart className="h-5 w-5 text-blue-400" />
++            </div>
++          </div>
+         </div>
+ 
+-        {/* Main Content Grid */}
+-        <div className="grid gap-6 lg:grid-cols-3">
+-          {/* Chart - Spans 2 columns */}
+-          <div className="lg:col-span-2">
+-            <SalesChart />
++        {/* Payouts at Risk */}
++        <div className="rounded-xl border border-orange-200 bg-orange-50 p-5 shadow-sm">
++          <div className="flex items-start justify-between">
++            <div>
++              <p className="text-sm text-orange-600">Payouts at Risk</p>
++              <p className="mt-1 text-2xl font-bold text-orange-500">8,450,000</p>
++              <p className="mt-1 text-xs text-orange-500">TZS pending review</p>
++            </div>
++            <div className="rounded-lg bg-orange-100 p-2">
++              <AlertTriangle className="h-5 w-5 text-orange-400" />
++            </div>
+           </div>
++        </div>
++      </div>
+ 
+-          {/* Quick Actions */}
+-      <div>
+-            <ActivityFeed />
++      {/* Pending Issues + System Health */}
++      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
++        {/* Pending Issues */}
++        <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
++          <div className="mb-4">
++            <h2 className="text-base font-semibold text-gray-900">Pending Issues</h2>
++            <p className="text-xs text-gray-500">Items requiring attention</p>
++          </div>
++          <div className="space-y-3">
++            {/* Open Disputes */}
++            <div className="flex items-center justify-between rounded-lg border border-gray-100 px-4 py-3">
++              <div className="flex items-center gap-3">
++                <div className="rounded-md bg-red-50 p-1.5">
++                  <Flame className="h-4 w-4 text-red-400" />
++                </div>
++                <span className="text-sm text-gray-700">Open Disputes</span>
++              </div>
++              <span className="flex h-6 w-6 items-center justify-center rounded-full bg-red-500 text-xs font-bold text-white">
++                23
++              </span>
++            </div>
++            {/* Merchants Pending Approval */}
++            <div className="flex items-center justify-between rounded-lg border border-gray-100 px-4 py-3">
++              <div className="flex items-center gap-3">
++                <div className="rounded-md bg-blue-50 p-1.5">
++                  <Store className="h-4 w-4 text-blue-400" />
++                </div>
++                <span className="text-sm text-gray-700">Merchants Pending Approval</span>
++              </div>
++              <span className="text-sm font-semibold text-gray-700">8</span>
++            </div>
++            {/* Orders Stuck > 24h */}
++            <div className="flex items-center justify-between rounded-lg border border-gray-100 px-4 py-3">
++              <div className="flex items-center gap-3">
++                <div className="rounded-md bg-orange-50 p-1.5">
++                  <Clock className="h-4 w-4 text-orange-400" />
++                </div>
++                <span className="text-sm text-gray-700">Orders Stuck &gt; 24h</span>
++              </div>
++              <span className="text-sm font-semibold text-gray-700">5</span>
++            </div>
++            {/* Failed Payment Callbacks */}
++            <div className="flex items-center justify-between rounded-lg border border-gray-100 px-4 py-3">
++              <div className="flex items-center gap-3">
++                <div className="rounded-md bg-purple-50 p-1.5">
++                  <CreditCard className="h-4 w-4 text-purple-400" />
++                </div>
++                <span className="text-sm text-gray-700">Failed Payment Callbacks</span>
++              </div>
++              <span className="text-sm font-semibold text-gray-700">3</span>
++            </div>
+           </div>
+         </div>
+ 
+-        {/* Bottom Grid */}
+-        <div className="">
+-          {/* Recent Orders - Spans 2 columns */}
+-          <div className="lg:col-span-2">
+-            <RecentOrders />
++        {/* System Health */}
++        <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
++          <div className="mb-4">
++            <div className="flex items-center gap-2">
++              <Shield className="h-4 w-4 text-gray-600" />
++              <h2 className="text-base font-semibold text-gray-900">System Health</h2>
++            </div>
++            <p className="text-xs text-gray-500 mt-0.5">Risk indicators</p>
++          </div>
++          <div className="space-y-3">
++            {/* High Refund Rate Merchants */}
++            <div className="flex items-center justify-between rounded-lg border border-gray-100 px-4 py-3">
++              <div className="flex items-center gap-3">
++                <div className="rounded-md bg-orange-50 p-1.5">
++                  <AlertTriangle className="h-4 w-4 text-orange-400" />
++                </div>
++                <span className="text-sm text-gray-700">High Refund Rate Merchants</span>
++              </div>
++              <span className="text-sm font-semibold text-gray-700">4</span>
++            </div>
++            {/* High Dispute Rate Merchants */}
++            <div className="flex items-center justify-between rounded-lg border border-gray-100 px-4 py-3">
++              <div className="flex items-center gap-3">
++                <div className="rounded-md bg-orange-50 p-1.5">
++                  <AlertTriangle className="h-4 w-4 text-orange-400" />
++                </div>
++                <span className="text-sm text-gray-700">High Dispute Rate Merchants</span>
++              </div>
++              <span className="flex h-6 w-6 items-center justify-center rounded-full bg-red-500 text-xs font-bold text-white">
++                2
++              </span>
++            </div>
++            {/* Buyers Flagged for Risk */}
++            <div className="flex items-center justify-between rounded-lg border border-gray-100 px-4 py-3">
++              <div className="flex items-center gap-3">
++                <div className="rounded-md bg-orange-50 p-1.5">
++                  <AlertTriangle className="h-4 w-4 text-orange-400" />
++                </div>
++                <span className="text-sm text-gray-700">Buyers Flagged for Risk</span>
++              </div>
++              <span className="text-sm font-semibold text-gray-700">12</span>
++            </div>
+           </div>
++        </div>
++      </div>
+ 
+-    
+-         
++      {/* Quick Actions */}
++      <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
++        <div className="mb-4">
++          <h2 className="text-base font-semibold text-gray-900">Quick Actions</h2>
++          <p className="text-xs text-gray-500">High-priority governance tasks</p>
++        </div>
++        <div className="flex flex-wrap gap-3">
++          <Link
++            href="/dashboard/disputes"
++            className="flex items-center gap-2 rounded-lg bg-red-500 px-4 py-2 text-sm font-medium text-white hover:bg-red-600 transition-colors"
++          >
++            <Flame className="h-4 w-4" />
++            View Disputes Queue
++          </Link>
++          <Link
++            href="/dashboard/merchants"
++            className="flex items-center gap-2 rounded-lg border border-gray-200 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
++          >
++            <Store className="h-4 w-4" />
++            Review Merchant Applications
++          </Link>
++          <Link
++            href="/dashboard/payouts"
++            className="flex items-center gap-2 rounded-lg border border-gray-200 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
++          >
++            <Landmark className="h-4 w-4" />
++            Manual Payouts
++          </Link>
++        </div>
++      </div>
++
++      {/* Recent Critical Activity */}
++      <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
++        <div className="mb-4">
++          <h2 className="text-base font-semibold text-gray-900">Recent Critical Activity</h2>
++          <p className="text-xs text-gray-500">Latest platform governance events</p>
++        </div>
++        <div className="divide-y divide-gray-100">
++          {recentActivity.map((item) => (
++            <div key={item.id} className="flex items-start gap-3 py-4 first:pt-0 last:pb-0">
++              <div className={`mt-0.5 flex-shrink-0 rounded-full p-2 ${item.iconBg}`}>
++                <item.icon className={`h-4 w-4 ${item.iconColor}`} />
++              </div>
++              <div className="flex-1 min-w-0">
++                <div className="flex flex-wrap items-center gap-2">
++                  <span className="text-sm font-medium text-gray-900">{item.description}</span>
++                  <span className={`rounded px-2 py-0.5 text-xs font-medium ${item.badgeColor}`}>
++                    {item.badge}
++                  </span>
++                </div>
++                <p className="mt-0.5 text-xs text-gray-500">
++                  {item.actor} • {item.admin}
++                </p>
++                <p className="mt-0.5 text-xs text-gray-400">{item.time}</p>
++              </div>
++              <button className="flex-shrink-0 text-gray-400 hover:text-gray-600">
++                <Eye className="h-4 w-4" />
++              </button>
++            </div>
++          ))}
+         </div>
+       </div>
+-    </>
++    </div>
+   );
+ }
+ 
+diff --git a/src/app/(Pages)/dashboard/DashboardClientLayout.tsx b/src/app/(Pages)/dashboard/DashboardClientLayout.tsx
+index 44c4ccf..b85ea9f 100644
+--- a/src/app/(Pages)/dashboard/DashboardClientLayout.tsx
++++ b/src/app/(Pages)/dashboard/DashboardClientLayout.tsx
+@@ -14,11 +14,6 @@ import { useEffect, useState, useRef } from "react";
+ import { usePathname } from "next/navigation";
+ 
+ const dashboardMenuLinks = [
+-  {
+-    link: "/",
+-    label: "Back to Site",
+-    icon: <Home className="w-4 h-4" />,
+-  },
+   {
+     link: "/dashboard/profile",
+     label: "Profile",
+diff --git a/src/components/layout/Sidebar.tsx b/src/components/layout/Sidebar.tsx
+index 53323be..7ab3c61 100644
+--- a/src/components/layout/Sidebar.tsx
++++ b/src/components/layout/Sidebar.tsx
+@@ -577,60 +577,8 @@ const Sidebar: React.FC<SidebarProps> = ({
+           {processedNavigationData.map(renderNavigationItem)}
+         </nav>
+ 
+-        {/* Back to Site & Footer */}
+-        <div className={cn("border-t", defaultTheme.footerBorder)}>
+-          {/* Back to Site Link */}
+-          {isCollapsed ? (
+-            <div className="p-2 flex justify-center">
+-              <TooltipProvider>
+-                <Tooltip>
+-                  <TooltipTrigger asChild>
+-                    <Link
+-                      href="/"
+-                      onClick={() =>
+-                        handleNavigationClick("/", {
+-                          label: "Back to Site",
+-                          href: "/",
+-                        })
+-                      }
+-                      className="flex p-2 items-center justify-center h-12 w-12 rounded-lg bg-gray-50 text-primary-950 hover:bg-gray-100 transition-colors"
+-                    >
+-                      <ArrowLeft className="w-4 h-4" />
+-                    </Link>
+-                  </TooltipTrigger>
+-                  <TooltipContent side="right" className="font-medium">
+-                    Back to Site
+-                  </TooltipContent>
+-                </Tooltip>
+-              </TooltipProvider>
+-            </div>
+-          ) : (
+-            <div className="p-4 pb-2">
+-              <Link
+-                href="/"
+-                className="flex items-center gap-2 text-sm text-muted-foreground hover:text-primary transition-colors"
+-                onClick={() =>
+-                  handleNavigationClick("/", {
+-                    label: "Back to Site",
+-                    href: "/",
+-                  })
+-                }
+-              >
+-                <ArrowLeft className="w-4 h-4" />
+-                <span>Back to Site</span>
+-              </Link>
+-            </div>
+-          )}
+-
+-          {/* Footer Text - Only show when not collapsed */}
+-          {footer && !isCollapsed && (
+-            <div className="px-4 pb-4">
+-              <div className="text-xs text-muted-foreground text-center">
+-                {footer.text}
+-              </div>
+-            </div>
+-          )}
+-        </div>
++      
++  
+       </div>
+     </>
+   );
+diff --git a/src/data/DashboardRoutes.ts b/src/data/DashboardRoutes.ts
+index 3f1c57a..f48aa94 100644
+--- a/src/data/DashboardRoutes.ts
++++ b/src/data/DashboardRoutes.ts
+@@ -28,75 +28,44 @@ export const dashboardRoutes: NavigationItemData[] = [
+     label: "Dashboard",
+     href: "/dashboard",
+     iconName: "LayoutDashboard",
+-    roles: ["ROLE_ADMIN", "ROLE_MARKET_PLACE_ADMIN"],
+-  },
+-  {
+-    label: "Store Management",
+-    href: "/dashboard/store",
+-    iconName: "ShoppingBag",
+-    roles: ["ROLE_NBC_MERCHANT"],
+-  },
+-  {
+-    label: "Products",
+-    href: "/dashboard/products",
+-    iconName: "Package",
+-    roles: ["ROLE_NBC_MERCHANT","ROLE_ADMIN"],
+-  },
+-  {
+-    label: "Orders",
+-    href: "/dashboard/orders",
+-    iconName: "ShoppingCart",
+-    roles: ["ROLE_NBC_MERCHANT","ROLE_ADMIN"],
+-  },
+-  {
+-    label: "Payments",
+-    href: "/dashboard/payments",
+-    iconName: "CreditCard",
+-    roles: ["ROLE_NBC_MERCHANT"],
+-  },
+-  {
+-    label: "Marketing",
+-    href: "/dashboard/marketing",
+-    iconName: "Megaphone",
+-    roles: ["ROLE_NBC_MERCHANT"],
+-  },
+-  {
+-    label: "Reports",
+-    href: "/dashboard/reports",
+-    iconName: "BarChart3",
+-    roles: ["ROLE_NBC_MERCHANT", "ROLE_MARKET_PLACE_ADMIN"],
+-  },
+-  {
+-    label: "Settings",
+-    href: "/dashboard/settings",
+-    iconName: "Settings",
+-    roles: ["ROLE_NBC_MERCHANT"],
+-  },
+-  {
+-    label: "Support",
+-    href: "/dashboard/support",
+-    iconName: "HelpCircle",
+-    roles: ["ROLE_NBC_MERCHANT"],
++    roles: ["ROLE_ADMIN"],
+   },
+-  // Admin-only items
+   {
+-    label: "Buyer Management",
++    label: "Buyers",
+     href: "/dashboard/buyers",
+     iconName: "Users",
+     roles: ["ROLE_ADMIN"],
+   },
+   {
+-    label: "Merchant Management",
++    label: "Merchants",
+     href: "/dashboard/merchants",
+     iconName: "ShoppingBasket",
+     roles: ["ROLE_ADMIN"],
+   },
+   {
+-    label: "Product Catalogue",
++    label: "Transporters",
++    href: "/dashboard/transporters",
++    iconName: "Truck",
++    roles: ["ROLE_ADMIN"],
++  },
++  {
++    label: "Product & Catalogue",
+     href: "/dashboard/catalogue",
+     iconName: "Package",
+     roles: ["ROLE_ADMIN"],
+   },
++  {
++    label: "Orders",
++    href: "/dashboard/orders",
++    iconName: "ShoppingCart",
++    roles: ["ROLE_ADMIN"],
++  },
++  {
++    label: "Payments & Payouts",
++    href: "/dashboard/payments-payouts",
++    iconName: "Shield",
++    roles: ["ROLE_ADMIN"],
++  },
+   {
+     label: "Disputes & Returns",
+     href: "/dashboard/disputes",
+@@ -104,21 +73,16 @@ export const dashboardRoutes: NavigationItemData[] = [
+     roles: ["ROLE_ADMIN"],
+   },
+   {
+-    label: "Promotions & CMS",
++    label: "Reviews & Moderation",
+     href: "/dashboard/promotions",
+     iconName: "Tag",
+     roles: ["ROLE_ADMIN"],
+   },
++
+   {
+-    label: "Transporter Management",
+-    href: "/dashboard/transporters",
+-    iconName: "Truck",
+-    roles: ["ROLE_ADMIN"],
+-  },
+-  {
+-    label: "Platform Settings",
+-    href: "/dashboard/settings",
+-    iconName: "Shield",
++    label: "Analytics & Reports",
++    href: "/dashboard/reports",
++    iconName: "BarChart3",
+     roles: ["ROLE_ADMIN"],
+   },
+ ];
+diff --git a/src/providers/order.provider.tsx b/src/providers/order.provider.tsx
+index dd6c8f7..b427c8e 100644
+--- a/src/providers/order.provider.tsx
++++ b/src/providers/order.provider.tsx
+@@ -23,7 +23,7 @@ export const OrderProvider: React.FC<OrderProviderProps> = ({ children }) => {
+ 
+   const [orders, setOrders] = useState<Order[]>([]);
+   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+-  const [loading, setLoading] = useState<boolean>(false);\
++  const [loading, setLoading] = useState<boolean>(false);
+   
+   const [error, setError] = useState<string | null>(null);
+   const [filters, setFiltersState] = useState<OrderFilters>({});
+diff --git a/src/types/buyers.ts b/src/types/buyers.ts
+index d7a9b24..6f5184b 100644
+--- a/src/types/buyers.ts
++++ b/src/types/buyers.ts
+@@ -6,6 +6,8 @@ interface BuyerI {
+   email: string;
+   phone: string;
+   status: "ACTIVE" | "INACTIVE" | "SUSPENDED";
++  riskStatus: "CLEAR" | "RISK" | "RESTRICTED";
++  riskCount?: number;
+   createdOn: string;
+   lastLoginDate: string | null;
+   totalOrders: number;
