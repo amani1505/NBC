@@ -1,48 +1,78 @@
- 
-❯ docker compose build
-[+] Building 108.2s (10/19)                                                                                                                                                                                                                                 
- => [internal] load local bake definitions                                                                                                                                                                                                             0.0s
- => => reading from stdin 933B                                                                                                                                                                                                                         0.0s
- => [internal] load build definition from Dockerfile                                                                                                                                                                                                   0.0s
- => => transferring dockerfile: 2.55kB                                                                                                                                                                                                                 0.0s
- => [internal] load metadata for docker.io/library/node:22.18.0-alpine3.22                                                                                                                                                                             1.0s
- => [internal] load .dockerignore                                                                                                                                                                                                                      0.0s
- => => transferring context: 2.28kB                                                                                                                                                                                                                    0.0s
- => [internal] load build context                                                                                                                                                                                                                      1.4s
- => => transferring context: 275.42MB                                                                                                                                                                                                                  1.3s
- => [base 1/1] FROM docker.io/library/node:22.18.0-alpine3.22@sha256:1b2479dd35a99687d6638f5976fd235e26c5b37e8122f786fcd5fe231d63de5b                                                                                                                  0.0s
- => CACHED [deps 1/4] RUN apk add --no-cache libc6-compat                                                                                                                                                                                              0.0s
- => CACHED [deps 2/4] WORKDIR /app                                                                                                                                                                                                                     0.0s
- => [deps 3/4] COPY package.json yarn.lock* package-lock.json* pnpm-lock.yaml* .npmrc* ./                                                                                                                                                              0.4s
- => ERROR [deps 4/4] RUN   if [ -f yarn.lock ]; then yarn --frozen-lockfile;   elif [ -f package-lock.json ]; then npm ci;   elif [ -f pnpm-lock.yaml ]; then corepack enable pnpm && pnpm i --frozen-lockfile;   else echo "Lockfile not found." &  104.9s
-------                                                                                                                                                                                                                                                      
- > [deps 4/4] RUN   if [ -f yarn.lock ]; then yarn --frozen-lockfile;   elif [ -f package-lock.json ]; then npm ci;   elif [ -f pnpm-lock.yaml ]; then corepack enable pnpm && pnpm i --frozen-lockfile;   else echo "Lockfile not found." && exit 1;   fi: 
-104.7 npm error Exit handler never called!                                                                                                                                                                                                                  
-104.7 npm error This is an error with npm itself. Please report this error at:                                                                                                                                                                              
-104.7 npm error   <https://github.com/npm/cli/issues>
-104.7 npm error A complete log of this run can be found in: /root/.npm/_logs/2026-02-17T05_49_01_343Z-debug-0.log
-------
-Dockerfile:11
+FROM node:22.18.0-alpine3.22 AS base
 
---------------------
+# Install dependencies only when needed
+FROM base AS deps
+# Check https://github.com/nodejs/docker-node/tree/b4117f9333da4138b03a546ec926ef50a31506c3#nodealpine to understand why libc6-compat might be needed.
+RUN apk add --no-cache libc6-compat
+WORKDIR /app
 
-  10 |     COPY package.json yarn.lock* package-lock.json* pnpm-lock.yaml* .npmrc* ./
+# Install dependencies based on the preferred package manager
+COPY package.json yarn.lock* package-lock.json* pnpm-lock.yaml* .npmrc* ./
+RUN \
+  if [ -f yarn.lock ]; then yarn --frozen-lockfile; \
+  elif [ -f package-lock.json ]; then npm ci; \
+  elif [ -f pnpm-lock.yaml ]; then corepack enable pnpm && pnpm i --frozen-lockfile; \
+  else echo "Lockfile not found." && exit 1; \
+  fi
 
-  11 | >>> RUN \
 
-  12 | >>>   if [ -f yarn.lock ]; then yarn --frozen-lockfile; \
+# Rebuild the source code only when needed
+FROM base AS builder
+WORKDIR /app
 
-  13 | >>>   elif [ -f package-lock.json ]; then npm ci; \
+# Add ARG and ENV here for build time
+ARG NEXT_PUBLIC_API_BASE_URL
+ENV NEXT_PUBLIC_API_BASE_URL=$NEXT_PUBLIC_API_BASE_URL
 
-  14 | >>>   elif [ -f pnpm-lock.yaml ]; then corepack enable pnpm && pnpm i --frozen-lockfile; \
 
-  15 | >>>   else echo "Lockfile not found." && exit 1; \
+COPY --from=deps /app/node_modules ./node_modules
+COPY . .
 
-  16 | >>>   fi
+# Next.js collects completely anonymous telemetry data about general usage.
+# Learn more here: https://nextjs.org/telemetry
+# Uncomment the following line in case you want to disable telemetry during the build.
+# ENV NEXT_TELEMETRY_DISABLED=1
 
-  17 |     
+RUN \
+  if [ -f yarn.lock ]; then yarn run build; \
+  elif [ -f package-lock.json ]; then npm run build; \
+  elif [ -f pnpm-lock.yaml ]; then corepack enable pnpm && pnpm run build; \
+  else echo "Lockfile not found." && exit 1; \
+  fi
 
---------------------
+# Production image, copy all the files and run next
+FROM base AS runner
+WORKDIR /app
 
-failed to solve: process "/bin/sh -c if [ -f yarn.lock ]; then yarn --frozen-lockfile;   elif [ -f package-lock.json ]; then npm ci;   elif [ -f pnpm-lock.yaml ]; then corepack enable pnpm && pnpm i --frozen-lockfile;   else echo \"Lockfile not found.\" && exit 1;   fi" did not complete successfully: exit code: 1
+ARG NEXT_PUBLIC_API_BASE_URL
+ENV NEXT_PUBLIC_API_BASE_URL=$NEXT_PUBLIC_API_BASE_URL
+ARG NEXT_PUBLIC_CHANNEL_API_KEY
+ENV NEXT_PUBLIC_CHANNEL_API_KEY=$NEXT_PUBLIC_CHANNEL_API_KEY
 
+
+
+ENV NODE_ENV=production
+# Uncomment the following line in case you want to disable telemetry during runtime.
+# ENV NEXT_TELEMETRY_DISABLED=1
+
+RUN addgroup --system --gid 1001 nodejs
+RUN adduser --system --uid 1001 nextjs
+
+# Copy public folder - ensure it exists in your project root
+COPY --from=builder /app/public ./public
+
+# Automatically leverage output traces to reduce image size
+# https://nextjs.org/docs/advanced-features/output-file-tracing
+COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
+COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
+
+USER nextjs
+
+EXPOSE 5174
+
+ENV PORT=5174
+
+# server.js is created by next build from the standalone output
+# https://nextjs.org/docs/pages/api-reference/config/next-config-js/output
+ENV HOSTNAME="0.0.0.0"
+CMD ["node", "server.js"]
