@@ -1,44 +1,48 @@
-Here's the commit message for these changes:
+ 
+❯ docker compose build
+[+] Building 108.2s (10/19)                                                                                                                                                                                                                                 
+ => [internal] load local bake definitions                                                                                                                                                                                                             0.0s
+ => => reading from stdin 933B                                                                                                                                                                                                                         0.0s
+ => [internal] load build definition from Dockerfile                                                                                                                                                                                                   0.0s
+ => => transferring dockerfile: 2.55kB                                                                                                                                                                                                                 0.0s
+ => [internal] load metadata for docker.io/library/node:22.18.0-alpine3.22                                                                                                                                                                             1.0s
+ => [internal] load .dockerignore                                                                                                                                                                                                                      0.0s
+ => => transferring context: 2.28kB                                                                                                                                                                                                                    0.0s
+ => [internal] load build context                                                                                                                                                                                                                      1.4s
+ => => transferring context: 275.42MB                                                                                                                                                                                                                  1.3s
+ => [base 1/1] FROM docker.io/library/node:22.18.0-alpine3.22@sha256:1b2479dd35a99687d6638f5976fd235e26c5b37e8122f786fcd5fe231d63de5b                                                                                                                  0.0s
+ => CACHED [deps 1/4] RUN apk add --no-cache libc6-compat                                                                                                                                                                                              0.0s
+ => CACHED [deps 2/4] WORKDIR /app                                                                                                                                                                                                                     0.0s
+ => [deps 3/4] COPY package.json yarn.lock* package-lock.json* pnpm-lock.yaml* .npmrc* ./                                                                                                                                                              0.4s
+ => ERROR [deps 4/4] RUN   if [ -f yarn.lock ]; then yarn --frozen-lockfile;   elif [ -f package-lock.json ]; then npm ci;   elif [ -f pnpm-lock.yaml ]; then corepack enable pnpm && pnpm i --frozen-lockfile;   else echo "Lockfile not found." &  104.9s
+------                                                                                                                                                                                                                                                      
+ > [deps 4/4] RUN   if [ -f yarn.lock ]; then yarn --frozen-lockfile;   elif [ -f package-lock.json ]; then npm ci;   elif [ -f pnpm-lock.yaml ]; then corepack enable pnpm && pnpm i --frozen-lockfile;   else echo "Lockfile not found." && exit 1;   fi: 
+104.7 npm error Exit handler never called!                                                                                                                                                                                                                  
+104.7 npm error This is an error with npm itself. Please report this error at:                                                                                                                                                                              
+104.7 npm error   <https://github.com/npm/cli/issues>
+104.7 npm error A complete log of this run can be found in: /root/.npm/_logs/2026-02-17T05_49_01_343Z-debug-0.log
+------
+Dockerfile:11
 
----
+--------------------
 
-**feat: redesign dashboard UI with admin-focused governance views**
+  10 |     COPY package.json yarn.lock* package-lock.json* pnpm-lock.yaml* .npmrc* ./
 
-**Dashboard (`DashboardPageSection`)**
-- Completely replaced the generic merchant stats dashboard (revenue, orders, products, customers) with an admin governance dashboard
-- New stats row: Total GMV, Total Orders, and Payouts at Risk
-- New "Pending Issues" panel: Open Disputes, Merchants Pending Approval, Orders Stuck >24h, Failed Payment Callbacks
-- New "System Health" panel: High Refund Rate Merchants, High Dispute Rate Merchants, Buyers Flagged for Risk
-- New "Quick Actions" row with links to Disputes Queue, Merchant Applications, and Manual Payouts
-- New "Recent Critical Activity" feed replacing the generic activity feed, showing governance events (approvals, flags, freezes, disputes) with actor/admin attribution, timestamps, and eye action buttons
-- Removed `StatsCard`, `SalesChart`, `RecentOrders`, `ActivityFeed`, and `QuickActions` section components
+  11 | >>> RUN \
 
-**Buyers Page (`BuyersPageSection`)**
-- Replaced `BuyerDataTable` component with an inline table built directly in the page section
-- Added summary stats row: Total Buyers, Flagged Buyers, Orders in Dispute, Total Payments (TZS)
-- Added search bar (filters by name, phone, email) and risk status dropdown filter (All / Clear / Risk / Restricted)
-- Added `getRiskBadge` helper rendering styled pill badges for `CLEAR`, `RISK`, and `RESTRICTED` statuses, including `riskCount` overflow indicator
-- Updated dummy data to use Tanzanian names, masked phone numbers, and `riskStatus`/`riskCount` fields aligned with the new type
-- Table columns: Buyer Name, Phone, Total Orders, Total Spend (TZS), Risk, Action (eye icon)
-- Removed `fetchAllBuyers` call from `useEffect` (API not yet ready; comment retained)
+  12 | >>>   if [ -f yarn.lock ]; then yarn --frozen-lockfile; \
 
-**Dashboard Routes (`DashboardRoutes.ts`)**
-- Removed all merchant-role routes (Store Management, Payments, Marketing, Settings, Support)
-- Scoped all remaining routes to `ROLE_ADMIN` only
-- Renamed and reordered nav items to reflect admin governance structure: Dashboard → Buyers → Merchants → Transporters → Product & Catalogue → Orders → Payments & Payouts → Disputes & Returns → Reviews & Moderation → Analytics & Reports
-- Renamed "Transporter Management" → "Transporters", "Buyer Management" → "Buyers", "Merchant Management" → "Merchants", "Product Catalogue" → "Product & Catalogue", "Promotions & CMS" → "Reviews & Moderation", "Reports" → "Analytics & Reports"
-- Added new "Payments & Payouts" route (`/dashboard/payments-payouts`, icon: `Shield`)
-- Removed "Platform Settings" route
+  13 | >>>   elif [ -f package-lock.json ]; then npm ci; \
 
-**Dashboard Client Layout**
-- Removed "Back to Site" link from the dashboard menu
+  14 | >>>   elif [ -f pnpm-lock.yaml ]; then corepack enable pnpm && pnpm i --frozen-lockfile; \
 
-**Sidebar (`Sidebar.tsx`)**
-- Removed "Back to Site" link and footer text block from the sidebar footer section
+  15 | >>>   else echo "Lockfile not found." && exit 1; \
 
-**Types (`buyers.ts`)**
-- Added `riskStatus: "CLEAR" | "RISK" | "RESTRICTED"` field to `BuyerI`
-- Added optional `riskCount?: number` field to `BuyerI`
+  16 | >>>   fi
 
-**Misc**
-- Fixed syntax error in `order.provider.tsx`: removed stray backslash from `setLoading` initialization
+  17 |     
+
+--------------------
+
+failed to solve: process "/bin/sh -c if [ -f yarn.lock ]; then yarn --frozen-lockfile;   elif [ -f package-lock.json ]; then npm ci;   elif [ -f pnpm-lock.yaml ]; then corepack enable pnpm && pnpm i --frozen-lockfile;   else echo \"Lockfile not found.\" && exit 1;   fi" did not complete successfully: exit code: 1
+
