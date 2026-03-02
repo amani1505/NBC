@@ -1,18 +1,3 @@
-Here's a commit message for these changes:
-
-```
-feat: add BNPL/S2B badges, per-product delivery, and Buy Now flow
-
-- Add isBnplEligible, isSaveToBuyEligible, totalReviews, and averageRating fields to product types (FlashDealProduct, AdminProductDetail, CustomerProductDetail)
-- Display stacked BNPL (purple) and S2B (emerald) badges on FlashDealProductCard and ShopProductCard alongside existing discount badges
-- Show payment eligibility badges (Buy Now Pay Later, Save to Buy) on single product page
-- Replace inline hero banner carousel with extracted HeroBanner component driven by API heroProducts data
-- Refactor checkout flow from 3-step (Checkout → Delivery → Payment) to 2-step (Delivery → Payment)
-- Replace global delivery selection with per-product delivery selector (ProductDeliverySelector) supporting DELIVERY and SELF_PICKUP per item
-- Replace CartItemRow with read-only CheckoutCartItemRow in checkout; remove clear cart button from checkout view
-- Implement functional Buy Now button: adds to cart, initiates checkout, and redirects to checkout page
-- Redesign ProductActions layout: inline Add to Cart + quantity selector + wishlist icon, full-width Buy Now button below
-- Replace sold count with review count display on product cards
-- Show temporary success message on coupon application; remove persistent coupon removal UI
-- Fix cart service clearCart call signature to include confirmation message
-```
+https://claude.ai/oauth/authorize?code=true&client_id=9d1c250a-e61b-44d9-88ed-5944d1962f5e&response_type=code&redirect_uri=https%3A%2F%2Fplatform.claude.com%2Foauth%2Fcode%2Fcallback&scope=org%3Acreate_api_key+user%3Aprofile+user%3Ainference+user%3Asessions%3Aclaude
+_code+user%3Amcp_servers&code_challenge=2yzwb5dnMJLv4FP58udUUSlD9FDU800cgtVvmzDdDPM&code_challenge_method=S256&state=zfNa5ZBwWWoPzA6YeSS-b42l5le3UHdxn4b2DZ8MN_4                                                                                                          
+                                                                                                                                                                  
