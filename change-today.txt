@@ -1,1 +1,51 @@
-qky4He4pRVSvV86mL4bub6VQcXzQqtlmDyuvH5TyFNide1dF#575CaB5bg-1mS1iRU9svdNcm87oCwhoGR5SPhtyAc8w
+Add coupon support, rebrand UI, and optimize layout spacing
+
+Cart & Coupon Features:
+      - Add coupon code functionality with apply/remove coupon methods in
+        cart service, provider, and context
+      - Refactor OrderSummaryCard: merge order summary and coupon into single
+        card with collapsible accordion for coupon input, inline apply button
+        with ArrowRight icon, and improved UX
+      - Update CartPageSection to pass applyCoupon, removeCoupon, and
+        appliedCouponCode to OrderSummaryCard
+      - Display discount as negative amount in red text when coupon applied
+
+Add BNPL/S2B badges, per-product delivery, and Buy Now flow
+
+
+ Add isBnplEligible, isSaveToBuyEligible, totalReviews, and averageRating fields to product types (FlashDealProduct, AdminProductDetail, CustomerProductDetail)
+    - Display stacked BNPL (purple) and S2B (emerald) badges on FlashDealProductCard and ShopProductCard alongside existing discount badges
+    - Show payment eligibility badges (Buy Now Pay Later, Save to Buy) on single product page
+    - Replace inline hero banner carousel with extracted HeroBanner component driven by API heroProducts data
+    - Refactor checkout flow from 3-step (Checkout → Delivery → Payment) to 2-step (Delivery → Payment)
+    - Replace global delivery selection with per-product delivery selector (ProductDeliverySelector) supporting DELIVERY and SELF_PICKUP per item
+    - Replace CartItemRow with read-only CheckoutCartItemRow in checkout; remove clear cart button from checkout view
+    - Implement functional Buy Now button: adds to cart, initiates checkout, and redirects to checkout page
+    - Redesign ProductActions layout: inline Add to Cart + quantity selector + wishlist icon, full-width Buy Now button below
+    - Replace sold count with review count display on product cards
+    - Show temporary success message on coupon application; remove persistent coupon removal UI
+    - Fix cart service clearCart call signature to include confirmation message
+
+
+Enhance BNPL/S2B badges, per-product delivery, and Buy Now flow
+
+Buy Now API Integration:
+      - Add BuyNowRequestI interface with variantId, quantity, customerId,
+        customerEmail, and customerName (sessionId and customerNotes not required)
+      - Add buyNow() method to checkout service, provider, and context calling
+        POST /api/checkout/buy-now endpoint
+      - Refactor ProductActions handleBuyNow to use single buyNow() API call
+        instead of two-step addToCartWithVariant + initiateCheckout flow
+      - Maintain same authentication flow (requireAuth for logged-in/guest users)
+    
+      Product Card Badge Redesign:
+      - Move BNPL and 'Save to buy' badges from top-left to bottom-center of
+        product image with horizontal pill layout
+      - Update badge styling: rounded-full pills, bg-blue-600, smaller text,
+        horizontally centered with left-1/2 -translate-x-1/2
+      - Remove border-gray-100 from FlashDealProductCard and ShopProductCard
+        for cleaner borderless design
+      - Remove 'Add to Cart' Plus button from product cards (users click card
+        to view details)
+      - Update price display to vertical layout with larger font (text-lg)
+      - Remove unused Plus icon imports
