@@ -1,17 +1,1646 @@
-Dear Enterprise Support Team,
-
-I am writing to report a hardware issue with my assigned MacBook.
-
-Asset/Serial Number: [INSERT ASSET TAG OR SERIAL NUMBER]
-Issue: The built-in display has completely stopped functioning. The screen remains black and unresponsive regardless of brightness settings or restart attempts.
-
-Current workaround: I am using an external monitor (Dell P2725H) connected via HDMI to continue working. However, this limits my ability to work remotely or away from a desk setup.
-
-The issue persists after performing an NVRAM reset and a full restart. The Mac otherwise operates normally — it boots up, connects to external displays, and runs all applications without any problems.
-
-Please advise on the next steps for repair or replacement.
-
-Thank you for your assistance.
-
-Best regards,
-Amani
+diff --git a/src/app/(PageSections)/Dashboard/RegistrationPageSection/RegistrationPageSection.tsx b/src/app/(PageSections)/Dashboard/RegistrationPageSection/RegistrationPageSection.tsx
+index d9d481a..b3d411c 100644
+--- a/src/app/(PageSections)/Dashboard/RegistrationPageSection/RegistrationPageSection.tsx
++++ b/src/app/(PageSections)/Dashboard/RegistrationPageSection/RegistrationPageSection.tsx
+@@ -97,7 +97,7 @@ function RegistrationRowSkeleton() {
+ }
+ 
+ function RegistrationPageSection() {
+-  const { getUserRegistrations, getEventRegistrations, isLoading } =
++  const { getUserRegistrations, getEventRegistrations, getAdminEventRegistrations, isLoading } =
+     useEventRegistration();
+   const { user } = useAuth();
+   const { openModal, closeModal } = useModal();
+@@ -137,7 +137,7 @@ function RegistrationPageSection() {
+       let response;
+       if (isAdmin || isPartner) {
+         if (selectedEventId) {
+-          response = await getEventRegistrations(selectedEventId);
++          response = await getAdminEventRegistrations(selectedEventId);
+         } else {
+           setAllRegistrations([]);
+           return;
+diff --git a/src/app/(PageSections)/PaymentCheckoutPageSection/PaymentCheckoutPageSection.tsx b/src/app/(PageSections)/PaymentCheckoutPageSection/PaymentCheckoutPageSection.tsx
+index ee1ad4d..0187fb6 100644
+--- a/src/app/(PageSections)/PaymentCheckoutPageSection/PaymentCheckoutPageSection.tsx
++++ b/src/app/(PageSections)/PaymentCheckoutPageSection/PaymentCheckoutPageSection.tsx
+@@ -29,6 +29,7 @@ import { PaymentMethod } from "@/types/payment";
+ import { errorMessage, successMessage } from "@/utils/notification";
+ import { Skeleton } from "@/components/ui/skeleton";
+ import { PhoneNumberModal } from "./Sections/PhoneNumberModal";
++import { RoyalRewardsSection } from "./Sections/RoyalRewardsSection";
+ 
+ 
+ interface PaymentCheckoutPageSectionProps {
+@@ -65,14 +66,14 @@ function PaymentCheckoutPageSection({ orderId }: PaymentCheckoutPageSectionProps
+   const router = useRouter();
+   const [currentStep, setCurrentStep] = useState(1); // Start at Delivery step
+ 
+-  // Per-product delivery state
+-  const [productDeliveries, setProductDeliveries] = useState<Map<string, ProductDeliveryState>>(new Map());
++  // Per-order-item delivery state (keyed by orderItemId)
++  const [itemDeliveries, setItemDeliveries] = useState<Map<string, ProductDeliveryState>>(new Map());
+   const [selectedPaymentMethod, setSelectedPaymentMethod] =
+     useState<string>("");
+   const [appliedCouponCode, setAppliedCouponCode] = useState<string>("");
+   const [discountAmount, setDiscountAmount] = useState(0);
+   const [customerPhone, setCustomerPhone] = useState("");
+-  const [expandedProductId, setExpandedProductId] = useState<string | null>(null);
++  const [expandedOrderItemId, setExpandedOrderItemId] = useState<string | null>(null);
+ 
+   // Card payment state
+   const [savedCards, setSavedCards] = useState<SavedCard[]>([
+@@ -117,10 +118,17 @@ function PaymentCheckoutPageSection({ orderId }: PaymentCheckoutPageSectionProps
+     isFetchingDeliveryOptions,
+     isSettingOrderAddresses,
+     isSelectingDelivery,
++    redemptionOptions,
++    isFetchingRedemptionOptions,
++    isReservingPoints,
++    isReservingCoupon,
+     getDeliveryModes,
+     getDeliveryOptions,
+     setOrderAddresses,
+     selectDelivery,
++    getRedemptionOptions,
++    reservePoints,
++    reserveCoupon,
+   } = useCheckout();
+ 
+   const {
+@@ -145,6 +153,32 @@ function PaymentCheckoutPageSection({ orderId }: PaymentCheckoutPageSectionProps
+     updateAddress,
+   } = useAddress();
+ 
++  // Calculate royal rewards discount
++  const royalRewardsDiscount = useMemo(() => {
++    let totalDiscount = 0;
++    let discountLabel = "";
++
++    // Check for reserved points
++    const reservedPreset = redemptionOptions?.discountPresets?.find((p) => p.reserved);
++    if (reservedPreset) {
++      totalDiscount += reservedPreset.discountAmount;
++      discountLabel = `Royal Points (${reservedPreset.name})`;
++    }
++
++    // Check for reserved coupon
++    const reservedCoupon = redemptionOptions?.customerCoupons?.find((c) => c.reserved);
++    if (reservedCoupon) {
++      totalDiscount += reservedCoupon.monetaryValue;
++      if (discountLabel) {
++        discountLabel += ` + ${reservedCoupon.configurationTitle}`;
++      } else {
++        discountLabel = `Royal Coupon (${reservedCoupon.configurationTitle})`;
++      }
++    }
++
++    return { totalDiscount, discountLabel };
++  }, [redemptionOptions]);
++
+   // Check authentication and redirect if needed
+   useEffect(() => {
+     if (!isAuthenticated) {
+@@ -195,12 +229,21 @@ function PaymentCheckoutPageSection({ orderId }: PaymentCheckoutPageSectionProps
+     }
+   }, [user]);
+ 
++  // Fetch redemption options when order is loaded
++  useEffect(() => {
++    if (checkoutOrder?.orderId) {
++      getRedemptionOptions(checkoutOrder.orderId);
++    }
++  }, [checkoutOrder?.orderId]);
++
+   // Map order/cart items to display format — prefer checkout order data
++  // id: orderItemId (for UI state management)
++  // productId: actual productId (for API calls)
+   const cartItems: CartItemRowData[] = useMemo(() => {
+     if (checkoutOrder?.items) {
+       return checkoutOrder.items.map((item) => ({
+-        id: item.orderItemId || item.variantId,
+-        productId: item.productId, // Keep the actual productId for delivery matching
++        id: item.orderItemId || item.variantId, // orderItemId for UI tracking
++        productId: item.productId, // productId for API calls
+         name: item.productNameSnapshot || "Product",
+         price: item.unitPrice || 0,
+         image: item.imageUrlSnapshot || "/images/placeholder.png",
+@@ -222,9 +265,9 @@ function PaymentCheckoutPageSection({ orderId }: PaymentCheckoutPageSectionProps
+ 
+   const subTotal = checkoutOrder?.subtotal ?? cart.data?.totalSubtotal ?? 0;
+ 
+-  // Initialize per-product delivery state from cart items
++  // Initialize per-order-item delivery state from cart items (keyed by orderItemId)
+   useEffect(() => {
+-    if (cartItems.length > 0 && productDeliveries.size === 0) {
++    if (cartItems.length > 0 && itemDeliveries.size === 0) {
+       const initialState = new Map<string, ProductDeliveryState>();
+       cartItems.forEach((item) => {
+         initialState.set(item.id, {
+@@ -233,16 +276,16 @@ function PaymentCheckoutPageSection({ orderId }: PaymentCheckoutPageSectionProps
+           selectedCourierId: undefined,
+         });
+       });
+-      setProductDeliveries(initialState);
++      setItemDeliveries(initialState);
+     }
+-  }, [cartItems, productDeliveries.size]);
++  }, [cartItems, itemDeliveries.size]);
+ 
+-  // Set the first product as expanded on initial load
++  // Set the first order item as expanded on initial load
+   useEffect(() => {
+-    if (cartItems.length > 0 && expandedProductId === null) {
+-      setExpandedProductId(cartItems[0].id);
++    if (cartItems.length > 0 && expandedOrderItemId === null) {
++      setExpandedOrderItemId(cartItems[0].id);
+     }
+-  }, [cartItems, expandedProductId]);
++  }, [cartItems, expandedOrderItemId]);
+ 
+   // Flatten API delivery options into a flat list of available options
+   const flattenedOptions: AvailableDeliveryOptionI[] = useMemo(() => {
+@@ -262,12 +305,18 @@ function PaymentCheckoutPageSection({ orderId }: PaymentCheckoutPageSectionProps
+     return allOptions;
+   }, [deliveryOptions]);
+ 
+-  // Get courier options for a specific product
+-  const getCourierOptionsForProduct = (
+-    productId: string
++  // Get courier options for a specific order item
++  const getCourierOptionsForItem = (
++    orderItemId: string
+   ): AvailableDeliveryOptionI[] => {
+     if (!deliveryOptions?.merchantDeliveryOptions) return [];
+ 
++    // Find the cart item to get its productId
++    const cartItem = cartItems.find(item => item.id === orderItemId);
++    const productId = cartItem?.productId;
++
++    if (!productId) return [];
++
+     for (const merchant of deliveryOptions.merchantDeliveryOptions) {
+       const product = merchant.productOptions.find(
+         (p) => p.productId === productId
+@@ -280,13 +329,13 @@ function PaymentCheckoutPageSection({ orderId }: PaymentCheckoutPageSectionProps
+     return [];
+   };
+ 
+-  // Calculate total delivery fee from all products
++  // Calculate total delivery fee from all order items
+   const deliveryFee = useMemo(() => {
+     let total = 0;
+     cartItems.forEach((item) => {
+-      const delivery = productDeliveries.get(item.id);
++      const delivery = itemDeliveries.get(item.id);
+       if (delivery?.deliveryType === "DELIVERY" && delivery.selectedCourierId) {
+-        const courierOptions = getCourierOptionsForProduct(item.productId || item.id);
++        const courierOptions = getCourierOptionsForItem(item.id);
+         const courier = courierOptions.find((c) => c.uuid === delivery.selectedCourierId);
+         if (courier) {
+           total += courier.unitCost;
+@@ -294,7 +343,7 @@ function PaymentCheckoutPageSection({ orderId }: PaymentCheckoutPageSectionProps
+       }
+     });
+     return total;
+-  }, [cartItems, productDeliveries, deliveryOptions]);
++  }, [cartItems, itemDeliveries, deliveryOptions]);
+ 
+   const totalItemCount = cartItems.reduce(
+     (sum, item) => sum + item.quantity,
+@@ -306,25 +355,25 @@ function PaymentCheckoutPageSection({ orderId }: PaymentCheckoutPageSectionProps
+     if (currentStep === 1) {
+       if (cartItems.length === 0) return 0;
+ 
+-      // Calculate progress based on per-product delivery selections
+-      // Each product needs: type (1 step) + for DELIVERY: address (1 step) + courier (1 step)
++      // Calculate progress based on per-item delivery selections
++      // Each item needs: type (1 step) + for DELIVERY: address (1 step) + courier (1 step)
+       let totalSteps = 0;
+       let completedSteps = 0;
+ 
+       cartItems.forEach((item) => {
+-        const delivery = productDeliveries.get(item.id);
++        const delivery = itemDeliveries.get(item.id);
+ 
+-        // Type selection (1 step for all products)
++        // Type selection (1 step for all items)
+         totalSteps += 1;
+         if (delivery?.deliveryType) completedSteps += 1;
+ 
+-        // Address and courier (2 additional steps for DELIVERY products only)
++        // Address and courier (2 additional steps for DELIVERY items only)
+         if (delivery?.deliveryType === "DELIVERY") {
+           totalSteps += 2;
+           if (delivery.selectedAddressId) completedSteps += 1;
+           if (delivery.selectedCourierId) completedSteps += 1;
+         }
+-        // SELF_PICKUP products don't need address/courier, so they're complete after type selection
++        // SELF_PICKUP items don't need address/courier, so they're complete after type selection
+       });
+ 
+       return totalSteps > 0 ? Math.round((completedSteps / totalSteps) * 100) : 0;
+@@ -341,15 +390,15 @@ function PaymentCheckoutPageSection({ orderId }: PaymentCheckoutPageSectionProps
+     }
+ 
+     return 0;
+-  }, [currentStep, cartItems, productDeliveries, selectedPaymentMethod, selectedCardId]);
++  }, [currentStep, cartItems, itemDeliveries, selectedPaymentMethod, selectedCardId]);
+ 
+-  // Step validation - validates per-product delivery selections
++  // Step validation - validates per-item delivery selections
+   const stepValidation = useMemo(() => {
+     const errors: Record<number, string[]> = { 1: [], 2: [] };
+ 
+-    // Step 1: Delivery - validate each product
++    // Step 1: Delivery - validate each item
+     cartItems.forEach((item) => {
+-      const delivery = productDeliveries.get(item.id);
++      const delivery = itemDeliveries.get(item.id);
+ 
+       if (!delivery?.deliveryType) {
+         errors[1].push(`Please select delivery method for ${item.name}`);
+@@ -374,12 +423,12 @@ function PaymentCheckoutPageSection({ orderId }: PaymentCheckoutPageSectionProps
+     }
+ 
+     return errors;
+-  }, [cartItems, productDeliveries, selectedPaymentMethod, selectedCardId]);
++  }, [cartItems, itemDeliveries, selectedPaymentMethod, selectedCardId]);
+ 
+-  // Get errors for a specific product
+-  const getProductErrors = (productId: string, productName: string): string[] => {
++  // Get errors for a specific order item
++  const getItemErrors = (orderItemId: string, itemName: string): string[] => {
+     const errors: string[] = [];
+-    const delivery = productDeliveries.get(productId);
++    const delivery = itemDeliveries.get(orderItemId);
+ 
+     if (!delivery?.deliveryType) {
+       errors.push("Please select delivery method");
+@@ -400,8 +449,8 @@ function PaymentCheckoutPageSection({ orderId }: PaymentCheckoutPageSectionProps
+   const isCurrentStepValid = (stepValidation[currentStep] || []).length === 0;
+ 
+   // Accordion toggle handler
+-  const handleToggleAccordion = (productId: string) => {
+-    setExpandedProductId((prev) => (prev === productId ? null : productId));
++  const handleToggleAccordion = (orderItemId: string) => {
++    setExpandedOrderItemId((prev) => (prev === orderItemId ? null : orderItemId));
+   };
+ 
+   // Handlers
+@@ -447,15 +496,45 @@ function PaymentCheckoutPageSection({ orderId }: PaymentCheckoutPageSectionProps
+     setDiscountAmount(0);
+   };
+ 
+-  // Per-product delivery handlers
+-  const handleProductDeliveryTypeChange = (
+-    productId: string,
++  const handleApplyRoyalPoints = async (presetCode: string) => {
++    if (!checkoutOrder?.orderId) {
++      errorMessage("Order information not found");
++      return;
++    }
++
++    try {
++      await reservePoints(checkoutOrder.orderId, presetCode);
++      successMessage("Points reserved successfully");
++    } catch (error) {
++      console.error("Failed to reserve points:", error);
++      errorMessage("Failed to reserve points. Please try again.");
++    }
++  };
++
++  const handleApplyRoyalCoupon = async (couponCode: string) => {
++    if (!checkoutOrder?.orderId) {
++      errorMessage("Order information not found");
++      return;
++    }
++
++    try {
++      await reserveCoupon(checkoutOrder.orderId, couponCode);
++      successMessage("Coupon reserved successfully");
++    } catch (error) {
++      console.error("Failed to reserve coupon:", error);
++      errorMessage("Failed to reserve coupon. Please try again.");
++    }
++  };
++
++  // Per-item delivery handlers
++  const handleItemDeliveryTypeChange = (
++    orderItemId: string,
+     type: "DELIVERY" | "SELF_PICKUP"
+   ) => {
+-    setProductDeliveries((prev) => {
++    setItemDeliveries((prev) => {
+       const updated = new Map(prev);
+-      const current = prev.get(productId);
+-      updated.set(productId, {
++      const current = prev.get(orderItemId);
++      updated.set(orderItemId, {
+         ...current,
+         deliveryType: type,
+         // Reset address and courier when type changes
+@@ -466,23 +545,25 @@ function PaymentCheckoutPageSection({ orderId }: PaymentCheckoutPageSectionProps
+       return updated;
+     });
+ 
+-    // Fetch delivery options for self-pickup products
++    // Fetch delivery options for self-pickup items
+     if (type === "SELF_PICKUP" && checkoutOrder) {
+       // Get the actual productId from the cart item
+-      const cartItem = cartItems.find(item => item.id === productId);
+-      const actualProductId = cartItem?.productId || productId;
+-      getDeliveryOptions(checkoutOrder.orderId, actualProductId, "SELF");
++      const cartItem = cartItems.find(item => item.id === orderItemId);
++      const actualProductId = cartItem?.productId;
++      if (actualProductId) {
++        getDeliveryOptions(checkoutOrder.orderId, actualProductId, "SELF");
++      }
+     }
+   };
+ 
+-  const handleProductAddressSelect = async (
+-    productId: string,
++  const handleItemAddressSelect = async (
++    orderItemId: string,
+     addressId: string
+   ) => {
+-    setProductDeliveries((prev) => {
++    setItemDeliveries((prev) => {
+       const updated = new Map(prev);
+-      const current = prev.get(productId) || { deliveryType: null };
+-      updated.set(productId, {
++      const current = prev.get(orderItemId) || { deliveryType: null };
++      updated.set(orderItemId, {
+         ...current,
+         selectedAddressId: addressId,
+         selectedCourierId: undefined, // Reset courier when address changes
+@@ -494,9 +575,11 @@ function PaymentCheckoutPageSection({ orderId }: PaymentCheckoutPageSectionProps
+     if (checkoutOrder) {
+       try {
+         // Get the actual productId from the cart item
+-        const cartItem = cartItems.find(item => item.id === productId);
+-        const actualProductId = cartItem?.productId || productId;
+-        await getDeliveryOptions(checkoutOrder.orderId, actualProductId, "TRANSPORTER", addressId);
++        const cartItem = cartItems.find(item => item.id === orderItemId);
++        const actualProductId = cartItem?.productId;
++        if (actualProductId) {
++          await getDeliveryOptions(checkoutOrder.orderId, actualProductId, "TRANSPORTER", addressId);
++        }
+       } catch (error) {
+         console.error("Failed to fetch courier options:", error);
+         errorMessage("Failed to load courier options");
+@@ -504,11 +587,11 @@ function PaymentCheckoutPageSection({ orderId }: PaymentCheckoutPageSectionProps
+     }
+   };
+ 
+-  const handleProductCourierSelect = (productId: string, courierUuid: string) => {
+-    setProductDeliveries((prev) => {
++  const handleItemCourierSelect = (orderItemId: string, courierUuid: string) => {
++    setItemDeliveries((prev) => {
+       const updated = new Map(prev);
+-      const current = prev.get(productId) || { deliveryType: null };
+-      updated.set(productId, {
++      const current = prev.get(orderItemId) || { deliveryType: null };
++      updated.set(orderItemId, {
+         ...current,
+         selectedCourierId: courierUuid,
+       });
+@@ -610,29 +693,29 @@ function PaymentCheckoutPageSection({ orderId }: PaymentCheckoutPageSectionProps
+     }
+   };
+ 
+-  // Submit all product delivery selections to the API
++  // Submit all item delivery selections to the API
+   const submitAllDeliverySelections = async () => {
+     if (!checkoutOrder) return;
+ 
+-    // Group products by delivery type
+-    const deliveryProducts = cartItems.filter(
+-      (item) => productDeliveries.get(item.id)?.deliveryType === "DELIVERY"
++    // Group items by delivery type
++    const deliveryItems = cartItems.filter(
++      (item) => itemDeliveries.get(item.id)?.deliveryType === "DELIVERY"
+     );
+ 
+-    const selfPickupProducts = cartItems.filter(
+-      (item) => productDeliveries.get(item.id)?.deliveryType === "SELF_PICKUP"
++    const selfPickupItems = cartItems.filter(
++      (item) => itemDeliveries.get(item.id)?.deliveryType === "SELF_PICKUP"
+     );
+ 
+     try {
+       // Submit DELIVERY selections
+-      if (deliveryProducts.length > 0) {
+-        const selections: DeliverySelectionItemI[] = deliveryProducts.map((item) => {
+-          const delivery = productDeliveries.get(item.id)!;
+-          const courierOptions = getCourierOptionsForProduct(item.productId || item.id);
++      if (deliveryItems.length > 0) {
++        const selections: DeliverySelectionItemI[] = deliveryItems.map((item) => {
++          const delivery = itemDeliveries.get(item.id)!;
++          const courierOptions = getCourierOptionsForItem(item.id);
+           const selectedCourier = courierOptions.find((c) => c.uuid === delivery.selectedCourierId);
+ 
+           return {
+-            productId: item.productId || item.id, // Use actual productId for API
++            productId: item.productId, // Use actual productId for API
+             selectedDeliveryRateUuid: delivery.selectedCourierId!,
+             unitCost: selectedCourier?.unitCost || 0,
+             addressId: delivery.selectedAddressId || "",
+@@ -643,14 +726,14 @@ function PaymentCheckoutPageSection({ orderId }: PaymentCheckoutPageSectionProps
+       }
+ 
+       // Submit SELF_PICKUP selections
+-      if (selfPickupProducts.length > 0) {
+-        const selections: DeliverySelectionItemI[] = selfPickupProducts.map((item) => {
+-          const delivery = productDeliveries.get(item.id)!;
+-          const courierOptions = getCourierOptionsForProduct(item.productId || item.id);
++      if (selfPickupItems.length > 0) {
++        const selections: DeliverySelectionItemI[] = selfPickupItems.map((item) => {
++          const delivery = itemDeliveries.get(item.id)!;
++          const courierOptions = getCourierOptionsForItem(item.id);
+           const selectedCourier = courierOptions[0];
+ 
+           return {
+-            productId: item.productId || item.id, // Use actual productId for API
++            productId: item.productId, // Use actual productId for API
+             selectedDeliveryRateUuid: selectedCourier?.uuid || "",
+             unitCost: selectedCourier?.unitCost || 0,
+             addressId: delivery.selectedAddressId || "",
+@@ -758,7 +841,7 @@ function PaymentCheckoutPageSection({ orderId }: PaymentCheckoutPageSectionProps
+     let phone = user?.phoneNumber || user?.phone || customerPhone;
+     if (!phone) {
+       // Try to get phone from any selected delivery address
+-      for (const [_productId, delivery] of productDeliveries) {
++      for (const [_orderItemId, delivery] of itemDeliveries) {
+         if (delivery.selectedAddressId) {
+           const address = addresses.find((a) => a.addressId === delivery.selectedAddressId);
+           if (address?.phone) {
+@@ -818,19 +901,19 @@ function PaymentCheckoutPageSection({ orderId }: PaymentCheckoutPageSectionProps
+         stepProgress={stepProgress}
+       />
+ 
+-      <div className="mx-auto px-4 py-6">
+-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
++      <div className="checkout-container mx-auto">
++        <div className="checkout-grid">
+           {/* Main Content */}
+-          <div className="lg:col-span-2 space-y-6">
++          <div className="checkout-section-gap flex flex-col">
+             {/* Step 1: Delivery — Type + Address + Courier (or Receiver form) */}
+             {currentStep === 1 && (
+               <>
+-                {/* Product-Wise Delivery Selection */}
+-                <div className="bg-white rounded-lg border border-gray-200 p-4 sm:p-6">
+-                  <h3 className="text-lg font-semibold text-gray-900 mb-4">
++                {/* Item-Wise Delivery Selection */}
++                <div className="bg-white border border-gray-200 checkout-card">
++                  <h3 className="checkout-h2 font-semibold text-gray-900" style={{ marginBottom: 'var(--checkout-item-gap)' }}>
+                     Select Delivery Method for Each Product
+                   </h3>
+-                  <div className="space-y-3">
++                  <div className="checkout-item-gap flex flex-col">
+                     {cartItems.map((item) => (
+                       <ProductDeliverySelector
+                         key={item.id}
+@@ -841,23 +924,23 @@ function PaymentCheckoutPageSection({ orderId }: PaymentCheckoutPageSectionProps
+                           quantity: item.quantity,
+                           price: item.price,
+                           deliveryType:
+-                            productDeliveries.get(item.id)?.deliveryType || null,
++                            itemDeliveries.get(item.id)?.deliveryType || null,
+                           selectedAddressId:
+-                            productDeliveries.get(item.id)?.selectedAddressId,
++                            itemDeliveries.get(item.id)?.selectedAddressId,
+                           selectedCourierId:
+-                            productDeliveries.get(item.id)?.selectedCourierId,
++                            itemDeliveries.get(item.id)?.selectedCourierId,
+                         }}
+                         addresses={addresses}
+-                        courierOptions={getCourierOptionsForProduct(item.productId || item.id)}
++                        courierOptions={getCourierOptionsForItem(item.id)}
+                         isLoadingCouriers={isFetchingDeliveryOptions}
+-                        onDeliveryTypeChange={handleProductDeliveryTypeChange}
+-                        onAddressSelect={handleProductAddressSelect}
+-                        onCourierSelect={handleProductCourierSelect}
++                        onDeliveryTypeChange={handleItemDeliveryTypeChange}
++                        onAddressSelect={handleItemAddressSelect}
++                        onCourierSelect={handleItemCourierSelect}
+                         onAddNewAddress={handleAddNewAddress}
+                         onEditAddress={handleEditAddress}
+-                        isExpanded={expandedProductId === item.id}
++                        isExpanded={expandedOrderItemId === item.id}
+                         onToggle={() => handleToggleAccordion(item.id)}
+-                        errors={getProductErrors(item.id, item.name)}
++                        errors={getItemErrors(item.id, item.name)}
+                       />
+                     ))}
+                   </div>
+@@ -870,9 +953,9 @@ function PaymentCheckoutPageSection({ orderId }: PaymentCheckoutPageSectionProps
+               <>
+                 {/* Validation notes */}
+                 {stepValidation[2].length > 0 && (
+-                  <div className="bg-red-50 border border-red-200 rounded-lg p-3 sm:p-4">
++                  <div className="bg-red-50 border border-red-200 checkout-card-sm">
+                     {stepValidation[2].map((msg, i) => (
+-                      <p key={i} className="text-sm text-red-600 flex items-center gap-2">
++                      <p key={i} className="checkout-body-sm text-red-600 flex items-center" style={{ gap: 'var(--checkout-item-gap)' }}>
+                         <span className="w-1.5 h-1.5 rounded-full bg-red-500 flex-shrink-0" />
+                         {msg}
+                       </p>
+@@ -880,7 +963,7 @@ function PaymentCheckoutPageSection({ orderId }: PaymentCheckoutPageSectionProps
+                   </div>
+                 )}
+ 
+-                <div className="bg-white rounded-lg border border-gray-200 p-4 sm:p-6">
++                <div className="bg-white border border-gray-200 checkout-card">
+                   <PaymentMethods
+                     methods={paymentMethods}
+                     selectedMethod={selectedPaymentMethod}
+@@ -892,7 +975,7 @@ function PaymentCheckoutPageSection({ orderId }: PaymentCheckoutPageSectionProps
+ 
+                 {/* Card Selection - shown when Card Payment is selected */}
+                 {selectedPaymentMethod === "CARD" && (
+-                  <div className="bg-white rounded-lg border border-gray-200 p-4 sm:p-6">
++                  <div className="bg-white border border-gray-200 checkout-card">
+                     <CardSelectionSection
+                       cards={savedCards}
+                       selectedCardId={selectedCardId}
+@@ -941,17 +1024,13 @@ function PaymentCheckoutPageSection({ orderId }: PaymentCheckoutPageSectionProps
+           </div>
+ 
+           {/* Order Summary Sidebar */}
+-          <div className="lg:col-span-1">
+-            <div className="lg:sticky lg:top-[140px]">
++          <div>
++            <div className="lg:sticky overflow-visible checkout-section-gap flex flex-col" style={{ top: 'clamp(100px, 10vh, 140px)' }}>
+               <OrderSummaryCard
+                 itemCount={totalItemCount}
+                 subtotal={subTotal}
+-                discount={discountAmount}
+-                discountLabel={
+-                  appliedCouponCode
+-                    ? `Discounts (${appliedCouponCode})`
+-                    : undefined
+-                }
++                discount={royalRewardsDiscount.totalDiscount}
++                discountLabel={royalRewardsDiscount.discountLabel || undefined}
+                 deliveryFee={deliveryFee}
+                 onProceed={handleProceedToPayment}
+                 onApplyCoupon={handleApplyCoupon}
+@@ -962,6 +1041,18 @@ function PaymentCheckoutPageSection({ orderId }: PaymentCheckoutPageSectionProps
+                 isLoading={isPaymentLoading}
+                 showCoupon={false}
+               />
++
++              {/* Royal Rewards Section */}
++              <RoyalRewardsSection
++                balance={redemptionOptions?.customerBalance || null}
++                discountPresets={redemptionOptions?.discountPresets || []}
++                coupons={redemptionOptions?.customerCoupons || []}
++                isLoading={isFetchingRedemptionOptions}
++                onApplyPoints={handleApplyRoyalPoints}
++                onApplyCoupon={handleApplyRoyalCoupon}
++                isApplyingPoints={isReservingPoints}
++                isApplyingCoupon={isReservingCoupon}
++              />
+             </div>
+           </div>
+         </div>
+@@ -981,17 +1072,17 @@ function PaymentCheckoutPageSection({ orderId }: PaymentCheckoutPageSectionProps
+ const CheckoutSkeleton = () => {
+   return (
+     <div className="min-h-screen bg-gray-50">
+-      <div className="w-full py-4 border-b border-gray-200 bg-white">
+-        <div className="container mx-auto px-4">
++      <div className="w-full border-b border-gray-200 bg-white" style={{ padding: 'var(--checkout-btn-py) 0' }}>
++        <div className="container mx-auto checkout-container" style={{ paddingTop: 0, paddingBottom: 0 }}>
+           <div className="flex items-center justify-between">
+             {[1, 2, 3].map((i) => (
+               <div key={i} className="flex items-center flex-1">
+-                <div className="flex items-center gap-2">
+-                  <Skeleton className="w-10 h-10 rounded-full" />
++                <div className="flex items-center" style={{ gap: 'var(--checkout-item-gap)' }}>
++                  <Skeleton style={{ width: 'var(--checkout-icon-lg)', height: 'var(--checkout-icon-lg)' }} className="rounded-full" />
+                   <Skeleton className="h-4 w-20 hidden sm:block" />
+                 </div>
+                 {i < 3 && (
+-                  <div className="flex-1 mx-4">
++                  <div className="flex-1" style={{ margin: '0 var(--checkout-item-gap)' }}>
+                     <Skeleton className="h-0.5 w-full" />
+                   </div>
+                 )}
+@@ -1000,14 +1091,14 @@ const CheckoutSkeleton = () => {
+           </div>
+         </div>
+       </div>
+-      <div className="container mx-auto px-4 py-6">
+-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+-          <div className="lg:col-span-2 space-y-6">
+-            <Skeleton className="h-48 w-full rounded-lg" />
+-            <Skeleton className="h-64 w-full rounded-lg" />
++      <div className="container mx-auto checkout-container">
++        <div className="checkout-grid">
++          <div className="checkout-section-gap flex flex-col">
++            <Skeleton className="w-full" style={{ height: 'clamp(12rem, 20vh, 18rem)', borderRadius: 'var(--checkout-card-radius)' }} />
++            <Skeleton className="w-full" style={{ height: 'clamp(16rem, 30vh, 24rem)', borderRadius: 'var(--checkout-card-radius)' }} />
+           </div>
+-          <div className="lg:col-span-1">
+-            <Skeleton className="h-80 w-full rounded-lg" />
++          <div>
++            <Skeleton className="w-full" style={{ height: 'clamp(20rem, 40vh, 30rem)', borderRadius: 'var(--checkout-card-radius)' }} />
+           </div>
+         </div>
+       </div>
+diff --git a/src/app/(PageSections)/PaymentCheckoutPageSection/Sections/ProductDeliverySelector.tsx b/src/app/(PageSections)/PaymentCheckoutPageSection/Sections/ProductDeliverySelector.tsx
+index 94d8f90..5a61d4c 100644
+--- a/src/app/(PageSections)/PaymentCheckoutPageSection/Sections/ProductDeliverySelector.tsx
++++ b/src/app/(PageSections)/PaymentCheckoutPageSection/Sections/ProductDeliverySelector.tsx
+@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
+ import { AvailableDeliveryOptionI } from "@/types/checkout";
+ 
+ export interface ProductDeliveryOption {
+-  productId: string;
++  productId: string; // This is actually orderItemId from the order
+   productName: string;
+   productImage: string;
+   quantity: number;
+@@ -31,9 +31,9 @@ interface ProductDeliverySelectorProps {
+   addresses: Address[];
+   courierOptions?: AvailableDeliveryOptionI[];
+   isLoadingCouriers?: boolean;
+-  onDeliveryTypeChange: (productId: string, type: "DELIVERY" | "SELF_PICKUP") => void;
+-  onAddressSelect: (productId: string, addressId: string) => void;
+-  onCourierSelect?: (productId: string, courierUuid: string) => void;
++  onDeliveryTypeChange: (orderItemId: string, type: "DELIVERY" | "SELF_PICKUP") => void;
++  onAddressSelect: (orderItemId: string, addressId: string) => void;
++  onCourierSelect?: (orderItemId: string, courierUuid: string) => void;
+   onAddNewAddress: () => void;
+   onEditAddress: (addressId: string) => void;
+   isExpanded: boolean;
+@@ -62,14 +62,14 @@ export const ProductDeliverySelector = ({
+   );
+ 
+   return (
+-    <div className="border border-gray-200 rounded-lg overflow-hidden">
++    <div className="border border-gray-200 overflow-hidden" style={{ borderRadius: 'var(--checkout-card-radius)' }}>
+       {/* Product Header - Always Visible */}
+       <div
+-        className="flex items-center justify-between p-4 bg-white cursor-pointer hover:bg-gray-50"
++        className="flex items-center justify-between bg-white cursor-pointer hover:bg-gray-50 checkout-card-sm"
+         onClick={onToggle}
+       >
+-        <div className="flex items-center gap-3 flex-1">
+-          <div className="w-16 h-16 rounded-lg bg-gray-50 flex-shrink-0 overflow-hidden flex items-center justify-center border border-gray-100 p-1.5">
++        <div className="flex items-center flex-1 checkout-product-gap">
++          <div className="checkout-product-img bg-gray-50 overflow-hidden flex items-center justify-center border border-gray-100" style={{ borderRadius: 'var(--checkout-card-radius)', padding: 'calc(var(--checkout-item-gap) * 0.5)' }}>
+             <AuthenticatedImage
+               src={product.productImage}
+               alt={product.productName}
+@@ -80,30 +80,30 @@ export const ProductDeliverySelector = ({
+             />
+           </div>
+           <div className="flex-1 min-w-0">
+-            <div className="flex items-start justify-between gap-2">
+-              <h4 className="text-sm font-medium text-gray-900 line-clamp-1 flex-1">
++            <div className="flex items-start justify-between" style={{ gap: 'var(--checkout-item-gap)' }}>
++              <h4 className="checkout-body font-medium text-gray-900 line-clamp-1 flex-1">
+                 {product.productName}
+               </h4>
+-              <p className="text-sm font-semibold text-gray-900 whitespace-nowrap">
++              <p className="checkout-body font-semibold text-gray-900 whitespace-nowrap">
+                 TZS {(product.price * product.quantity).toLocaleString()}
+               </p>
+             </div>
+-            <p className="text-xs text-gray-500 mt-0.5">
++            <p className="checkout-caption text-gray-500" style={{ marginTop: 'calc(var(--checkout-item-gap) * 0.25)' }}>
+               Qty: {product.quantity} × TZS {product.price.toLocaleString()}
+             </p>
+             {product.deliveryType && (
+-              <div className="flex items-center gap-1.5 mt-1">
++              <div className="flex items-center" style={{ gap: 'calc(var(--checkout-item-gap) * 0.5)', marginTop: 'calc(var(--checkout-item-gap) * 0.5)' }}>
+                 {product.deliveryType === "DELIVERY" ? (
+                   <>
+-                    <Truck className="w-3.5 h-3.5 text-primary-600" />
+-                    <span className="text-xs text-primary-600 font-medium">
++                    <Truck className="checkout-icon-xs text-primary-600" />
++                    <span className="checkout-caption text-primary-600 font-medium">
+                       Delivery
+                     </span>
+                   </>
+                 ) : (
+                   <>
+-                    <Store className="w-3.5 h-3.5 text-green-600" />
+-                    <span className="text-xs text-green-600 font-medium">
++                    <Store className="checkout-icon-xs text-green-600" />
++                    <span className="checkout-caption text-green-600 font-medium">
+                       Self Pickup
+                     </span>
+                   </>
+@@ -114,7 +114,7 @@ export const ProductDeliverySelector = ({
+         </div>
+         <ChevronDown
+           className={cn(
+-            "w-5 h-5 text-gray-400 transition-transform",
++            "checkout-icon-sm text-gray-400 transition-transform",
+             isExpanded && "rotate-180"
+           )}
+         />
+@@ -122,12 +122,13 @@ export const ProductDeliverySelector = ({
+ 
+       {/* Expandable Content */}
+       {isExpanded && (
+-        <div className="p-4 pt-0 space-y-4 bg-gray-50">
++        <div className="checkout-card-sm bg-gray-50" style={{ paddingTop: 0 }}>
++          <div className="checkout-section-gap flex flex-col">
+           {/* Product-specific Errors */}
+           {errors.length > 0 && (
+-            <div className="bg-red-50 border border-red-200 rounded-lg p-3">
++            <div className="bg-red-50 border border-red-200 checkout-card-sm">
+               {errors.map((msg, i) => (
+-                <p key={i} className="text-sm text-red-600 flex items-center gap-2">
++                <p key={i} className="checkout-body-sm text-red-600 flex items-center" style={{ gap: 'var(--checkout-item-gap)' }}>
+                   <span className="w-1.5 h-1.5 rounded-full bg-red-500 flex-shrink-0" />
+                   {msg}
+                 </p>
+@@ -137,25 +138,26 @@ export const ProductDeliverySelector = ({
+ 
+           {/* Delivery Type Selection */}
+           <div>
+-            <label className="block text-sm font-medium text-gray-700 mb-2">
++            <label className="block checkout-body-sm font-medium text-gray-700" style={{ marginBottom: 'var(--checkout-item-gap)' }}>
+               Choose Delivery Option
+             </label>
+-            <div className="grid grid-cols-2 gap-3">
++            <div className="checkout-delivery-options">
+               <button
+                 onClick={() => {
+                   onDeliveryTypeChange(product.productId, "DELIVERY");
+                   setIsSelectingAddress(false);
+                 }}
+                 className={cn(
+-                  "flex flex-col items-center gap-2 p-4 rounded-lg border-2 transition-all",
++                  "flex flex-col items-center checkout-delivery-card border-2 transition-all",
+                   product.deliveryType === "DELIVERY"
+                     ? "border-primary-600 bg-primary-50"
+                     : "border-gray-200 bg-white hover:border-gray-300"
+                 )}
++                style={{ gap: 'var(--checkout-item-gap)' }}
+               >
+                 <Truck
+                   className={cn(
+-                    "w-6 h-6",
++                    "checkout-icon-md",
+                     product.deliveryType === "DELIVERY"
+                       ? "text-primary-600"
+                       : "text-gray-400"
+@@ -163,7 +165,7 @@ export const ProductDeliverySelector = ({
+                 />
+                 <span
+                   className={cn(
+-                    "text-sm font-medium",
++                    "checkout-body-sm font-medium",
+                     product.deliveryType === "DELIVERY"
+                       ? "text-primary-600"
+                       : "text-gray-600"
+@@ -179,15 +181,16 @@ export const ProductDeliverySelector = ({
+                   setIsSelectingAddress(false);
+                 }}
+                 className={cn(
+-                  "flex flex-col items-center gap-2 p-4 rounded-lg border-2 transition-all",
++                  "flex flex-col items-center checkout-delivery-card border-2 transition-all",
+                   product.deliveryType === "SELF_PICKUP"
+                     ? "border-green-600 bg-green-50"
+                     : "border-gray-200 bg-white hover:border-gray-300"
+                 )}
++                style={{ gap: 'var(--checkout-item-gap)' }}
+               >
+                 <Store
+                   className={cn(
+-                    "w-6 h-6",
++                    "checkout-icon-md",
+                     product.deliveryType === "SELF_PICKUP"
+                       ? "text-green-600"
+                       : "text-gray-400"
+@@ -195,7 +198,7 @@ export const ProductDeliverySelector = ({
+                 />
+                 <span
+                   className={cn(
+-                    "text-sm font-medium",
++                    "checkout-body-sm font-medium",
+                     product.deliveryType === "SELF_PICKUP"
+                       ? "text-green-600"
+                       : "text-gray-600"
+@@ -210,45 +213,45 @@ export const ProductDeliverySelector = ({
+           {/* Address Selection - Only for Delivery */}
+           {product.deliveryType === "DELIVERY" && (
+             <div>
+-              <div className="flex items-center justify-between mb-2">
+-                <label className="block text-sm font-medium text-gray-700">
++              <div className="flex items-center justify-between" style={{ marginBottom: 'var(--checkout-item-gap)' }}>
++                <label className="block checkout-body-sm font-medium text-gray-700">
+                   Delivery Address
+                 </label>
+                 <button
+                   onClick={onAddNewAddress}
+-                  className="text-xs text-primary-600 hover:text-primary-700 font-medium"
++                  className="checkout-caption text-primary-600 hover:text-primary-700 font-medium"
+                 >
+                   + Add New
+                 </button>
+               </div>
+ 
+               {selectedAddress && !isSelectingAddress ? (
+-                <div className="bg-white rounded-lg border border-primary-200 p-3">
++                <div className="bg-white border border-primary-200 checkout-card-sm" style={{ borderRadius: 'var(--checkout-card-radius)' }}>
+                   <div className="flex items-start justify-between">
+-                    <div className="flex items-start gap-2 flex-1">
+-                      <MapPin className="w-4 h-4 text-primary-600 mt-0.5 flex-shrink-0" />
++                    <div className="flex items-start flex-1" style={{ gap: 'var(--checkout-item-gap)' }}>
++                      <MapPin className="checkout-icon-sm text-primary-600 flex-shrink-0" style={{ marginTop: 'calc(var(--checkout-item-gap) * 0.25)' }} />
+                       <div className="flex-1 min-w-0">
+-                        <p className="text-sm font-medium text-gray-900">
++                        <p className="checkout-body-sm font-medium text-gray-900">
+                           {selectedAddress.fullName}
+                         </p>
+-                        <p className="text-xs text-gray-600 mt-0.5">
++                        <p className="checkout-caption text-gray-600" style={{ marginTop: 'calc(var(--checkout-item-gap) * 0.25)' }}>
+                           {selectedAddress.addressLine1}, {selectedAddress.city}
+                         </p>
+-                        <p className="text-xs text-gray-500 mt-0.5">
++                        <p className="checkout-caption text-gray-500" style={{ marginTop: 'calc(var(--checkout-item-gap) * 0.25)' }}>
+                           {selectedAddress.phone}
+                         </p>
+                       </div>
+                     </div>
+-                    <div className="flex items-center gap-2">
++                    <div className="flex items-center" style={{ gap: 'var(--checkout-item-gap)' }}>
+                       <button
+                         onClick={() => setIsSelectingAddress(true)}
+-                        className="text-xs text-primary-600 hover:text-primary-700 font-medium"
++                        className="checkout-caption text-primary-600 hover:text-primary-700 font-medium"
+                       >
+                         Change
+                       </button>
+                       <button
+                         onClick={() => onEditAddress(selectedAddress.addressId)}
+-                        className="text-xs text-gray-600 hover:text-gray-700 font-medium"
++                        className="checkout-caption text-gray-600 hover:text-gray-700 font-medium"
+                       >
+                         Edit
+                       </button>
+@@ -256,7 +259,7 @@ export const ProductDeliverySelector = ({
+                   </div>
+                 </div>
+               ) : (
+-                <div className="space-y-2 max-h-48 overflow-y-auto">
++                <div className="checkout-item-gap flex flex-col overflow-y-auto" style={{ maxHeight: 'clamp(12rem, 30vh, 18rem)' }}>
+                   {addresses.map((address) => {
+                     const isSelected = product.selectedAddressId === address.addressId;
+                     return (
+@@ -267,45 +270,45 @@ export const ProductDeliverySelector = ({
+                           setIsSelectingAddress(false);
+                         }}
+                         className={cn(
+-                          "w-full bg-white rounded-lg border-2 p-3 hover:border-primary-300 hover:bg-primary-50/50 transition-all text-left",
++                          "w-full bg-white checkout-card-sm border-2 hover:border-primary-300 hover:bg-primary-50/50 transition-all text-left",
+                           isSelected
+                             ? "border-primary-950 bg-primary-50"
+                             : "border-gray-200"
+                         )}
+                       >
+-                        <div className="flex items-start gap-3">
++                        <div className="flex items-start" style={{ gap: 'var(--checkout-product-gap)' }}>
+                           {/* Radio Button Indicator */}
+-                          <div className="flex-shrink-0 mt-0.5">
++                          <div className="flex-shrink-0" style={{ marginTop: 'calc(var(--checkout-item-gap) * 0.25)' }}>
+                             <div
+                               className={cn(
+-                                "w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors",
++                                "checkout-radio rounded-full border-2 flex items-center justify-center transition-colors",
+                                 isSelected
+                                   ? "border-primary-950 bg-white"
+                                   : "border-gray-300 bg-white"
+                               )}
+                             >
+                               {isSelected && (
+-                                <div className="w-2.5 h-2.5 rounded-full bg-primary-950" />
++                                <div className="checkout-radio-dot rounded-full bg-primary-950" />
+                               )}
+                             </div>
+                           </div>
+                           <MapPin className={cn(
+-                            "w-4 h-4 mt-0.5 flex-shrink-0",
++                            "checkout-icon-sm flex-shrink-0",
+                             isSelected ? "text-primary-950" : "text-gray-400"
+-                          )} />
++                          )} style={{ marginTop: 'calc(var(--checkout-item-gap) * 0.25)' }} />
+                           <div className="flex-1 min-w-0">
+                             <p className={cn(
+-                              "text-sm font-medium",
++                              "checkout-body-sm font-medium",
+                               isSelected ? "text-primary-950" : "text-gray-900"
+                             )}>
+                               {address.fullName}
+                               {address.isDefault && (
+-                                <span className="ml-2 text-xs text-primary-600 font-normal">
++                                <span className="checkout-caption text-primary-600 font-normal" style={{ marginLeft: 'var(--checkout-item-gap)' }}>
+                                   (Default)
+                                 </span>
+                               )}
+                             </p>
+-                            <p className="text-xs text-gray-600 mt-0.5">
++                            <p className="checkout-caption text-gray-600" style={{ marginTop: 'calc(var(--checkout-item-gap) * 0.25)' }}>
+                               {address.addressLine1}, {address.city}
+                             </p>
+                           </div>
+@@ -321,26 +324,26 @@ export const ProductDeliverySelector = ({
+           {/* Courier Selection - Only for Delivery with Address Selected */}
+           {product.deliveryType === "DELIVERY" && product.selectedAddressId && (
+             <div>
+-              <label className="block text-sm font-medium text-gray-700 mb-2">
++              <label className="block checkout-body-sm font-medium text-gray-700" style={{ marginBottom: 'var(--checkout-item-gap)' }}>
+                 Select Courier
+               </label>
+ 
+               {isLoadingCouriers ? (
+-                <div className="flex items-center justify-center py-8">
+-                  <Loader2 className="w-6 h-6 animate-spin text-primary-600" />
+-                  <span className="ml-2 text-sm text-gray-600">
++                <div className="flex items-center justify-center" style={{ padding: 'calc(var(--checkout-card-p) * 0.5) 0' }}>
++                  <Loader2 className="checkout-icon-md animate-spin text-primary-600" />
++                  <span className="checkout-body-sm text-gray-600" style={{ marginLeft: 'var(--checkout-item-gap)' }}>
+                     Loading courier options...
+                   </span>
+                 </div>
+               ) : courierOptions.length === 0 ? (
+-                <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+-                  <p className="text-sm text-yellow-800">
++                <div className="bg-yellow-50 border border-yellow-200 checkout-card-sm" style={{ borderRadius: 'var(--checkout-card-radius)' }}>
++                  <p className="checkout-body-sm text-yellow-800">
+                     No delivery options available for this address. Please try a
+                     different address or choose self-pickup.
+                   </p>
+                 </div>
+               ) : (
+-                <div className="space-y-2">
++                <div className="checkout-item-gap flex flex-col">
+                   {courierOptions.map((courier) => {
+                     const isSelected = product.selectedCourierId === courier.uuid;
+                     return (
+@@ -350,39 +353,40 @@ export const ProductDeliverySelector = ({
+                           onCourierSelect?.(product.productId, courier.uuid)
+                         }
+                         className={cn(
+-                          "w-full bg-white rounded-lg border-2 p-3 text-left transition-all",
++                          "w-full bg-white checkout-card-sm border-2 text-left transition-all",
+                           isSelected
+                             ? "border-primary-950 bg-primary-50"
+                             : "border-gray-200 hover:border-primary-300 hover:bg-primary-50/50"
+                         )}
+                       >
+-                        <div className="flex items-start gap-3">
++                        <div className="flex items-start" style={{ gap: 'var(--checkout-product-gap)' }}>
+                           {/* Radio Button Indicator */}
+-                          <div className="flex-shrink-0 mt-0.5">
++                          <div className="flex-shrink-0" style={{ marginTop: 'calc(var(--checkout-item-gap) * 0.25)' }}>
+                             <div
+                               className={cn(
+-                                "w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors",
++                                "checkout-radio rounded-full border-2 flex items-center justify-center transition-colors",
+                                 isSelected
+                                   ? "border-primary-950 bg-white"
+                                   : "border-gray-300 bg-white"
+                               )}
+                             >
+                               {isSelected && (
+-                                <div className="w-2.5 h-2.5 rounded-full bg-primary-950" />
++                                <div className="checkout-radio-dot rounded-full bg-primary-950" />
+                               )}
+                             </div>
+                           </div>
+                           <Package
+                             className={cn(
+-                              "w-5 h-5 mt-0.5 shrink-0",
++                              "checkout-icon-sm shrink-0",
+                               isSelected ? "text-primary-950" : "text-gray-400"
+                             )}
++                            style={{ marginTop: 'calc(var(--checkout-item-gap) * 0.25)' }}
+                           />
+                           <div className="flex-1 min-w-0">
+-                            <div className="flex items-center justify-between gap-2">
++                            <div className="flex items-center justify-between" style={{ gap: 'var(--checkout-item-gap)' }}>
+                               <p
+                                 className={cn(
+-                                  "text-sm font-medium",
++                                  "checkout-body-sm font-medium",
+                                   isSelected ? "text-primary-950" : "text-gray-900"
+                                 )}
+                               >
+@@ -391,7 +395,7 @@ export const ProductDeliverySelector = ({
+                               </p>
+                               <p
+                                 className={cn(
+-                                  "text-sm font-semibold shrink-0",
++                                  "checkout-body-sm font-semibold shrink-0",
+                                   isSelected ? "text-primary-950" : "text-gray-900"
+                                 )}
+                               >
+@@ -399,11 +403,11 @@ export const ProductDeliverySelector = ({
+                               </p>
+                             </div>
+                             {courier.transporter?.phone && (
+-                              <p className="text-xs text-gray-500 mt-0.5">
++                              <p className="checkout-caption text-gray-500" style={{ marginTop: 'calc(var(--checkout-item-gap) * 0.25)' }}>
+                                 {courier.transporter.phone}
+                               </p>
+                             )}
+-                            <p className="text-xs text-gray-500 mt-0.5">
++                            <p className="checkout-caption text-gray-500" style={{ marginTop: 'calc(var(--checkout-item-gap) * 0.25)' }}>
+                               {courier.deliveryMode}
+                             </p>
+                           </div>
+@@ -418,14 +422,14 @@ export const ProductDeliverySelector = ({
+ 
+           {/* Self Pickup Info */}
+           {product.deliveryType === "SELF_PICKUP" && (
+-            <div className="bg-green-50 border border-green-200 rounded-lg p-3">
+-              <div className="flex items-start gap-2">
+-                <Store className="w-4 h-4 text-green-600 mt-0.5 flex-shrink-0" />
++            <div className="bg-green-50 border border-green-200 checkout-card-sm" style={{ borderRadius: 'var(--checkout-card-radius)' }}>
++              <div className="flex items-start" style={{ gap: 'var(--checkout-item-gap)' }}>
++                <Store className="checkout-icon-sm text-green-600 flex-shrink-0" style={{ marginTop: 'calc(var(--checkout-item-gap) * 0.25)' }} />
+                 <div>
+-                  <p className="text-sm font-medium text-green-800">
++                  <p className="checkout-body-sm font-medium text-green-800">
+                     Self Pickup Selected
+                   </p>
+-                  <p className="text-xs text-green-700 mt-1">
++                  <p className="checkout-caption text-green-700" style={{ marginTop: 'calc(var(--checkout-item-gap) * 0.5)' }}>
+                     You can pick up this item from our store. We'll notify you when
+                     it's ready for pickup.
+                   </p>
+@@ -433,6 +437,7 @@ export const ProductDeliverySelector = ({
+               </div>
+             </div>
+           )}
++          </div>
+         </div>
+       )}
+     </div>
+diff --git a/src/app/globals.css b/src/app/globals.css
+index d841ca0..b09a6cd 100644
+--- a/src/app/globals.css
++++ b/src/app/globals.css
+@@ -172,6 +172,74 @@
+   /* Auto-fill grid column min widths */
+   --dash-col-2:      clamp(15rem, 38vw, 22rem);
+   --dash-col-3:      clamp(12rem, 27vw, 17rem);
++
++  /* ── Checkout Page · Fluid Sizing (Webflow Wizardry) ────────────────
++     Viewport range: 320px → 2560px (ultra-wide support)
++     Formula: clamp(min, slope·vw + intercept, max)
++     Ensures smooth scaling across mobile, tablet, desktop, and 4K displays */
++
++  /* Container & Layout */
++  --checkout-container-px:   clamp(1rem, 2.5vw + 0.5rem, 4rem);          /* 16px → 64px */
++  --checkout-container-py:   clamp(1rem, 1.5vw + 0.5rem, 2.5rem);        /* 16px → 40px */
++  --checkout-grid-gap:       clamp(1rem, 2vw + 0.5rem, 3rem);            /* 16px → 48px */
++  --checkout-section-gap:    clamp(0.75rem, 1.5vw + 0.25rem, 2rem);      /* 12px → 32px */
++  --checkout-card-radius:    clamp(0.5rem, 0.5vw + 0.25rem, 1rem);       /* 8px → 16px */
++
++  /* Card Spacing */
++  --checkout-card-p:         clamp(1rem, 1.5vw + 0.5rem, 2.5rem);        /* 16px → 40px */
++  --checkout-card-p-sm:      clamp(0.75rem, 1vw + 0.5rem, 1.5rem);       /* 12px → 24px */
++  --checkout-item-gap:       clamp(0.5rem, 1vw + 0.25rem, 1.25rem);      /* 8px → 20px */
++
++  /* Typography - Checkout Page */
++  --checkout-h1:             clamp(1.25rem, 1.5vw + 0.75rem, 2rem);      /* 20px → 32px */
++  --checkout-h2:             clamp(1.125rem, 1vw + 0.625rem, 1.5rem);    /* 18px → 24px */
++  --checkout-h3:             clamp(1rem, 0.75vw + 0.5rem, 1.25rem);      /* 16px → 20px */
++  --checkout-body:           clamp(0.875rem, 0.5vw + 0.5rem, 1rem);      /* 14px → 16px */
++  --checkout-body-sm:        clamp(0.8125rem, 0.35vw + 0.5rem, 0.9375rem); /* 13px → 15px */
++  --checkout-caption:        clamp(0.75rem, 0.25vw + 0.5rem, 0.875rem);  /* 12px → 14px */
++  --checkout-tiny:           clamp(0.6875rem, 0.2vw + 0.5rem, 0.8125rem);/* 11px → 13px */
++
++  /* Product Item Specific */
++  --checkout-product-img:    clamp(3rem, 4vw + 2rem, 5rem);              /* 48px → 80px */
++  --checkout-product-gap:    clamp(0.75rem, 1vw + 0.5rem, 1.5rem);      /* 12px → 24px */
++
++  /* Icons - Checkout */
++  --checkout-icon-xs:        clamp(0.75rem, 0.5vw + 0.5rem, 1rem);       /* 12px → 16px */
++  --checkout-icon-sm:        clamp(0.875rem, 0.5vw + 0.5rem, 1.125rem);  /* 14px → 18px */
++  --checkout-icon-md:        clamp(1rem, 0.75vw + 0.5rem, 1.5rem);       /* 16px → 24px */
++  --checkout-icon-lg:        clamp(1.25rem, 1vw + 0.75rem, 2rem);        /* 20px → 32px */
++
++  /* Button Sizing */
++  --checkout-btn-px:         clamp(1rem, 1.5vw + 0.5rem, 2rem);          /* 16px → 32px */
++  --checkout-btn-py:         clamp(0.5rem, 0.75vw + 0.25rem, 1rem);      /* 8px → 16px */
++  --checkout-btn-text:       clamp(0.875rem, 0.5vw + 0.5rem, 1rem);      /* 14px → 16px */
++
++  /* Badge & Status Elements */
++  --checkout-badge-px:       clamp(0.5rem, 0.75vw + 0.25rem, 1rem);      /* 8px → 16px */
++  --checkout-badge-py:       clamp(0.25rem, 0.5vw + 0.125rem, 0.5rem);   /* 4px → 8px */
++  --checkout-badge-text:     clamp(0.6875rem, 0.25vw + 0.5rem, 0.8125rem); /* 11px → 13px */
++
++  /* Input Fields */
++  --checkout-input-px:       clamp(0.75rem, 1vw + 0.5rem, 1.5rem);       /* 12px → 24px */
++  --checkout-input-py:       clamp(0.5rem, 0.75vw + 0.25rem, 1rem);      /* 8px → 16px */
++  --checkout-input-text:     clamp(0.875rem, 0.5vw + 0.5rem, 1rem);      /* 14px → 16px */
++
++  /* Delivery Selector Specific */
++  --checkout-delivery-card-p: clamp(0.75rem, 1.25vw + 0.5rem, 1.5rem);   /* 12px → 24px */
++  --checkout-radio-size:      clamp(1.125rem, 0.5vw + 0.75rem, 1.5rem);  /* 18px → 24px */
++
++  /* Royal Rewards Section */
++  --checkout-reward-card-p:   clamp(0.5rem, 0.75vw + 0.25rem, 1rem);     /* 8px → 16px */
++  --checkout-preset-gap:      clamp(0.375rem, 0.5vw + 0.25rem, 0.75rem); /* 6px → 12px */
++
++  /* Responsive Grid Columns (auto-fit with fluid min-widths) */
++  --checkout-col-2:           clamp(16rem, 45vw, 28rem);                  /* 2-col grid min */
++  --checkout-delivery-col:    clamp(10rem, 48%, 15rem);                   /* Delivery options */
++
++  /* Z-index layers */
++  --checkout-z-sticky:        10;
++  --checkout-z-modal:         50;
++  --checkout-z-overlay:       40;
+ }
+ 
+ /* Fluid logo sizing - overrides Next.js Image inline styles */
+@@ -197,6 +265,127 @@
+ /* Fluid list row gaps (replaces space-y-3) */
+ .dash-list { display: flex; flex-direction: column; gap: var(--dash-row-gap); }
+ 
++/* ── Checkout Fluid Utilities ───────────────────────────────────────── */
++/* Container */
++.checkout-container {
++  padding-left: var(--checkout-container-px);
++  padding-right: var(--checkout-container-px);
++  padding-top: var(--checkout-container-py);
++  padding-bottom: var(--checkout-container-py);
++}
++
++/* Cards */
++.checkout-card {
++  padding: var(--checkout-card-p);
++  border-radius: var(--checkout-card-radius);
++}
++
++.checkout-card-sm {
++  padding: var(--checkout-card-p-sm);
++  border-radius: var(--checkout-card-radius);
++}
++
++/* Typography */
++.checkout-h1 { font-size: var(--checkout-h1); line-height: 1.3; }
++.checkout-h2 { font-size: var(--checkout-h2); line-height: 1.3; }
++.checkout-h3 { font-size: var(--checkout-h3); line-height: 1.4; }
++.checkout-body { font-size: var(--checkout-body); line-height: 1.5; }
++.checkout-body-sm { font-size: var(--checkout-body-sm); line-height: 1.5; }
++.checkout-caption { font-size: var(--checkout-caption); line-height: 1.4; }
++.checkout-tiny { font-size: var(--checkout-tiny); line-height: 1.3; }
++
++/* Product Item */
++.checkout-product-img {
++  width: var(--checkout-product-img);
++  height: var(--checkout-product-img);
++  flex-shrink: 0;
++}
++
++.checkout-product-gap {
++  gap: var(--checkout-product-gap);
++}
++
++/* Icons */
++.checkout-icon-xs { width: var(--checkout-icon-xs); height: var(--checkout-icon-xs); }
++.checkout-icon-sm { width: var(--checkout-icon-sm); height: var(--checkout-icon-sm); }
++.checkout-icon-md { width: var(--checkout-icon-md); height: var(--checkout-icon-md); }
++.checkout-icon-lg { width: var(--checkout-icon-lg); height: var(--checkout-icon-lg); }
++
++/* Buttons */
++.checkout-btn {
++  padding: var(--checkout-btn-py) var(--checkout-btn-px);
++  font-size: var(--checkout-btn-text);
++  border-radius: var(--checkout-card-radius);
++}
++
++/* Grid Layouts - breakpoint-free */
++.checkout-grid {
++  display: grid;
++  grid-template-columns: 1fr;
++  gap: var(--checkout-grid-gap);
++}
++
++@media (min-width: 1024px) {
++  .checkout-grid {
++    grid-template-columns: 2fr 1fr;
++  }
++}
++
++.checkout-section-gap {
++  gap: var(--checkout-section-gap);
++}
++
++.checkout-item-gap {
++  gap: var(--checkout-item-gap);
++}
++
++/* Delivery Selector */
++.checkout-delivery-options {
++  display: grid;
++  grid-template-columns: repeat(2, 1fr);
++  gap: var(--checkout-item-gap);
++}
++
++.checkout-delivery-card {
++  padding: var(--checkout-delivery-card-p);
++  border-radius: var(--checkout-card-radius);
++}
++
++/* Radio button sizing */
++.checkout-radio {
++  width: var(--checkout-radio-size);
++  height: var(--checkout-radio-size);
++}
++
++.checkout-radio-dot {
++  width: calc(var(--checkout-radio-size) * 0.5);
++  height: calc(var(--checkout-radio-size) * 0.5);
++}
++
++/* Badge */
++.checkout-badge {
++  padding: var(--checkout-badge-py) var(--checkout-badge-px);
++  font-size: var(--checkout-badge-text);
++  border-radius: calc(var(--checkout-card-radius) * 0.5);
++}
++
++/* Input */
++.checkout-input {
++  padding: var(--checkout-input-py) var(--checkout-input-px);
++  font-size: var(--checkout-input-text);
++  border-radius: var(--checkout-card-radius);
++}
++
++/* Rewards Card */
++.checkout-reward-card {
++  padding: var(--checkout-reward-card-p);
++  border-radius: var(--checkout-card-radius);
++}
++
++.checkout-preset-gap {
++  gap: var(--checkout-preset-gap);
++}
++
+ html {
+   scroll-behavior: smooth;
+   height: 100%;
+@@ -502,7 +691,26 @@ body{
+   ::-webkit-scrollbar-thumb:hover {
+     background: #DD0A14;
+   }
+-  
++
++  /* Custom scrollbar for coupon list */
++  .coupon-scroll::-webkit-scrollbar {
++    width: 6px;
++  }
++
++  .coupon-scroll::-webkit-scrollbar-track {
++    background: #F7FAFC;
++    border-radius: 3px;
++  }
++
++  .coupon-scroll::-webkit-scrollbar-thumb {
++    background: #CBD5E0;
++    border-radius: 3px;
++  }
++
++  .coupon-scroll::-webkit-scrollbar-thumb:hover {
++    background: #A0AEC0;
++  }
++
+   /* Focus styles */
+   /* *:focus {
+     outline: 2px solid #DD0A14;
+diff --git a/src/contexts/event-registration.context.tsx b/src/contexts/event-registration.context.tsx
+index 41bba0b..8b5531e 100644
+--- a/src/contexts/event-registration.context.tsx
++++ b/src/contexts/event-registration.context.tsx
+@@ -83,6 +83,9 @@ interface EventRegistrationContextI {
+   getEventRegistrations: (
+     eventId: string,
+   ) => Promise<ApiResponseI<RegistrationListItemI[]>>;
++  getAdminEventRegistrations: (
++    eventId: string,
++  ) => Promise<ApiResponseI<RegistrationListItemI[]>>;
+ }
+ 
+ export const EventRegistrationContext = createContext<
+diff --git a/src/providers/checkout.provider.tsx b/src/providers/checkout.provider.tsx
+index 1df08d4..b47ccbd 100644
+--- a/src/providers/checkout.provider.tsx
++++ b/src/providers/checkout.provider.tsx
+@@ -3,7 +3,7 @@
+ import React, { useState } from "react";
+ import { CheckoutContext } from "@/contexts/checkout.context";
+ import { checkoutService } from "@/services/checkout.service";
+-import { InitiateCheckoutRequestI, BuyNowRequestI, CheckoutOrderI, MyOrdersParamsI, DeliveryOptionsDataI, DeliverySelectionItemI } from "@/types/checkout";
++import { InitiateCheckoutRequestI, BuyNowRequestI, CheckoutOrderI, MyOrdersParamsI, DeliveryOptionsDataI, DeliverySelectionItemI, RedemptionOptionsI } from "@/types/checkout";
+ import { ApiResponseI } from "@/types/api";
+ 
+ export const CheckoutProvider: React.FC<{ children: React.ReactNode }> = ({
+@@ -18,8 +18,12 @@ export const CheckoutProvider: React.FC<{ children: React.ReactNode }> = ({
+   const [isFetchingDeliveryOptions, setIsFetchingDeliveryOptions] = useState<boolean>(false);
+   const [isSettingOrderAddresses, setIsSettingOrderAddresses] = useState<boolean>(false);
+   const [isSelectingDelivery, setIsSelectingDelivery] = useState<boolean>(false);
++  const [isFetchingRedemptionOptions, setIsFetchingRedemptionOptions] = useState<boolean>(false);
++  const [isReservingPoints, setIsReservingPoints] = useState<boolean>(false);
++  const [isReservingCoupon, setIsReservingCoupon] = useState<boolean>(false);
+   const [deliveryModes, setDeliveryModes] = useState<string[]>([]);
+   const [deliveryOptions, setDeliveryOptions] = useState<DeliveryOptionsDataI | null>(null);
++  const [redemptionOptions, setRedemptionOptions] = useState<RedemptionOptionsI | null>(null);
+ 
+   const buyNow = async (data: BuyNowRequestI): Promise<CheckoutOrderI> => {
+     try {
+@@ -147,10 +151,60 @@ export const CheckoutProvider: React.FC<{ children: React.ReactNode }> = ({
+     }
+   };
+ 
++  const getRedemptionOptions = async (orderId: string) => {
++    try {
++      setIsFetchingRedemptionOptions(true);
++      const response = await checkoutService.getRedemptionOptions(orderId) as ApiResponseI<RedemptionOptionsI>;
++
++      if (response?.data) {
++        setRedemptionOptions(response.data);
++      }
++    } catch (error) {
++      throw error;
++    } finally {
++      setIsFetchingRedemptionOptions(false);
++    }
++  };
++
++  const reservePoints = async (orderId: string, presetCode: string) => {
++    try {
++      setIsReservingPoints(true);
++      const response = await checkoutService.reservePoints(orderId, { presetCode }) as ApiResponseI<CheckoutOrderI>;
++
++      if (response?.data) {
++        setCheckoutOrder(response.data);
++        // Refresh redemption options after reserving
++        await getRedemptionOptions(orderId);
++      }
++    } catch (error) {
++      throw error;
++    } finally {
++      setIsReservingPoints(false);
++    }
++  };
++
++  const reserveCoupon = async (orderId: string, couponCode: string) => {
++    try {
++      setIsReservingCoupon(true);
++      const response = await checkoutService.reserveCoupon(orderId, { couponCode }) as ApiResponseI<CheckoutOrderI>;
++
++      if (response?.data) {
++        setCheckoutOrder(response.data);
++        // Refresh redemption options after reserving
++        await getRedemptionOptions(orderId);
++      }
++    } catch (error) {
++      throw error;
++    } finally {
++      setIsReservingCoupon(false);
++    }
++  };
++
+   const resetCheckout = () => {
+     setCheckoutOrder(null);
+     setDeliveryModes([]);
+     setDeliveryOptions(null);
++    setRedemptionOptions(null);
+   };
+ 
+   return (
+@@ -163,10 +217,14 @@ export const CheckoutProvider: React.FC<{ children: React.ReactNode }> = ({
+         isFetchingDeliveryOptions,
+         isSettingOrderAddresses,
+         isSelectingDelivery,
++        isFetchingRedemptionOptions,
++        isReservingPoints,
++        isReservingCoupon,
+         checkoutOrder,
+         myOrders,
+         deliveryModes,
+         deliveryOptions,
++        redemptionOptions,
+         buyNow,
+         initiateCheckout,
+         getOrderById,
+@@ -175,6 +233,9 @@ export const CheckoutProvider: React.FC<{ children: React.ReactNode }> = ({
+         getDeliveryOptions,
+         setOrderAddresses,
+         selectDelivery,
++        getRedemptionOptions,
++        reservePoints,
++        reserveCoupon,
+         resetCheckout,
+       }}
+     >
+diff --git a/src/providers/event-registration.provider.tsx b/src/providers/event-registration.provider.tsx
+index e633d68..ba12305 100644
+--- a/src/providers/event-registration.provider.tsx
++++ b/src/providers/event-registration.provider.tsx
+@@ -293,6 +293,21 @@ export const EventRegistrationProvider: React.FC<{
+     }
+   };
+ 
++  const getAdminEventRegistrations = async (
++    eventId: string,
++  ): Promise<ApiResponseI<RegistrationListItemI[]>> => {
++    try {
++      setIsLoading(true);
++      const response =
++        await eventRegistrationService.getAdminEventRegistrations(eventId);
++      return response;
++    } catch (error) {
++      throw error;
++    } finally {
++      setIsLoading(false);
++    }
++  };
++
+   return (
+     <EventRegistrationContext.Provider
+       value={{
+@@ -324,6 +339,7 @@ export const EventRegistrationProvider: React.FC<{
+         // REGISTRATION HISTORY
+         getUserRegistrations,
+         getEventRegistrations,
++        getAdminEventRegistrations,
+       }}
+     >
+       {children}
+diff --git a/src/services/checkout.service.ts b/src/services/checkout.service.ts
+index 0c3a9c7..d27edd7 100644
+--- a/src/services/checkout.service.ts
++++ b/src/services/checkout.service.ts
+@@ -1,7 +1,7 @@
+ import { API_PATHS } from "@/lib/api/api-config";
+ import { BaseApiService } from "@/lib/api/base-api";
+ import { ApiResponseI } from "@/types/api";
+-import { InitiateCheckoutRequestI, BuyNowRequestI, CheckoutOrderI, MyOrdersParamsI, DeliveryOptionsDataI, SelectDeliveryRequestI } from "@/types/checkout";
++import { InitiateCheckoutRequestI, BuyNowRequestI, CheckoutOrderI, MyOrdersParamsI, DeliveryOptionsDataI, SelectDeliveryRequestI, RedemptionOptionsI, ReservePointsRequestI, ReserveCouponRequestI } from "@/types/checkout";
+ 
+ class CheckoutService extends BaseApiService {
+   async buyNow(data: BuyNowRequestI) {
+@@ -83,6 +83,31 @@ class CheckoutService extends BaseApiService {
+     );
+     return response;
+   }
++
++  async getRedemptionOptions(orderId: string) {
++    const response: ApiResponseI<RedemptionOptionsI> = await this.get(
++      `${API_PATHS.MARKETPLACE}orders/${orderId}/redemption/options`
++    );
++    return response;
++  }
++
++  async reservePoints(orderId: string, data: ReservePointsRequestI) {
++    const response: ApiResponseI<CheckoutOrderI> = await this.post(
++      `${API_PATHS.MARKETPLACE}orders/${orderId}/redemption/points/reserve`,
++      data,
++      "Points reserved successfully"
++    );
++    return response;
++  }
++
++  async reserveCoupon(orderId: string, data: ReserveCouponRequestI) {
++    const response: ApiResponseI<CheckoutOrderI> = await this.post(
++      `${API_PATHS.MARKETPLACE}orders/${orderId}/redemption/coupon/reserve`,
++      data,
++      "Coupon reserved successfully"
++    );
++    return response;
++  }
+ }
+ 
+ export const checkoutService = new CheckoutService();
+diff --git a/src/services/event-registration.service.ts b/src/services/event-registration.service.ts
+index ed5182a..439a97c 100644
+--- a/src/services/event-registration.service.ts
++++ b/src/services/event-registration.service.ts
+@@ -323,13 +323,27 @@ class EventRegistrationService extends BaseApiService {
+     }
+   }
+ 
+-  // Get registrations for a specific event (Admin/Partner)
++  // Get registrations for a specific event (current user's registrations for that event)
+   async getEventRegistrations(
+     eventId: string
+   ): Promise<ApiResponseI<RegistrationListItemI[]>> {
+     try {
+       const response: ApiResponseI<RegistrationListItemI[]> = await this.get(
+-        `${API_PATHS.EVENT}v2/event-registrations/event-registrations/me/events/${eventId}`
++        `${API_PATHS.EVENT}v2/event-registrations/me/events/${eventId}`
++      );
++      return response;
++    } catch (error) {
++      throw error;
++    }
++  }
++
++  // Get ALL registrations for a specific event (Admin/Partner only)
++  async getAdminEventRegistrations(
++    eventId: string
++  ): Promise<ApiResponseI<RegistrationListItemI[]>> {
++    try {
++      const response: ApiResponseI<RegistrationListItemI[]> = await this.get(
++        `${API_PATHS.EVENT}ticket-purchases/by-event/${eventId}`
+       );
+       return response;
+     } catch (error) {
+diff --git a/src/types/checkout.ts b/src/types/checkout.ts
+index d23cc3e..62f0713 100644
+--- a/src/types/checkout.ts
++++ b/src/types/checkout.ts
+@@ -256,6 +256,53 @@ export interface SelectDeliveryRequestI {
+   selections: DeliverySelectionItemI[];
+ }
+ 
++// --- Redemption (Royal Points & Coupons) ---
++
++export interface DiscountPresetI {
++  code: string;
++  name: string;
++  eligible: boolean;
++  discountAmount: number;
++  pointsRequired: number;
++  ineligibleReason?: string;
++  reserved: boolean;
++}
++
++export interface CustomerBalanceI {
++  totalPoints: number;
++  totalMonetaryValue: number;
++  availablePoints: number;
++  availableMonetaryAmount: number;
++}
++
++export interface CustomerCouponI {
++  code: string;
++  status: string;
++  monetaryValue: number;
++  configurationTitle: string;
++  mode: string;
++  usageCount: number;
++  generatedAt: string;
++  expiresAt: string;
++  awardedAt: string;
++  reserved: boolean;
++  active: boolean;
++}
++
++export interface RedemptionOptionsI {
++  discountPresets: DiscountPresetI[];
++  customerBalance: CustomerBalanceI;
++  customerCoupons: CustomerCouponI[];
++}
++
++export interface ReservePointsRequestI {
++  presetCode: string;
++}
++
++export interface ReserveCouponRequestI {
++  couponCode: string;
++}
++
+ // --- Context ---
+ 
+ export interface CheckoutContextI {
+@@ -266,10 +313,14 @@ export interface CheckoutContextI {
+   isFetchingDeliveryOptions: boolean;
+   isSettingOrderAddresses: boolean;
+   isSelectingDelivery: boolean;
++  isFetchingRedemptionOptions: boolean;
++  isReservingPoints: boolean;
++  isReservingCoupon: boolean;
+   checkoutOrder: CheckoutOrderI | null;
+   myOrders: CheckoutOrderI[];
+   deliveryModes: string[];
+   deliveryOptions: DeliveryOptionsDataI | null;
++  redemptionOptions: RedemptionOptionsI | null;
+   buyNow: (data: BuyNowRequestI) => Promise<CheckoutOrderI>;
+   initiateCheckout: (data: InitiateCheckoutRequestI) => Promise<CheckoutOrderI>;
+   getOrderById: (orderId: string) => Promise<void>;
+@@ -278,5 +329,8 @@ export interface CheckoutContextI {
+   getDeliveryOptions: (orderId: string, productId: string, mode: string, addressId?: string) => Promise<void>;
+   setOrderAddresses: (orderId: string, shippingAddressId: string, billingAddressId?: string) => Promise<void>;
+   selectDelivery: (orderId: string, mode: string, selections: DeliverySelectionItemI[]) => Promise<void>;
++  getRedemptionOptions: (orderId: string) => Promise<void>;
++  reservePoints: (orderId: string, presetCode: string) => Promise<void>;
++  reserveCoupon: (orderId: string, couponCode: string) => Promise<void>;
+   resetCheckout: () => void;
+ }
