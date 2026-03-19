@@ -1,27 +1,2 @@
-feat(checkout): add Royal Rewards redemption + fix admin event registrations & delivery key mapping
-
-## Checkout - Royal Rewards Redemption
-- Add `RoyalRewardsSection` component to checkout sidebar
-- Add `getRedemptionOptions`, `reservePoints`, `reserveCoupon` to checkout service, provider, and context
-- Add `RedemptionOptionsI`, `DiscountPresetI`, `CustomerBalanceI`, `CustomerCouponI`, `ReservePointsRequestI`, `ReserveCouponRequestI` types
-- Compute `royalRewardsDiscount` from reserved presets/coupons and surface in `OrderSummaryCard`
-- Fetch redemption options on order load; refresh after each reservation
-
-## Checkout - Delivery State Key Fix (productId → orderItemId)
-- Rename `productDeliveries` → `itemDeliveries` and `expandedProductId` → `expandedOrderItemId` throughout
-- Key delivery state by `orderItemId` (not `productId`) to correctly handle duplicate products in the same order
-- Rename handlers: `handleProductDeliveryTypeChange` → `handleItemDeliveryTypeChange`, etc.
-- Fix `getCourierOptionsForProduct` → `getCourierOptionsForItem` to look up productId via orderItemId
-- Guard all `getDeliveryOptions` calls behind `if (actualProductId)` null checks
-- Update `ProductDeliverySelector` prop comments and callback signatures to reflect orderItemId semantics
-
-## Event Registrations - Admin Endpoint Fix
-- Split `getEventRegistrations` (user's own, `/me/events/:id`) from `getAdminEventRegistrations` (all registrations, `/ticket-purchases/by-event/:id`)
-- Fix duplicate path segment bug in old endpoint (`event-registrations/event-registrations/me/...`)
-- Wire `getAdminEventRegistrations` into context, provider, and `RegistrationPageSection` for admin/partner role
-
-## Styles - Checkout Fluid Sizing System
-- Add comprehensive CSS custom property system (`--checkout-*`) with `clamp()` for fluid scaling 320px → 2560px
-- Add utility classes: `checkout-container`, `checkout-card`, `checkout-grid`, `checkout-icon-*`, `checkout-body-*`, etc.
-- Add custom scrollbar styles for `.coupon-scroll`
-- Replace hardcoded `px-4 py-6`, `rounded-lg`, `text-sm`, `w-5 h-5` etc. with fluid tokens throughout checkout and delivery selector
+https://claude.ai/oauth/authorize?code=true&client_id=9d1c250a-e61b-44d9-88ed-5944d1962f5e&response_type=code&redirect_uri=https%3A%2F%2Fplatform.claude.com%2Foauth%2Fcode%2Fcallback&scope=org%3Acreate_api_key+user%3Aprofile+user%3Ainference+user%3Asessions%3Aclaude
+_code+user%3Amcp_servers+user%3Afile_upload&code_challenge=ZnJdkqSlPVKCz1SnC8YzIf9eO3Aw6BPSPT0It6sIcHU&code_challenge_method=S256&state=_h0uZPy6hTuScrdEIJ2XFgP03TgTLnTRykrP68dKbaU  
