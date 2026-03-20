@@ -1,1 +1,4 @@
-4zuTFJ7DaUwoEVLD0aYK1SQl2orpyK88MLlxgUgh8MCmbdUh#o-9ggS3OhqjAcs734k6rW8I_cXkW1bcsaZLqB9RGdtw
+https://claude.ai/oauth/authorize?code=true&client_id=9d1c250a-e61b-44d9-88ed-5944d1962f5e&response_type=code&redirect_u
+ri=https%3A%2F%2Fplatform.claude.com%2Foauth%2Fcode%2Fcallback&scope=org%3Acreate_api_key+user%3Aprofile+user%3Ainferenc
+e+user%3Asessions%3Aclaude_code+user%3Amcp_servers+user%3Afile_upload&code_challenge=TeEfed6LjvOYUCwP1H4IdULQg7gKNcjG7o8
+yvQXll4w&code_challenge_method=S256&state=ZKU4tMVNszNFRnS10IJFsUXcM2KgrPK5Vy1KISpuZWo
