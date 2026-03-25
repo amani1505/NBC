@@ -1,1 +1,2061 @@
-h0mY3R6c7EVWnddpW6ER9aetr1nWpzkNumEdVN4O93v7QpoO#QgRR9q46pbJa0JhUACGP0paYQFgEJwKigpnvmPPCOiY
+diff --git a/src/app/(PageSections)/Dashboard/DashboardPageSection/Sections/Admin/Cards.tsx b/src/app/(PageSections)/Dashboard/DashboardPageSection/Sections/Admin/Cards.tsx
+index c622b06..2144a0d 100644
+--- a/src/app/(PageSections)/Dashboard/DashboardPageSection/Sections/Admin/Cards.tsx
++++ b/src/app/(PageSections)/Dashboard/DashboardPageSection/Sections/Admin/Cards.tsx
+@@ -22,7 +22,7 @@ function Cards() {
+     },
+     {
+       title: "Payments Count",
+-      count: summary.data?.paymentsCount?.toLocaleString() || "0",
++      count: summary.data?.totalPaymentsCount?.toLocaleString() || "0",
+     },
+     {
+       title: "Donations Count",
+diff --git a/src/app/(PageSections)/Dashboard/DashboardPageSection/Sections/Admin/EventRegistrations.tsx b/src/app/(PageSections)/Dashboard/DashboardPageSection/Sections/Admin/EventRegistrations.tsx
+index 8fb859b..234718a 100644
+--- a/src/app/(PageSections)/Dashboard/DashboardPageSection/Sections/Admin/EventRegistrations.tsx
++++ b/src/app/(PageSections)/Dashboard/DashboardPageSection/Sections/Admin/EventRegistrations.tsx
+@@ -52,18 +52,22 @@ function EventRegistrations() {
+   const getStatusBadge = (status?: string) => {
+     if (!status) return null;
+ 
+-    const statusColors: Record<string, string> = {
+-      COMPLETED: "bg-green-500",
+-      CONFIRMED: "bg-blue-500",
+-      PENDING: "bg-yellow-500",
+-      CANCELLED: "bg-red-500",
+-      PAID: "bg-green-500",
+-      UNPAID: "bg-red-500",
++    const statusConfig: Record<string, { bg: string; label: string }> = {
++      COMPLETED:                { bg: "bg-green-500",              label: "Completed" },
++      CONFIRMED:                { bg: "bg-green-500",              label: "Confirmed" },
++      PAID:                     { bg: "bg-green-500",              label: "Paid" },
++      PENDING:                  { bg: "bg-amber-500",              label: "Pending" },
++      AWAITING_PAYMENT:         { bg: "bg-amber-500",              label: "Awaiting Payment" },
++      CONTROL_NUMBER_GENERATED: { bg: "bg-[#213a89]",             label: "Control No. Generated" },
++      UNPAID:                   { bg: "bg-red-500",                label: "Unpaid" },
++      CANCELLED:                { bg: "bg-red-500",                label: "Cancelled" },
+     };
+ 
++    const config = statusConfig[status.toUpperCase()];
++
+     return (
+-      <Badge className={`${statusColors[status.toUpperCase()] || "bg-gray-500"} text-white`}>
+-        {status}
++      <Badge className={`${config?.bg ?? "bg-gray-400"} text-white text-xs whitespace-nowrap`}>
++        {config?.label ?? status}
+       </Badge>
+     );
+   };
+@@ -85,7 +89,7 @@ function EventRegistrations() {
+             variant="outline"
+             onClick={() => {
+               if (filters.eventId) {
+-                router.push(`/dashboard/event-registrations?eventId=${filters.eventId}`);
++                router.push(`/dashboard/registrations?eventId=${filters.eventId}`);
+               }
+             }}
+           >
+diff --git a/src/app/(PageSections)/Dashboard/DashboardPageSection/Sections/Admin/Header.tsx b/src/app/(PageSections)/Dashboard/DashboardPageSection/Sections/Admin/Header.tsx
+index 8e1c1a3..5c3ed2b 100644
+--- a/src/app/(PageSections)/Dashboard/DashboardPageSection/Sections/Admin/Header.tsx
++++ b/src/app/(PageSections)/Dashboard/DashboardPageSection/Sections/Admin/Header.tsx
+@@ -25,7 +25,8 @@ function Header() {
+     getSummary,
+     getPaymentTrends,
+     getDetailedRegistrations,
+-    getRegistrationCategoryDistribution
++    getRegistrationCategoryDistribution,
++    getPaymentMethodDistribution,
+   } = useEventAnalytics();
+   const isAdmin = hasRequiredRole(user?.authorities || [], ["ROLE_ADMIN"]);
+   const isPartner = hasRequiredRole(user?.authorities || [], [
+@@ -44,6 +45,8 @@ function Header() {
+     updateFilters({ eventId: eventId || undefined });
+   };
+ 
++  const eventList: EventI[] = (isPartner ? partnerEvents?.data : events?.data) || [];
++
+   useEffect(() => {
+     if (isPartner) {
+       getMyPartnerEvents({});
+@@ -52,11 +55,33 @@ function Header() {
+     }
+   }, [isPartner, isAdmin]);
+ 
++  // Auto-select the currently active event by date when events load and none is selected
++  useEffect(() => {
++    if (filters.eventId || eventList.length === 0) return;
++    const now = new Date();
++    // Prefer a PUBLISHED event where today falls between eventDate and eventEndDate
++    const currentlyRunning = eventList.find((e) => {
++      if (e.status !== "PUBLISHED") return false;
++      const start = e.eventDate ? new Date(e.eventDate) : null;
++      const end = e.eventEndDate ? new Date(e.eventEndDate) : null;
++      return start && start <= now && (!end || end >= now);
++    });
++    // Fallback: nearest upcoming PUBLISHED event by date
++    const upcoming = eventList
++      .filter((e) => e.status === "PUBLISHED" && e.eventDate && new Date(e.eventDate) > now)
++      .sort((a, b) => new Date(a.eventDate).getTime() - new Date(b.eventDate).getTime())[0];
++    const activeEvent = currentlyRunning ?? upcoming ?? eventList[0];
++    if (activeEvent) {
++      updateFilters({ eventId: String(activeEvent.id) });
++    }
++  }, [eventList.length]);
++
+   // Fetch all analytics data when event changes
+   useEffect(() => {
+     if (filters.eventId) {
+       getSummary(filters.eventId, { period: "ALL_TIME" });
+       getPaymentTrends(filters.eventId);
++      getPaymentMethodDistribution(filters.eventId);
+       getDetailedRegistrations(filters.eventId);
+       getRegistrationCategoryDistribution(filters.eventId);
+     }
+@@ -70,12 +95,8 @@ Event Dashboard
+  <div className="w-80">
+          <UniversalSelect
+         options={[
+-          // Only show "All Events" option for admin
+           ...(isAdmin ? [{ value: "", label: "All Events" }] : []),
+-          ...(Array.isArray(isPartner ? partnerEvents?.data : events?.data)
+-            ? (isPartner ? partnerEvents.data : events.data) || []
+-            : []
+-          ).map((event: EventI) => ({
++          ...eventList.map((event: EventI) => ({
+             value: String(event.id),
+             label: event.title,
+           })),
+diff --git a/src/app/(PageSections)/Dashboard/DashboardPageSection/Sections/Admin/PaymentOverview.tsx b/src/app/(PageSections)/Dashboard/DashboardPageSection/Sections/Admin/PaymentOverview.tsx
+index ad10c74..d63d6ed 100644
+--- a/src/app/(PageSections)/Dashboard/DashboardPageSection/Sections/Admin/PaymentOverview.tsx
++++ b/src/app/(PageSections)/Dashboard/DashboardPageSection/Sections/Admin/PaymentOverview.tsx
+@@ -8,8 +8,16 @@ import {
+   CardHeader,
+   CardTitle,
+ } from "@/components/ui/card";
++import { useEventAnalytics } from "@/hooks/useEventAnalytics";
+ 
+ function PaymentOverview() {
++  const { summary, paymentMethodDistribution } = useEventAnalytics();
++
++  const currency = summary.data?.currency || "TZS";
++
++  const formatCurrency = (amount?: number) =>
++    `${currency} ${(amount ?? 0).toLocaleString()}`;
++
+   return (
+     <Card>
+       <CardHeader>
+@@ -20,34 +28,48 @@ function PaymentOverview() {
+         {/* Total and Pending Payments */}
+         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+           <div className="border rounded-lg p-6 space-y-2">
+-            <div className="text-sm text-muted-foreground">
+-              Total Payments
++            <div className="text-sm text-muted-foreground">Total Payments</div>
++            <div className="text-3xl font-bold">
++              {formatCurrency(summary.data?.totalPaymentsAmount)}
+             </div>
+-            <div className="text-3xl font-bold">TZS 0</div>
+           </div>
+           <div className="border rounded-lg p-6 space-y-2">
+-            <div className="text-sm text-muted-foreground">
+-              Pending Payments
++            <div className="text-sm text-muted-foreground">Pending Payments</div>
++            <div className="text-3xl font-bold">
++              {formatCurrency(summary.data?.pendingPaymentsAmount)}
+             </div>
+-            <div className="text-3xl font-bold">TZS 0</div>
+           </div>
+         </div>
+ 
+         {/* Payment Methods */}
+-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+-          <div className="border rounded-lg p-6 space-y-2">
+-            <div className="text-sm text-muted-foreground">Selcom</div>
+-            <div className="text-2xl font-bold">0</div>
++        {paymentMethodDistribution.data && paymentMethodDistribution.data.length > 0 ? (
++          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
++            {paymentMethodDistribution.data.map((method, index) => (
++              <div key={index} className="border rounded-lg p-6 space-y-2">
++                <div className="text-sm text-muted-foreground capitalize">
++                  {method.method || "Unknown"}
++                </div>
++                <div className="text-2xl font-bold">
++                  {(method.count ?? 0).toLocaleString()}
++                </div>
++                {method.amount !== undefined && method.amount > 0 && (
++                  <div className="text-xs text-muted-foreground">
++                    {formatCurrency(method.amount)}
++                  </div>
++                )}
++              </div>
++            ))}
+           </div>
+-          <div className="border rounded-lg p-6 space-y-2">
+-            <div className="text-sm text-muted-foreground">Bulk</div>
+-            <div className="text-2xl font-bold">0</div>
+-          </div>
+-          <div className="border rounded-lg p-6 space-y-2">
+-            <div className="text-sm text-muted-foreground">Card</div>
+-            <div className="text-2xl font-bold">0</div>
++        ) : (
++          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
++            {["Selcom", "Bulk", "Card"].map((name) => (
++              <div key={name} className="border rounded-lg p-6 space-y-2">
++                <div className="text-sm text-muted-foreground">{name}</div>
++                <div className="text-2xl font-bold">0</div>
++              </div>
++            ))}
+           </div>
+-        </div>
++        )}
+       </CardContent>
+     </Card>
+   );
+diff --git a/src/app/(PageSections)/Dashboard/DashboardPageSection/Sections/Admin/PaymentTrends.tsx b/src/app/(PageSections)/Dashboard/DashboardPageSection/Sections/Admin/PaymentTrends.tsx
+index b94706d..8069fc1 100644
+--- a/src/app/(PageSections)/Dashboard/DashboardPageSection/Sections/Admin/PaymentTrends.tsx
++++ b/src/app/(PageSections)/Dashboard/DashboardPageSection/Sections/Admin/PaymentTrends.tsx
+@@ -1,6 +1,6 @@
+ "use client";
+ 
+-import React, { useState } from "react";
++import React, { useState, useEffect } from "react";
+ import {
+   Card,
+   CardContent,
+@@ -10,8 +10,8 @@ import {
+ } from "@/components/ui/card";
+ import { FormSelect } from "@/components/ui/form-select";
+ import {
+-  LineChart,
+-  Line,
++  AreaChart,
++  Area,
+   XAxis,
+   YAxis,
+   CartesianGrid,
+@@ -19,6 +19,8 @@ import {
+   ResponsiveContainer,
+ } from "recharts";
+ import { useEventAnalytics } from "@/hooks/useEventAnalytics";
++import { useFilters } from "@/hooks";
++import { PeriodType } from "@/types/event-analytics";
+ 
+ const timeRangeOptions = [
+   { value: "LAST_7_DAYS", label: "Last 7 days" },
+@@ -28,24 +30,75 @@ const timeRangeOptions = [
+   { value: "ALL_TIME", label: "All time" },
+ ];
+ 
++const CustomTooltip = ({
++  active,
++  payload,
++  label,
++}: {
++  active?: boolean;
++  payload?: Array<{ value: number; name: string }>;
++  label?: string;
++}) => {
++  if (active && payload && payload.length) {
++    return (
++      <div
++        style={{
++          background: "oklch(0.275 0.135 261.5)",
++          border: "none",
++          borderRadius: "8px",
++          padding: "10px 14px",
++          boxShadow: "0 4px 20px rgba(17, 29, 69, 0.25)",
++        }}
++      >
++        <p
++          style={{
++            color: "rgba(255,255,255,0.65)",
++            fontSize: "11px",
++            fontWeight: 500,
++            marginBottom: "2px",
++            letterSpacing: "0.04em",
++          }}
++        >
++          {label}
++        </p>
++        <p
++          style={{
++            color: "#ffffff",
++            fontSize: "14px",
++            fontWeight: 700,
++            margin: 0,
++          }}
++        >
++          TZS {(payload[0].value ?? 0).toLocaleString()}
++        </p>
++      </div>
++    );
++  }
++  return null;
++};
++
+ function PaymentTrends() {
+-  const [timeRange, setTimeRange] = useState("LAST_30_DAYS");
+-  const { paymentTrends } = useEventAnalytics();
++  const [timeRange, setTimeRange] = useState<PeriodType>("LAST_30_DAYS");
++  const { paymentTrends, getPaymentTrends } = useEventAnalytics();
++  const { filters } = useFilters<{ eventId?: string }>({
++    defaultFilters: {},
++    syncWithURL: true,
++  });
++
++  useEffect(() => {
++    if (filters.eventId) {
++      getPaymentTrends(filters.eventId, { period: timeRange });
++    }
++  }, [filters.eventId, timeRange]);
+ 
+   const formatChartData = () => {
+     if (!paymentTrends.data || paymentTrends.data.length === 0) {
+       return [];
+     }
+ 
+-    // Debug: Log the first item to see the structure
+-    if (paymentTrends.data.length > 0) {
+-      console.log("Payment Trends Sample Data:", paymentTrends.data[0]);
+-    }
+-
+     return paymentTrends.data.map((item, index) => {
+       let formattedDate = "Invalid Date";
+ 
+-      // Try to extract timestamp from the item
+       const timestamp = item.timestamp || item.date || item.label;
+ 
+       if (timestamp) {
+@@ -57,11 +110,9 @@ function PaymentTrends() {
+               day: "numeric",
+             });
+           } else {
+-            // If it's not a valid date, use it as-is if it's a string
+             formattedDate = typeof timestamp === "string" ? timestamp : `Day ${index + 1}`;
+           }
+         } catch (error) {
+-          console.error("Error formatting date:", error);
+           formattedDate = `Day ${index + 1}`;
+         }
+       } else {
+@@ -87,7 +138,7 @@ function PaymentTrends() {
+         </div>
+         <FormSelect
+           value={timeRange}
+-          onValueChange={setTimeRange}
++          onValueChange={(v) => setTimeRange(v as PeriodType)}
+           options={timeRangeOptions}
+           placeholder="Select time range"
+           triggerClassName="w-[180px]"
+@@ -98,45 +149,52 @@ function PaymentTrends() {
+         {chartData.length > 0 ? (
+           <div className="h-[300px] w-full [&_*]:outline-none [&_*]:focus:outline-none [&_svg]:outline-none">
+             <ResponsiveContainer width="100%" height="100%">
+-              <LineChart
++              <AreaChart
+                 data={chartData}
+-                margin={{ top: 5, right: 30, left: -15, bottom: 5 }}
++                margin={{ top: 8, right: 16, left: -15, bottom: 5 }}
+                 style={{ outline: "none" }}
+               >
+-                <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
++                <defs>
++                  <linearGradient id="paymentGradient" x1="0" y1="0" x2="0" y2="1">
++                    <stop offset="0%" stopColor="oklch(0.275 0.135 261.5)" stopOpacity={0.18} />
++                    <stop offset="100%" stopColor="oklch(0.275 0.135 261.5)" stopOpacity={0} />
++                  </linearGradient>
++                </defs>
++                <CartesianGrid
++                  strokeDasharray="4 4"
++                  stroke="oklch(0.923 0.003 48.717)"
++                  vertical={false}
++                />
+                 <XAxis
+                   dataKey="label"
+-                  className="text-sm"
+-                  tick={{ fill: "hsl(var(--foreground))" }}
++                  tick={{ fill: "oklch(0.553 0.013 58.071)", fontSize: 12 }}
++                  axisLine={false}
++                  tickLine={false}
++                  dy={6}
+                 />
+                 <YAxis
+-                  className="text-sm"
+-                  tick={{ fill: "hsl(var(--foreground))" }}
++                  tick={{ fill: "oklch(0.553 0.013 58.071)", fontSize: 12 }}
+                   width={60}
+-                  tickFormatter={(value) => `${value.toLocaleString()}`}
+-                />
+-                <Tooltip
+-                  contentStyle={{
+-                    backgroundColor: "hsl(var(--background))",
+-                    border: "1px solid hsl(var(--border))",
+-                    borderRadius: "6px",
+-                  }}
+-                  formatter={(value?: number, name?: string) => [
+-                    name === "value"
+-                      ? `TZS ${(value ?? 0).toLocaleString()}`
+-                      : (value ?? 0).toLocaleString(),
+-                    name === "value" ? "Amount" : "Count",
+-                  ]}
++                  axisLine={false}
++                  tickLine={false}
++                  tickFormatter={(value) => value.toLocaleString()}
+                 />
+-                <Line
++                <Tooltip content={<CustomTooltip />} cursor={{ stroke: "oklch(0.275 0.135 261.5)", strokeWidth: 1, strokeDasharray: "4 4" }} />
++                <Area
+                   type="monotone"
+                   dataKey="value"
+-                  stroke="hsl(var(--primary))"
+-                  strokeWidth={2}
+-                  dot={{ fill: "hsl(var(--primary))", r: 4 }}
+-                  activeDot={{ r: 6 }}
++                  stroke="oklch(0.275 0.135 261.5)"
++                  strokeWidth={2.5}
++                  fill="url(#paymentGradient)"
++                  dot={false}
++                  activeDot={{
++                    r: 5,
++                    fill: "oklch(0.275 0.135 261.5)",
++                    stroke: "#ffffff",
++                    strokeWidth: 2,
++                  }}
+                 />
+-              </LineChart>
++              </AreaChart>
+             </ResponsiveContainer>
+           </div>
+         ) : (
+diff --git a/src/app/(PageSections)/Dashboard/DashboardPageSection/Sections/Admin/RegistrationByCategory.tsx b/src/app/(PageSections)/Dashboard/DashboardPageSection/Sections/Admin/RegistrationByCategory.tsx
+index bf5546e..bf52647 100644
+--- a/src/app/(PageSections)/Dashboard/DashboardPageSection/Sections/Admin/RegistrationByCategory.tsx
++++ b/src/app/(PageSections)/Dashboard/DashboardPageSection/Sections/Admin/RegistrationByCategory.tsx
+@@ -39,7 +39,7 @@ function RegistrationByCategory() {
+                     className="h-full transition-all"
+                     style={{
+                       width: `${category.percentage || 0}%`,
+-                      backgroundColor: category.color || "#3b82f6",
++                      backgroundColor: category.color || "#213a89",
+                     }}
+                   />
+                 </div>
+diff --git a/src/app/(PageSections)/Dashboard/DonationPageSection/DonationPageSection.tsx b/src/app/(PageSections)/Dashboard/DonationPageSection/DonationPageSection.tsx
+index 2a50bf0..1a7dbca 100644
+--- a/src/app/(PageSections)/Dashboard/DonationPageSection/DonationPageSection.tsx
++++ b/src/app/(PageSections)/Dashboard/DonationPageSection/DonationPageSection.tsx
+@@ -87,18 +87,34 @@ function DonationPageSection() {
+ 
+   useEffect(() => {
+     const eventsData = isPartner ? partnerEvents.data : events.data;
+-    if (eventsData && eventsData.length > 0) {
+-      const options = [
+-        ...(isAdmin ? [{ label: "All Events", value: "" }] : []),
+-        ...eventsData.map((event: EventI) => ({
+-          label: event.title,
+-          value: String(event.id),
+-        })),
+-      ];
+-      setEventOptions(options);
+-      if (isPartner && !selectedEventId) {
+-        setSelectedEventId(String(eventsData[0].id));
+-      }
++    if (!eventsData || eventsData.length === 0) return;
++
++    const eligible = eventsData.filter(
++      (e: EventI) => e.status === "PUBLISHED" || e.status === "COMPLETED"
++    );
++
++    const options = [
++      ...(isAdmin ? [{ label: "All Events", value: "" }] : []),
++      ...eligible.map((event: EventI) => ({
++        label: event.title,
++        value: String(event.id),
++      })),
++    ];
++    setEventOptions(options);
++
++    if ((isAdmin || isPartner) && !selectedEventId && eligible.length > 0) {
++      const now = new Date();
++      const currentlyRunning = eligible.find((e: EventI) => {
++        if (e.status !== "PUBLISHED") return false;
++        const start = e.eventDate ? new Date(e.eventDate) : null;
++        const end = e.eventEndDate ? new Date(e.eventEndDate) : null;
++        return start && start <= now && (!end || end >= now);
++      });
++      const upcoming = eligible
++        .filter((e: EventI) => e.status === "PUBLISHED" && e.eventDate && new Date(e.eventDate) > now)
++        .sort((a: EventI, b: EventI) => new Date(a.eventDate).getTime() - new Date(b.eventDate).getTime())[0];
++      const activeEvent = currentlyRunning ?? upcoming ?? eligible[0];
++      if (activeEvent) setSelectedEventId(String(activeEvent.id));
+     }
+   }, [events.data, partnerEvents.data, isPartner, isAdmin]);
+ 
+@@ -142,26 +158,28 @@ function DonationPageSection() {
+       {/* Header */}
+       <h1 className="text-[var(--dash-heading)] font-semibold text-primary-950 mb-[var(--dash-header-mb)]">Donations</h1>
+ 
+-      {/* Tabs */}
+-      <div className="flex gap-1 border-b border-gray-200 mb-[var(--dash-section-mb)]">
+-        {TABS.map((tab) => (
+-          <button
+-            key={tab.key}
+-            onClick={() => setActiveTab(tab.key)}
+-            className={cn(
+-              "px-4 py-2.5 text-sm font-medium transition-colors border-b-2 -mb-px",
+-              activeTab === tab.key
+-                ? "border-primary-700 text-primary-700"
+-                : "border-transparent text-gray-500 hover:text-gray-700"
+-            )}
+-          >
+-            {tab.label}
+-          </button>
+-        ))}
+-      </div>
++      {/* Tabs — only show Make Donation tab for regular users */}
++      {!isAdmin && !isPartner && (
++        <div className="flex gap-1 border-b border-gray-200 mb-[var(--dash-section-mb)]">
++          {TABS.map((tab) => (
++            <button
++              key={tab.key}
++              onClick={() => setActiveTab(tab.key)}
++              className={cn(
++                "px-4 py-2.5 text-sm font-medium transition-colors border-b-2 -mb-px",
++                activeTab === tab.key
++                  ? "border-primary-700 text-primary-700"
++                  : "border-transparent text-gray-500 hover:text-gray-700"
++              )}
++            >
++              {tab.label}
++            </button>
++          ))}
++        </div>
++      )}
+ 
+-      {/* Make Donation Tab */}
+-      {activeTab === "make" && (
++      {/* Make Donation Tab — users only */}
++      {activeTab === "make" && !isAdmin && !isPartner && (
+         <div className="text-center py-16 bg-white rounded-xl border border-gray-200">
+           <div className="w-16 h-16 rounded-full bg-primary-50 flex items-center justify-center mx-auto mb-4">
+             <HandCoins className="h-8 w-8 text-primary-600" />
+@@ -179,7 +197,7 @@ function DonationPageSection() {
+       )}
+ 
+       {/* Donation History Tab */}
+-      {activeTab === "history" && (
++      {(activeTab === "history" || isAdmin || isPartner) && (
+         <>
+           {/* Event selector for admin/partner */}
+           {(isAdmin || isPartner) && (
+diff --git a/src/app/(PageSections)/Dashboard/EventPageSection/AdminEventDetailPageSection.tsx b/src/app/(PageSections)/Dashboard/EventPageSection/AdminEventDetailPageSection.tsx
+index ae6f186..7f5e730 100644
+--- a/src/app/(PageSections)/Dashboard/EventPageSection/AdminEventDetailPageSection.tsx
++++ b/src/app/(PageSections)/Dashboard/EventPageSection/AdminEventDetailPageSection.tsx
+@@ -9,7 +9,6 @@ import { Button } from "@/components/ui/button";
+ import { Badge } from "@/components/ui/badge";
+ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+-import { AuthenticatedImage } from "@/components/ui/AuthenticatedImage";
+ import { EventStatus } from "@/types/event";
+ import { useToast } from "@/hooks/use-toast";
+ import { eventService } from "@/services/event.service";
+@@ -20,6 +19,7 @@ import { WinnersTab } from "./components/tabs/WinnersTab";
+ import { DiscountsTab } from "./components/tabs/DiscountsTab";
+ import { GalleryTab } from "./components/tabs/GalleryTab";
+ import { CheckInOfficersTab } from "./components/tabs/CheckInOfficersTab";
++import Image from "next/image";
+ 
+ // Loading Skeleton Component
+ function EventDetailSkeleton() {
+@@ -157,11 +157,11 @@ function AdminEventDetailPageSection() {
+   return (
+     <div className="space-y-6">
+       {/* Header Actions */}
+-      <div className="flex items-center justify-between">
+-        <Button variant="ghost" onClick={handleBack} className="gap-2">
++      <div className="flex items-center justify-end">
++        {/* <Button variant="ghost" onClick={handleBack} className="gap-2">
+           <ArrowLeft className="h-4 w-4" />
+           Back to Events
+-        </Button>
++        </Button> */}
+         <div className="flex gap-2">
+           <Button variant="outline" onClick={handleViewPublic} className="gap-2">
+             <Eye className="h-4 w-4" />
+@@ -176,7 +176,7 @@ function AdminEventDetailPageSection() {
+ 
+       {/* Event Banner */}
+       <div className="relative h-96 rounded-lg overflow-hidden">
+-        <AuthenticatedImage
++        <Image
+           src={eventData.eventBannerUrl || "/placeholder-event.jpg"}
+           alt={eventData.title || "Event"}
+           className="w-full h-full object-cover"
+diff --git a/src/app/(PageSections)/Dashboard/RegistrationPageSection/RegistrationDetailsModal.tsx b/src/app/(PageSections)/Dashboard/RegistrationPageSection/RegistrationDetailsModal.tsx
+index 21eac21..b1e747b 100644
+--- a/src/app/(PageSections)/Dashboard/RegistrationPageSection/RegistrationDetailsModal.tsx
++++ b/src/app/(PageSections)/Dashboard/RegistrationPageSection/RegistrationDetailsModal.tsx
+@@ -1,44 +1,65 @@
+ "use client";
+ 
+ import { useEffect, useState } from "react";
+-import { X, FileText, Download, Loader2 } from "lucide-react";
++import { FileText, Download, Loader2, ShoppingBag } from "lucide-react";
+ import { Button } from "@/components/ui/button";
+ import { Skeleton } from "@/components/ui/skeleton";
+ import { useEventRegistration } from "@/hooks/useEventRegistration";
+-import { RegistrationListItemI } from "@/types/event-registration";
++import { RegistrationListItemI, RegistrationResponseI } from "@/types/event-registration";
++import { cn } from "@/lib/utils";
+ 
+ interface RegistrationDetailsModalProps {
+-  registration: RegistrationListItemI;
+-  onClose: () => void;
++  /** Full data (admin view) — used directly, no extra API call */
++  registrationData?: RegistrationResponseI;
++  /** Minimal data (user view) — order details fetched via API */
++  registration?: RegistrationListItemI;
++  onClose?: () => void;
+ }
+ 
+-function DetailRow({ label, value }: { label: string; value?: string | null }) {
++function DetailRow({ label, value }: { label: string; value?: string | number | null }) {
+   return (
+-    <p className="text-[var(--dash-text-sm)] text-gray-700">
+-      <span className="font-medium">{label}: </span>
+-      {value || "N/A"}
+-    </p>
++    <div className="flex items-start gap-2 py-1.5 border-b border-gray-50 last:border-0">
++      <span className="text-xs text-gray-500 w-36 shrink-0 pt-0.5">{label}</span>
++      <span className="text-xs font-medium text-gray-900 flex-1">{value ?? "N/A"}</span>
++    </div>
+   );
+ }
+ 
++const paymentStatusConfig: Record<string, { bg: string; text: string; label: string }> = {
++  PAID: { bg: "bg-green-100", text: "text-green-700", label: "Paid" },
++  PENDING: { bg: "bg-yellow-100", text: "text-yellow-700", label: "Pending" },
++  AWAITING_PAYMENT: { bg: "bg-amber-100", text: "text-amber-700", label: "Awaiting Payment" },
++  CONTROL_NUMBER_GENERATED: { bg: "bg-[#e8ecf7]", text: "text-[#213a89]", label: "Control No. Generated" },
++  UNPAID: { bg: "bg-gray-100", text: "text-gray-600", label: "Unpaid" },
++  FAILED: { bg: "bg-red-100", text: "text-red-700", label: "Failed" },
++};
++
+ export function RegistrationDetailsModal({
++  registrationData,
+   registration,
+-  onClose,
+ }: RegistrationDetailsModalProps) {
+   const { eventRegistrationOrderDetails, orderDetails, isLoading, downloadDigitalTicket } =
+     useEventRegistration();
+   const [isDownloading, setIsDownloading] = useState(false);
++  const [downloadingAttendeeId, setDownloadingAttendeeId] = useState<string | null>(null);
+ 
++  // Only fetch via API when we don't already have the full data (user view)
+   useEffect(() => {
+-    eventRegistrationOrderDetails(registration.id);
+-  }, [registration.id]);
+-
+-  const details = orderDetails?.data;
+-  const firstAttendee = details?.attendeeDetails?.[0];
+-  const attendee = firstAttendee?.attendee;
+-  const firstTicket = firstAttendee?.ticketDetails?.[0];
+-  const ticket = firstTicket?.ticket;
++    if (!registrationData && registration?.id) {
++      eventRegistrationOrderDetails(String(registration.id));
++    }
++  }, [registration?.id]);
++
++  // Resolve which data to show
++  const details: RegistrationResponseI | undefined =
++    registrationData ?? (orderDetails?.data as RegistrationResponseI | undefined);
++
++  const registrationId = registrationData
++    ? String(registrationData.registration?.id)
++    : String(registration?.id);
++
+   const isPaid = details?.paymentStatus === "PAID";
++  const loading = !registrationData && isLoading;
+ 
+   const formatDate = (dateStr?: string | null) => {
+     if (!dateStr) return "N/A";
+@@ -49,137 +70,275 @@ export function RegistrationDetailsModal({
+     });
+   };
+ 
+-  const handleDownload = async () => {
+-    if (!attendee?.id) return;
++  const handleDownload = async (attendeeId: string) => {
++    setDownloadingAttendeeId(attendeeId);
+     setIsDownloading(true);
+     try {
+-      await downloadDigitalTicket(String(registration.id), String(attendee.id));
++      await downloadDigitalTicket(registrationId, attendeeId);
+     } finally {
+       setIsDownloading(false);
++      setDownloadingAttendeeId(null);
+     }
+   };
+ 
++  const paymentStatus =
++    details?.paymentStatus ??
++    (registration as RegistrationListItemI | undefined)?.status ??
++    "";
++  const statusStyle = paymentStatusConfig[paymentStatus] ?? {
++    bg: "bg-gray-100",
++    text: "text-gray-600",
++    label: paymentStatus.replace(/_/g, " ") || "Unknown",
++  };
++
++  const regRef =
++    details?.registration?.registrationReference ??
++    (registration as RegistrationListItemI | undefined)?.registrationReference;
++  const displayName =
++    details?.registration?.displayName ??
++    (registration as RegistrationListItemI | undefined)?.displayName;
++  const regType =
++    details?.registration?.registrationType ??
++    (registration as RegistrationListItemI | undefined)?.registrationType;
++  const regDate =
++    details?.registration?.registrationStartedAt ??
++    (registration as RegistrationListItemI | undefined)?.registrationStartedAt;
++  const controlNumber =
++    details?.registration?.controlNumber ??
++    (registration as RegistrationListItemI | undefined)?.controlNumber;
++
+   return (
+-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+-      <div className="fixed inset-0 bg-black/50" onClick={onClose} />
+-      <div className="relative bg-white rounded-xl shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+-        {/* Header */}
+-        <div className="flex items-start justify-between p-6 border-b border-gray-200">
+-          <div>
+-            <h2 className="text-[var(--dash-heading)] font-semibold text-primary-900">
+-              {registration.displayName}
+-            </h2>
+-            <p className="text-sm text-gray-500 mt-0.5">Your registration details</p>
++    <div className="space-y-5">
++      {loading ? (
++        <div className="space-y-4">
++          <div className="space-y-2">
++            <Skeleton className="h-4 w-40" />
++            {[1, 2, 3, 4, 5].map((i) => (
++              <Skeleton key={i} className="h-5 w-full" />
++            ))}
++          </div>
++          <div className="space-y-2">
++            <Skeleton className="h-4 w-40" />
++            {[1, 2, 3, 4].map((i) => (
++              <Skeleton key={i} className="h-5 w-full" />
++            ))}
+           </div>
+-          <button
+-            type="button"
+-            onClick={onClose}
+-            className="p-1.5 text-gray-400 hover:text-gray-600 transition-colors ml-4 flex-shrink-0"
+-          >
+-            <X className="w-5 h-5" />
+-          </button>
+         </div>
+-
+-        {/* Content */}
+-        <div className="p-[var(--dash-card-p)]">
+-          {isLoading ? (
+-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-[var(--dash-grid-gap)]">
+-              <div className="space-y-3">
+-                <Skeleton className="h-4 w-32 mb-2" />
+-                {[1, 2, 3, 4, 5, 6].map((i) => (
+-                  <Skeleton key={i} className="h-4 w-full" />
+-                ))}
+-              </div>
+-              <div className="space-y-3">
+-                <Skeleton className="h-4 w-32 mb-2" />
+-                {[1, 2, 3, 4].map((i) => (
+-                  <Skeleton key={i} className="h-4 w-full" />
+-                ))}
+-              </div>
+-            </div>
+-          ) : (
+-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-[var(--dash-grid-gap)]">
+-              {/* Event Information */}
+-              <div className="space-y-2.5">
+-                <h3 className="text-sm font-semibold text-gray-900 mb-3">
+-                  Event Information
+-                </h3>
+-                <DetailRow
+-                  label="Registration ID"
+-                  value={details?.registration?.registrationReference || registration.registrationReference}
+-                />
+-                <DetailRow
+-                  label="Registration Date"
+-                  value={formatDate(details?.registration?.registrationStartedAt || registration.registrationStartedAt)}
+-                />
+-                <DetailRow
+-                  label="Registration Type"
+-                  value={
+-                    (details?.registration?.registrationType || registration.registrationType) === "GROUP"
+-                      ? "Group"
+-                      : "Individual"
+-                  }
+-                />
+-                <DetailRow
+-                  label="Ticket Type"
+-                  value={ticket?.name}
+-                />
+-                <DetailRow
+-                  label="Amount"
+-                  value={
+-                    details?.registrationTotal
+-                      ? `TZS${details.registrationTotal.toLocaleString()}`
+-                      : undefined
+-                  }
+-                />
+-              </div>
+-
+-              {/* Personal Information */}
+-              <div className="space-y-2.5">
+-                <h3 className="text-sm font-semibold text-gray-900 mb-3">
+-                  Personal Information
+-                </h3>
+-                <DetailRow label="First Name" value={attendee?.firstName} />
+-                <DetailRow label="Last Name" value={attendee?.lastName} />
+-                <DetailRow label="Phone number" value={attendee?.phoneNumber} />
+-                <DetailRow label="Email" value={attendee?.email} />
+-              </div>
++      ) : (
++        <>
++          {/* Registration Overview */}
++          <div className="bg-gray-50 rounded-lg p-4">
++            <div className="flex items-center justify-between mb-3">
++              <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
++                Registration Overview
++              </h3>
++              <span
++                className={cn(
++                  "inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold",
++                  statusStyle.bg,
++                  statusStyle.text
++                )}
++              >
++                {statusStyle.label}
++              </span>
+             </div>
+-          )}
++            <DetailRow label="Registration ID" value={regRef} />
++            <DetailRow label="Display Name" value={displayName} />
++            <DetailRow label="Registration Date" value={formatDate(regDate)} />
++            <DetailRow
++              label="Registration Type"
++              value={regType === "GROUP" ? "Group" : "Individual"}
++            />
++            <DetailRow label="Total Tickets" value={details?.totalTickets} />
++            <DetailRow
++              label="Total Amount"
++              value={
++                details?.registrationTotal != null
++                  ? `TZS ${details.registrationTotal.toLocaleString()}`
++                  : undefined
++              }
++            />
++            {controlNumber && (
++              <DetailRow label="Control Number" value={controlNumber} />
++            )}
++          </div>
++
++          {/* Attendees */}
++          {details?.attendeeDetails && details.attendeeDetails.length > 0 && (
++            <div className="space-y-4">
++              <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
++                {details.attendeeDetails.length === 1
++                  ? "Attendee"
++                  : `Attendees (${details.attendeeDetails.length})`}
++              </h3>
+ 
+-          {/* Ticket Download - Only show when payment is completed */}
+-          {!isLoading && attendee && isPaid && (
+-            <div className="mt-6 border border-gray-200 rounded-lg p-4">
+-              <div className="flex items-center gap-3">
+-                <div className="w-9 h-9 rounded-lg border border-gray-200 flex items-center justify-center flex-shrink-0">
+-                  <FileText className="w-4 h-4 text-gray-500" />
+-                </div>
+-                <div className="flex-1 min-w-0">
+-                  <p className="text-sm font-medium text-gray-900 truncate">
+-                    {registration.registrationReference}Ticket.pdf
+-                  </p>
+-                  <div className="mt-1.5 h-1.5 bg-gray-100 rounded-full overflow-hidden">
+-                    <div className="h-full bg-primary-700 rounded-full w-2/3" />
++              {details.attendeeDetails.map((attendeeDetail, index) => {
++                const { attendee, ticketDetails, merchandiseDetails, attendeeTotal } = attendeeDetail;
++                return (
++                  <div
++                    key={attendee.id ?? index}
++                    className="border border-gray-200 rounded-lg overflow-hidden"
++                  >
++                    {/* Attendee Header */}
++                    <div className="bg-white px-4 py-3 border-b border-gray-100 flex items-center justify-between">
++                      <div>
++                        <p className="text-sm font-semibold text-gray-900">
++                          {[attendee.firstName, attendee.middleName, attendee.lastName]
++                            .filter(Boolean)
++                            .join(" ")}
++                          {attendee.isPrimaryRegistrant && (
++                            <span className="ml-2 text-xs text-primary-700 font-normal">
++                              (Primary)
++                            </span>
++                          )}
++                        </p>
++                        <p className="text-xs text-gray-500 mt-0.5">
++                          {attendee.email || "No email"}
++                        </p>
++                      </div>
++                      {isPaid && attendee.id && (
++                        <Button
++                          variant="outline"
++                          size="sm"
++                          className="h-8 gap-1.5 text-xs"
++                          onClick={() => handleDownload(String(attendee.id))}
++                          disabled={
++                            isDownloading &&
++                            downloadingAttendeeId === String(attendee.id)
++                          }
++                        >
++                          {isDownloading &&
++                          downloadingAttendeeId === String(attendee.id) ? (
++                            <Loader2 className="w-3.5 h-3.5 animate-spin" />
++                          ) : (
++                            <Download className="w-3.5 h-3.5" />
++                          )}
++                          Ticket
++                        </Button>
++                      )}
++                    </div>
++
++                    <div className="p-4 space-y-4">
++                      {/* Personal Details */}
++                      <div>
++                        <DetailRow label="Phone" value={attendee.phoneNumber} />
++                        {attendee.gender && (
++                          <DetailRow label="Gender" value={attendee.gender} />
++                        )}
++                        {attendee.dateOfBirth && (
++                          <DetailRow
++                            label="Date of Birth"
++                            value={formatDate(attendee.dateOfBirth)}
++                          />
++                        )}
++                        {attendee.country && (
++                          <DetailRow label="Country" value={attendee.country} />
++                        )}
++                        {attendee.pace && (
++                          <DetailRow label="Pace" value={attendee.pace} />
++                        )}
++                      </div>
++
++                      {/* Tickets */}
++                      {ticketDetails && ticketDetails.length > 0 && (
++                        <div>
++                          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">
++                            Tickets
++                          </p>
++                          <div className="space-y-1.5">
++                            {ticketDetails.map((ticketDetail, tIdx) => (
++                              <div
++                                key={tIdx}
++                                className="flex items-center justify-between bg-gray-50 rounded-md px-3 py-2"
++                              >
++                                <div className="flex items-center gap-2">
++                                  <FileText className="w-3.5 h-3.5 text-gray-400 shrink-0" />
++                                  <div>
++                                    <p className="text-xs font-medium text-gray-900">
++                                      {ticketDetail.ticket?.name ??
++                                        ticketDetail.ticketName ??
++                                        "Ticket"}
++                                    </p>
++                                    {ticketDetail.ticketCode && (
++                                      <p className="text-xs text-gray-400">
++                                        {ticketDetail.ticketCode}
++                                      </p>
++                                    )}
++                                  </div>
++                                </div>
++                                <div className="text-right">
++                                  <p className="text-xs font-semibold text-gray-900">
++                                    TZS{" "}
++                                    {(
++                                      ticketDetail.pricePaid ??
++                                      ticketDetail.totalPrice ??
++                                      0
++                                    ).toLocaleString()}
++                                  </p>
++                                  {ticketDetail.quantity > 1 && (
++                                    <p className="text-xs text-gray-400">
++                                      × {ticketDetail.quantity}
++                                    </p>
++                                  )}
++                                </div>
++                              </div>
++                            ))}
++                          </div>
++                        </div>
++                      )}
++
++                      {/* Merchandise */}
++                      {merchandiseDetails && merchandiseDetails.length > 0 && (
++                        <div>
++                          <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2 flex items-center gap-1">
++                            <ShoppingBag className="w-3 h-3" />
++                            Merchandise
++                          </p>
++                          <div className="space-y-1.5">
++                            {merchandiseDetails.map((merch, mIdx) => (
++                              <div
++                                key={mIdx}
++                                className="flex items-center justify-between bg-gray-50 rounded-md px-3 py-2"
++                              >
++                                <div>
++                                  <p className="text-xs font-medium text-gray-900">
++                                    {merch.productName}
++                                  </p>
++                                  {merch.collectionCenterName && (
++                                    <p className="text-xs text-gray-400">
++                                      Collection: {merch.collectionCenterName}
++                                    </p>
++                                  )}
++                                </div>
++                                <div className="text-right">
++                                  <p className="text-xs font-semibold text-gray-900">
++                                    TZS {(merch.totalPrice ?? 0).toLocaleString()}
++                                  </p>
++                                  <p className="text-xs text-gray-400">× {merch.quantity}</p>
++                                </div>
++                              </div>
++                            ))}
++                          </div>
++                        </div>
++                      )}
++
++                      {/* Attendee Total */}
++                      {attendeeTotal != null && (
++                        <div className="flex items-center justify-between pt-2 border-t border-gray-100">
++                          <span className="text-xs text-gray-500">Attendee Total</span>
++                          <span className="text-sm font-semibold text-gray-900">
++                            TZS {attendeeTotal.toLocaleString()}
++                          </span>
++                        </div>
++                      )}
++                    </div>
+                   </div>
+-                </div>
+-                <Button
+-                  variant="ghost"
+-                  size="sm"
+-                  className="h-9 w-9 p-0 flex-shrink-0"
+-                  onClick={handleDownload}
+-                  disabled={isDownloading}
+-                >
+-                  {isDownloading ? (
+-                    <Loader2 className="w-4 h-4 animate-spin" />
+-                  ) : (
+-                    <Download className="w-4 h-4 text-gray-500" />
+-                  )}
+-                </Button>
+-              </div>
++                );
++              })}
+             </div>
+           )}
+-        </div>
+-      </div>
++        </>
++      )}
+     </div>
+   );
+ }
+diff --git a/src/app/(PageSections)/Dashboard/RegistrationPageSection/RegistrationPageSection.tsx b/src/app/(PageSections)/Dashboard/RegistrationPageSection/RegistrationPageSection.tsx
+index dd3d79d..2c8f1cb 100644
+--- a/src/app/(PageSections)/Dashboard/RegistrationPageSection/RegistrationPageSection.tsx
++++ b/src/app/(PageSections)/Dashboard/RegistrationPageSection/RegistrationPageSection.tsx
+@@ -8,7 +8,7 @@ import {
+   Clock,
+   CalendarDays,
+ } from "lucide-react";
+-import { RegistrationListItemI } from "@/types/event-registration";
++import { RegistrationListItemI, RegistrationResponseI } from "@/types/event-registration";
+ import { useEventRegistration } from "@/hooks/useEventRegistration";
+ import { useAuth } from "@/hooks/use-auth";
+ import { hasRequiredRole } from "@/utils/rbac";
+@@ -19,15 +19,13 @@ import { EventI } from "@/types/event";
+ import { Input } from "@/components/ui/input";
+ import { Button } from "@/components/ui/button";
+ import { Skeleton } from "@/components/ui/skeleton";
+-import { RegistrationDetailsModal } from "./RegistrationDetailsModal";
++import { RegistrationSideSheet } from "./RegistrationSideSheet";
+ import { cn } from "@/lib/utils";
+ import Link from "next/link";
+ import DataTable from "@/components/shared/Datatable/DataTable";
+ import { ColumnDef, Row, FilterFn } from "@tanstack/react-table";
+ import { useFilters } from "@/hooks/useFilters";
+ import { ApiResponseI } from "@/types/api";
+-import { useModal } from "@/hooks/useModal";
+-import { EventRegistrationProvider } from "@/providers/event-registration.provider";
+ 
+ type TabKey = "all" | "paid" | "unpaid" | "draft";
+ 
+@@ -44,6 +42,16 @@ const statusConfig: Record<string, { label: string; color: string; icon: React.R
+     color: "border-green-300 text-green-700 bg-green-50",
+     icon: <CheckCircle className="w-3.5 h-3.5" />,
+   },
++  REGISTERED: {
++    label: "Registered",
++    color: "border-green-300 text-green-700 bg-green-50",
++    icon: <CheckCircle className="w-3.5 h-3.5" />,
++  },
++  AWAITING_PAYMENT: {
++    label: "Awaiting Payment",
++    color: "border-amber-300 text-amber-700 bg-amber-50",
++    icon: <Clock className="w-3.5 h-3.5" />,
++  },
+   PENDING_PAYMENT: {
+     label: "Unpaid",
+     color: "border-yellow-300 text-yellow-700 bg-yellow-50",
+@@ -55,7 +63,7 @@ const statusConfig: Record<string, { label: string; color: string; icon: React.R
+     icon: <Clock className="w-3.5 h-3.5" />,
+   },
+   DRAFT: {
+-    label: "Drafts",
++    label: "Draft",
+     color: "border-gray-300 text-gray-600 bg-gray-50",
+     icon: <Clock className="w-3.5 h-3.5" />,
+   },
+@@ -123,9 +131,12 @@ function RegistrationPageSection() {
+   const { user } = useAuth();
+   const { events, findAllEvents } = useEvent();
+   const { getMyPartnerEvents, partnerEvents } = usePartner();
+-  const { openModal, closeModal } = useModal();
+ 
+-  const [registrationsData, setRegistrationsData] = useState<ApiResponseI<RegistrationListItemI[]>>({});
++  const [sheetOpen, setSheetOpen] = useState(false);
++  const [selectedRegistration, setSelectedRegistration] = useState<RegistrationResponseI | null>(null);
++
++  const [adminRegistrationsData, setAdminRegistrationsData] = useState<ApiResponseI<RegistrationResponseI[]>>({});
++  const [userRegistrationsData, setUserRegistrationsData] = useState<ApiResponseI<RegistrationListItemI[]>>({});
+   const [search, setSearch] = useState("");
+   const [activeTab, setActiveTab] = useState<TabKey>("all");
+   const [selectedEventId, setSelectedEventId] = useState<string>("");
+@@ -154,10 +165,25 @@ function RegistrationPageSection() {
+ 
+   useEffect(() => {
+     if (!selectedEventId && (isAdmin || isPartner)) {
+-      const list = isPartner ? partnerEvents?.data : events?.data;
+-      if (Array.isArray(list) && list.length > 0) {
+-        setSelectedEventId(String(list[0].id));
+-      }
++      const list = (isPartner ? partnerEvents?.data : events?.data) || [];
++      const eligible = list.filter(
++        (e: EventI) => e.status === "PUBLISHED" || e.status === "COMPLETED"
++      );
++      if (eligible.length === 0) return;
++      const now = new Date();
++      // Prefer a PUBLISHED event currently running by date
++      const currentlyRunning = eligible.find((e: EventI) => {
++        if (e.status !== "PUBLISHED") return false;
++        const start = e.eventDate ? new Date(e.eventDate) : null;
++        const end = e.eventEndDate ? new Date(e.eventEndDate) : null;
++        return start && start <= now && (!end || end >= now);
++      });
++      // Fallback: nearest upcoming PUBLISHED event
++      const upcoming = eligible
++        .filter((e: EventI) => e.status === "PUBLISHED" && e.eventDate && new Date(e.eventDate) > now)
++        .sort((a: EventI, b: EventI) => new Date(a.eventDate).getTime() - new Date(b.eventDate).getTime())[0];
++      const activeEvent = currentlyRunning ?? upcoming ?? eligible[0];
++      if (activeEvent) setSelectedEventId(String(activeEvent.id));
+     }
+   }, [events?.data, partnerEvents?.data, isPartner]);
+ 
+@@ -174,7 +200,7 @@ function RegistrationPageSection() {
+   const fetchAdminRegistrations = async (queryFilters: RegistrationFilters) => {
+     try {
+       if (!selectedEventId) {
+-        setRegistrationsData({});
++        setAdminRegistrationsData({});
+         return;
+       }
+ 
+@@ -196,18 +222,18 @@ function RegistrationPageSection() {
+       }
+ 
+       const response = await getAdminEventRegistrations(selectedEventId, queryParams);
+-      setRegistrationsData(response);
++      setAdminRegistrationsData(response);
+     } catch {
+-      setRegistrationsData({});
++      setAdminRegistrationsData({});
+     }
+   };
+ 
+   const fetchUserRegistrations = async () => {
+     try {
+       const response = await getUserRegistrations();
+-      setRegistrationsData(response);
++      setUserRegistrationsData(response);
+     } catch {
+-      setRegistrationsData({});
++      setUserRegistrationsData({});
+     }
+   };
+ 
+@@ -220,18 +246,30 @@ function RegistrationPageSection() {
+     });
+   };
+ 
+-  const handleViewRegistration = (registration: RegistrationListItemI) => {
+-    openModal(
+-      <EventRegistrationProvider>
+-        <RegistrationDetailsModal
+-          registration={registration}
+-          onClose={closeModal}
+-        />
+-      </EventRegistrationProvider>,
+-      "Registration Details",
+-      "xl",
+-      `View details for ${registration.displayName}`
+-    );
++  const handleViewRegistration = (item: RegistrationResponseI | RegistrationListItemI) => {
++    const isFullData = "attendeeDetails" in item;
++    if (isFullData) {
++      setSelectedRegistration(item as RegistrationResponseI);
++    } else {
++      // User view: wrap RegistrationListItemI into a minimal RegistrationResponseI shape
++      const reg = item as RegistrationListItemI;
++      setSelectedRegistration({
++        registration: reg as unknown as RegistrationResponseI["registration"],
++        attendeeDetails: [],
++        registrationTotal: 0,
++        totalTickets: 0,
++        paymentStatus: reg.status,
++      });
++    }
++    setSheetOpen(true);
++  };
++
++  const handleSheetRefresh = async () => {
++    if (isAdmin || isPartner) {
++      await fetchAdminRegistrations(filters);
++    } else {
++      await fetchUserRegistrations();
++    }
+   };
+ 
+   const handlePageChange = (page: number) => {
+@@ -251,33 +289,36 @@ function RegistrationPageSection() {
+   };
+ 
+   // Admin/Partner Table Columns
+-  const registrationColumns: ColumnDef<RegistrationListItemI>[] = [
++  const registrationColumns: ColumnDef<RegistrationResponseI>[] = [
+     {
+-      header: "Registration Reference",
+-      accessorKey: "registrationReference",
+-      cell: ({ row }: { row: Row<RegistrationListItemI> }) => (
+-        <div className="font-medium text-primary-700">
+-          {row.getValue("registrationReference")}
++      id: "registrationReference",
++      header: "Reference",
++      accessorFn: (row) => row.registration?.registrationReference,
++      cell: ({ row }: { row: Row<RegistrationResponseI> }) => (
++        <div className="font-medium text-primary-700 text-sm">
++          {row.original.registration?.registrationReference}
+         </div>
+       ),
+       size: 180,
+       enableHiding: false,
+     },
+     {
++      id: "displayName",
+       header: "Display Name",
+-      accessorKey: "displayName",
+-      cell: ({ row }: { row: Row<RegistrationListItemI> }) => (
+-        <div className="font-medium">
+-          {row.getValue("displayName")}
++      accessorFn: (row) => row.registration?.displayName,
++      cell: ({ row }: { row: Row<RegistrationResponseI> }) => (
++        <div className="font-medium text-sm">
++          {row.original.registration?.displayName}
+         </div>
+       ),
+       size: 200,
+     },
+     {
++      id: "registrationType",
+       header: "Type",
+-      accessorKey: "registrationType",
+-      cell: ({ row }: { row: Row<RegistrationListItemI> }) => {
+-        const type = row.getValue("registrationType") as string;
++      accessorFn: (row) => row.registration?.registrationType,
++      cell: ({ row }: { row: Row<RegistrationResponseI> }) => {
++        const type = row.original.registration?.registrationType;
+         return (
+           <span className={cn(
+             "inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold",
+@@ -292,10 +333,11 @@ function RegistrationPageSection() {
+       size: 100,
+     },
+     {
++      id: "status",
+       header: "Status",
+-      accessorKey: "status",
+-      cell: ({ row }: { row: Row<RegistrationListItemI> }) => {
+-        const statusValue = row.getValue("status") as string;
++      accessorFn: (row) => row.registration?.status,
++      cell: ({ row }: { row: Row<RegistrationResponseI> }) => {
++        const statusValue = row.original.registration?.status ?? "";
+         const status = statusConfig[statusValue] || statusConfig.DRAFT;
+         return (
+           <span className={cn(
+@@ -307,44 +349,87 @@ function RegistrationPageSection() {
+           </span>
+         );
+       },
+-      size: 130,
+-      filterFn: statusFilter,
++      size: 140,
++      filterFn: statusFilter as FilterFn<RegistrationResponseI>,
+     },
+     {
++      id: "paymentStatus",
++      header: "Payment",
++      accessorFn: (row) => row.paymentStatus,
++      cell: ({ row }: { row: Row<RegistrationResponseI> }) => {
++        const ps = row.original.paymentStatus ?? "";
++        const cfg = {
++          PAID: "bg-green-100 text-green-700",
++          PENDING: "bg-yellow-100 text-yellow-700",
++          CONTROL_NUMBER_GENERATED: "bg-[#e8ecf7] text-[#213a89]",
++          UNPAID: "bg-gray-100 text-gray-600",
++        }[ps] ?? "bg-gray-100 text-gray-600";
++        const lbl = {
++          PAID: "Paid",
++          PENDING: "Pending",
++          CONTROL_NUMBER_GENERATED: "Ctrl No. Generated",
++          UNPAID: "Unpaid",
++        }[ps] ?? ps.replace(/_/g, " ");
++        return (
++          <span className={cn("inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold", cfg)}>
++            {lbl}
++          </span>
++        );
++      },
++      size: 140,
++    },
++    {
++      id: "currentAttendeeCount",
+       header: "Attendees",
+-      accessorKey: "currentAttendeeCount",
+-      cell: ({ row }: { row: Row<RegistrationListItemI> }) => (
+-        <div className="text-sm">
+-          {row.getValue("currentAttendeeCount")} / {row.original.maxAttendees}
++      accessorFn: (row) => row.registration?.currentAttendeeCount,
++      cell: ({ row }: { row: Row<RegistrationResponseI> }) => (
++        <div className="text-sm text-center">
++          {row.original.registration?.currentAttendeeCount ?? 0} / {row.original.registration?.maxAttendees ?? 0}
+         </div>
+       ),
+-      size: 100,
++      size: 90,
++    },
++    {
++      id: "registrationTotal",
++      header: "Total",
++      accessorFn: (row) => row.registrationTotal,
++      cell: ({ row }: { row: Row<RegistrationResponseI> }) => (
++        <div className="text-sm font-medium">
++          TZS {(row.original.registrationTotal ?? 0).toLocaleString()}
++        </div>
++      ),
++      size: 120,
+     },
+     {
+-      header: "Registration Date",
+-      accessorKey: "registrationStartedAt",
+-      cell: ({ row }: { row: Row<RegistrationListItemI> }) => (
++      id: "registrationStartedAt",
++      header: "Date",
++      accessorFn: (row) => row.registration?.registrationStartedAt,
++      cell: ({ row }: { row: Row<RegistrationResponseI> }) => (
+         <div className="text-sm">
+-          {formatDate(row.getValue("registrationStartedAt"))}
++          {formatDate(row.original.registration?.registrationStartedAt)}
+         </div>
+       ),
+-      size: 150,
++      size: 130,
+     },
+     {
++      id: "controlNumber",
+       header: "Control Number",
+-      accessorKey: "controlNumber",
+-      cell: ({ row }: { row: Row<RegistrationListItemI> }) => (
++      accessorFn: (row) => row.registration?.controlNumber,
++      cell: ({ row }: { row: Row<RegistrationResponseI> }) => (
+         <div className="text-sm font-mono">
+-          {row.getValue("controlNumber") || "—"}
++          {row.original.registration?.controlNumber || "—"}
+         </div>
+       ),
+       size: 150,
+     },
+   ];
+ 
+-  // Apply tab + search filters for card view (user only)
+-  const allRegistrations = registrationsData?.data || [];
+-  const tabFiltered = filterByTab(allRegistrations, activeTab);
++  // Admin table data
++  const allAdminRegistrations = adminRegistrationsData?.data || [];
++
++  // User card view data
++  const allUserRegistrations = userRegistrationsData?.data || [];
++  const tabFiltered = filterByTab(allUserRegistrations, activeTab);
+   const displayed = search
+     ? tabFiltered.filter(
+         (r) =>
+@@ -353,16 +438,16 @@ function RegistrationPageSection() {
+       )
+     : tabFiltered;
+ 
++  const rawEventList: EventI[] = (isPartner ? partnerEvents?.data : events?.data) || [];
++  const filteredEventList = rawEventList.filter(
++    (e) => e.status === "PUBLISHED" || e.status === "COMPLETED"
++  );
+   const eventOptions = [
+     ...(isAdmin ? [{ value: "", label: "All Events" }] : []),
+-    ...(Array.isArray(isPartner ? partnerEvents?.data : events?.data)
+-      ? ((isPartner ? partnerEvents?.data : events?.data) || []).map(
+-          (event: EventI) => ({
+-            value: String(event.id),
+-            label: event.title,
+-          })
+-        )
+-      : []),
++    ...filteredEventList.map((event: EventI) => ({
++      value: String(event.id),
++      label: event.title,
++    })),
+   ];
+ 
+   // Render Admin/Partner Table View with Server-side Pagination
+@@ -398,7 +483,7 @@ function RegistrationPageSection() {
+ 
+         {/* Data Table with Server-side Pagination */}
+         <DataTable
+-          data={allRegistrations}
++          data={allAdminRegistrations}
+           columns={registrationColumns}
+           searchableColumns={[
+             { column: "registrationReference", label: "Reference", searchParam: "registrationReference.contains" },
+@@ -409,9 +494,9 @@ function RegistrationPageSection() {
+               column: "status",
+               label: "Status",
+               options: [
++                { label: "Registered", value: "REGISTERED" },
+                 { label: "Completed", value: "COMPLETED" },
+-                { label: "Pending Payment", value: "PENDING_PAYMENT" },
+-                { label: "Processing", value: "PAYMENT_PROCESSING" },
++                { label: "Awaiting Payment", value: "AWAITING_PAYMENT" },
+                 { label: "Draft", value: "DRAFT" },
+                 { label: "Cancelled", value: "CANCELLED" },
+                 { label: "Expired", value: "EXPIRED" },
+@@ -432,14 +517,21 @@ function RegistrationPageSection() {
+           enableDelete={false}
+           isLoading={isLoading}
+           // Server-side pagination props
+-          totalCount={registrationsData?.pagination?.totalCount}
+-          currentPage={registrationsData?.pagination?.currentPage}
+-          totalPages={registrationsData?.pagination?.totalPages}
++          totalCount={adminRegistrationsData?.pagination?.totalCount}
++          currentPage={adminRegistrationsData?.pagination?.currentPage}
++          totalPages={adminRegistrationsData?.pagination?.totalPages}
+           onPageChange={handlePageChange}
+           onPageSizeChange={handlePageSizeChange}
+           onSearchChange={handleSearchChange}
+           onFilterChange={handleFilterChange}
+         />
++
++        <RegistrationSideSheet
++          registrationData={selectedRegistration}
++          open={sheetOpen}
++          onClose={() => setSheetOpen(false)}
++          onRefresh={handleSheetRefresh}
++        />
+       </div>
+     );
+   }
+@@ -536,7 +628,7 @@ function RegistrationPageSection() {
+                   </div>
+ 
+                   {/* Right: badge + button */}
+-                  <div className="flex flex-col items-end gap-2 flex-shrink-0">
++                  <div className="flex flex-col items-end gap-2 shrink-0">
+                     <span
+                       className={cn(
+                         "inline-flex items-center gap-1 px-2.5 py-1 rounded-full border text-xs font-medium",
+@@ -586,6 +678,13 @@ function RegistrationPageSection() {
+           })
+         )}
+       </div>
++
++      <RegistrationSideSheet
++        registrationData={selectedRegistration}
++        open={sheetOpen}
++        onClose={() => setSheetOpen(false)}
++        onRefresh={handleSheetRefresh}
++      />
+     </div>
+   );
+ }
+diff --git a/src/app/(PageSections)/Dashboard/TicketsPageSection/TicketsPagesection.tsx b/src/app/(PageSections)/Dashboard/TicketsPageSection/TicketsPagesection.tsx
+index 012edae..928114f 100644
+--- a/src/app/(PageSections)/Dashboard/TicketsPageSection/TicketsPagesection.tsx
++++ b/src/app/(PageSections)/Dashboard/TicketsPageSection/TicketsPagesection.tsx
+@@ -7,8 +7,7 @@ import { cn } from "@/lib/utils";
+ import { TicketPurchaseI } from "@/types/ticket";
+ import { ColumnDef, Row } from "@tanstack/react-table";
+ import { Calendar, Ticket } from "lucide-react";
+-import { useRouter, useSearchParams, usePathname } from "next/navigation";
+-import React, { useEffect, useState } from "react";
++import React, { useEffect } from "react";
+ import { useEvent } from "@/hooks/useEvent";
+ import { UniversalSelect, SelectOption } from "@/components/ui/UniversalSelect";
+ import { useAuth } from "@/hooks/use-auth";
+@@ -102,27 +101,37 @@ const ticketPurchaseColumns: ColumnDef<TicketPurchaseI>[] = [
+ interface TicketFilters extends Record<string, unknown> {
+   page: number;
+   size: number;
+-  search?: string;
+-  status?: string;
++  eventId?: string;
++  "ticketCode.contains"?: string;
++  "purchaseReference.contains"?: string;
++  "status.equals"?: string;
+ }
+ 
+ function TicketsPagesection() {
+   const { findAllEventTicketPurchases, ticketPurchases, isLoading } = useTicket();
+   const { events, findAllEvents } = useEvent();
+   const { user } = useAuth();
+-  const router = useRouter();
+-  const pathname = usePathname();
+-  const searchParams = useSearchParams();
+-  const [selectedEventId, setSelectedEventId] = useState<string>("");
+ 
+   const isPartner = user?.authorities?.includes("ROLE_PARTNER_CONTACT");
+   const partnerId = user?.partnerProfile?.id;
+ 
+-  const { filters, updateFilters, queryString } = useFilters<TicketFilters>({
+-    defaultFilters: {
+-      page: 0,
+-      size: 10,
++  const fetchTickets = (queryFilters: TicketFilters) => {
++    if (!queryFilters.eventId) return;
++    const params: Record<string, string | number> = {};
++    if (queryFilters.page !== undefined) params.page = queryFilters.page;
++    if (queryFilters.size) params.size = queryFilters.size;
++    if (queryFilters["ticketCode.contains"]) params["ticketCode.contains"] = queryFilters["ticketCode.contains"];
++    if (queryFilters["purchaseReference.contains"]) params["purchaseReference.contains"] = queryFilters["purchaseReference.contains"];
++    if (queryFilters["status.equals"]) params["status.equals"] = queryFilters["status.equals"];
++    findAllEventTicketPurchases(queryFilters.eventId, params);
++  };
++
++  const { filters, updateFilters } = useFilters<TicketFilters>({
++    defaultFilters: { page: 0, size: 10 },
++    onFilterChange: (newFilters) => {
++      fetchTickets(newFilters);
+     },
++    syncWithURL: true,
+   });
+ 
+   // Fetch events with partner filtering
+@@ -134,43 +143,31 @@ function TicketsPagesection() {
+     }
+   }, [isPartner, partnerId]);
+ 
+-  // Initialize from URL params or set default
+-  useEffect(() => {
+-    const eventIdFromUrl = searchParams.get("eventId");
+-
+-    if (eventIdFromUrl) {
+-      setSelectedEventId(eventIdFromUrl);
+-    } else if (events.data && events.data.length > 0 && !selectedEventId) {
+-      const defaultEventId = String(events.data[0].id);
+-      setSelectedEventId(defaultEventId);
+-      // Update URL with default event
+-      updateURLParams(defaultEventId);
+-    }
+-  }, [events.data, searchParams]);
+-
++  // Auto-select NBC/nearest upcoming PUBLISHED event when events load and none selected
+   useEffect(() => {
+-    if (selectedEventId) {
+-      findAllEventTicketPurchases(selectedEventId);
+-    }
+-  }, [selectedEventId]);
+-
+-  const updateURLParams = (eventId: string) => {
+-    const params = new URLSearchParams(searchParams.toString());
+-    if (eventId) {
+-      params.set("eventId", eventId);
+-    } else {
+-      params.delete("eventId");
++    if (filters.eventId || !events.data || events.data.length === 0) return;
++    const eligible = events.data.filter(
++      (e) => e.status === "PUBLISHED" || e.status === "COMPLETED"
++    );
++    if (eligible.length === 0) return;
++    const now = new Date();
++    const currentlyRunning = eligible.find((e) => {
++      if (e.status !== "PUBLISHED") return false;
++      const start = e.eventDate ? new Date(e.eventDate) : null;
++      const end = e.eventEndDate ? new Date(e.eventEndDate) : null;
++      return start && start <= now && (!end || end >= now);
++    });
++    const upcoming = eligible
++      .filter((e) => e.status === "PUBLISHED" && e.eventDate && new Date(e.eventDate) > now)
++      .sort((a, b) => new Date(a.eventDate).getTime() - new Date(b.eventDate).getTime())[0];
++    const activeEvent = currentlyRunning ?? upcoming ?? eligible[0];
++    if (activeEvent) {
++      updateFilters({ eventId: String(activeEvent.id), page: 0 });
+     }
+-    router.push(`${pathname}?${params.toString()}`);
+-  };
++  }, [events.data]);
+ 
+   const handleEventChange = (eventId: string) => {
+-    setSelectedEventId(eventId);
+-    updateURLParams(eventId);
+-  };
+-
+-  const handleAddEvent = () => {
+-    router.push("tickets/create");
++    updateFilters({ eventId: eventId || undefined, page: 0 });
+   };
+ 
+   const handlePageChange = (page: number) => {
+@@ -181,19 +178,27 @@ function TicketsPagesection() {
+     updateFilters({ size, page: 0 });
+   };
+ 
+-  const handleSearchChange = (searchParams: Record<string, string>) => {
+-    updateFilters({ ...searchParams });
++  const handleSearchChange = (params: Record<string, string>) => {
++    updateFilters({ ...params, page: 0 });
+   };
+ 
+-  const handleFilterChange = (filters: Record<string, string>) => {
+-    updateFilters({ ...filters });
++  // Map column name keys (e.g. "status") to API param keys (e.g. "status.equals")
++  const handleFilterChange = (params: Record<string, string>) => {
++    const mapped: Record<string, string> = {};
++    for (const [key, value] of Object.entries(params)) {
++      if (key === "status") mapped["status.equals"] = value;
++      else mapped[key] = value;
++    }
++    updateFilters({ ...mapped, page: 0 });
+   };
+ 
+   const eventOptions: SelectOption[] =
+-    events.data?.map((event) => ({
+-      value: String(event.id),
+-      label: event.title || "Untitled Event",
+-    })) || [];
++    (events.data || [])
++      .filter((e) => e.status === "PUBLISHED" || e.status === "COMPLETED")
++      .map((event) => ({
++        value: String(event.id),
++        label: event.title || "Untitled Event",
++      }));
+ 
+   return (
+     <div className="space-y-4">
+@@ -201,7 +206,7 @@ function TicketsPagesection() {
+         <div className="flex-1 max-w-md">
+           <UniversalSelect
+             options={eventOptions}
+-            value={selectedEventId}
++            value={filters.eventId || ""}
+             label="Select Event"
+             onValueChange={(value) => handleEventChange(value as string)}
+             placeholder="Select an event to view ticket purchases"
+@@ -209,15 +214,27 @@ function TicketsPagesection() {
+         </div>
+       </div>
+ 
+-      {selectedEventId ? (
++      {filters.eventId ? (
+         <DataTable<TicketPurchaseI>
+           data={ticketPurchases.data || []}
+           isLoading={isLoading}
+           columns={ticketPurchaseColumns}
+-          onAddItem={handleAddEvent}
+-          addButtonText="New Ticket"
+-          searchableColumns={["ticketCode", "purchaseReference"]}
+-          filterableColumns={["status"]}
++          searchableColumns={[
++            { column: "ticketCode", label: "Ticket Code", searchParam: "ticketCode.contains" },
++            { column: "purchaseReference", label: "Purchase Reference", searchParam: "purchaseReference.contains" },
++          ]}
++          filterableColumns={[
++            {
++              column: "status",
++              label: "Status",
++              options: [
++                { label: "Confirmed", value: "CONFIRMED" },
++                { label: "Pending", value: "PENDING" },
++                { label: "Cancelled", value: "CANCELLED" },
++                { label: "Checked In", value: "CHECKED_IN" },
++              ],
++            },
++          ]}
+           defaultSorting={[{ id: "purchaseDate", desc: true }]}
+           defaultPageSize={ticketPurchases.pagination?.pageSize || 10}
+           enableSelection={true}
+diff --git a/src/app/(Pages)/dashboard/registrations/page.tsx b/src/app/(Pages)/dashboard/registrations/page.tsx
+index a524ed5..a71f7c7 100644
+--- a/src/app/(Pages)/dashboard/registrations/page.tsx
++++ b/src/app/(Pages)/dashboard/registrations/page.tsx
+@@ -3,6 +3,7 @@ import { RoleGuard } from "@/components/guards/RoleGuard";
+ import { EventRegistrationProvider } from "@/providers/event-registration.provider";
+ import { EventProvider } from "@/providers/event.provider";
+ import { PartnerProvider } from "@/providers/partner.provider";
++import { TicketProvider } from "@/providers/ticket.provider";
+ import React from "react";
+ 
+ function Registrations() {
+@@ -11,7 +12,9 @@ function Registrations() {
+       <EventRegistrationProvider>
+         <EventProvider>
+           <PartnerProvider>
+-            <RegistrationPageSection />
++            <TicketProvider>
++              <RegistrationPageSection />
++            </TicketProvider>
+           </PartnerProvider>
+         </EventProvider>
+       </EventRegistrationProvider>
+diff --git a/src/app/layout.tsx b/src/app/layout.tsx
+index 4239e40..0c62cca 100644
+--- a/src/app/layout.tsx
++++ b/src/app/layout.tsx
+@@ -48,8 +48,8 @@ export default function RootLayout({
+       </head>
+       <body>
+         <LanguageProvider>
+-          <AuthProvider>
+-            <ModalProvider>
++          <ModalProvider>
++            <AuthProvider>
+               <ActivityLogProvider>
+                 <ProductProvider>
+                   <MarketplaceCategoryProvider>
+@@ -87,8 +87,8 @@ export default function RootLayout({
+                   </MarketplaceCategoryProvider>
+                 </ProductProvider>
+               </ActivityLogProvider>
+-            </ModalProvider>
+-          </AuthProvider>
++            </AuthProvider>
++          </ModalProvider>
+         </LanguageProvider>
+       </body>
+     </html>
+diff --git a/src/components/ui/sheet.tsx b/src/components/ui/sheet.tsx
+index 7b4b97d..6807882 100644
+--- a/src/components/ui/sheet.tsx
++++ b/src/components/ui/sheet.tsx
+@@ -36,7 +36,7 @@ function SheetOverlay({
+     <SheetPrimitive.Overlay
+       data-slot="sheet-overlay"
+       className={cn(
+-        "data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-0 z-[999999] bg-black/60 backdrop-blur-md pointer-events-none",
++        "data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 fixed inset-0 z-[99999998] bg-black/60 backdrop-blur-md pointer-events-none",
+         className
+       )}
+       {...props}
+@@ -58,8 +58,8 @@ function SheetContent({
+       <SheetPrimitive.Content
+         data-slot="sheet-content"
+         className={cn(
+-          "bg-background data-[state=open]:animate-in data-[state=closed]:animate-out fixed z-[999999] flex flex-col gap-4 shadow-lg transition ease-in-out data-[state=closed]:duration-300 data-[state=open]:duration-500 pointer-events-auto",
+-          "bg-background data-[state=open]:animate-in data-[state=closed]:animate-out fixed z-[999999] flex flex-col gap-4 shadow-lg transition ease-in-out data-[state=closed]:duration-300 data-[state=open]:duration-500 pointer-events-auto",
++          "bg-background data-[state=open]:animate-in data-[state=closed]:animate-out fixed z-[99999999] flex flex-col gap-4 shadow-lg transition ease-in-out data-[state=closed]:duration-300 data-[state=open]:duration-500 pointer-events-auto",
++          "bg-background data-[state=open]:animate-in data-[state=closed]:animate-out fixed z-[99999999] flex flex-col gap-4 shadow-lg transition ease-in-out data-[state=closed]:duration-300 data-[state=open]:duration-500 pointer-events-auto",
+           side === "right" &&
+             "data-[state=closed]:slide-out-to-right data-[state=open]:slide-in-from-right inset-y-0 right-0 h-full w-3/4 border-l sm:max-w-sm",
+           side === "left" &&
+diff --git a/src/contexts/event-analytics.context.tsx b/src/contexts/event-analytics.context.tsx
+index 60ad0ef..8c5127f 100644
+--- a/src/contexts/event-analytics.context.tsx
++++ b/src/contexts/event-analytics.context.tsx
+@@ -86,7 +86,7 @@ interface EventAnalyticsContextI {
+   getRegistrationCategoryDistribution: (eventId: string) => Promise<void>;
+ 
+   // Methods - Payment Analytics
+-  getPaymentTrends: (eventId: string) => Promise<void>;
++  getPaymentTrends: (eventId: string, filters?: AnalyticsFiltersI) => Promise<void>;
+   getPaymentStatusDistribution: (eventId: string) => Promise<void>;
+   getPaymentMethodDistribution: (eventId: string) => Promise<void>;
+ 
+diff --git a/src/contexts/event-registration.context.tsx b/src/contexts/event-registration.context.tsx
+index 474ca0e..3e61a61 100644
+--- a/src/contexts/event-registration.context.tsx
++++ b/src/contexts/event-registration.context.tsx
+@@ -86,7 +86,7 @@ interface EventRegistrationContextI {
+   getAdminEventRegistrations: (
+     eventId: string,
+     queryParams?: Record<string, string | number>
+-  ) => Promise<ApiResponseI<RegistrationListItemI[]>>;
++  ) => Promise<ApiResponseI<RegistrationResponseI[]>>;
+ }
+ 
+ export const EventRegistrationContext = createContext<
+diff --git a/src/contexts/ticket.context.tsx b/src/contexts/ticket.context.tsx
+index ab070b7..913ac72 100644
+--- a/src/contexts/ticket.context.tsx
++++ b/src/contexts/ticket.context.tsx
+@@ -24,7 +24,7 @@ interface TicketContextI {
+   downloadTicket: (ticketCode: string) => Promise<void>;
+   findAllTicketPurchases: (queryString?: string) => Promise<void>;
+   findSingleTicketPurchase: (id: string) => Promise<void>;
+-  findAllEventTicketPurchases: (eventId: string) => Promise<void>;
++  findAllEventTicketPurchases: (eventId: string, queryParams?: Record<string, string | number>) => Promise<void>;
+   findAllBuyerTicketPurchases: (buyerId: string) => Promise<void>;
+   createTicketPurchase: (data: CreateTicketPurchaseI) => Promise<void>;
+   updateTicketPurchase: (data: Partial<CreateTicketPurchaseI>) => Promise<void>;
+diff --git a/src/providers/event-analytics.provider.tsx b/src/providers/event-analytics.provider.tsx
+index ec1ff54..70b9fc2 100644
+--- a/src/providers/event-analytics.provider.tsx
++++ b/src/providers/event-analytics.provider.tsx
+@@ -270,10 +270,10 @@ export const EventAnalyticsProvider: React.FC<{ children: React.ReactNode }> = (
+   };
+ 
+   // Payment Analytics Methods
+-  const getPaymentTrends = async (eventId: string) => {
++  const getPaymentTrends = async (eventId: string, filters?: AnalyticsFiltersI) => {
+     try {
+       setIsLoading(true);
+-      await eventAnalyticsService.getPaymentTrends(eventId, setPaymentTrends);
++      await eventAnalyticsService.getPaymentTrends(eventId, setPaymentTrends, filters);
+     } catch (error) {
+       throw error;
+     } finally {
+diff --git a/src/providers/event-registration.provider.tsx b/src/providers/event-registration.provider.tsx
+index e4cd301..5bc9f24 100644
+--- a/src/providers/event-registration.provider.tsx
++++ b/src/providers/event-registration.provider.tsx
+@@ -296,7 +296,7 @@ export const EventRegistrationProvider: React.FC<{
+   const getAdminEventRegistrations = async (
+     eventId: string,
+     queryParams?: Record<string, string | number>
+-  ): Promise<ApiResponseI<RegistrationListItemI[]>> => {
++  ): Promise<ApiResponseI<RegistrationResponseI[]>> => {
+     try {
+       setIsLoading(true);
+       const response =
+diff --git a/src/providers/ticket.provider.tsx b/src/providers/ticket.provider.tsx
+index 204e8c2..81ef690 100644
+--- a/src/providers/ticket.provider.tsx
++++ b/src/providers/ticket.provider.tsx
+@@ -131,10 +131,10 @@ export const TicketProvider: React.FC<{ children: React.ReactNode }> = ({
+     }
+   };
+ 
+-  const findAllEventTicketPurchases = async (eventId: string): Promise<void> => {
++  const findAllEventTicketPurchases = async (eventId: string, queryParams?: Record<string, string | number>): Promise<void> => {
+     try {
+       setIsLoading(true);
+-      await ticketService.findAllEventTicketPurchase(eventId, setTicketPurchases);
++      await ticketService.findAllEventTicketPurchase(eventId, setTicketPurchases, queryParams);
+     } catch (error) {
+       throw error;
+     } finally {
+diff --git a/src/services/event-analytics.service.ts b/src/services/event-analytics.service.ts
+index 9fb19f7..1f01bdf 100644
+--- a/src/services/event-analytics.service.ts
++++ b/src/services/event-analytics.service.ts
+@@ -183,11 +183,13 @@ class EventAnalyticsService extends BaseApiService {
+    */
+   async getPaymentTrends(
+     eventId: string,
+-    setData: (response: ApiResponseI<PaymentTrendsI[]>) => void
++    setData: (response: ApiResponseI<PaymentTrendsI[]>) => void,
++    filters?: AnalyticsFiltersI
+   ) {
+     try {
++      const queryParams = filters ? this.buildQueryParams(filters) : "";
+       const response: ApiResponseI<PaymentTrendsI[]> = await this.get(
+-        `${API_PATHS.EVENT}events/${eventId}/analytics/payments/trends`
++        `${API_PATHS.EVENT}events/${eventId}/analytics/payments/trends${queryParams}`
+       );
+       setData(response);
+     } catch (error) {
+diff --git a/src/services/event-registration.service.ts b/src/services/event-registration.service.ts
+index 6c67559..456a95a 100644
+--- a/src/services/event-registration.service.ts
++++ b/src/services/event-registration.service.ts
+@@ -341,7 +341,7 @@ class EventRegistrationService extends BaseApiService {
+   async getAdminEventRegistrations(
+     eventId: string,
+     queryParams?: Record<string, string | number>
+-  ): Promise<ApiResponseI<RegistrationListItemI[]>> {
++  ): Promise<ApiResponseI<RegistrationResponseI[]>> {
+     try {
+       const params = new URLSearchParams();
+ 
+@@ -358,7 +358,7 @@ class EventRegistrationService extends BaseApiService {
+         ? `${API_PATHS.EVENT}v2/event-registrations/events/${eventId}/all?${queryString}`
+         : `${API_PATHS.EVENT}v2/event-registrations/events/${eventId}/all`;
+ 
+-      const response: ApiResponseI<RegistrationListItemI[]> = await this.get(url);
++      const response: ApiResponseI<RegistrationResponseI[]> = await this.get(url);
+       return response;
+     } catch (error) {
+       throw error;
+diff --git a/src/services/ticket.service.ts b/src/services/ticket.service.ts
+index b2d482a..5e97c23 100644
+--- a/src/services/ticket.service.ts
++++ b/src/services/ticket.service.ts
+@@ -129,11 +129,20 @@ class TicketService extends BaseApiService {
+ 
+   async findAllEventTicketPurchase(
+     id: string,
+-    setEventTicketPurchase: (response: ApiResponseI<TicketPurchaseI[]>) => void
++    setEventTicketPurchase: (response: ApiResponseI<TicketPurchaseI[]>) => void,
++    queryParams?: Record<string, string | number>
+   ) {
+     try {
++      const params = queryParams
++        ? "?" + new URLSearchParams(
++            Object.entries(queryParams).reduce((acc, [k, v]) => {
++              acc[k] = String(v);
++              return acc;
++            }, {} as Record<string, string>)
++          ).toString()
++        : "";
+       const response: ApiResponseI<TicketPurchaseI[]> = await this.get(
+-        `${API_PATHS.EVENT}ticket-purchases/by-event/${id}`
++        `${API_PATHS.EVENT}ticket-purchases/by-event/${id}${params}`
+       );
+       setEventTicketPurchase(response);
+       return response;
+diff --git a/src/types/event-analytics.ts b/src/types/event-analytics.ts
+index ef4b2de..4f57869 100644
+--- a/src/types/event-analytics.ts
++++ b/src/types/event-analytics.ts
+@@ -60,12 +60,14 @@ export interface EventAnalyticsSummaryI {
+   averageTicketPrice?: number;
+ 
+   // Payment Metrics
+-  paymentsCount?: number;
++  totalPaymentsCount?: number;
+   pendingPaymentsCount?: number;
+   completedPaymentsCount?: number;
+ 
+   // Financial Metrics
+   totalPaymentsAmount?: number;
++  pendingPaymentsAmount?: number;
++  completedPaymentsAmount?: number;
+   totalDonationsCount?: number;
+   totalDonationsAmount?: number;
+   averageDonationAmount?: number;
+diff --git a/src/types/event-registration.ts b/src/types/event-registration.ts
+index b047024..ecfa4cb 100644
+--- a/src/types/event-registration.ts
++++ b/src/types/event-registration.ts
+@@ -28,14 +28,16 @@ export interface AttendeeI {
+   gender: string;
+   country?: string;
+   region?: string;
+-  pace?: string;
++  city?: string;
++  zipCode?: string;
++  pace?: string | number;
+   emergencyContactPhone: string;
+-  attendeeData: string;
+-  specialNeeds: string;
+-  isPrimaryRegistrant: true;
+-  attendeeDataAsJson: string;
++  attendeeData?: string;
++  specialNeeds?: string;
++  isPrimaryRegistrant: boolean;
++  attendeeDataAsJson?: string;
+   attendeeRole: string;
+-  attendeeStatus: string;
++  attendeeStatus?: string;
+   ticketsValidated: boolean;
+   addedAt: string;
+   eventRegistrationId: number | string;
+@@ -82,27 +84,41 @@ export interface MerchandiseDetailsI {
+   productType: string | null;
+ }
+ 
++export interface TicketDetailItemI {
++  ticket?: TicketDetailsI;
++  ticketPurchase?: {
++    id: string;
++    ticketCode: string;
++    status: string;
++    originalPrice: number;
++    discountAmount: number;
++    pricePaid: number;
++    currency: string;
++    purchaseDate: string;
++    quantity: number;
++    qrCode?: string | null;
++    purchaseReference?: string | null;
++  };
++  ticketName?: string;
++  ticketCategory?: string;
++  ticketCode: string;
++  quantity: number;
++  originalPrice: number;
++  pricePaid: number;
++  totalPrice?: number;
++  discountAmount: number;
++}
++
++export interface AttendeeDetailI {
++  attendee: AttendeeI;
++  ticketDetails: TicketDetailItemI[];
++  merchandiseDetails?: MerchandiseDetailsI[];
++  attendeeTotal: number;
++}
++
+ export interface RegistrationResponseI {
+   registration: RegistrationI;
+-  attendeeDetails: [
+-    {
+-      attendee: AttendeeI;
+-      ticketDetails: [
+-        {
+-          ticket: TicketDetailsI;
+-          ticketCode:string;
+-          quantity: number;
+-          originalPrice:number
+-          pricePaid:number
+-          unitPrice: number;
+-          totalPrice: number;
+-          discountAmount:number
+-        }
+-      ];
+-      merchandiseDetails?: MerchandiseDetailsI[];
+-      attendeeTotal: number;
+-    }
+-  ];
++  attendeeDetails: AttendeeDetailI[];
+   registrationTotal: number;
+   totalTickets: number;
+   paymentStatus: string;
