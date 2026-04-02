@@ -1,70 +1,130 @@
 import { Button } from '@/components/ui/button'
-import { User2, Users } from 'lucide-react'
+import { Users, CalendarDays, ShoppingBag, CreditCard, LayoutGrid, ArrowRight, TrendingUp } from 'lucide-react'
 import React from 'react'
 
 const CARDS = [
-    {
-        icon: Users,
-        label: "User Management",
-        url: "/user-management"
-
-    },
-    {
-        icon: Users,
-        label: "Event Management",
-        url: "/user-management"
-
-    },
-    {
-        icon: Users,
-        label: "Marketplace Management",
-        url: "/user-management"
-
-    },
-    {
-        icon: Users,
-        label: "Payment Configurations",
-        url: "/user-management"
-
-    },
-    {
-        icon: Users,
-        label: "Mini Apps MAnagement",
-        url: "/user-management"
-
-    }
+  {
+    icon: Users,
+    label: "User Management",
+    description: "Manage accounts, roles, permissions, and access controls across your platform.",
+    url: "/user-management",
+    stat: "2,481",
+    statLabel: "active users",
+    trend: "+12%",
+    accentClass: "bg-violet-50 text-violet-600 border-violet-100",
+    iconBg: "bg-violet-100 text-violet-600",
+    trendColor: "text-emerald-600",
+  },
+  {
+    icon: CalendarDays,
+    label: "Event Management",
+    description: "Schedule, publish, and track events with real-time attendance and analytics.",
+    url: "/event-management",
+    stat: "38",
+    statLabel: "upcoming events",
+    trend: "+5 this week",
+    accentClass: "bg-sky-50 text-sky-600 border-sky-100",
+    iconBg: "bg-sky-100 text-sky-600",
+    trendColor: "text-sky-600",
+  },
+  {
+    icon: ShoppingBag,
+    label: "Marketplace",
+    description: "Oversee listings, vendors, inventory, and marketplace activity in one place.",
+    url: "/marketplace-management",
+    stat: "1,204",
+    statLabel: "active listings",
+    trend: "+8%",
+    accentClass: "bg-amber-50 text-amber-600 border-amber-100",
+    iconBg: "bg-amber-100 text-amber-600",
+    trendColor: "text-emerald-600",
+  },
+  {
+    icon: CreditCard,
+    label: "Payment Config",
+    description: "Configure gateways, payout rules, tax settings, and transaction limits.",
+    url: "/payment-configurations",
+    stat: "$84.2k",
+    statLabel: "processed today",
+    trend: "+3.1%",
+    accentClass: "bg-emerald-50 text-emerald-600 border-emerald-100",
+    iconBg: "bg-emerald-100 text-emerald-600",
+    trendColor: "text-emerald-600",
+  },
+  {
+    icon: LayoutGrid,
+    label: "Mini Apps",
+    description: "Deploy, version, and monitor embedded mini-apps and integrations.",
+    url: "/mini-apps-management",
+    stat: "17",
+    statLabel: "apps deployed",
+    trend: "2 pending",
+    accentClass: "bg-rose-50 text-rose-600 border-rose-100",
+    iconBg: "bg-rose-100 text-rose-600",
+    trendColor: "text-amber-500",
+  },
 ]
 
 function DashboardPageSection() {
-    return (
-        <div className='h-screen flex justify-center items-center'>
-            <div className='grid grid-cols-5 gap-5 '>
+  return (
+    <div className="min-h-screen bg-gray-50 flex flex-col justify-center px-8 py-12">
+      {/* Header */}
+      <div className="mb-10 max-w-7xl mx-auto w-full">
+        <p className="text-xs font-semibold uppercase tracking-widest text-gray-400 mb-1">Admin Console</p>
+        <h1 className="text-3xl font-bold text-gray-900 tracking-tight">Dashboard</h1>
+        <p className="text-gray-500 mt-1 text-sm">Manage your platform from a single control panel.</p>
+      </div>
 
-                {
-                    CARDS.map((card, index) => (
-                        <div className='border border-primary-950 rounded-md flex flex-col items-center p-5 space-y-2 bg-white'>
-                            <div>
-                                <card.icon />
+      {/* Cards Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-5 max-w-7xl mx-auto w-full">
+        {CARDS.map((card) => (
+          <div
+            key={card.label}
+            className="group bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col overflow-hidden"
+          >
+            {/* Card Top Accent Bar */}
+            <div className={`h-1 w-full ${card.iconBg.split(' ')[0].replace('bg-', 'bg-').replace('100', '400')}`} />
 
-                            </div>
-                            <div>
-                                {card.label}
-                            </div>
-                            <div>
-                                <Button>
-                                    Proceed
-                                </Button>
-                            </div>
+            <div className="p-5 flex flex-col flex-1">
+              {/* Icon */}
+              <div className={`inline-flex items-center justify-center w-10 h-10 rounded-xl mb-4 ${card.iconBg}`}>
+                <card.icon size={18} strokeWidth={1.8} />
+              </div>
 
-                        </div>
-                    ))
-                }
+              {/* Label + Description */}
+              <h2 className="text-sm font-semibold text-gray-800 mb-1">{card.label}</h2>
+              <p className="text-xs text-gray-400 leading-relaxed mb-4 flex-1">{card.description}</p>
 
+              {/* Stat Block */}
+              <div className={`rounded-xl px-3 py-2.5 mb-4 border ${card.accentClass}`}>
+                <div className="flex items-end justify-between">
+                  <span className="text-xl font-bold leading-none">{card.stat}</span>
+                  <span className={`text-xs font-medium flex items-center gap-0.5 ${card.trendColor}`}>
+                    <TrendingUp size={11} />
+                    {card.trend}
+                  </span>
+                </div>
+                <p className="text-xs mt-0.5 opacity-70">{card.statLabel}</p>
+              </div>
 
-
+              {/* CTA */}
+              <Button
+                variant="ghost"
+                size="sm"
+                className="w-full justify-between text-xs text-gray-600 hover:text-gray-900 hover:bg-gray-50 border border-gray-100 group-hover:border-gray-200 transition-all rounded-xl"
+                asChild
+              >
+                <a href={card.url}>
+                  Manage
+                  <ArrowRight size={13} className="opacity-50 group-hover:translate-x-0.5 transition-transform" />
+                </a>
+              </Button>
             </div>
-        </div>
-    )
+          </div>
+        ))}
+      </div>
+    </div>
+  )
 }
 
 export default DashboardPageSection
