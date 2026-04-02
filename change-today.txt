@@ -1,7 +1,630 @@
-refactor: reorganize dashboard page structure and update routing paths
-
-Remove all page sections from Dashboard/ directory (moved/renamed)
-Rename marketplace dashboard routes from /dashboard/* to /marketplace-management/* in DashboardRoutes.ts
-Update product-mappers.ts import to reflect new Marketplace/ path
-Overhaul UserMenuDropdown with new design: profile avatar, site/dashboard toggle, NBC Events and NBC Sokoni quick links, logout confirmation modal
-Restructure (Pages)/events/ and (Pages)/marketplace/ route directories (files deleted, likely relocated)
+diff --git a/src/app/(Pages)/events-management/DashboardClientLayout.tsx b/src/app/(Pages)/events-management/DashboardClientLayout.tsx
+index 12fe732..c52905d 100644
+--- a/src/app/(Pages)/events-management/DashboardClientLayout.tsx
++++ b/src/app/(Pages)/events-management/DashboardClientLayout.tsx
+@@ -9,22 +9,11 @@ import { NavigationItemData } from "@/data/DashboardRoutes";
+ import { useAuth } from "@/hooks/use-auth";
+ import { useModal } from "@/hooks/useModal";
+ import { ConfirmationModalProvider } from "@/utils/showConfirmation";
+-import { Bell, Home, Menu, Search, UserCircle } from "lucide-react";
++import { Bell, Menu, Search } from "lucide-react";
+ import { useEffect, useState, useRef } from "react";
+ import { usePathname } from "next/navigation";
+ 
+-const dashboardMenuLinks = [
+-  {
+-    link: "/",
+-    label: "Back to Site",
+-    icon: <Home className="w-4 h-4" />,
+-  },
+-  {
+-    link: "/dashboard/profile",
+-    label: "Profile",
+-    icon: <UserCircle className="w-4 h-4" />,
+-  },
+-];
++
+ 
+ export function ConfirmationSetup() {
+   const { openModal, closeModal } = useModal();
+diff --git a/src/app/(Pages)/events-management/events/(with-layout)/manage/[id]/page.tsx b/src/app/(Pages)/events-management/events/(with-layout)/manage/[id]/page.tsx
+index 87cef0d..70c589c 100644
+--- a/src/app/(Pages)/events-management/events/(with-layout)/manage/[id]/page.tsx
++++ b/src/app/(Pages)/events-management/events/(with-layout)/manage/[id]/page.tsx
+@@ -1,4 +1,4 @@
+-import AdminEventDetailPageSection from "@/app/(PageSections)/Dashboard/EventPageSection/AdminEventDetailPageSection";
++import EventDetailPageSection from "@/app/(PageSections)/Events/EventPageSection/EventDetailPageSection";
+ import { RoleGuard } from "@/components/guards/RoleGuard";
+ import { EventProvider } from "@/providers/event.provider";
+ import { TicketProvider } from "@/providers/ticket.provider";
+@@ -23,7 +23,7 @@ function AdminEventDetail() {
+                   <EventGalleryProvider>
+                     <EventStaffProvider>
+                       <SponsorProvider>
+-                        <AdminEventDetailPageSection />
++                        <EventDetailPageSection />
+                       </SponsorProvider>
+                     </EventStaffProvider>
+                   </EventGalleryProvider>
+diff --git a/src/app/(Pages)/events-management/events/(with-layout)/page.tsx b/src/app/(Pages)/events-management/events/(with-layout)/page.tsx
+index 2628148..f797318 100644
+--- a/src/app/(Pages)/events-management/events/(with-layout)/page.tsx
++++ b/src/app/(Pages)/events-management/events/(with-layout)/page.tsx
+@@ -1,4 +1,4 @@
+-import EventPageSection from "@/app/(PageSections)/Dashboard/EventPageSection/EventPageSection";
++import EventPageSection from "@/app/(PageSections)/Events/EventPageSection/EventPageSection";
+ import { RoleGuard } from "@/components/guards/RoleGuard";
+ import { EventProvider } from "@/providers/event.provider";
+ import { PartnerProvider } from "@/providers/partner.provider";
+@@ -6,7 +6,7 @@ import React from "react";
+ 
+ function Events() {
+   return (
+-    <RoleGuard requiredRoles={["ROLE_USER", "ROLE_ADMIN", "ROLE_PARTNER_CONTACT"]}>
++    <RoleGuard requiredRoles={["ROLE_ADMIN"]}>
+       <PartnerProvider>
+         <EventProvider>
+           <EventPageSection key="all-events" />
+diff --git a/src/app/(Pages)/events-management/galleries/page.tsx b/src/app/(Pages)/events-management/galleries/page.tsx
+index 66f21c9..69f3ed2 100644
+--- a/src/app/(Pages)/events-management/galleries/page.tsx
++++ b/src/app/(Pages)/events-management/galleries/page.tsx
+@@ -1,4 +1,4 @@
+-import GalleryPageSection from "@/app/(PageSections)/Dashboard/GalleryPageSection/GalleryPageSection";
++import GalleryPageSection from "@/app/(PageSections)/Events/GalleryPageSection/GalleryPageSection";
+ import { RoleGuard } from "@/components/guards/RoleGuard";
+ import { EventGalleryProvider } from "@/providers/event-gallery.provider";
+ import { EventProvider } from "@/providers/event.provider";
+@@ -6,7 +6,7 @@ import React from "react";
+ 
+ function Galleries() {
+   return (
+-    <RoleGuard requiredRoles={["ROLE_USER", "ROLE_ADMIN", "ROLE_PARTNER_CONTACT"]}>
++    <RoleGuard requiredRoles={["ROLE_ADMIN"]}>
+       <EventProvider>
+         <EventGalleryProvider>
+           <GalleryPageSection />
+diff --git a/src/app/(Pages)/events-management/layout.tsx b/src/app/(Pages)/events-management/layout.tsx
+index 9d064ea..1ca05d3 100644
+--- a/src/app/(Pages)/events-management/layout.tsx
++++ b/src/app/(Pages)/events-management/layout.tsx
+@@ -1,4 +1,4 @@
+-import { dashboardRoutes } from "@/data/DashboardRoutes";
++import { eventDashboardRoutes } from "@/data/DashboardRoutes";
+ import type { Metadata } from "next";
+ import DashboardClientLayout from "./DashboardClientLayout";
+ import {AuthGuard} from "@/components/guards/AuthGuard";
+@@ -15,7 +15,7 @@ export default function DashboardLayout({
+ }) {
+   return (
+     <AuthGuard requireAuth={true}>
+-    <DashboardClientLayout navigationData={dashboardRoutes}>
++    <DashboardClientLayout navigationData={eventDashboardRoutes}>
+       {children}
+     </DashboardClientLayout>
+     </AuthGuard>
+diff --git a/src/app/(Pages)/events-management/page.tsx b/src/app/(Pages)/events-management/page.tsx
+index 52a5be0..7138035 100644
+--- a/src/app/(Pages)/events-management/page.tsx
++++ b/src/app/(Pages)/events-management/page.tsx
+@@ -1,4 +1,4 @@
+-import DashboardPageSection from "@/app/(PageSections)/Marketplace/DashboardPageSection/DashboardPageSection";
++import DashboardPageSection from "@/app/(PageSections)/Events/DashboardPageSection/DashboardPageSection";
+ import { EventProvider } from "@/providers/event.provider";
+ // import { PartnerProvider } from "@/providers/partner.provider";
+ // import { RoleGuard } from "@/components/guards/RoleGuard";
+diff --git a/src/app/(Pages)/marketplace-management/DashboardClientLayout.tsx b/src/app/(Pages)/marketplace-management/DashboardClientLayout.tsx
+index 9cd60e1..c657508 100644
+--- a/src/app/(Pages)/marketplace-management/DashboardClientLayout.tsx
++++ b/src/app/(Pages)/marketplace-management/DashboardClientLayout.tsx
+@@ -9,17 +9,10 @@ import { NavigationItemData } from "@/data/DashboardRoutes";
+ import { useAuth } from "@/hooks/use-auth";
+ import { useModal } from "@/hooks/useModal";
+ import { ConfirmationModalProvider } from "@/utils/showConfirmation";
+-import { Bell, Home, Menu, Search, UserCircle } from "lucide-react";
++import { Bell, Menu, Search, } from "lucide-react";
+ import { useEffect, useState, useRef } from "react";
+ import { usePathname } from "next/navigation";
+ 
+-const dashboardMenuLinks = [
+-  {
+-    link: "/dashboard/profile",
+-    label: "Profile",
+-    icon: <UserCircle className="w-4 h-4" />,
+-  },
+-];
+ 
+ export function ConfirmationSetup() {
+   const { openModal, closeModal } = useModal();
+@@ -110,7 +103,7 @@ export default function DashboardClientLayout({
+                 </div>
+ 
+                 {/* Replace the user info section with UserMenuDropdown */}
+-                <UserMenuDropdown links={dashboardMenuLinks} />
++                <UserMenuDropdown  />
+               </div>
+             </div>
+           </div>
+diff --git a/src/app/(Pages)/marketplace-management/layout.tsx b/src/app/(Pages)/marketplace-management/layout.tsx
+index 9d064ea..202da1f 100644
+--- a/src/app/(Pages)/marketplace-management/layout.tsx
++++ b/src/app/(Pages)/marketplace-management/layout.tsx
+@@ -1,4 +1,4 @@
+-import { dashboardRoutes } from "@/data/DashboardRoutes";
++import { marketplaceDashboardRoutes } from "@/data/DashboardRoutes";
+ import type { Metadata } from "next";
+ import DashboardClientLayout from "./DashboardClientLayout";
+ import {AuthGuard} from "@/components/guards/AuthGuard";
+@@ -15,7 +15,7 @@ export default function DashboardLayout({
+ }) {
+   return (
+     <AuthGuard requireAuth={true}>
+-    <DashboardClientLayout navigationData={dashboardRoutes}>
++    <DashboardClientLayout navigationData={marketplaceDashboardRoutes}>
+       {children}
+     </DashboardClientLayout>
+     </AuthGuard>
+diff --git a/src/app/layout.tsx b/src/app/layout.tsx
+index e622981..12d20d3 100644
+--- a/src/app/layout.tsx
++++ b/src/app/layout.tsx
+@@ -5,6 +5,7 @@ import { AuthProvider } from "@/providers/auth.provider";
+ import ModalProvider from "@/contexts/ModalContext";
+ import { ConfirmationModalSetup } from "@/components/shared/ConfirmationModalSetup";
+ import { LanguageProvider } from "@/providers/language.provider";
++import { PartnerProvider } from "@/providers/partner.provider";
+ 
+ 
+ export const metadata: Metadata = {
+@@ -14,7 +15,7 @@ export const metadata: Metadata = {
+   },
+   description: "Marketplace management platform",
+ };
+-  
++
+ export default function RootLayout({
+   children,
+ }: {
+@@ -37,9 +38,13 @@ export default function RootLayout({
+         <LanguageProvider>
+           <ModalProvider>
+             <AuthProvider>
+-              <ConfirmationModalSetup />
+-              <Toaster />
+-              {children}
++              <PartnerProvider>
++                <ConfirmationModalSetup />
++                <Toaster />
++                {children}
++
++              </PartnerProvider>
++
+             </AuthProvider>
+           </ModalProvider>
+         </LanguageProvider>
+diff --git a/src/components/shared/Datatable/DataTable.tsx b/src/components/shared/Datatable/DataTable.tsx
+index 4c042db..d671bff 100644
+--- a/src/components/shared/Datatable/DataTable.tsx
++++ b/src/components/shared/Datatable/DataTable.tsx
+@@ -17,14 +17,13 @@ import {
+   useReactTable,
+   VisibilityState,
+ } from "@tanstack/react-table";
+-import { useMemo, useState, useEffect } from "react";
+-import DataTableRowActions from "./DataTableRowActions";
++import { useMemo, useRef, useState, useEffect } from "react";
++import DataTableRowActions, { CustomAction } from "./DataTableRowActions";
+ import DataTableFilters from "./DataTableFilters";
+ import { ChevronDownIcon, ChevronUpIcon } from "lucide-react";
+ import DataTablePagination from "./DataTablePagination";
+ import TableLoadingSkeleton from "@/components/loaders/TableLoadingSkeleton";
+ import { useTableURLSync } from "@/hooks/useTableURLSync";
+-import { useSearchParams } from "next/navigation";
+ 
+ 
+ export default function DataTable<T>({
+@@ -53,10 +52,16 @@ export default function DataTable<T>({
+   onPageSizeChange,
+   onSearchChange,
+   onFilterChange,
++  onSortingChange,
++  initialColumnFilters,
++  externalColumnFilters,
+   customFilterComponent,
+-}: DataTablePropsI<T> & { isLoading?: boolean }) {
+-  const searchParams = useSearchParams();
+-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
++  getCustomActions,
++}: DataTablePropsI<T> & { isLoading?: boolean; getCustomActions?: (item: T) => CustomAction[] }) {
++  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>(initialColumnFilters ?? []);
++  // Refs to manage one-time sync from external filters and avoid triggering onFilterChange
++  const hasSyncedExternal = useRef(false);
++  const isExternalSync = useRef(false);
+   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
+   const [pagination, setPagination] = useState<PaginationState>({
+     // Both backend and TanStack Table use 0-based indexing
+@@ -121,9 +126,27 @@ export default function DataTable<T>({
+     }
+   }, [currentPage, isServerPagination, isInitialized]);
+ 
++  // One-time sync of column filters from URL-derived external values (for server-side pagination)
++  // Uses a flag so it only fires once and skips calling onFilterChange to avoid double-fetch.
++  // Guard: only sync when columnFilters is empty (i.e. user hasn't interacted yet), so a user
++  // clicking a filter after mount doesn't get their selection overwritten by the URL sync effect.
++  useEffect(() => {
++    if (!isServerPagination || hasSyncedExternal.current) return;
++    if (externalColumnFilters && externalColumnFilters.length > 0 && columnFilters.length === 0) {
++      hasSyncedExternal.current = true;
++      isExternalSync.current = true;
++      setColumnFilters(externalColumnFilters);
++    }
++  }, [externalColumnFilters, isServerPagination, columnFilters.length]);
++
+   // Handle column filter changes for server-side filtering and URL sync
+   useEffect(() => {
+     if (!isInitialized) return;
++    // Skip if this was triggered by an external sync (URL hydration) to avoid double-fetch
++    if (isExternalSync.current) {
++      isExternalSync.current = false;
++      return;
++    }
+ 
+     // Update URL with current search value (only for client-side)
+     if (searchColumn && shouldSyncURL) {
+@@ -155,18 +178,20 @@ export default function DataTable<T>({
+       onSearchChange(searchParams);
+     }
+ 
+-    // Update URL with current filters (only for client-side)
+-    const filters: Record<string, string> = {};
+     const filterableColumnKeys = filterableColumns.map(fc =>
+       typeof fc === 'string' ? fc : fc.column
+     );
+ 
+-    columnFilters.forEach(filter => {
+-      if (filterableColumnKeys.includes(filter.id)) {
+-        filters[filter.id] = String(filter.value);
+-      }
++    // Always include every filterable column key so that cleared filters are
++    // passed as '' (empty string) — this lets the parent explicitly clear them
++    // from server-side params rather than keeping stale values via merge.
++    const filters: Record<string, string> = {};
++    filterableColumnKeys.forEach(key => {
++      const active = columnFilters.find(f => f.id === key);
++      filters[key] = active ? String(active.value) : '';
+     });
+ 
++    // Update URL with current filters (only for client-side)
+     if (shouldSyncURL) {
+       updateURL({ filters });
+     }
+@@ -357,6 +382,7 @@ export default function DataTable<T>({
+             onView={onViewItem ? (item) => onViewItem(item) : undefined}
+             onEdit={onEditItem ? (item) => onEditItem(item) : undefined}
+             onDelete={onDeleteItem ? (item) => onDeleteItem(item) : undefined}
++            customActions={getCustomActions ? getCustomActions(row.original) : []}
+           />
+         ),
+         size: 60,
+@@ -381,7 +407,14 @@ export default function DataTable<T>({
+     columns,
+     getCoreRowModel: getCoreRowModel(),
+     getSortedRowModel: getSortedRowModel(),
+-    onSortingChange: setSorting,
++    onSortingChange: (updater) => {
++      const newSorting = typeof updater === "function" ? updater(sorting) : updater;
++      setSorting(newSorting);
++      if (isServerPagination && onSortingChange && newSorting.length > 0) {
++        const sortStr = newSorting.map((s) => `${s.id},${s.desc ? "desc" : "asc"}`).join(",");
++        onSortingChange(sortStr);
++      }
++    },
+     enableSortingRemoval: false,
+     getPaginationRowModel: getPaginationRowModel(),
+     onPaginationChange: (updater) => {
+@@ -417,6 +450,8 @@ export default function DataTable<T>({
+     // For server-side pagination
+     ...(isServerPagination && {
+       manualPagination: true,
++      manualSorting: true,
++      manualFiltering: true,
+       pageCount: totalPages ?? -1,
+       rowCount: totalCount,
+     }),
+diff --git a/src/components/shared/Datatable/DataTableRowActions.tsx b/src/components/shared/Datatable/DataTableRowActions.tsx
+index f79c491..95bfe8d 100644
+--- a/src/components/shared/Datatable/DataTableRowActions.tsx
++++ b/src/components/shared/Datatable/DataTableRowActions.tsx
+@@ -4,19 +4,52 @@ import { Row } from "@tanstack/react-table";
+ import { Edit, Trash2, Eye } from "lucide-react";
+ import OptionsDropdown from "../OptionsDropdown";
+ 
++export interface CustomAction {
++  id: string;
++  label: string;
++  icon: React.ReactNode;
++  onClick: () => void;
++  destructive?: boolean;
++  variant?: "default" | "success" | "warning" | "info";
++}
++
+ export default function DataTableRowActions<T>({
+   row,
+   onView,
+   onEdit,
+   onDelete,
++  customActions = [],
+ }: {
+   row: Row<T>;
+   onView?: (item: T) => void;
+   onEdit?: (item: T) => void;
+   onDelete?: (item: T) => void;
++  customActions?: CustomAction[];
+ }) {
+   const options = [];
+ 
++  // Add custom actions first with variant-based styling
++  if (customActions.length > 0) {
++    customActions.forEach((action, index) => {
++      let actionClassName = "";
++
++      // Apply color styling based on variant
++      if (action.variant === "success") {
++        actionClassName = "text-emerald-600 focus:text-emerald-700 focus:bg-emerald-50";
++      } else if (action.variant === "warning") {
++        actionClassName = "text-amber-600 focus:text-amber-700 focus:bg-amber-50";
++      } else if (action.variant === "info") {
++        actionClassName = "text-blue-600 focus:text-blue-700 focus:bg-blue-50";
++      }
++
++      options.push({
++        ...action,
++        className: actionClassName,
++        showSeparator: index === customActions.length - 1,
++      });
++    });
++  }
++
+   if (onView) {
+     options.push({
+       id: "view",
+@@ -25,6 +58,7 @@ export default function DataTableRowActions<T>({
+       onClick: () => {
+         onView(row.original);
+       },
++      showSeparator: false,
+     });
+   }
+ 
+diff --git a/src/components/ui/phone-number-input.tsx b/src/components/ui/phone-number-input.tsx
+index c566f82..48932d2 100644
+--- a/src/components/ui/phone-number-input.tsx
++++ b/src/components/ui/phone-number-input.tsx
+@@ -14,6 +14,7 @@ interface PhoneNumberInputProps {
+   placeholder?: string;
+   value: string;
+   onChange: (value: string) => void;
++  onBlur?: () => void;
+   error?: string;
+   required?: boolean;
+   disabled?: boolean;
+@@ -28,6 +29,7 @@ export default function PhoneNumberInput({
+   placeholder = "Enter phone number",
+   value,
+   onChange,
++  onBlur,
+   error,
+   required = false,
+   disabled = false,
+@@ -37,20 +39,15 @@ export default function PhoneNumberInput({
+ }: PhoneNumberInputProps) {
+   return (
+     <div className={cn("space-y-2", className)}>
+-      <div>
+-        {label && (
+-          <label
+-            htmlFor={id}
+-            className=" block text-sm font-medium text-foreground"
+-          >
+-            {label}
+-            {required && <span className="text-destructive ml-1">*</span>}
+-          </label>
+-        )}
+-        {description && (
+-          <p className="text-sm text-muted-foreground">{description}</p>
+-        )}
+-      </div>
++      {label && (
++        <label
++          htmlFor={id}
++          className=" block text-sm font-medium text-foreground"
++        >
++          {label}
++          {required && <span className="text-destructive ml-1">*</span>}
++        </label>
++      )}
+ 
+       <RPNInput.default
+         id={id}
+@@ -60,7 +57,7 @@ export default function PhoneNumberInput({
+           disabled && "opacity-50 cursor-not-allowed"
+         )}
+         flagComponent={FlagComponent}
+-        countrySelectComponent={CountrySelect} // Removed type assertion
++        countrySelectComponent={CountrySelect}
+         inputComponent={
+           PhoneInput as React.ComponentType<
+             React.InputHTMLAttributes<HTMLInputElement>
+@@ -69,11 +66,19 @@ export default function PhoneNumberInput({
+         placeholder={placeholder}
+         value={value}
+         onChange={(newValue: string | undefined) => onChange(newValue ?? "")}
++        onBlur={onBlur}
+         defaultCountry={defaultCountry}
+         disabled={disabled}
++        international={true}
++        withCountryCallingCode={false}
++        smartCaret={true}
++        limitMaxLength={false}
++        addInternationalOption={false}
++        countryCallingCodeEditable={false}
+       />
+ 
+       {error && <p className="text-sm text-destructive">{error}</p>}
++      {description && <p className="text-sm text-muted-foreground">{description}</p>}
+     </div>
+   );
+ }
+diff --git a/src/data/DashboardRoutes.ts b/src/data/DashboardRoutes.ts
+index 9ca4d74..e8d9dbf 100644
+--- a/src/data/DashboardRoutes.ts
++++ b/src/data/DashboardRoutes.ts
+@@ -23,7 +23,7 @@ export type NavigationItemData =
+   | NavigationItemWithSubItemsData
+   | NavigationItemWithoutSubItemsData;
+ 
+-export const dashboardRoutes: NavigationItemData[] = [
++export const marketplaceDashboardRoutes: NavigationItemData[] = [
+   {
+     label: "Dashboard",
+     href: "/marketplace-management",
+@@ -86,3 +86,112 @@ export const dashboardRoutes: NavigationItemData[] = [
+     roles: ["ROLE_ADMIN"],
+   },
+ ];
++
++export const eventDashboardRoutes: NavigationItemData[] = [
++  {
++    label: "Dashboard",
++    iconName: "LayoutDashboard",
++    href: "/events-management",
++    roles: ["ROLE_USER", "ROLE_ADMIN", "ROLE_PARTNER_CONTACT"], // Both users and admins can access
++  },
++  {
++    label: "Events",
++    iconName: "CalendarDays",
++    href: "/events-management/events",
++    roles: ["ROLE_USER", "ROLE_ADMIN", "ROLE_PARTNER_CONTACT"],
++  },
++  {
++    label: "Gallery",
++    iconName: "Images",
++    href: "/events-management/galleries",
++    roles: ["ROLE_USER", "ROLE_ADMIN", "ROLE_PARTNER_CONTACT"],
++  },
++
++  {
++    label: "Groups",
++    iconName: "Users",
++    href: "/events-management/groups",
++    roles: ["ROLE_USER", "ROLE_ADMIN", "ROLE_PARTNER_CONTACT"],
++  },
++  {
++    label: "Donations",
++    iconName: "HandCoins",
++    href: "/events-management/donations",
++    roles: ["ROLE_PARTNER_CONTACT", "ROLE_ADMIN", "ROLE_USER"],
++  },
++  {
++    label: "Registrations",
++    iconName: "FileUser",
++    href: "/events-management/registrations",
++    roles: ["ROLE_USER", "ROLE_ADMIN", "ROLE_PARTNER_CONTACT"],
++  },
++
++  // Admin-only routes
++  {
++    label: "User Management",
++    iconName: "Users",
++    href: "/events-management/users",
++    roles: ["ROLE_ADMIN"],
++  },
++  {
++    label: "Ticket Management",
++    iconName: "Tickets",
++    href: "/events-management/tickets",
++    roles: ["ROLE_ADMIN", "ROLE_PARTNER_CONTACT"],
++  },
++  {
++    label: "Partners Management",
++    iconName: "Handshake",
++    href: "/events-management/partners",
++    roles: ["ROLE_ADMIN"],
++  },
++  {
++    label: "Sponsors Management",
++    iconName: "Handshake",
++    roles: ["ROLE_ADMIN", "ROLE_PARTNER_CONTACT"],
++    subItems: [
++      {
++        label: "All Sponsors",
++        href: "/events-management/sponsors",
++        roles: ["ROLE_ADMIN", "ROLE_PARTNER_CONTACT"],
++      },
++      {
++        label: "Sponser Tiers",
++        href: "/events-management/sponsors/tiers",
++        roles: ["ROLE_ADMIN", "ROLE_PARTNER_CONTACT"],
++      },
++    ],
++  },
++  {
++    label: "Kit Collection",
++    iconName: "MapPin",
++    href: "/events-management/collection-centers",
++    roles: ["ROLE_ADMIN"],
++  },
++  {
++    label: "Winners",
++    iconName: "Award",
++    href: "/events-management/recognized-people",
++    roles: ["ROLE_ADMIN", "ROLE_PARTNER_CONTACT"],
++  },
++  {
++    label: "Featured People",
++    iconName: "Users",
++    href: "/events-management/featured-people",
++    roles: ["ROLE_ADMIN", "ROLE_PARTNER_CONTACT"],
++  },
++  {
++    label: "Discount Settings",
++    iconName: "Cog",
++    href: "/events-management/discounts",
++    roles: ["ROLE_ADMIN", "ROLE_PARTNER_CONTACT"],
++  },
++  {
++    label: "Profile",
++    iconName: "Contact",
++    href: "/events-management/profile",
++    roles: ["ROLE_USER", "ROLE_ADMIN", "ROLE_PARTNER_CONTACT"],
++  },
++
++
++];
+\ No newline at end of file
+diff --git a/src/types/table.ts b/src/types/table.ts
+index bb81072..8974691 100644
+--- a/src/types/table.ts
++++ b/src/types/table.ts
+@@ -1,9 +1,10 @@
+-import { ColumnDef, SortingState, Table } from "@tanstack/react-table";
++import { ColumnDef, ColumnFiltersState, SortingState, Table } from "@tanstack/react-table";
+ 
+ export interface FilterColumnOption {
+   column: string;
+   label: string;
+   options: Array<{ label: string; value: string }>;
++  singleSelect?: boolean;
+ }
+ 
+ export interface SearchColumnOption {
+@@ -47,6 +48,9 @@ export interface DataTablePropsI<T> {
+   onPageSizeChange?: (size: number) => void;
+   onSearchChange?: (searchParams: Record<string, string>) => void;
+   onFilterChange?: (filters: Record<string, string>) => void;
++  onSortingChange?: (sort: string) => void;
++  initialColumnFilters?: ColumnFiltersState;
++  externalColumnFilters?: ColumnFiltersState;
+ }
+ 
+ export type TableFiltersPropsI<T> = {
