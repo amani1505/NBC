@@ -1,16 +1,70 @@
-feat: dashboard analytics, registration details overhaul & UX improvements
+import { Button } from '@/components/ui/button'
+import { User2, Users } from 'lucide-react'
+import React from 'react'
 
-- Replace paymentsCount with totalPaymentsCount; add pendingPaymentsAmount field
-- Add paymentMethodDistribution to analytics fetching and PaymentOverview card
-- Auto-select active/upcoming PUBLISHED event on dashboard, registrations, tickets & donations pages
-- Upgrade PaymentTrends chart from LineChart to AreaChart with custom tooltip and period filter
-- Refactor RegistrationDetailsModal into per-attendee layout with tickets, merchandise & per-attendee download
-- Replace modal-based registration details with RegistrationSideSheet
-- Switch admin registrations API response type from RegistrationListItemI[] to RegistrationResponseI[]
-- Add Payment and Total columns to admin registrations table; update status config with REGISTERED/AWAITING_PAYMENT
-- Refactor TicketsPagesection to use useFilters with URL sync and server-side search/filter params
-- Hide Make Donation tab and show history directly for admin/partner roles
-- Filter event selectors to PUBLISHED/COMPLETED events only
-- Swap AuthenticatedImage for next/image in AdminEventDetailPageSection
-- Fix sheet z-index and swap ModalProvider/AuthProvider nesting order in layout
-- Expand RegistrationResponseI, AttendeeDetailI, TicketDetailItemI types; loosen AttendeeI optionals
+const CARDS = [
+    {
+        icon: Users,
+        label: "User Management",
+        url: "/user-management"
+
+    },
+    {
+        icon: Users,
+        label: "Event Management",
+        url: "/user-management"
+
+    },
+    {
+        icon: Users,
+        label: "Marketplace Management",
+        url: "/user-management"
+
+    },
+    {
+        icon: Users,
+        label: "Payment Configurations",
+        url: "/user-management"
+
+    },
+    {
+        icon: Users,
+        label: "Mini Apps MAnagement",
+        url: "/user-management"
+
+    }
+]
+
+function DashboardPageSection() {
+    return (
+        <div className='h-screen flex justify-center items-center'>
+            <div className='grid grid-cols-5 gap-5 '>
+
+                {
+                    CARDS.map((card, index) => (
+                        <div className='border border-primary-950 rounded-md flex flex-col items-center p-5 space-y-2 bg-white'>
+                            <div>
+                                <card.icon />
+
+                            </div>
+                            <div>
+                                {card.label}
+                            </div>
+                            <div>
+                                <Button>
+                                    Proceed
+                                </Button>
+                            </div>
+
+                        </div>
+                    ))
+                }
+
+
+
+            </div>
+        </div>
+    )
+}
+
+export default DashboardPageSection
