@@ -1,15 +1,1 @@
-feat(registrations): refactor RegistrationSideSheet to fetch by ID and add full attendee edit support
-
-- `RegistrationSideSheet` now accepts `registrationId` instead of `registrationData` and fetches fresh data on open via `eventRegistrationOrderDetails`; adds a custom backdrop overlay with `modal={false}`
-- Refactor `IndividualAttendeeTab` to render all attendees via new `IndividualAttendeeCard` component (supports expand/collapse per card, first card expanded by default)
-- Add `EditGroupMemberForm` with Formik + `editGroupMemberSchema` for editing group member details directly in `MemberCard`; `MemberCard` now accepts `registrationId` and `onRefresh`
-- Replace bare state forms in `EditAttendeeForm` and `AddMemberForm` with Formik instances using `editAttendeeSchema`, `addMemberSchema`, and `paymentSchema`; use `PhoneNumberInput` and `CountriesSelect` throughout
-- Add `isValidTanzanianPhone` shared validator; enforce DOB min-age (2 years) and Tanzania region conditional in all attendee forms
-- Add `updateGroupMember` to `EventRegistrationProvider`/service using `PUT group-members/:id`; change `updateParticipant` from `put` to `patch`
-- Normalize email validation across entire codebase with `.matches(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)` in 20+ Yup schemas
-- `RegistrationPageSection`: switch from passing full `registrationData` to `selectedRegistrationId`; fix `getCustomActions` to hide "send control number" when payment is already `PAID`; remove manual header block, add DataTable `title`
-- `TicketsPagesection`: add `onSortingChange` and `externalColumnFilters` for server-side sort; map column IDs to API field names; fix status filter param key
-- `AttendeeForm`/`GroupRegistrationForm`: make phone, DOB, gender, emergency phone required with proper validators
-- Fix `account/page.tsx` to read `user.phoneNumber` and `user.langKey` correctly; pass `langKey` on profile update
-- Update `en/validation.json` and `TRANSLATION_KEYS.md` email invalid message to "Please enter a valid email address"
-- `DashboardRoutes.ts`: clean up commented-out nav items from `dashboardRoutes`
+https://claude.ai/oauth/authorize?code=true&client_id=9d1c250a-e61b-44d9-88ed-5944d1962f5e&response_type=code&redirect_uri=https%3A%2F%2Fplatform.claude.com%2Foauth%2Fcode%2Fcallback&scope=org%3Acreate_api_key+user%3Aprofile+user%3Ainference+user%3Asessions%3Aclaude_code+user%3Amcp_servers+user%3Afile_upload&code_challenge=YGStu5wDCQJSkGpNWxdBQJSdKgVOmKvOkrV3H2C2Z3Q&code_challenge_method=S256&state=A06J4JpPT4EryH-2i153DYPf52N2hynr5jdxRRyECz4
