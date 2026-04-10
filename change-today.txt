@@ -1,1 +1,1147 @@
-xIuKRAG3EeJZJB4wV4FzdnkAb9snF2Tr7pbnEuOgIH9r7vl8#btoUa4rNsb8s45Fak0-ftMsbK14Is0H7r66ifyEVmm4
+diff --git a/docker-compose.yml b/docker-compose.yml
+index 32ed2fd..d08a103 100644
+--- a/docker-compose.yml
++++ b/docker-compose.yml
+@@ -7,7 +7,7 @@
+ services:
+   corporate-events-website:
+     platform: linux/amd64
+-    image: "gitlabprod.intra.nbc.co.tz:5000/event-management-system-uat:0.0.99"
++    image: "gitlabprod.intra.nbc.co.tz:5000/event-management-system-uat:0.1.0"
+     build:
+       context: .
+       dockerfile: Dockerfile
+diff --git a/src/app/(PageSections)/PaymentCheckoutPageSection/Sections/PaymentSubOptionSelector.tsx b/src/app/(PageSections)/PaymentCheckoutPageSection/Sections/PaymentSubOptionSelector.tsx
+index 5c5f9f9..36c7eea 100644
+--- a/src/app/(PageSections)/PaymentCheckoutPageSection/Sections/PaymentSubOptionSelector.tsx
++++ b/src/app/(PageSections)/PaymentCheckoutPageSection/Sections/PaymentSubOptionSelector.tsx
+@@ -1,7 +1,7 @@
+ "use client";
+ 
+-import React from "react";
+-import { Building, Globe } from "lucide-react";
++import { useEffect } from "react";
++// import { Building, Globe } from "lucide-react";
+ import { type PaymentSubOption } from "../TicketCheckoutPagesection";
+ 
+ interface PaymentSubOptionSelectorProps {
+@@ -10,83 +10,93 @@ interface PaymentSubOptionSelectorProps {
+   onSubOptionChange: (subOption: PaymentSubOption) => void;
+ }
+ 
+-const SUB_OPTIONS: Record<string, { nbc: string; selcom: string }> = {
+-  control_number: {
+-    nbc: "NBC Control Number",
+-    selcom: "Selcom Control Number",
+-  },
+-  card: {
+-    nbc: "NBC Card",
+-    selcom: "Other Cards",
+-  },
+-  ussd: {
+-    nbc: "NBC USSD",
+-    selcom: "Selcom USSD",
+-  },
+-  mobile_money: {
+-    nbc: "YAS USSD",
+-    selcom: "Selcom USSD",
+-  },
+-};
++// ── NEW SUB-OPTION CONFIG (commented out — restore when Selcom sub-options are needed) ──
++// const SUB_OPTIONS: Record<string, { nbc: string; selcom: string }> = {
++//   control_number: {
++//     nbc: "NBC Control Number",
++//     selcom: "Selcom Control Number",
++//   },
++//   card: {
++//     nbc: "NBC Card",
++//     selcom: "Other Cards",
++//   },
++//   ussd: {
++//     nbc: "NBC USSD",
++//     selcom: "Selcom USSD",
++//   },
++//   mobile_money: {
++//     nbc: "YAS USSD",
++//     selcom: "Selcom USSD",
++//   },
++// };
+ 
+ export default function PaymentSubOptionSelector({
+   selectedPayment,
+-  selectedSubOption,
+   onSubOptionChange,
+ }: PaymentSubOptionSelectorProps) {
+-  const options = SUB_OPTIONS[selectedPayment];
+-  if (!options) return null;
++  // Legacy: always default to "nbc" silently — no UI shown
++  useEffect(() => {
++    if (selectedPayment) {
++      onSubOptionChange("nbc");
++    }
++  }, [selectedPayment]);
+ 
+-  const subOptions: { id: PaymentSubOption; label: string; icon: React.ReactNode }[] = [
+-    {
+-      id: "nbc",
+-      label: options.nbc,
+-      icon: <Building className="w-4 h-4 text-primary-600" />,
+-    },
+-    {
+-      id: "selcom",
+-      label: options.selcom,
+-      icon: <Globe className="w-4 h-4 text-green-600" />,
+-    },
+-  ];
++  return null;
+ 
+-  return (
+-    <div
+-      className="bg-white rounded-xl border border-gray-200"
+-      style={{ padding: "clamp(1rem, 1.5vw + 0.5rem, 1.5rem)" }}
+-    >
+-      <p
+-        className="font-medium text-gray-700 mb-3"
+-        style={{ fontSize: "clamp(0.875rem, 0.75vw + 0.5rem, 0.9375rem)" }}
+-      >
+-        Choose payment provider
+-      </p>
+-      <div className="grid grid-cols-2 gap-3">
+-        {subOptions.map((option) => (
+-          <button
+-            key={option.id}
+-            type="button"
+-            onClick={() => onSubOptionChange(option.id)}
+-            className={`
+-              flex items-center gap-2.5 rounded-lg border transition-all duration-200 text-left
+-              ${
+-                selectedSubOption === option.id
+-                  ? "border-primary-600 bg-primary-50"
+-                  : "border-gray-200 bg-white hover:border-gray-300 hover:shadow-sm"
+-              }
+-            `}
+-            style={{ padding: "clamp(0.75rem, 1vw + 0.5rem, 1rem)" }}
+-          >
+-            {option.icon}
+-            <span
+-              className="font-medium text-gray-900"
+-              style={{ fontSize: "clamp(0.8125rem, 0.75vw + 0.5rem, 0.9375rem)" }}
+-            >
+-              {option.label}
+-            </span>
+-          </button>
+-        ))}
+-      </div>
+-    </div>
+-  );
++  // ── NEW PROVIDER SELECTOR UI (commented out — restore when Selcom sub-options are needed) ──
++  // const options = SUB_OPTIONS[selectedPayment];
++  // if (!options) return null;
++  //
++  // const subOptions: { id: PaymentSubOption; label: string; icon: React.ReactNode }[] = [
++  //   {
++  //     id: "nbc",
++  //     label: options.nbc,
++  //     icon: <Building className="w-4 h-4 text-primary-600" />,
++  //   },
++  //   {
++  //     id: "selcom",
++  //     label: options.selcom,
++  //     icon: <Globe className="w-4 h-4 text-green-600" />,
++  //   },
++  // ];
++  //
++  // return (
++  //   <div
++  //     className="bg-white rounded-xl border border-gray-200"
++  //     style={{ padding: "clamp(1rem, 1.5vw + 0.5rem, 1.5rem)" }}
++  //   >
++  //     <p
++  //       className="font-medium text-gray-700 mb-3"
++  //       style={{ fontSize: "clamp(0.875rem, 0.75vw + 0.5rem, 0.9375rem)" }}
++  //     >
++  //       Choose payment provider
++  //     </p>
++  //     <div className="grid grid-cols-2 gap-3">
++  //       {subOptions.map((option) => (
++  //         <button
++  //           key={option.id}
++  //           type="button"
++  //           onClick={() => onSubOptionChange(option.id)}
++  //           className={`
++  //             flex items-center gap-2.5 rounded-lg border transition-all duration-200 text-left
++  //             ${
++  //               selectedSubOption === option.id
++  //                 ? "border-primary-600 bg-primary-50"
++  //                 : "border-gray-200 bg-white hover:border-gray-300 hover:shadow-sm"
++  //             }
++  //           `}
++  //           style={{ padding: "clamp(0.75rem, 1vw + 0.5rem, 1rem)" }}
++  //         >
++  //           {option.icon}
++  //           <span
++  //             className="font-medium text-gray-900"
++  //             style={{ fontSize: "clamp(0.8125rem, 0.75vw + 0.5rem, 0.9375rem)" }}
++  //           >
++  //             {option.label}
++  //           </span>
++  //         </button>
++  //       ))}
++  //     </div>
++  //   </div>
++  // );
+ }
+diff --git a/src/components/shared/registration/GroupRegistration.tsx b/src/components/shared/registration/GroupRegistration.tsx
+index 60c0d96..f9c4682 100644
+--- a/src/components/shared/registration/GroupRegistration.tsx
++++ b/src/components/shared/registration/GroupRegistration.tsx
+@@ -105,9 +105,9 @@ export function GroupRegistration({
+   return (
+     <div className={cn("w-full  mx-auto animate-fade-in px-4", className)}>
+       <div className="text-center mb-4">
+-        <h2 className="text-3xl font-bold text-foreground mb-2">
++        <h4 className=" text-foreground mb-2">
+           Create Your One Time Group
+-        </h2>
++        </h4>
+         <p className="text-gray-500 text-sm">
+           Enter your group information to start registering participants
+         </p>
+diff --git a/src/components/shared/registration/ParticipantDetails.tsx b/src/components/shared/registration/ParticipantDetails.tsx
+index e1d22e9..72e4b71 100644
+--- a/src/components/shared/registration/ParticipantDetails.tsx
++++ b/src/components/shared/registration/ParticipantDetails.tsx
+@@ -1,4 +1,5 @@
+ import { useState, useEffect } from "react";
++import { AttendeeDetailI, UpdateParticipantI } from "@/types/event-registration";
+ import {
+   Plus,
+   Download,
+@@ -25,8 +26,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+ import { FileUploader } from "@/components/ui/FileUploader";
+ import { useTicket } from "@/hooks/useTicket";
+ import { useEventRegistration } from "@/hooks/useEventRegistration";
+-import { useGroup } from "@/hooks/useGroup";
+-import { GroupMemberI } from "@/types/group";
+ import { formatRegistrationId } from "@/utils/formatRegistrationId";
+ import { useRouter } from "next/navigation";
+ import { useEvent } from "@/hooks/useEvent";
+@@ -214,7 +213,7 @@ export interface ParticipantData {
+   pace: string;
+   emergencyContact: string;
+   selectedMerchandise?: SelectedMerchandise[];
+-  backendMemberId?: string; // populated after addAttendeToGroup succeeds
++  backendMemberId?: string;
+ }
+ 
+ interface FormValues {
+@@ -303,7 +302,7 @@ const participantSchema = Yup.object().shape({
+   emergencyContact: Yup.string()
+     .trim()
+     .required("Emergency contact is required")
+-    .test("valid-phone", "Enter a valid emergency contact number (e.g., 0754710235, +255754710235, or 255754710235)", (value) => {
++    .test("valid-phone", "Enter a valid emergency contact number", (value) => {
+       if (!value) return false;
+       return isValidTanzanianPhone(value);
+     })
+@@ -371,35 +370,23 @@ export function ParticipantDetails({
+   const [isDownloading, setIsDownloading] = useState(false);
+   const [isCheckingOut, setIsCheckingOut] = useState(false);
+   const [deletingId, setDeletingId] = useState<string | null>(null);
+-  const [uploadSucceeded, setUploadSucceeded] = useState(false);
+   const { openModal, closeModal } = useModal();
+ 
+-  const localKey = groupId ? `localParticipants_${groupId}` : null;
+-  const [localParticipants, setLocalParticipantsState] = useState<ParticipantData[]>(() => {
+-    if (!localKey || typeof window === "undefined") return [];
+-    try {
+-      return JSON.parse(sessionStorage.getItem(localKey) || "[]");
+-    } catch {
+-      return [];
+-    }
+-  });
+ 
+-  const setLocalParticipants = (updater: (prev: ParticipantData[]) => ParticipantData[]) => {
+-    setLocalParticipantsState((prev) => {
+-      const next = updater(prev);
+-      if (localKey) sessionStorage.setItem(localKey, JSON.stringify(next));
+-      return next;
+-    });
+-  };
+   const { eventTickets, findEventTickets } = useTicket();
+   const {
+     isCreateLoading,
+-    addMemberToGroupRegistration,
++    addAttendees,
+     downloadExcelTemplete,
+     uploadExcel,
+     finalizingRegistration,
++    eventRegistrationOrderDetails,
++    orderDetails,
++    deleteParticipant,
++    updateParticipant,
++    updateAttendeeTickets,
++    updateAttendeeMerchandise,
+   } = useEventRegistration();
+-  const { findAllGroupMembers, addAttendeToGroup, deleteAttendee, groupMembers } = useGroup();
+   const { findSingleEvent } = useEvent();
+   const { findActiveCollectionCenters } = useCollectionCenter();
+   const { eventMechandise, findAllEventMechadise } = useMerchandiseCategory();
+@@ -425,38 +412,12 @@ export function ParticipantDetails({
+     findActiveCollectionCenters();
+   }, []);
+ 
+-  // Fetch group members on mount
++  // Fetch order details on mount and whenever registrationId changes
+   useEffect(() => {
+-    if (groupId) {
+-      findAllGroupMembers(groupId);
++    if (registrationId) {
++      eventRegistrationOrderDetails(registrationId);
+     }
+-  }, [groupId]);
+-
+-  // After Excel upload, map the freshly-fetched group members into localParticipants
+-  // so the "Added Participants" list and "Proceed to Checkout" button become active.
+-  useEffect(() => {
+-    if (!uploadSucceeded || !groupMembers?.data?.length) return;
+-    setUploadSucceeded(false);
+-    setLocalParticipants(() =>
+-      (groupMembers.data ?? []).map((m, i) => ({
+-        id: `upload_${i}_${m.id}`,
+-        backendMemberId: m.id,
+-        firstName: m.firstName || "",
+-        middleName: m.middleName || "",
+-        lastName: m.lastName || "",
+-        email: m.email || "",
+-        phoneNumber: m.phone || "",
+-        gender: m.gender || "",
+-        dateOfBirth: m.dateOfBirth ? new Date(m.dateOfBirth) : undefined,
+-        country: m.country || "Tanzania",
+-        region: m.region || "",
+-        pace: m.pace || "",
+-        emergencyContact: m.emergencyContactPhone || "",
+-        selectedTicket: "",
+-        selectedMerchandise: [],
+-      }))
+-    );
+-  }, [groupMembers, uploadSucceeded]);
++  }, [registrationId]);
+ 
+   // Card format for TicketCard display
+   const ticketCards =
+@@ -543,59 +504,44 @@ export function ParticipantDetails({
+     }
+     const currentParticipant = formik.values.participants[currentIndex];
+ 
+-    // Always add to local list immediately for display (works for both auth and guest)
+-    const localId = Date.now().toString();
+-    setLocalParticipants((prev) => [...prev, { ...currentParticipant, id: localId }]);
+-
+-    // Persist to backend if we have the IDs (may fail for guests — that's ok, local list is source of truth)
+-    if (registrationId && groupId) {
++    if (registrationId) {
+       try {
+-        // Step 1: add member to the attendee group
+-        const memberResponse = await addAttendeToGroup(groupId, {
+-          attendeeGroupId: groupId,
+-          firstName: currentParticipant.firstName,
+-          middleName: currentParticipant.middleName || "",
+-          lastName: currentParticipant.lastName,
+-          email: currentParticipant.email || "",
+-          phone: currentParticipant.phoneNumber,
+-          dateOfBirth: currentParticipant.dateOfBirth
+-            ? currentParticipant.dateOfBirth.toISOString().split("T")[0]
+-            : "",
+-          gender: currentParticipant.gender,
+-          country: currentParticipant.country,
+-          region: currentParticipant.region || "",
+-          pace: currentParticipant.pace || "",
+-          emergencyContactPhone: currentParticipant.emergencyContact,
+-          role: "MEMBER",
+-        } as unknown as GroupMemberI);
+-
+-        const memberId = memberResponse?.data?.id;
+-        if (memberId) {
+-          // Patch backendMemberId onto the local entry for deletion later
+-          setLocalParticipants((prev) =>
+-            prev.map((p) => (p.id === localId ? { ...p, backendMemberId: memberId } : p))
+-          );
+-          // Step 2: link member to the registration with ticket + merchandise
+-          await addMemberToGroupRegistration(registrationId, {
+-            groupMemberId: memberId,
+-            selectedTickets: currentParticipant.selectedTicket
+-              ? { [currentParticipant.selectedTicket]: 1 }
+-              : {},
+-            selectedMerchandise: currentParticipant.selectedMerchandise?.map(
+-              (item) => ({
+-                varietyId: item.variantId || item.variantyId || undefined,
+-                quantity: item.quantity,
+-                collectionCenterId: item.collectionCenterId || "",
+-              })
+-            ),
+-          });
+-        }
++        await addAttendees(registrationId, {
++          attendee: {
++            firstName: currentParticipant.firstName,
++            middleName: currentParticipant.middleName || undefined,
++            lastName: currentParticipant.lastName,
++            email: currentParticipant.email || undefined,
++            phoneNumber: currentParticipant.phoneNumber,
++            dateOfBirth: currentParticipant.dateOfBirth
++              ? currentParticipant.dateOfBirth.toISOString().split("T")[0]
++              : "",
++            gender: currentParticipant.gender,
++            country: currentParticipant.country || undefined,
++            region: currentParticipant.region || undefined,
++            pace: currentParticipant.pace ? Number(currentParticipant.pace) : undefined,
++            emergencyContactPhone: currentParticipant.emergencyContact,
++            attendeeRole: "MEMBER",
++          },
++          selectedTickets: currentParticipant.selectedTicket
++            ? [{ ticketId: currentParticipant.selectedTicket, quantity: 1 }]
++            : [],
++          selectedMerchandise: currentParticipant.selectedMerchandise?.map((item) => ({
++            varietyId: item.variantId || item.variantyId || item.merchandiseId,
++            quantity: item.quantity,
++            collectionCenterId: item.collectionCenterId || "",
++          })),
++        });
+       } catch (error) {
+-        console.error("Error saving participant to backend:", error);
+-        // Don't block the UI — participant is already shown in local list
++        console.error("Error adding participant:", error);
+       }
+     }
+ 
++    // Refresh order details so the display reflects the newly added participant
++    if (registrationId) {
++      await eventRegistrationOrderDetails(registrationId);
++    }
++
+     // Reset form to single empty participant - always execute after successful save
+     formik.setFieldValue("participants", [createEmptyParticipant()], false);
+     formik.setTouched({}, false);
+@@ -626,17 +572,10 @@ export function ParticipantDetails({
+       setIsUploading(true);
+       const formData = new FormData();
+       formData.append("file", file);
+-
+       await uploadExcel(eventId, registrationId, formData);
+-
+-      // Refresh group members and trigger the useEffect that populates localParticipants
+-      if (groupId) {
+-        setUploadSucceeded(true);
+-        await findAllGroupMembers(groupId);
+-      }
++      await eventRegistrationOrderDetails(registrationId);
+     } catch (error) {
+       console.error("Error uploading participants:", error);
+-      setUploadSucceeded(false);
+     } finally {
+       setIsUploading(false);
+     }
+@@ -659,15 +598,14 @@ export function ParticipantDetails({
+     // Block checkout if any participant is missing ticket or merchandise
+     const hasTickets = eventTickets?.data && eventTickets.data.length > 0;
+     const hasMerch = eventMechandise?.data && eventMechandise.data.length > 0;
+-    const incompleteParticipants = localParticipants.filter((p) => {
+-      const missingTicket = hasTickets && !p.selectedTicket;
+-      const missingMerch = hasMerch && (!p.selectedMerchandise || p.selectedMerchandise.length === 0);
+-      const missingCollectionCenter = hasMerch && p.selectedMerchandise && p.selectedMerchandise.length > 0 && p.selectedMerchandise.some((m) => !m.collectionCenterId);
+-      return missingTicket || missingMerch || missingCollectionCenter;
++    const incompleteParticipants = (orderDetails?.data?.attendeeDetails ?? []).filter((d) => {
++      const missingTicket = hasTickets && (!d.ticketDetails || d.ticketDetails.length === 0);
++      const missingMerch = hasMerch && (!d.merchandiseDetails || d.merchandiseDetails.length === 0);
++      return missingTicket || missingMerch;
+     });
+ 
+     if (incompleteParticipants.length > 0) {
+-      const names = incompleteParticipants.map((p) => `${p.firstName} ${p.lastName}`).join(", ");
++      const names = incompleteParticipants.map((d) => `${d.attendee.firstName} ${d.attendee.lastName}`).join(", ");
+       openModal(
+         <div className="space-y-4 py-2">
+           <p className="text-sm text-gray-700">
+@@ -716,43 +654,123 @@ export function ParticipantDetails({
+     );
+   };
+ 
+-  const handleDeleteParticipant = async (participantId: string) => {
+-    console.log("handleDeleteParticipant called", { participantId, localParticipantsCount: localParticipants.length });
+-    if (localParticipants.length <= 1) {
+-      console.log("Blocked: only 1 participant remaining");
+-      return;
+-    }
+-    const participant = localParticipants.find((p) => p.id === participantId);
+-    console.log("participant found", participant);
+-    console.log("groupId", groupId, "backendMemberId", participant?.backendMemberId);
+-    setDeletingId(participantId);
+-    setLocalParticipants((prev) => prev.filter((p) => p.id !== participantId));
+-    if (groupId && participant?.backendMemberId) {
+-      try {
+-        console.log("Calling deleteAttendee", groupId, participant.backendMemberId);
+-        await deleteAttendee(groupId, participant.backendMemberId);
+-        console.log("deleteAttendee success");
+-      } catch (e) {
+-        console.error("deleteAttendee failed", e);
+-      }
+-    } else {
+-      console.log("Skipping API call - groupId or backendMemberId missing", { groupId, backendMemberId: participant?.backendMemberId });
+-    }
+-    setDeletingId(null);
++  const handleDeleteParticipant = (attendeeId: string, name: string) => {
++    const attendeeCount = orderDetails?.data?.attendeeDetails?.length ?? 0;
++    if (attendeeCount <= 1) return;
++
++    openModal(
++      <div className="space-y-4 py-2">
++        <p className="body-sm text-gray-700">
++          Are you sure you want to remove <span className="font-semibold">{name}</span> from the group? This action cannot be undone.
++        </p>
++        <div className="flex justify-end gap-3 pt-2">
++          <Button variant="outline" type="button" onClick={closeModal}>
++            Cancel
++          </Button>
++          <Button
++            variant="destructive"
++            type="button"
++            onClick={async () => {
++              closeModal();
++              setDeletingId(attendeeId);
++              try {
++                await deleteParticipant(attendeeId);
++                if (registrationId) {
++                  await eventRegistrationOrderDetails(registrationId);
++                }
++              } catch (e) {
++                console.error("deleteParticipant failed", e);
++              }
++              setDeletingId(null);
++            }}
++          >
++            Remove
++          </Button>
++        </div>
++      </div>,
++      "Remove Participant",
++      "sm",
++      "Confirm participant removal"
++    );
+   };
+ 
+-  const handleEditParticipant = (participant: ParticipantData) => {
++  const handleEditParticipant = (detail: AttendeeDetailI) => {
++    const participantData: ParticipantData = {
++      id: detail.attendee.id as string,
++      backendMemberId: detail.attendee.id as string,
++      firstName: detail.attendee.firstName,
++      middleName: detail.attendee.middleName || "",
++      lastName: detail.attendee.lastName,
++      email: detail.attendee.email,
++      phoneNumber: detail.attendee.phoneNumber,
++      gender: detail.attendee.gender,
++      dateOfBirth: detail.attendee.dateOfBirth ? new Date(detail.attendee.dateOfBirth) : undefined,
++      country: detail.attendee.country || "Tanzania",
++      region: detail.attendee.region || "",
++      pace: detail.attendee.pace?.toString() || "",
++      emergencyContact: detail.attendee.emergencyContactPhone,
++      selectedTicket: detail.ticketDetails?.[0]?.ticket?.id?.toString() || "",
++      selectedMerchandise: detail.merchandiseDetails?.map((m) => ({
++        merchandiseId: m.varietyId,
++        variantId: m.varietyId,
++        variantyId: m.varietyId,
++        name: m.productName,
++        category: m.productType || "",
++        quantity: m.quantity,
++        collectionCenterId: m.collectionCenterId,
++      })) || [],
++    };
++
+     openModal(
+       <CollectionCenterProvider>
+         <EditLocalParticipantForm
+-          participant={participant}
++          participant={participantData}
+           ticketCards={ticketCards}
+           eventMerchandise={eventMechandise?.data ?? []}
+           eventId={eventId}
+-          onSave={(updated) => {
+-            setLocalParticipants((prev) =>
+-              prev.map((p) => (p.id === updated.id ? updated : p))
+-            );
++          onSave={async (updated) => {
++            try {
++              const attendeeId = detail.attendee.id as string;
++              // 1. Update personal details
++              if (registrationId) {
++                await updateParticipant(registrationId, attendeeId, {
++                  firstName: updated.firstName,
++                  lastName: updated.lastName,
++                  middleName: updated.middleName,
++                  email: updated.email,
++                  phoneNumber: updated.phoneNumber,
++                  gender: updated.gender,
++                  dateOfBirth: updated.dateOfBirth
++                    ? updated.dateOfBirth.toISOString().split("T")[0]
++                    : undefined,
++                  country: updated.country,
++                  region: updated.region,
++                  pace: updated.pace ? Number(updated.pace) : undefined,
++                  emergencyContactPhone: updated.emergencyContact,
++                } as UpdateParticipantI);
++              }
++              // 2. Update ticket selection
++              if (updated.selectedTicket) {
++                await updateAttendeeTickets(attendeeId, [
++                  { ticketId: updated.selectedTicket, quantity: 1 },
++                ]);
++              }
++              // 3. Update merchandise selection
++              await updateAttendeeMerchandise(
++                attendeeId,
++                (updated.selectedMerchandise ?? []).map((m) => ({
++                  varietyId: m.variantId || m.variantyId || m.merchandiseId,
++                  quantity: m.quantity,
++                  collectionCenterId: m.collectionCenterId || "",
++                }))
++              );
++              // 4. Refresh display
++              if (registrationId) {
++                await eventRegistrationOrderDetails(registrationId);
++              }
++            } catch (e) {
++              console.error("Failed to update participant", e);
++            }
+             closeModal();
+           }}
+           onCancel={() => closeModal()}
+@@ -1096,21 +1114,22 @@ export function ParticipantDetails({
+               </div>
+ 
+               {/* Added Participants Summary */}
+-              {localParticipants.length > 0 && (
++              {(orderDetails?.data?.attendeeDetails?.length ?? 0) > 0 && (
+                 <div className="rounded-xl border bg-white p-6 space-y-4">
+                   <h3 className="text-lg font-bold text-primary-950">
+-                    Added Participants ({localParticipants.length})
++                    Added Participants ({orderDetails?.data?.attendeeDetails?.length})
+                   </h3>
+                   <div className="space-y-3">
+-                    {localParticipants.map((participant) => {
+-                      const ticket = eventTickets?.data?.find(
+-                        (t) => t.id.toString() === participant.selectedTicket
+-                      );
+-                      const hasMerch = participant.selectedMerchandise && participant.selectedMerchandise.length > 0;
+-                      const needsSetup = !ticket || !hasMerch;
++                    {orderDetails?.data?.attendeeDetails?.map((detail) => {
++                      const hasTickets = detail.ticketDetails && detail.ticketDetails.length > 0;
++                      const hasMerch = detail.merchandiseDetails && detail.merchandiseDetails.length > 0;
++                      const eventHasTickets = eventTickets?.data && eventTickets.data.length > 0;
++                      const eventHasMerch = eventMechandise?.data && eventMechandise.data.length > 0;
++                      const needsSetup = (eventHasTickets && !hasTickets) || (eventHasMerch && !hasMerch);
++                      const attendeeName = `${detail.attendee.firstName} ${detail.attendee.lastName}`;
+                       return (
+                         <div
+-                          key={participant.id}
++                          key={detail.attendee.id}
+                           className={cn(
+                             "p-4 rounded-lg border",
+                             needsSetup ? "border-amber-300 bg-amber-50/50" : "border-gray-200"
+@@ -1119,48 +1138,49 @@ export function ParticipantDetails({
+                           <div className="flex items-center justify-between">
+                             <div className="space-y-1">
+                               <div className="flex items-center gap-2">
+-                                <span className="font-semibold text-gray-900">
+-                                  {participant.firstName} {participant.lastName}
+-                                </span>
+-                                {ticket ? (
+-                                  <span className="px-2 py-0.5 text-xs font-semibold border border-red-500 text-red-500 rounded">
+-                                    {ticket.name}
++                                <span className="font-semibold text-gray-900">{attendeeName}</span>
++                                {hasTickets ? (
++                                  <span className="px-2 py-0.5 caption-sm-semibold border border-red-500 text-red-500 rounded">
++                                    {detail.ticketDetails[0].ticketName ?? detail.ticketDetails[0].ticket?.name}
+                                   </span>
+                                 ) : (
+-                                  <span className="px-2 py-0.5 text-xs font-semibold border border-amber-500 text-amber-600 bg-amber-50 rounded">
++                                  <span className="px-2 py-0.5 caption-sm-semibold border border-amber-500 text-amber-600 bg-amber-50 rounded">
+                                     No ticket
+                                   </span>
+                                 )}
+                                 {hasMerch ? (
+-                                  <span className="px-2 py-0.5 text-xs font-medium border border-green-500 text-green-600 rounded">
+-                                    Merchandise selected
++                                  <span className="px-2 py-0.5 caption-sm-semibold border border-green-500 text-green-600 rounded">
++                                    {detail.merchandiseDetails![0].productName}
+                                   </span>
+                                 ) : (
+-                                  <span className="px-2 py-0.5 text-xs font-medium border border-amber-500 text-amber-600 bg-amber-50 rounded">
++                                  <span className="px-2 py-0.5 caption-sm-semibold border border-amber-500 text-amber-600 bg-amber-50 rounded">
+                                     No merchandise
+                                   </span>
+                                 )}
+                               </div>
+                               <div className="flex items-center gap-4 text-sm text-gray-500">
+-                                <span>Contact: {participant.phoneNumber}</span>
+-                                {ticket && (
+-                                  <span>Ticket: {ticket.name} — {ticket.currency} {ticket.price.toLocaleString()}</span>
++                                <span>Contact: {detail.attendee.phoneNumber}</span>
++                                {hasTickets && (
++                                  <span>
++                                    {detail.ticketDetails[0].ticketName} — {detail.ticketDetails[0].pricePaid?.toLocaleString()}
++                                  </span>
+                                 )}
+                               </div>
+                             </div>
+                             <div className="flex items-center gap-2">
+                               <button
+                                 className="px-4 py-1.5 text-sm font-medium border border-primary-950 text-primary-950 rounded hover:bg-primary-950/5 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+-                                onClick={() => handleEditParticipant(participant)}
++                                onClick={() => handleEditParticipant(detail)}
+                                 disabled={isCreateLoading}
+                               >
+                                 Edit
+                               </button>
+-                              {localParticipants.length > 1 && (
++                              {(orderDetails?.data?.attendeeDetails?.length ?? 0) > 1 && (
+                                 <button
++                                  type="button"
+                                   className="text-red-500 hover:text-red-700 p-1 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+-                                  onClick={() => handleDeleteParticipant(participant.id)}
+-                                  disabled={deletingId === participant.id}
++                                  onClick={() => handleDeleteParticipant(detail.attendee.id as string, attendeeName)}
++                                  disabled={deletingId === detail.attendee.id}
+                                 >
+                                   <Trash2 className="w-4 h-4" />
+                                 </button>
+@@ -1168,7 +1188,7 @@ export function ParticipantDetails({
+                             </div>
+                           </div>
+                           {needsSetup && (
+-                            <p className="text-xs text-amber-600 mt-2">
++                            <p className="caption-sm text-amber-600 mt-2">
+                               Click Edit to assign ticket and merchandise before proceeding to checkout.
+                             </p>
+                           )}
+@@ -1189,7 +1209,7 @@ export function ParticipantDetails({
+                   type="button"
+                   onClick={confirmCheckout}
+                   disabled={
+-                    isCheckingOut || localParticipants.length === 0
++                    isCheckingOut || (orderDetails?.data?.attendeeDetails?.length ?? 0) === 0
+                   }
+                   loading={isCheckingOut}
+                 >
+@@ -1202,10 +1222,10 @@ export function ParticipantDetails({
+         <TabsContent value="tab-2" className="w-full py-5">
+           <div className="max-w-5xl mx-auto space-y-6">
+             <div>
+-              <h1 className="text-primary-950 font-semibold text-lg">
++              <h5 className="text-primary-950 font-semibold ">
+                 Bulk Upload Participants via Excel
+-              </h1>
+-              <p className="text-gray-500 text-sm">
++              </h5>
++              <p className="text-gray-500 body-sm">
+                 Download the template, fill in participant details, and upload
+                 to register multiple participants at once
+               </p>
+@@ -1219,10 +1239,11 @@ export function ParticipantDetails({
+                         <Download className="h-5 w-5 text-marathon-blue" />
+                       </div>
+                       <div>
+-                        <CardTitle className="text-base">
++                        <CardTitle className="body-lg-bold
++">
+                           Step 1: Download Template
+                         </CardTitle>
+-                        <p className="text-xs text-gray-500 mt-1">
++                        <p className="caption text-gray-500 mt-1">
+                           Get the Excel template with the required format
+                         </p>
+                       </div>
+@@ -1240,7 +1261,7 @@ export function ParticipantDetails({
+                         ? "Downloading..."
+                         : "Download Excel Template"}
+                     </Button>
+-                    <p className="text-xs text-gray-500 mt-3">
++                    <p className="body-sm text-gray-500 mt-3">
+                       The template includes all required fields for participant
+                       registration
+                     </p>
+@@ -1255,10 +1276,10 @@ export function ParticipantDetails({
+                         <Upload className="h-5 w-5 text-green-600" />
+                       </div>
+                       <div>
+-                        <CardTitle className="text-base">
++                        <CardTitle className="body-lg-bold">
+                           Step 2: Upload Filled Template
+                         </CardTitle>
+-                        <p className="text-xs text-gray-500 mt-1">
++                        <p className="caption text-gray-500 mt-1">
+                           Upload your completed Excel file with participant
+                           details
+                         </p>
+@@ -1298,21 +1319,22 @@ export function ParticipantDetails({
+                 </Card>
+ 
+                 {/* Added Participants Summary (Excel Upload) */}
+-                {localParticipants.length > 0 && (
++                {(orderDetails?.data?.attendeeDetails?.length ?? 0) > 0 && (
+                   <div className="rounded-xl border bg-white p-6 space-y-4">
+                     <h3 className="text-lg font-bold text-primary-950">
+-                      Added Participants ({localParticipants.length})
++                      Added Participants ({orderDetails?.data?.attendeeDetails?.length})
+                     </h3>
+                     <div className="space-y-3">
+-                      {localParticipants.map((participant) => {
+-                        const ticket = eventTickets?.data?.find(
+-                          (t) => t.id.toString() === participant.selectedTicket
+-                        );
+-                        const hasMerchandise = participant.selectedMerchandise && participant.selectedMerchandise.length > 0;
+-                        const needsSetup = !ticket || !hasMerchandise;
++                      {orderDetails?.data?.attendeeDetails?.map((detail) => {
++                        const hasTickets = detail.ticketDetails && detail.ticketDetails.length > 0;
++                        const hasMerch = detail.merchandiseDetails && detail.merchandiseDetails.length > 0;
++                        const eventHasTickets = eventTickets?.data && eventTickets.data.length > 0;
++                        const eventHasMerch = eventMechandise?.data && eventMechandise.data.length > 0;
++                        const needsSetup = (eventHasTickets && !hasTickets) || (eventHasMerch && !hasMerch);
++                        const attendeeName = `${detail.attendee.firstName} ${detail.attendee.lastName}`;
+                         return (
+                           <div
+-                            key={participant.id}
++                            key={detail.attendee.id}
+                             className={cn(
+                               "p-4 rounded-lg border",
+                               needsSetup ? "border-amber-300 bg-amber-50/50" : "border-gray-200"
+@@ -1321,47 +1343,48 @@ export function ParticipantDetails({
+                             <div className="flex items-center justify-between">
+                               <div className="space-y-1">
+                                 <div className="flex items-center gap-2">
+-                                  <span className="font-semibold text-gray-900">
+-                                    {participant.firstName} {participant.lastName}
+-                                  </span>
+-                                  {ticket ? (
+-                                    <span className="px-2 py-0.5 text-xs font-semibold border border-red-500 text-red-500 rounded">
+-                                      {ticket.name}
++                                  <span className="font-semibold text-gray-900">{attendeeName}</span>
++                                  {hasTickets ? (
++                                    <span className="px-2 py-0.5 caption-sm-semibold border border-red-500 text-red-500 rounded">
++                                      {detail.ticketDetails[0].ticketName ?? detail.ticketDetails[0].ticket?.name}
+                                     </span>
+                                   ) : (
+-                                    <span className="px-2 py-0.5 text-xs font-semibold border border-amber-500 text-amber-600 bg-amber-50 rounded">
++                                    <span className="px-2 py-0.5 caption-sm-semibold border border-amber-500 text-amber-600 bg-amber-50 rounded">
+                                       No ticket
+                                     </span>
+                                   )}
+-                                  {hasMerchandise ? (
+-                                    <span className="px-2 py-0.5 text-xs font-medium border border-green-500 text-green-600 rounded">
+-                                      Merchandise selected
++                                  {hasMerch ? (
++                                    <span className="px-2 py-0.5 caption-sm-semibold border border-green-500 text-green-600 rounded">
++                                      {detail.merchandiseDetails![0].productName}
+                                     </span>
+                                   ) : (
+-                                    <span className="px-2 py-0.5 text-xs font-medium border border-amber-500 text-amber-600 bg-amber-50 rounded">
++                                    <span className="px-2 py-0.5 caption-sm-semibold border border-amber-500 text-amber-600 bg-amber-50 rounded">
+                                       No merchandise
+                                     </span>
+                                   )}
+                                 </div>
+                                 <div className="flex items-center gap-4 text-sm text-gray-500">
+-                                  <span>Contact: {participant.phoneNumber}</span>
+-                                  {ticket && (
+-                                    <span>Ticket: {ticket.name} — {ticket.currency} {ticket.price.toLocaleString()}</span>
++                                  <span>Contact: {detail.attendee.phoneNumber}</span>
++                                  {hasTickets && (
++                                    <span>
++                                      {detail.ticketDetails[0].ticketName} — {detail.ticketDetails[0].pricePaid?.toLocaleString()}
++                                    </span>
+                                   )}
+                                 </div>
+                               </div>
+                               <div className="flex items-center gap-2">
+                                 <button
+                                   className="px-4 py-1.5 text-sm font-medium border border-primary-950 text-primary-950 rounded hover:bg-primary-950/5 transition-colors"
+-                                  onClick={() => handleEditParticipant(participant)}
++                                  onClick={() => handleEditParticipant(detail)}
+                                 >
+                                   Edit
+                                 </button>
+-                                {localParticipants.length > 1 && (
++                                {(orderDetails?.data?.attendeeDetails?.length ?? 0) > 1 && (
+                                   <button
++                                    type="button"
+                                     className="text-red-500 hover:text-red-700 p-1 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+-                                    onClick={() => handleDeleteParticipant(participant.id)}
+-                                    disabled={deletingId === participant.id}
++                                    onClick={() => handleDeleteParticipant(detail.attendee.id as string, attendeeName)}
++                                    disabled={deletingId === detail.attendee.id}
+                                   >
+                                     <Trash2 className="w-4 h-4" />
+                                   </button>
+@@ -1369,7 +1392,7 @@ export function ParticipantDetails({
+                               </div>
+                             </div>
+                             {needsSetup && (
+-                              <p className="text-xs text-amber-600 mt-2">
++                              <p className="caption-sm text-amber-600 mt-2">
+                                 Click Edit to assign ticket and merchandise before proceeding to checkout.
+                               </p>
+                             )}
+@@ -1389,7 +1412,7 @@ export function ParticipantDetails({
+                   <Button
+                     type="button"
+                     onClick={confirmCheckout}
+-                    disabled={isCheckingOut || localParticipants.length === 0}
++                    disabled={isCheckingOut || (orderDetails?.data?.attendeeDetails?.length ?? 0) === 0}
+                     loading={isCheckingOut}
+                   >
+                     Proceed with Checkout
+diff --git a/src/components/ui/FileUploader.tsx b/src/components/ui/FileUploader.tsx
+index 0fd719a..6e69025 100644
+--- a/src/components/ui/FileUploader.tsx
++++ b/src/components/ui/FileUploader.tsx
+@@ -86,6 +86,8 @@ export const FileUploader: React.FC<FileUploaderProps> = ({
+       if (file) {
+         handleFileUpload(file);
+       }
++      // Reset so the same file can be re-selected after a successful upload
++      event.target.value = "";
+     },
+     [handleFileUpload]
+   );
+@@ -182,13 +184,13 @@ export const FileUploader: React.FC<FileUploaderProps> = ({
+               isDragOver ? "text-primary" : "text-muted-foreground"
+             }`}
+           />
+-          <p className="text-sm text-muted-foreground mb-1">
++          <p className="caption-semibold text-muted-foreground mb-1">
+             {isDragOver ? "Drop file here" : "Drag & drop a file here"}
+           </p>
+-          <p className="text-xs text-muted-foreground">
++          <p className="caption-sm text-muted-foreground">
+             or click to browse files
+           </p>
+-          <p className="text-xs text-muted-foreground mt-2">
++          <p className="caption-semibold text-muted-foreground mt-2">
+             Supports: {acceptedFormats.join(", ")}
+             {maxSize && ` • ${maxSize}`}
+           </p>
+@@ -260,17 +262,17 @@ export const FileUploader: React.FC<FileUploaderProps> = ({
+     <div className={className}>
+       <div className="space-y-2">
+         {label && (
+-          <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
++          <label className="body-sm-semibold font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+             {label}
+             {isUploading && (
+-              <span className="ml-2 text-xs text-muted-foreground">
++              <span className="ml-2 caption text-muted-foreground">
+                 (Uploading...)
+               </span>
+             )}
+           </label>
+         )}
+         {description && (
+-          <p className="text-sm text-muted-foreground">{description}</p>
++          <p className="caption text-muted-foreground">{description}</p>
+         )}
+ 
+         {value ? renderFilePreview() : renderUploadArea()}
+@@ -284,7 +286,7 @@ export const FileUploader: React.FC<FileUploaderProps> = ({
+           disabled={disabled || isUploading}
+         />
+ 
+-        {error && <p className="text-sm text-red-500">{error}</p>}
++        {error && <p className="caption-sm text-red-500">{error}</p>}
+       </div>
+     </div>
+   );
+diff --git a/src/components/ui/stepper.tsx b/src/components/ui/stepper.tsx
+index b970657..88400b1 100644
+--- a/src/components/ui/stepper.tsx
++++ b/src/components/ui/stepper.tsx
+@@ -59,7 +59,7 @@ export function Stepper({ steps, currentStep, className }: StepperProps) {
+                     {step.title}
+                   </p>
+                   {step.description && (
+-                    <p className="text-xs text-gray-500 mt-1">
++                    <p className="caption-sm text-gray-500 mt-1">
+                       {step.description}
+                     </p>
+                   )}
+diff --git a/src/contexts/event-registration.context.tsx b/src/contexts/event-registration.context.tsx
+index 6d3ae74..6d1e1d6 100644
+--- a/src/contexts/event-registration.context.tsx
++++ b/src/contexts/event-registration.context.tsx
+@@ -95,6 +95,14 @@ interface EventRegistrationContextI {
+     attendeeId: string,
+     data: UpdateParticipantI,
+   ) => Promise<void>;
++  updateAttendeeTickets: (
++    attendeeId: string,
++    tickets: { ticketId: string; quantity: number }[]
++  ) => Promise<void>;
++  updateAttendeeMerchandise: (
++    attendeeId: string,
++    merchandise: { varietyId: string; quantity: number; collectionCenterId: string }[]
++  ) => Promise<void>;
+   updateGroupMember: (
+     memberId: string,
+     data: Partial<import("@/types/group").GroupMemberI>,
+diff --git a/src/locales/TRANSLATION_KEYS.md b/src/locales/TRANSLATION_KEYS.md
+index e55f053..2287d98 100644
+--- a/src/locales/TRANSLATION_KEYS.md
++++ b/src/locales/TRANSLATION_KEYS.md
+@@ -278,7 +278,7 @@ All validation messages support dynamic parameters like `{min}`, `{max}`, `{age}
+ 
+ ### validation.phone
+ - `required` - Phone number is required / Nambari ya simu inahitajika
+-- `invalid` - Enter a valid phone number (e.g., 0754710235 or +255754710235 or 255754710235)
++- `invalid` - Enter a valid phone number
+ - `validPhone` - Please enter a valid phone number
+ - `sameAsMain` - Emergency phone cannot be the same as your phone number
+ 
+diff --git a/src/locales/en/validation.json b/src/locales/en/validation.json
+index 61a9314..ad069f1 100644
+--- a/src/locales/en/validation.json
++++ b/src/locales/en/validation.json
+@@ -36,7 +36,7 @@
+   },
+   "phone": {
+     "required": "Phone number is required",
+-    "invalid": "Enter a valid phone number (e.g., 0754710235 or +255754710235 or 255754710235)",
++    "invalid": "Enter a valid phone number",
+     "validPhone": "Please enter a valid phone number",
+     "sameAsMain": "Emergency phone cannot be the same as your phone number"
+   },
+diff --git a/src/providers/event-registration.provider.tsx b/src/providers/event-registration.provider.tsx
+index a6fd560..2f99c9d 100644
+--- a/src/providers/event-registration.provider.tsx
++++ b/src/providers/event-registration.provider.tsx
+@@ -330,6 +330,34 @@ export const EventRegistrationProvider: React.FC<{
+     }
+   };
+ 
++  const updateAttendeeTickets = async (
++    attendeeId: string,
++    tickets: { ticketId: string; quantity: number }[],
++  ): Promise<void> => {
++    try {
++      setIsCreateLoading(true);
++      await eventRegistrationService.updateAttendeeTickets(attendeeId, tickets);
++    } catch (error) {
++      throw error;
++    } finally {
++      setIsCreateLoading(false);
++    }
++  };
++
++  const updateAttendeeMerchandise = async (
++    attendeeId: string,
++    merchandise: { varietyId: string; quantity: number; collectionCenterId: string }[],
++  ): Promise<void> => {
++    try {
++      setIsCreateLoading(true);
++      await eventRegistrationService.updateAttendeeMerchandise(attendeeId, merchandise);
++    } catch (error) {
++      throw error;
++    } finally {
++      setIsCreateLoading(false);
++    }
++  };
++
+   const updateGroupMember = async (
+     memberId: string,
+     data: Partial<import("@/types/group").GroupMemberI>,
+@@ -447,6 +475,8 @@ export const EventRegistrationProvider: React.FC<{
+         // PARTICIPANT MANAGEMENT
+         deleteParticipant,
+         updateParticipant,
++        updateAttendeeTickets,
++        updateAttendeeMerchandise,
+         updateGroupMember,
+ 
+         // REGISTRATION HISTORY
+diff --git a/src/services/Group.service.ts b/src/services/Group.service.ts
+index 97e3f49..e44c1d3 100644
+--- a/src/services/Group.service.ts
++++ b/src/services/Group.service.ts
+@@ -132,8 +132,7 @@ class GroupService extends BaseApiService {
+   async deleteAttendee(groupId: string, memberId: string) {
+     try {
+       const response = await this.delete(
+-        `${API_PATHS.EVENT}attendee-groups/${groupId}/members/${memberId}`,
+-        "Are You Sure ?You want remove the member from the Group"
++        `${API_PATHS.EVENT}attendee-groups/${groupId}/members/${memberId}`
+       );
+       return response;
+     } catch (error) {
+diff --git a/src/services/event-registration.service.ts b/src/services/event-registration.service.ts
+index 679172f..666132b 100644
+--- a/src/services/event-registration.service.ts
++++ b/src/services/event-registration.service.ts
+@@ -380,8 +380,7 @@ class EventRegistrationService extends BaseApiService {
+   async deleteParticipant(attendeeId: string) {
+     try {
+       const response = await this.delete(
+-        `${API_PATHS.EVENT}event-attendees/${attendeeId}`,
+-        "Are you sure you want to remove this participant?"
++        `${API_PATHS.EVENT}event-attendees/${attendeeId}`
+       );
+       return response;
+     } catch (error) {
+@@ -410,6 +409,38 @@ class EventRegistrationService extends BaseApiService {
+     }
+   }
+ 
++  async updateAttendeeTickets(
++    attendeeId: string,
++    tickets: { ticketId: string; quantity: number }[]
++  ) {
++    try {
++      const response = await this.put(
++        `${API_PATHS.EVENT}event-attendees/${attendeeId}/tickets`,
++        tickets,
++        "Tickets updated successfully"
++      );
++      return response;
++    } catch (error) {
++      throw error;
++    }
++  }
++
++  async updateAttendeeMerchandise(
++    attendeeId: string,
++    merchandise: { varietyId: string; quantity: number; collectionCenterId: string }[]
++  ) {
++    try {
++      const response = await this.put(
++        `${API_PATHS.EVENT}event-attendees/${attendeeId}/merchandise`,
++        merchandise,
++        "Merchandise updated successfully"
++      );
++      return response;
++    } catch (error) {
++      throw error;
++    }
++  }
++
+   async updateGroupMember(
+     memberId: string,
+     data: Partial<import("@/types/group").GroupMemberI>
+diff --git a/src/types/event-registration.ts b/src/types/event-registration.ts
+index 0641159..94b6185 100644
+--- a/src/types/event-registration.ts
++++ b/src/types/event-registration.ts
+@@ -154,6 +154,7 @@ export interface AddAttendeeI {
+   attendee: {
+     id?: string;
+     firstName: string;
++    middleName?: string;
+     lastName: string;
+     email?: string;
+     phoneNumber: string;
