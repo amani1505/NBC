@@ -1,1 +1,2625 @@
-bjrenhXTWxBxo8sFK1i9EU8GolUOymucbBDjl1sS2c3Ymkan#GAdzJqHvHsYTvlGRT5ckvyJkQMBjY3nyw4MVsf4AIM0
+give me developer commit message for this changes
+diff --git a/changes.txt b/changes.txt
+index 4d61ae0..e69de29 100644
+--- a/changes.txt
++++ b/changes.txt
+@@ -1,33 +0,0 @@
+-feat(checkout,registration): add PaymentDetailsForm, fix payment flow, and harden form error
+-  handling                                                                                          
+-                                                                                            
+-  Checkout:                                                                                         
+-  - Add PaymentDetailsForm component (renders requiredFields from selected                          
+-    payment method dyn1amically) and OrderItemsSummary component                                     
+-  - Add paymentDetails state to useCheckoutState; reset it on method change;                        
+-    pass fields to initiatePayment; validate missing required fields before proceeding              
+-  - Expand PaymentMethod type to include BANK_TRANSFER, BNPL, SAVE_TO_BUY, SELCOM;                  
+-    simplify PaymentDetailsI to Record<string,string>                                               
+-  - Pass paymentMethod code directly to initiatePayment instead of mapping                          
+-    through a static lookup; redirect to payment-pending for BANK_TRANSFER                          
+-  - Forward hasNBCAccount, paymentDetails, onPaymentDetailChange, and                               
+-    onChangeDelivery through PaymentCheckoutPageSection → CheckoutPaymentStep                       
+-  - Fix PaymentMethods: only disable methods requiring NBC verification when                        
+-    !hasNBCAccount; update active border to border-primary-950; use 3-col                           
+-    grid for delivery mode options; unify delivery mode colours to primary-950                      
+-  - Replace AuthenticatedImage with next/image in ProductDeliverySelector;                          
+-    swap Gift icon for Bike on FREE delivery; replace inline buttons with Button                    
+-  - Fix PaymentProvider to throw on missing response data instead of silently                       
+-    swallowing errors; remove try/catch wrapper in payment.service.initiatePayment                  
+-                                                                                                    
+-  Registration:                                                                                     
+-  - In ParticipantDetails, move form reset inside try block so it only runs                         
+-    on success (not API failure); add scrollToFirstParticipantError helper to                       
+-    auto-scroll to first validation error on failed add; pass false to                              
+-    setTouched to avoid redundant re-validation                                                     
+-  - Send optional attendee fields as null instead of undefined so they are                          
+-    included in the request body; update AddAttendeeI types accordingly                             
+-  - Remove try/catch wrapper in event-registration.service.addAttendees so                          
+-    errors propagate to the caller                                                                  
+-  - Strip empty strings from GroupRegistrationForm add/update payloads before                       
+-    sending to avoid API rejections on optional fields      
+\ No newline at end of file
+diff --git a/commits.txt b/commits.txt
+index 98f5c08..d44f0e1 100644
+--- a/commits.txt
++++ b/commits.txt
+@@ -604,99 +604,3 @@
+     
+     ╚════════════════════════════════════════════════════════════════════╝
+ 
+- .../Account/Orders/components/ProductItemCard.tsx  |   2 +-
+- .../EventPageSection/SingleEventPageSection.tsx    |   5 +-
+- .../components/EventDetailedCard.tsx               |   3 +-
+- .../GroupRegistrationForm.tsx                      |  97 +++++++----
+- .../IndividualRegistrationForm.tsx                 |  40 ++++-
+- src/components/shared/Hero/HeroSection.tsx         |  11 +-
+- .../shared/registration/ParticipantDetails.tsx     | 177 ++++++++++++++++-----
+- 7 files changed, 249 insertions(+), 86 deletions(-)
+-
+-╔════════════════════════════════════════════════════════════════════╗
+-║ Commit: 6a40dc5ca403d259463928a829b7ba360e5513bc
+-║ Short:  6a40dc5
+-║ Date:   2026-04-05 11:54:11 (8 days ago)
+-║ Author: Robinson.Anthony <robinson.anthony@nbc.co.tz>
+-╠════════════════════════════════════════════════════════════════════╣
+-║ Subject:
+-║   feat(tickets,registrations): add display availability override, wire RegistrationsTab, and simplify Excel upload flow
+-║
+-║ Message:    
+-    ║     - Add displayAvailabilityPercent field to TicketI
+-      - Add setDisplayAvailability service method (PATCH tickets/{id}/display-availability)
+-      - Expose setDisplayAvailability through ticket context and provider
+-      - Add DisplayAvailabilityForm modal in TicketsTab to set/clear the marketing availability override with a Percent icon button and badge display
+-      - Replace 'Registration management coming soon' placeholder in AdminEventDetailPageSection with RegistrationsTab component (new untracked file)
+-      - Wrap AdminEventDetailPageSection with EventRegistrationProvider in the manage event page
+-      - Fix registration sort field from registration.paymentStatus to payments.status
+-      - Simplify Excel upload in EventRegistrationExcelUpload, GroupMemberExcelUpload, and ParticipantDetails: merge handleFileUpload and handleUploadMembers/handleUploadParticipants into a single async
+-      handler, removing separate uploadedFile state and Upload button
+-    
+-    ╚════════════════════════════════════════════════════════════════════╝
+-
+- .../AdminEventDetailPageSection.tsx                |  11 +-
+- .../components/tabs/RegistrationsTab.tsx           | 323 +++++++++++++++++++++
+- .../components/tabs/TicketsTab.tsx                 |  90 +++++-
+- .../EventRegistrationExcelUpload.tsx               |  28 +-
+- .../GroupMemberExcelUpload.tsx                     |  28 +-
+- .../RegistrationPageSection.tsx                    |   2 +-
+- .../events/(with-layout)/manage/[id]/page.tsx      |   5 +-
+- .../shared/registration/ParticipantDetails.tsx     |  33 +--
+- src/contexts/ticket.context.tsx                    |   1 +
+- src/providers/ticket.provider.tsx                  |  12 +
+- src/services/ticket.service.ts                     |  13 +
+- src/types/ticket.ts                                |   1 +
+- 12 files changed, 453 insertions(+), 94 deletions(-)
+-
+-╔════════════════════════════════════════════════════════════════════╗
+-║ Commit: b5f4190a718719b35664eeff31be4cffe888e554
+-║ Short:  b5f4190
+-║ Date:   2026-04-03 20:14:01 (10 days ago)
+-║ Author: Robinson.Anthony <robinson.anthony@nbc.co.tz>
+-╠════════════════════════════════════════════════════════════════════╣
+-║ Subject:
+-║   feat(registrations): unify registration list to RegistrationResponseI, add client-side pagination, and expand status coverage
+-║
+-║ Message:    
+-    ║     - Update getUserRegistrations service, context, and provider return type from RegistrationListItemI[] to RegistrationResponseI[]
+-      - Rename tabs from paid/unpaid to registered/pending with accurate status groupings (REGISTERED_STATUSES, PENDING_STATUSES)
+-      - Add client-side pagination for the user's 'My Registrations' tab (10 per page, reset on tab/search change)
+-      - Add PAYMENT_CONFIRMED, AWAITING_AMENDMENT, PARTIAL_PAYMENT, WAITLISTED to statusConfig with labels and colors
+-      - Simplify handleViewRegistration to always use RegistrationResponseI shape
+-      - Fix search filter to access reg.registration.displayName/registrationReference for the new type shape
+-      - Derive expired state from ticket purchase status or registrationExpiredAt date
+-    
+-    ╚════════════════════════════════════════════════════════════════════╝
+-
+- docker-compose.yml                                 |   2 +-
+- .../RegistrationPageSection.tsx                    | 198 +++++++++++++++------
+- src/contexts/event-registration.context.tsx        |   2 +-
+- src/providers/event-registration.provider.tsx      |   2 +-
+- src/services/event-registration.service.ts         |   4 +-
+- 5 files changed, 146 insertions(+), 62 deletions(-)
+-
+-╔════════════════════════════════════════════════════════════════════╗
+-║ Commit: 5781ad1d6c5945c92844b777a92158fc0afde3e3
+-║ Short:  5781ad1
+-║ Date:   2026-04-03 14:09:53 (10 days ago)
+-║ Author: Robinson.Anthony <robinson.anthony@nbc.co.tz>
+-╠════════════════════════════════════════════════════════════════════╣
+-║ Subject:
+-║   ix(tickets,registrations): 
+-║
+-║ Message:    
+-    ║     - Migrate ticket purchases fetch from by-event/{id} to ticket-purchases/search with eventId.equals param
+-      - Migrate registrations fetch from events/{id}/all to v2/event-registrations/search with eventId.equals param
+-      - Fix TicketsPageSection search+filter race: store pending search params in a ref and merge them in handleFilterChange to prevent second call overwriting the first
+-      - Fix ticket sort field paths to use nested purchase.* prefix (e.g. purchase.ticketCode, purchase.status)
+-      - Fix status filter param key from status.equals to correctly pass through as API query param
+-      - Update ticket purchase status colors: rename CANCELLED → CANCELED, add TRANSFERRED/REFUNDED/EXPIRED styles
+-      - Expand ticket status filter options to include Canceled, Transferred, Refunded
+-      - Remove page range display from DataTablePagination
+-      - Close RegistrationSideSheet overlay when clicking the backdrop
+-      - Fix canAmend check to use includes() for multiple allowed statuses
+-      - In ParticipantDetails: sync group members into localParticipants after Excel upload using uploadSucceeded flag + useEffect on groupMembers
+-    
+-    ╚════════════════════════════════════════════════════════════════════╝
+-
+diff --git a/docker-compose.yml b/docker-compose.yml
+index 57ec9a5..0198e71 100644
+--- a/docker-compose.yml
++++ b/docker-compose.yml
+@@ -7,7 +7,7 @@
+ services:
+   corporate-events-website:
+     platform: linux/amd64
+-    image: "gitlabprod.intra.nbc.co.tz:5000/event-management-system-uat:0.1.7"
++    image: "gitlabprod.intra.nbc.co.tz:5000/event-management-system-uat:0.1.8"
+     build:
+       context: .
+       dockerfile: Dockerfile
+diff --git a/src/app/(PageSections)/Account/Orders/OrderDetailPagesection.tsx b/src/app/(PageSections)/Account/Orders/OrderDetailPagesection.tsx
+index 511d1ff..85027ba 100644
+--- a/src/app/(PageSections)/Account/Orders/OrderDetailPagesection.tsx
++++ b/src/app/(PageSections)/Account/Orders/OrderDetailPagesection.tsx
+@@ -19,6 +19,7 @@ import { Skeleton } from "@/components/ui/skeleton";
+ import { useCheckout } from "@/hooks/useCheckout";
+ import { usePayment } from "@/hooks/usePayment";
+ import type { OrderProgressStatusI } from "@/types/order";
++import type { OrderItemDetailI } from "@/types/checkout";
+ 
+ function formatAmount(amount: number, currency: string) {
+   return `${currency} ${amount.toLocaleString()}`;
+@@ -96,6 +97,7 @@ export default function OrderDetailPageSection({
+   }, [orderId]);
+ 
+   const payment = orderPayments[0] ?? null;
++  const orderDetail = checkoutOrder as unknown as OrderItemDetailI | null;
+ 
+   const handleCopyControlNumber = async () => {
+     if (!payment?.controlNumber) return;
+@@ -115,7 +117,7 @@ export default function OrderDetailPageSection({
+     }
+   };
+ 
+-  if (isFetchingOrder || !checkoutOrder) {
++  if (isFetchingOrder || !orderDetail) {
+     return (
+       <div className="space-y-3 sm:space-y-4">
+         {/* Back Button */}
+@@ -165,9 +167,10 @@ export default function OrderDetailPageSection({
+     );
+   }
+ 
+-  const order = checkoutOrder;
+-  const itemCount = order.items.length;
++  const order = orderDetail;
++  const itemCount = 1;
+   const progressStatus = mapOrderStatus(order.orderStatus);
++  const currency = order.orderContext.currency;
+ 
+   return (
+     <div className="space-y-3 sm:space-y-4">
+@@ -197,9 +200,9 @@ export default function OrderDetailPageSection({
+ 
+             {/* Product Items */}
+             <div className="space-y-2 sm:space-y-3">
+-              {order.items.map((item) => {
+-                const attributes = item.attributesSnapshot
+-                  ? Object.entries(item.attributesSnapshot).map(
++              {(() => {
++                const attributes = order.attributesSnapshot
++                  ? Object.entries(order.attributesSnapshot).map(
+                       ([key, value]) => ({
+                         label: key,
+                         value: value,
+@@ -209,16 +212,16 @@ export default function OrderDetailPageSection({
+ 
+                 return (
+                   <ProductItemCard
+-                    key={item.orderItemId}
+-                    name={item.productNameSnapshot}
+-                    image={item.imageUrlSnapshot}
+-                    price={item.unitPrice}
+-                    quantity={item.quantity}
++                    key={order.orderNumber}
++                    name={order.productNameSnapshot}
++                    image={order.imageUrlSnapshot}
++                    price={order.unitPrice}
++                    quantity={order.quantity}
+                     attributes={attributes}
+-                    currency={order.currency}
++                    currency={currency}
+                   />
+                 );
+-              })}
++              })()}
+             </div>
+           </div>
+ 
+@@ -234,33 +237,26 @@ export default function OrderDetailPageSection({
+                   Subtotal ({itemCount} items)
+                 </span>
+                 <span className="text-gray-900 font-medium">
+-                  {formatAmount(order.subtotal, order.currency)}
++                  {formatAmount(order.totalPrice, currency)}
+                 </span>
+               </div>
+ 
+               <div className="border-t border-gray-100" />
+ 
+-              <div className="flex justify-between items-center text-xs sm:text-sm">
+-                <span className="text-gray-600">Shipping</span>
+-                <span className="text-gray-900 font-medium">
+-                  {formatAmount(order.shippingCost, order.currency)}
+-                </span>
+-              </div>
+-
+               <div className="flex justify-between items-center text-xs sm:text-sm">
+                 <span className="text-gray-600">Taxes</span>
+                 <span className="text-gray-900 font-medium">
+                   {order.taxAmount > 0
+-                    ? formatAmount(order.taxAmount, order.currency)
++                    ? formatAmount(order.taxAmount, currency)
+                     : "Inclusive"}
+                 </span>
+               </div>
+ 
+-              {order.totalDiscount > 0 && (
++              {order.discountAmount > 0 && (
+                 <div className="flex justify-between items-center text-xs sm:text-sm">
+                   <span className="text-gray-600">Discount</span>
+                   <span className="text-gray-900 font-medium">
+-                    -{formatAmount(order.totalDiscount, order.currency)}
++                    -{formatAmount(order.discountAmount, currency)}
+                   </span>
+                 </div>
+               )}
+@@ -271,7 +267,7 @@ export default function OrderDetailPageSection({
+                     Total
+                   </span>
+                   <span className="text-base sm:text-lg font-bold text-primary-600">
+-                    {formatAmount(order.total, order.currency)}
++                    {formatAmount(order.payment.orderTotal, currency)}
+                   </span>
+                 </div>
+               </div>
+@@ -294,13 +290,8 @@ export default function OrderDetailPageSection({
+               </div>
+               <div>
+                 <p className="text-xs sm:text-sm font-semibold text-gray-900">
+-                  Order #{order.orderNumber}
++                  Order #{order.orderContext.platformOrderRef}
+                 </p>
+-                {order.deliveredAt && (
+-                  <p className="text-[11px] sm:text-xs text-gray-500 mt-0.5">
+-                    Delivered on {formatDate(order.deliveredAt)}
+-                  </p>
+-                )}
+               </div>
+             </div>
+ 
+@@ -315,14 +306,14 @@ export default function OrderDetailPageSection({
+               <div className="flex justify-between items-center text-xs sm:text-sm">
+                 <span className="text-gray-500">Payment status</span>
+                 <span className="font-medium text-gray-900">
+-                  {order.paymentStatus.replace(/_/g, " ")}
++                  {order.orderContext.paymentStatus.replace(/_/g, " ")}
+                 </span>
+               </div>
+               <div className="flex justify-between items-center text-xs sm:text-sm">
+                 <span className="text-gray-500">Order at</span>
+                 <span className="font-medium text-gray-900">
+-                  {formatDate(order.createdDate)} at{" "}
+-                  {formatTime(order.createdDate)}
++                  {formatDate(order.orderContext.createdDate)} at{" "}
++                  {formatTime(order.orderContext.createdDate)}
+                 </span>
+               </div>
+             </div>
+@@ -485,7 +476,7 @@ export default function OrderDetailPageSection({
+           </div>
+ 
+           {/* Shipping Address */}
+-          {order.shippingAddress && (
++          {(order as any).shippingAddress && (
+             <div className="bg-white rounded-xl border border-gray-200 p-3 sm:p-5">
+               <h3 className="text-sm sm:text-base font-bold text-gray-900 mb-3 sm:mb-4">
+                 Shipping address
+@@ -497,21 +488,21 @@ export default function OrderDetailPageSection({
+                 </div>
+                 <div>
+                   <p className="text-xs sm:text-sm font-semibold text-gray-900">
+-                    {order.shippingAddress.fullName}
++                    {(order as any).shippingAddress.fullName}
+                   </p>
+                   <p className="text-[11px] sm:text-xs text-gray-500 mt-1 leading-relaxed">
+                     {[
+-                      order.shippingAddress.addressLine1,
+-                      order.shippingAddress.addressLine2,
+-                      order.shippingAddress.city,
+-                      order.shippingAddress.state,
+-                      order.shippingAddress.country,
++                      (order as any).shippingAddress.addressLine1,
++                      (order as any).shippingAddress.addressLine2,
++                      (order as any).shippingAddress.city,
++                      (order as any).shippingAddress.state,
++                      (order as any).shippingAddress.country,
+                     ]
+                       .filter(Boolean)
+                       .join(", ")}
+                   </p>
+                   <p className="text-[11px] sm:text-xs text-gray-500 mt-1">
+-                    {order.shippingAddress.phone}
++                    {(order as any).shippingAddress.phone}
+                   </p>
+                 </div>
+               </div>
+@@ -519,14 +510,14 @@ export default function OrderDetailPageSection({
+           )}
+ 
+           {/* Delivery Selections */}
+-          {order.deliverySelections.length > 0 && (
++          {(order as any).deliverySelections?.length > 0 && (
+             <div className="bg-white rounded-xl border border-gray-200 p-3 sm:p-5">
+               <h3 className="text-sm sm:text-base font-bold text-gray-900 mb-3 sm:mb-4">
+                 Delivery info
+               </h3>
+ 
+               <div className="space-y-2.5">
+-                {order.deliverySelections.map((selection) => (
++                {((order as any).deliverySelections ?? []).map((selection: any) => (
+                   <div
+                     key={selection.deliverySelectionId}
+                     className="bg-gray-50 rounded-lg p-2.5 sm:p-3 space-y-1.5"
+@@ -551,7 +542,7 @@ export default function OrderDetailPageSection({
+                     <div className="flex justify-between items-center text-xs sm:text-sm">
+                       <span className="text-gray-500">Cost</span>
+                       <span className="font-medium text-gray-900">
+-                        {formatAmount(selection.totalCost, order.currency)}
++                        {formatAmount(selection.totalCost, currency)}
+                       </span>
+                     </div>
+                   </div>
+diff --git a/src/app/(PageSections)/Dashboard/EventRegistrationPageSection/GroupRegistrationForm.tsx b/src/app/(PageSections)/Dashboard/EventRegistrationPageSection/GroupRegistrationForm.tsx
+index 3b3c457..fc9e070 100644
+--- a/src/app/(PageSections)/Dashboard/EventRegistrationPageSection/GroupRegistrationForm.tsx
++++ b/src/app/(PageSections)/Dashboard/EventRegistrationPageSection/GroupRegistrationForm.tsx
+@@ -1,1321 +1 @@
+-"use client";
+-
+-import { useState, useEffect, useRef } from "react";
+-import { useRouter, useSearchParams } from "next/navigation";
+-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+-import { Skeleton } from "@/components/ui/skeleton";
+-import { Button } from "@/components/ui/button";
+-import { FormSelect } from "@/components/ui/form-select";
+-import { Checkbox } from "@/components/ui/checkbox";
+-import { FormInput } from "@/components/ui/form-input";
+-import PhoneNumberInput from "@/components/ui/phone-number-input";
+-import { useAuth } from "@/hooks/use-auth";
+-import { useGroup } from "@/hooks/useGroup";
+-import { useTicket } from "@/hooks/useTicket";
+-import { useEventRegistration } from "@/hooks/useEventRegistration";
+-import { GroupMemberI } from "@/types/group";
+-import {
+-  Users,
+-  Phone,
+-  User2,
+-  ChevronRight,
+-  ChevronDown,
+-  Plus,
+-  Pencil,
+-  Trash2,
+-  AlertCircle,
+-} from "lucide-react";
+-import {
+-  Collapsible,
+-  CollapsibleContent,
+-  CollapsibleTrigger,
+-} from "@/components/ui/collapsible";
+-import { useFormik } from "formik";
+-import * as Yup from "yup";
+-import { useModal } from "@/hooks/useModal";
+-import CreateGroupPageSection from "../GroupPageSection.tsx/CreateGroupPageSection";
+-import { GroupProvider } from "@/providers/group.provider";
+-import { useMerchandiseCategory } from "@/hooks/useMerchandiseCategory";
+-import { SelectedMerchandise } from "@/types/merchandise";
+-import { MerchandiseSelection } from "@/components/shared/registration/MerchandiseSelection";
+-import TicketCard from "@/components/shared/registration/TicketCard";
+-import CountriesSelect from "@/components/ui/countries-select";
+-import { TANZANIA_REGION_OPTIONS } from "@/constants/tanzania-regions";
+-import FormDatePicker from "@/components/ui/form-date-picker";
+-import { dateToCalendarDate } from "@/utils/DateValueConversion";
+-import { today, getLocalTimeZone } from "@internationalized/date";
+-import { EventMerchandise } from "@/types/merchandise";
+-import { ApiResponseI } from "@/types/api";
+-import { AuthProvider } from "@/providers/auth.provider";
+-import { CollectionCenterProvider } from "@/providers/collection-center.provider";
+-import { isValidPhoneNumber } from "react-phone-number-input";
+-
+-interface GroupRegistrationFormProps {
+-  eventId: string;
+-}
+-
+-interface ParticipantTicketSelection {
+-  participantId: string;
+-  ticketId: string;
+-  selectedMerchandise?: SelectedMerchandise[];
+-}
+-
+-interface GroupRegistrationFormValues {
+-  selectedGroup: string;
+-  selectedParticipants: string[];
+-  participantTickets: ParticipantTicketSelection[];
+-}
+-
+-const validationSchema = Yup.object({
+-  selectedGroup: Yup.string().required("Please select a group"),
+-  selectedParticipants: Yup.array()
+-    .min(1, "Please select at least one participant")
+-    .required("Please select participants"),
+-  participantTickets: Yup.array()
+-    .of(
+-      Yup.object({
+-        participantId: Yup.string().required(),
+-        ticketId: Yup.string(),
+-      })
+-    )
+-    .test(
+-      "all-participants-have-tickets",
+-      "All selected participants must have a ticket",
+-      function (value) {
+-        const { selectedParticipants } = this.parent;
+-        if (!selectedParticipants || selectedParticipants.length === 0)
+-          return true;
+-
+-        const participantTickets = value || [];
+-        return selectedParticipants.every((participantId: string) =>
+-          participantTickets.some(
+-            (pt) => pt.participantId === participantId && pt.ticketId
+-          )
+-        );
+-      }
+-    )
+-    .test(
+-      "all-merchandise-have-collection-centers",
+-      "All merchandise items must have a collection center selected",
+-      function (value) {
+-        if (!value) return true;
+-        const participantTickets = value as ParticipantTicketSelection[];
+-        return participantTickets.every((pt) => {
+-          if (!pt.selectedMerchandise || pt.selectedMerchandise.length === 0) return true;
+-          return pt.selectedMerchandise.every((m) => !!m.collectionCenterId);
+-        });
+-      }
+-    ),
+-});
+-
+-const GroupRegistrationForm = ({ eventId }: GroupRegistrationFormProps) => {
+-  const router = useRouter();
+-  const searchParams = useSearchParams();
+-  const registrationId = searchParams.get("registrationId");
+-  const { user } = useAuth();
+-  const {
+-    allMyGroups,
+-    findAllMyGroups,
+-    groupMembers,
+-    findAllGroupMembers,
+-    addAttendeToGroup,
+-    updateAttendeToGroup,
+-    deleteAttendee,
+-    isLoading,
+-  } = useGroup();
+-  const { eventTickets, findEventTickets } = useTicket();
+-  const { completeExistingGroupRegistration, addMemberToGroupRegistration } = useEventRegistration();
+-  const { openModal, closeModal } = useModal();
+-  const pendingSubmitRef = useRef<(() => void) | null>(null);
+-  const { eventMechandise, findAllEventMechadise } = useMerchandiseCategory();
+-  const [selectedGroupId, setSelectedGroupId] = useState<string>("");
+-  const [, setEditingMember] = useState<GroupMemberI | null>(null);
+-  const [expandedParticipants, setExpandedParticipants] = useState<Set<string>>(new Set());
+-
+-  // Function to open create group modal
+-  const handleOpenCreateGroupModal = () => {
+-    openModal(
+-      <AuthProvider>
+-        <GroupProvider>
+-          <CreateGroupPageSection
+-            isModal={true}
+-            onSuccess={() => {
+-              closeModal();
+-              findAllMyGroups(); // Refresh the groups list
+-            }}
+-          />
+-        </GroupProvider>
+-      </AuthProvider>
+-      ,
+-      "Create a New Group",
+-      "lg",
+-      "Set up a new group for event registration"
+-    );
+-  };
+-
+-  // Function to open add/edit attendee modal
+-  const handleOpenAttendeeModal = (member?: GroupMemberI) => {
+-    setEditingMember(member || null);
+-    openModal(
+-      <CollectionCenterProvider>
+-        <AttendeeForm
+-          groupId={selectedGroupId}
+-          member={member}
+-          tickets={tickets}
+-          eventMerchandise={eventMechandise?.data ?? []}
+-          eventId={eventId}
+-          onSuccess={async (newMemberId, selectedTicket, selectedMerchandise) => {
+-            closeModal();
+-            findAllGroupMembers(selectedGroupId);
+-            setEditingMember(null);
+-            // Auto-select the new member with their chosen ticket (new members only)
+-            if (newMemberId && selectedTicket) {
+-              formik.setFieldValue("selectedParticipants", [
+-                ...formik.values.selectedParticipants,
+-                newMemberId,
+-              ]);
+-              formik.setFieldValue("participantTickets", [
+-                ...formik.values.participantTickets,
+-                {
+-                  participantId: newMemberId,
+-                  ticketId: selectedTicket,
+-                  selectedMerchandise: selectedMerchandise ?? [],
+-                },
+-              ]);
+-              // If there's an active registration, also add the member to it via BFF
+-              if (registrationId) {
+-                try {
+-                  await addMemberToGroupRegistration(registrationId, {
+-                    groupMemberId: newMemberId,
+-                    selectedTickets: { [selectedTicket]: 1 },
+-                    selectedMerchandise: (selectedMerchandise ?? []).map((item) => ({
+-                      quantity: item.quantity,
+-                      collectionCenterId: item.collectionCenterId || "",
+-                    })),
+-                  });
+-                } catch (error) {
+-                  console.error("Failed to add member to registration:", error);
+-                }
+-              }
+-            }
+-          }}
+-          onCancel={() => {
+-            closeModal();
+-            setEditingMember(null);
+-          }}
+-          addAttendeToGroup={addAttendeToGroup}
+-          updateAttendeToGroup={updateAttendeToGroup}
+-        />
+-      </CollectionCenterProvider>,
+-      member ? "Edit Attendee" : "Add Attendee",
+-      "xl",
+-      member
+-        ? "Update attendee information"
+-        : "Add a new attendee to your group"
+-    );
+-  };
+-
+-  // Function to handle delete attendee
+-  const handleDeleteAttendee = async (memberId: string) => {
+-    try {
+-      await deleteAttendee(selectedGroupId, memberId);
+-      findAllGroupMembers(selectedGroupId);
+-      // Remove from selected participants and tickets if it was selected
+-      const currentParticipants = formik.values.selectedParticipants;
+-      const currentTickets = formik.values.participantTickets;
+-      if (currentParticipants.includes(memberId)) {
+-        formik.setFieldValue(
+-          "selectedParticipants",
+-          currentParticipants.filter((id) => id !== memberId)
+-        );
+-        formik.setFieldValue(
+-          "participantTickets",
+-          currentTickets.filter((pt) => pt.participantId !== memberId)
+-        );
+-      }
+-    } catch (error) {
+-      console.error("Error deleting attendee:", error);
+-    }
+-  };
+-
+-  // Fetch user's groups and event tickets on mount
+-  useEffect(() => {
+-    findAllMyGroups();
+-    if (eventId) {
+-      findEventTickets(eventId);
+-      findAllEventMechadise(eventId);
+-    }
+-  }, [eventId]);
+-
+-  // Fetch group members when a group is selected
+-  useEffect(() => {
+-    if (selectedGroupId) {
+-      findAllGroupMembers(selectedGroupId);
+-    }
+-  }, [selectedGroupId]);
+-
+-  const formik = useFormik<GroupRegistrationFormValues>({
+-    initialValues: {
+-      selectedGroup: "",
+-      selectedParticipants: [],
+-      participantTickets: [],
+-    },
+-    validationSchema,
+-    onSubmit: async (values) => {
+-      const doSubmit = async () => {
+-        try {
+-          // Transform participantTickets into the format expected by the API
+-          const groupMembers = values.participantTickets.map((pt) => ({
+-            groupMemberId: pt.participantId,
+-            selectedTickets: {
+-              [pt.ticketId]: 1,
+-            },
+-            selectedMerchandise: pt.selectedMerchandise?.map((item) => ({
+-              varietyId: item.variantId || item.variantyId || undefined,
+-              quantity: item.quantity,
+-              collectionCenterId: item.collectionCenterId || "",
+-            })),
+-          }));
+-
+-          // Call the one-shot endpoint
+-          const response = await completeExistingGroupRegistration({
+-            eventId,
+-            attendeeGroupId: values.selectedGroup,
+-            groupMembers,
+-          });
+-
+-          if (!response?.data?.registrationId) {
+-            throw new Error("Failed to complete group registration");
+-          }
+-
+-          const registrationId = response.data.registrationId;
+-
+-          // Navigate to checkout
+-          router.push(
+-            `/events/${eventId}/registration/${registrationId}/ticket-checkout`
+-          );
+-        } catch (error) {
+-          console.error("Error submitting group registration:", error);
+-        }
+-      };
+-
+-      // Show confirmation before proceeding to payment
+-      pendingSubmitRef.current = doSubmit;
+-      openModal(
+-        <div className="space-y-4 py-2">
+-          <p className="body-sm text-gray-700">
+-            Once you proceed to payment, you will <span className="font-semibold">not be able to edit or delete</span> participant details. Please make sure all information is correct before continuing.
+-          </p>
+-          <div className="flex justify-end gap-3 pt-2">
+-            <Button variant="outline" type="button" onClick={closeModal}>
+-              Go Back & Review
+-            </Button>
+-            <Button
+-              type="button"
+-              onClick={() => {
+-                closeModal();
+-                pendingSubmitRef.current?.();
+-                pendingSubmitRef.current = null;
+-              }}
+-            >
+-              Confirm & Proceed
+-            </Button>
+-          </div>
+-        </div>,
+-        "Confirm Checkout",
+-        "md",
+-        "Are you sure you want to proceed?"
+-      );
+-    },
+-  });
+-
+-  // Create groups array for select
+-  const groupOptions =
+-    allMyGroups?.data?.map((group) => ({
+-      value: group.id,
+-      label: `${group.groupName} (${group.currentMemberCount} members)`,
+-    })) || [];
+-
+-  // Create tickets array for card display
+-  const tickets =
+-    eventTickets?.data?.map((ticket) => ({
+-      type: ticket.id.toString(),
+-      title: ticket.name,
+-      price: `${ticket.currency} ${ticket.price.toLocaleString()}`,
+-      image: ticket.imageUrl || "/images/ticket-3.png",
+-      description: ticket.description || "",
+-      id: ticket.id,
+-    })) || [];
+-
+-  const handleGroupChange = (value: string) => {
+-    formik.setFieldValue("selectedGroup", value);
+-    formik.setFieldValue("selectedParticipants", []);
+-    formik.setFieldValue("participantTickets", []);
+-    setSelectedGroupId(value);
+-  };
+-
+-  const handleParticipantToggle = (memberId: string) => {
+-    const currentParticipants = formik.values.selectedParticipants;
+-    const currentTickets = formik.values.participantTickets;
+-    const isSelected = currentParticipants.includes(memberId);
+-
+-    if (isSelected) {
+-      // Only remove from selectedParticipants — preserve ticket/merchandise data
+-      // so it is restored if the participant is re-selected later
+-      formik.setFieldValue(
+-        "selectedParticipants",
+-        currentParticipants.filter((id) => id !== memberId)
+-      );
+-      setExpandedParticipants((prev) => {
+-        const next = new Set(prev);
+-        next.delete(memberId);
+-        return next;
+-      });
+-    } else {
+-      formik.setFieldValue("selectedParticipants", [
+-        ...currentParticipants,
+-        memberId,
+-      ]);
+-      // Only add a new empty entry if this participant has no saved data yet
+-      const alreadyHasEntry = currentTickets.some(
+-        (pt) => pt.participantId === memberId
+-      );
+-      if (!alreadyHasEntry) {
+-        formik.setFieldValue("participantTickets", [
+-          ...currentTickets,
+-          { participantId: memberId, ticketId: "" },
+-        ]);
+-      }
+-      setExpandedParticipants((prev) => new Set(prev).add(memberId));
+-    }
+-  };
+-
+-  const handleSelectAll = () => {
+-    if (!groupMembers?.data) return;
+-
+-    const allMemberIds = groupMembers.data.map((member) => member.id);
+-    const allSelected =
+-      formik.values.selectedParticipants.length === allMemberIds.length;
+-
+-    if (allSelected) {
+-      // Only clear selection — preserve ticket/merchandise data
+-      formik.setFieldValue("selectedParticipants", []);
+-      setExpandedParticipants(new Set());
+-    } else {
+-      // Select all — only add entries for members who have no saved data yet
+-      formik.setFieldValue("selectedParticipants", allMemberIds);
+-      const existingTickets = formik.values.participantTickets;
+-      const newEntries = allMemberIds
+-        .filter((id) => !existingTickets.some((pt) => pt.participantId === id))
+-        .map((id) => ({ participantId: id, ticketId: "" }));
+-      if (newEntries.length > 0) {
+-        formik.setFieldValue("participantTickets", [
+-          ...existingTickets,
+-          ...newEntries,
+-        ]);
+-      }
+-      setExpandedParticipants(new Set(allMemberIds));
+-    }
+-  };
+-
+-  const isAllSelected =
+-    groupMembers?.data &&
+-    formik.values.selectedParticipants.length === groupMembers.data.length;
+-
+-  // Helper function to get ticket selection for a participant
+-  const getParticipantTicket = (participantId: string): string => {
+-    const ticket = formik.values.participantTickets.find(
+-      (pt) => pt.participantId === participantId
+-    );
+-    return ticket?.ticketId || "";
+-  };
+-
+-  // Helper function to update ticket selection for a participant
+-  const handleTicketChange = (participantId: string, ticketId: string) => {
+-    const currentTickets = formik.values.participantTickets;
+-    const existingIndex = currentTickets.findIndex(
+-      (pt) => pt.participantId === participantId
+-    );
+-
+-    if (existingIndex >= 0) {
+-      // Update existing ticket selection while preserving merchandise
+-      const updatedTickets = [...currentTickets];
+-      updatedTickets[existingIndex] = {
+-        ...updatedTickets[existingIndex],
+-        ticketId,
+-      };
+-      formik.setFieldValue("participantTickets", updatedTickets);
+-    } else {
+-      // Add new ticket selection
+-      formik.setFieldValue("participantTickets", [
+-        ...currentTickets,
+-        { participantId, ticketId },
+-      ]);
+-    }
+-  };
+-
+-  // Helper function to get merchandise selection for a participant
+-  const getParticipantMerchandise = (
+-    participantId: string
+-  ): SelectedMerchandise[] => {
+-    const ticket = formik.values.participantTickets.find(
+-      (pt) => pt.participantId === participantId
+-    );
+-    return ticket?.selectedMerchandise || [];
+-  };
+-
+-  // Helper function to update merchandise selection for a participant
+-  const handleMerchandiseChange = (
+-    participantId: string,
+-    selectedMerchandise: SelectedMerchandise[]
+-  ) => {
+-    const currentTickets = formik.values.participantTickets;
+-    const existingIndex = currentTickets.findIndex(
+-      (pt) => pt.participantId === participantId
+-    );
+-
+-    if (existingIndex >= 0) {
+-      // Update existing merchandise selection
+-      const updatedTickets = [...currentTickets];
+-      updatedTickets[existingIndex] = {
+-        ...updatedTickets[existingIndex],
+-        selectedMerchandise,
+-      };
+-      formik.setFieldValue("participantTickets", updatedTickets);
+-    }
+-  };
+-
+-  if (!user) {
+-    return (
+-      <div className="text-center py-12 space-y-4">
+-        <p className="text-gray-600">Please sign in to register as a group.</p>
+-        <Button onClick={() => router.push("/auth/sign-in")}>Sign In</Button>
+-      </div>
+-    );
+-  }
+-
+-  return (
+-    <div className="space-y-6">
+-      <div>
+-        <h5 className=" text-foreground mb-2">
+-          Group Registration
+-        </h5>
+-        <p className="text-gray-500 text-sm">
+-          Select your group and participants to register for this event
+-        </p>
+-      </div>
+-
+-      {/* Loading skeleton while fetching groups */}
+-      {isLoading && (
+-        <div className="space-y-4">
+-          <div className="flex items-center justify-between">
+-            <Skeleton className="h-9 flex-1 rounded-md" />
+-          </div>
+-          <div className="space-y-3">
+-            {[1, 2, 3].map((i) => (
+-              <div key={i} className="p-4 rounded-lg border">
+-                <div className="flex items-center gap-4">
+-                  <Skeleton className="h-4 w-4 rounded" />
+-                  <div className="flex-1 space-y-2">
+-                    <Skeleton className="h-4 w-40 rounded" />
+-                    <Skeleton className="h-3 w-56 rounded" />
+-                  </div>
+-                </div>
+-              </div>
+-            ))}
+-          </div>
+-        </div>
+-      )}
+-
+-      {/* Show create group prompt if no groups exist */}
+-      {!isLoading && (!allMyGroups?.data || allMyGroups.data.length === 0) && (
+-        <Card className="bg-gradient-to-br from-blue-50 to-blue-100/50 border-blue-200">
+-          <CardContent className="p-6 text-center space-y-4">
+-            <div className="flex justify-center">
+-              <div className="p-3 bg-blue-500/10 rounded-full">
+-                <Users className="h-12 w-12 text-blue-600" />
+-              </div>
+-            </div>
+-            <div>
+-              <h3 className="text-lg font-semibold text-gray-900 mb-2">
+-                No Groups Found
+-              </h3>
+-              <p className="text-gray-600 text-sm mb-4">
+-                You don&apos;t have any groups yet. Create a group to register
+-                multiple participants together.
+-              </p>
+-              <Button
+-                type="button"
+-                onClick={handleOpenCreateGroupModal}
+-                className="gap-2"
+-              >
+-                <Plus className="h-4 w-4" />
+-                Create Your First Group
+-              </Button>
+-            </div>
+-          </CardContent>
+-        </Card>
+-      )}
+-
+-      {/* Show form only if groups exist */}
+-      {!isLoading && allMyGroups?.data && allMyGroups.data.length > 0 && (
+-        <form onSubmit={formik.handleSubmit} className="space-y-6">
+-          {/* Group Selection */}
+-          <div className="space-y-4">
+-            <div className="flex items-center justify-between">
+-              <FormSelect
+-                label="Select Your Group"
+-                placeholder="Choose a group"
+-                required
+-                options={groupOptions}
+-                value={formik.values.selectedGroup}
+-                onValueChange={handleGroupChange}
+-                error={
+-                  formik.touched.selectedGroup && formik.errors.selectedGroup
+-                    ? formik.errors.selectedGroup
+-                    : undefined
+-                }
+-                className="flex-1"
+-              />
+-            </div>
+-            <Button
+-              type="button"
+-              variant="outline"
+-              size="sm"
+-              onClick={handleOpenCreateGroupModal}
+-              className="gap-2"
+-            >
+-              <Plus className="h-4 w-4" />
+-              Create New Group
+-            </Button>
+-          </div>
+-
+-          {/* Participants Selection */}
+-          {formik.values.selectedGroup && groupMembers?.data && (
+-            <Card>
+-              <CardHeader className="px-3 sm:px-6">
+-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+-                  <div>
+-                    <CardTitle className="body-lg-semibold flex items-center gap-2">
+-                      <Users className="h-5 w-5 hidden sm:block" />
+-                      Select Participants
+-                      <span className="px-2.5 py-0.5 bg-primary-950/10 text-primary-950 text-xs font-semibold rounded-full">
+-                        {formik.values.selectedParticipants.length} /{" "}
+-                        {groupMembers.data.length}
+-                      </span>
+-                    </CardTitle>
+-                    <p className="caption text-gray-500 mt-1">
+-                      Select one or more members to register — you don't have to select all
+-                    </p>
+-                  </div>
+-                  <div className="flex gap-2">
+-                    <Button
+-                      type="button"
+-                      variant="outline"
+-                      size="sm"
+-                      onClick={() => handleOpenAttendeeModal()}
+-                      className="gap-2"
+-                    >
+-                      <Plus className="h-4 w-4" />
+-                      Add Attendee
+-                    </Button>
+-                    {groupMembers.data.length > 0 && (
+-                      <Button
+-                        type="button"
+-                        variant="outline"
+-                        size="sm"
+-                        onClick={handleSelectAll}
+-                      >
+-                        {isAllSelected ? "Deselect All" : "Select All"}
+-                      </Button>
+-                    )}
+-                  </div>
+-                </div>
+-              </CardHeader>
+-
+-              <CardContent className="pt-6 px-3 sm:px-6">
+-                {groupMembers.data.length === 0 ? (
+-                  <div className="text-center py-8 text-gray-500">
+-                    <Users className="h-12 w-12 mx-auto mb-3 opacity-50" />
+-                    <p>No members found in this group</p>
+-                    <p className="text-sm mt-1 mb-4">
+-                      Add members to your group before registering
+-                    </p>
+-                    <Button
+-                      type="button"
+-                      onClick={() => handleOpenAttendeeModal()}
+-                      className="gap-2"
+-                    >
+-                      <Plus className="h-4 w-4" />
+-                      Add First Attendee
+-                    </Button>
+-                  </div>
+-                ) : (
+-                  <div className="space-y-3">
+-                    {groupMembers.data.map((member: GroupMemberI) => {
+-                      const isSelected =
+-                        formik.values.selectedParticipants.includes(member.id);
+-                      const isExpanded = expandedParticipants.has(member.id);
+-                      const hasTicket = !!getParticipantTicket(member.id);
+-                      const memberMerch = getParticipantMerchandise(member.id);
+-                      const hasMerch = eventMechandise?.data && eventMechandise.data.length > 0;
+-                      const missingMerch = hasMerch && memberMerch.length === 0;
+-                      const missingCollectionCenter = hasMerch && memberMerch.length > 0 && memberMerch.some((m) => !m.collectionCenterId);
+-                      const hasMissingFields = isSelected && (!hasTicket || missingMerch || missingCollectionCenter);
+-
+-                      const toggleExpanded = () => {
+-                        setExpandedParticipants((prev) => {
+-                          const next = new Set(prev);
+-                          if (next.has(member.id)) {
+-                            next.delete(member.id);
+-                          } else {
+-                            next.add(member.id);
+-                          }
+-                          return next;
+-                        });
+-                      };
+-
+-                      return (
+-                        <Collapsible
+-                          key={member.id}
+-                          open={isExpanded}
+-                          onOpenChange={toggleExpanded}
+-                        >
+-                          <div
+-                            className={`p-4 rounded-lg border transition-all duration-200 ${isSelected
+-                              ? " border-primary-950"
+-                              : "bg-white border-gray-200 hover:border-gray-300"
+-                              }`}
+-                          >
+-                            {/* Participant Info Row */}
+-                            <div className="flex items-center gap-2 sm:gap-4">
+-                              <Checkbox
+-                                checked={isSelected}
+-                                onCheckedChange={() =>
+-                                  handleParticipantToggle(member.id)
+-                                }
+-                                className="mt-1"
+-                              />
+-
+-                              <div
+-                                className="flex items-center gap-2 sm:gap-4 flex-1 min-w-0 cursor-pointer"
+-                                onClick={() => handleParticipantToggle(member.id)}
+-                              >
+-                                <div className="hidden sm:flex flex-shrink-0 w-8 h-8  text-gray-500 border border-gray-500 rounded-full items-center justify-center">
+-                                  <User2 className="h-4 w-4" />
+-                                </div>
+-
+-                                <div className="flex-1 min-w-0">
+-                                  <div className="flex flex-wrap items-center gap-1 sm:gap-2">
+-                                    <p className="text-sm font-medium text-gray-900 truncate">
+-                                      {member.firstName} {member.lastName}
+-                                    </p>
+-                                    {hasMissingFields && !isExpanded && (
+-                                      <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-xs font-medium bg-amber-100 text-amber-800">
+-                                        <AlertCircle className="h-3 w-3" />
+-                                        <span className="hidden sm:inline">Incomplete</span>
+-                                      </span>
+-                                    )}
+-                                    {isSelected && hasTicket && !isExpanded && (
+-                                      <span className="hidden sm:inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">
+-                                        Ticket selected
+-                                      </span>
+-                                    )}
+-                                  </div>
+-                                  <div className="flex items-center gap-2 sm:gap-4 mt-1">
+-                                    {/* <div className="flex items-center gap-1.5 min-w-0">
+-                                      <Mail className="h-3 w-3 text-gray-400 flex-shrink-0" />
+-                                      <p className="text-xs text-gray-600 truncate">
+-                                        {member.email}
+-                                      </p>
+-                                    </div> */}
+-                                    {member.phone && (
+-                                      <div className="hidden sm:flex items-center gap-1.5">
+-                                        <Phone className="h-3 w-3 text-gray-400" />
+-                                        <p className="text-xs text-gray-600">
+-                                          {member.phone}
+-                                        </p>
+-                                      </div>
+-                                    )}
+-                                  </div>
+-                                </div>
+-                              </div>
+-
+-                              <div className="flex items-center gap-1 sm:gap-2">
+-                                <Button
+-                                  type="button"
+-
+-                                  size="sm"
+-                                  onClick={(e) => {
+-                                    e.stopPropagation();
+-                                    handleOpenAttendeeModal(member);
+-                                  }}
+-                                  className="h-8 w-8 p-0"
+-                                >
+-                                  <Pencil className="h-4 w-4 " />
+-                                </Button>
+-                                <Button
+-                                  type="button"
+-                                  variant="destructive"
+-                                  size="sm"
+-                                  onClick={(e) => {
+-                                    e.stopPropagation();
+-                                    handleDeleteAttendee(member.id);
+-                                  }}
+-                                  className="h-8 w-8 p-0"
+-                                >
+-                                  <Trash2 className="h-4 w-4 " />
+-                                </Button>
+-                                {isSelected && (
+-                                  <CollapsibleTrigger asChild>
+-                                    <Button
+-                                      type="button"
+-                                      variant="outline"
+-                                      size="sm"
+-                                      className="h-8 w-8 p-0"
+-                                    >
+-                                      <ChevronDown
+-                                        className={`h-4 w-4 text-gray-600 transition-transform duration-200 ${isExpanded ? "rotate-180" : ""
+-                                          }`}
+-                                      />
+-                                    </Button>
+-                                  </CollapsibleTrigger>
+-                                )}
+-                              </div>
+-                            </div>
+-
+-                            {/* Warning when collapsed with missing fields */}
+-                            {isSelected && !isExpanded && hasMissingFields && (
+-                              <CollapsibleTrigger asChild>
+-                                <div className="mt-3 flex items-center gap-2 px-3 py-2 rounded-md bg-amber-50 border border-amber-200 text-amber-800 text-xs cursor-pointer hover:bg-amber-100 transition-colors">
+-                                  <AlertCircle className="h-3.5 w-3.5 flex-shrink-0" />
+-                                  <span>
+-                                    {!hasTicket ? "Ticket selection is required." : ""}
+-                                    {missingMerch ? " Merchandise selection is required." : ""}
+-                                    {missingCollectionCenter ? " Collection center is required." : ""}
+-                                    {" "}Click to expand and complete.
+-                                  </span>
+-                                </div>
+-                              </CollapsibleTrigger>
+-                            )}
+-
+-                            {/* Collapsible Ticket & Merchandise Selection */}
+-                            {isSelected && (
+-                              <CollapsibleContent>
+-                                <div className="mt-4 pt-4 border-t border-gray-200 space-y-4">
+-                                  <div>
+-                                    <h4 className="text-sm font-semibold mb-2 text-foreground">
+-                                      Select Ticket <span className="text-destructive">*</span>
+-                                    </h4>
+-                                    {formik.touched.participantTickets &&
+-                                      !getParticipantTicket(member.id) && (
+-                                        <p className="text-sm text-destructive mb-2">
+-                                          Ticket is required
+-                                        </p>
+-                                      )}
+-                                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+-                                      {tickets.map((ticket) => (
+-                                        <TicketCard
+-                                          key={ticket.type}
+-                                          type={ticket.type}
+-                                          title={ticket.title}
+-                                          price={ticket.price}
+-                                          image={ticket.image}
+-                                          description={ticket.description}
+-                                          isSelected={getParticipantTicket(member.id) === ticket.type}
+-                                          onClick={() =>
+-                                            handleTicketChange(member.id, ticket.type)
+-                                          }
+-                                        />
+-                                      ))}
+-                                    </div>
+-                                  </div>
+-
+-                                  {/* Merchandise Selection */}
+-                                  {eventMechandise?.data &&
+-                                    eventMechandise.data.length > 0 && (() => {
+-                                      const participantMerch = getParticipantMerchandise(member.id);
+-                                      const noMerchSelected = participantMerch.length === 0;
+-                                      const missingCenter = participantMerch.length > 0 && participantMerch.some((m) => !m.collectionCenterId);
+-                                      return (
+-                                        <MerchandiseSelection
+-                                          availableMerchandise={eventMechandise.data}
+-                                          selectedMerchandise={participantMerch}
+-                                          onChange={(selectedMerchandise) =>
+-                                            handleMerchandiseChange(
+-                                              member.id,
+-                                              selectedMerchandise
+-                                            )
+-                                          }
+-                                          eventId={eventId}
+-                                          required
+-                                          error={
+-                                            formik.touched.participantTickets && noMerchSelected
+-                                              ? "Please select at least one merchandise item"
+-                                              : undefined
+-                                          }
+-                                          collectionCenterError={
+-                                            formik.touched.participantTickets && missingCenter
+-                                              ? "Please select a collection center for each merchandise item"
+-                                              : undefined
+-                                          }
+-                                        />
+-                                      );
+-                                    })()}
+-                                </div>
+-                              </CollapsibleContent>
+-                            )}
+-                          </div>
+-                        </Collapsible>
+-                      );
+-                    })}
+-                  </div>
+-                )}
+-
+-                {formik.touched.selectedParticipants &&
+-                  formik.errors.selectedParticipants && (
+-                    <p className="text-sm text-destructive mt-3">
+-                      {formik.errors.selectedParticipants}
+-                    </p>
+-                  )}
+-                {formik.touched.participantTickets &&
+-                  formik.errors.participantTickets &&
+-                  typeof formik.errors.participantTickets === "string" && (
+-                    <p className="text-sm text-destructive mt-3">
+-                      {formik.errors.participantTickets}
+-                    </p>
+-                  )}
+-              </CardContent>
+-            </Card>
+-          )}
+-
+-          {/* Submit Button */}
+-          {formik.values.selectedGroup && (
+-            <div className="flex justify-end pt-4">
+-              <Button
+-                type="submit"
+-                disabled={
+-                  formik.values.selectedParticipants.length === 0 || formik.isSubmitting
+-                }
+-                loading={formik.isSubmitting}
+-                className="gap-2"
+-              >
+-                {formik.isSubmitting ? "Submitting..." : "Continue to Checkout"}
+-                {!formik.isSubmitting && <ChevronRight className="w-4 h-4" />}
+-              </Button>
+-            </div>
+-          )}
+-        </form>
+-      )}
+-    </div>
+-  );
+-};
+-
+-// Attendee Form Component
+-interface AttendeeFormProps {
+-  groupId: string;
+-  member?: GroupMemberI;
+-  // Optional — provided only in registration flow to enable ticket selection
+-  tickets?: Array<{ type: string; title: string; price: string; image: string; description: string }>;
+-  eventMerchandise?: EventMerchandise[];
+-  eventId?: string;
+-  onSuccess: (newMemberId?: string, selectedTicket?: string, selectedMerchandise?: SelectedMerchandise[]) => void;
+-  onCancel: () => void;
+-  addAttendeToGroup: (groupId: string, data: GroupMemberI) => Promise<ApiResponseI<GroupMemberI>>;
+-  updateAttendeToGroup: (
+-    groupId: string,
+-    memberId: string,
+-    data: Partial<GroupMemberI>
+-  ) => Promise<void>;
+-}
+-
+-const baseAttendeeSchema = Yup.object({
+-  firstName: Yup.string().required("First name is required"),
+-  lastName: Yup.string().required("Last name is required"),
+-  email: Yup.string()
+-    .transform((val) => (val === "" ? undefined : val))
+-    .email("Please enter a valid email address")
+-    .matches(/^[^\s@]+@[^\s@]+\.[^\s@]+$/, "Please enter a valid email address")
+-    .optional(),
+-  phone: Yup.string()
+-    .required("Phone number is required")
+-    .test("valid-phone", "Please enter a valid phone number", (value) =>
+-      value ? isValidPhoneNumber(value) : false
+-    ),
+-  dateOfBirth: Yup.date().required("Date of birth is required").max(
+-      new Date(new Date().setFullYear(new Date().getFullYear() - 2)),
+-      "Must be at least 2 years old",
+-    ),
+-  gender: Yup.string().required("Gender is required"),
+-  country: Yup.string().required("Country is required"),
+-  region: Yup.string(),
+-  pace: Yup.string().test(
+-    "valid-pace",
+-    "Pace must be a whole number between 3 and 10",
+-    (value) => {
+-      if (!value) return true;
+-      const num = Number(value);
+-      return Number.isInteger(num) && num >= 3 && num <= 10;
+-    }
+-  ).optional(),
+-  emergencyContactPhone: Yup.string()
+-    .required("Emergency contact phone is required")
+-    .test("valid-emergency-phone", "Please enter a valid phone number", (value) =>
+-      value ? isValidPhoneNumber(value) : false
+-    )
+-    .test(
+-      "different-from-phone",
+-      "Emergency contact must be different from your phone number",
+-      function (value) {
+-        if (!value || !this.parent.phone) return true;
+-        return value !== this.parent.phone;
+-      }
+-    ),
+-  selectedTicket: Yup.string().optional(),
+-  selectedMerchandise: Yup.array().optional(),
+-});
+-
+-const AttendeeForm = ({
+-  groupId,
+-  member,
+-  tickets,
+-  eventMerchandise,
+-  eventId,
+-  onSuccess,
+-  onCancel,
+-  addAttendeToGroup,
+-  updateAttendeToGroup,
+-}: AttendeeFormProps) => {
+-  // Ticket selection is shown when tickets are provided and it's a new member (not edit)
+-  const isRegistrationFlow = !!tickets && tickets.length > 0 && !member;
+-
+-  const hasMerchandise = !!eventMerchandise && eventMerchandise.length > 0;
+-
+-  const validationSchema = isRegistrationFlow
+-    ? baseAttendeeSchema.shape({
+-        selectedTicket: Yup.string().required("Please select a ticket"),
+-        ...(hasMerchandise
+-          ? {
+-              selectedMerchandise: Yup.array()
+-                .min(1, "Please select at least one merchandise item")
+-                .test(
+-                  "collection-centers-required",
+-                  "Each merchandise item must have a collection center",
+-                  (value) => {
+-                    if (!value || value.length === 0) return true;
+-                    return (value as SelectedMerchandise[]).every(
+-                      (item) => !!item.collectionCenterId
+-                    );
+-                  }
+-                ),
+-            }
+-          : {}),
+-      })
+-    : baseAttendeeSchema;
+-
+-  const formik = useFormik({
+-    initialValues: {
+-      firstName: member?.firstName || "",
+-      lastName: member?.lastName || "",
+-      email: member?.email || "",
+-      phone: member?.phone || "",
+-      dateOfBirth: member?.dateOfBirth || "",
+-      gender: member?.gender || "",
+-      country: member?.country || "Tanzania",
+-      region: member?.region || "",
+-      pace: member?.pace || "",
+-      emergencyContactPhone: member?.emergencyContactPhone || "",
+-      selectedTicket: "",
+-      selectedMerchandise: [] as SelectedMerchandise[],
+-    },
+-    validationSchema,
+-    onSubmit: async (values, { setStatus }) => {
+-      try {
+-        if (member?.id) {
+-          const { selectedTicket: _t, selectedMerchandise: _m, ...updateData } = values;
+-          const cleanedUpdate = Object.fromEntries(
+-            Object.entries(updateData).filter(([, v]) => v !== "" && v !== null && v !== undefined)
+-          );
+-          await updateAttendeToGroup(groupId, member.id, cleanedUpdate as Partial<GroupMemberI>);
+-          onSuccess();
+-        } else {
+-          const { selectedTicket, selectedMerchandise, ...memberData } = values;
+-          // Strip empty strings so optional fields are omitted from the request
+-          // rather than sent as "" which the API may reject or mishandle
+-          const cleanedData = Object.fromEntries(
+-            Object.entries(memberData).filter(([, v]) => v !== "" && v !== null && v !== undefined)
+-          );
+-          const response = await addAttendeToGroup(groupId, {
+-            ...cleanedData,
+-            attendeeGroupId: groupId,
+-          } as unknown as GroupMemberI);
+-          onSuccess(response?.data?.id, selectedTicket, selectedMerchandise);
+-        }
+-      } catch (error) {
+-        const message =
+-          error instanceof Error ? error.message : "Failed to save attendee. Please try again.";
+-        setStatus(message);
+-      }
+-    },
+-  });
+-
+-  const genderOptions = [
+-    { value: "MALE", label: "Male" },
+-    { value: "FEMALE", label: "Female" },
+-  ];
+-
+-  // Scroll to the first error field when a submit attempt fails
+-  const scrollToFirstError = () => {
+-    const firstErrorField = Object.keys(formik.errors)[0];
+-    if (!firstErrorField) return;
+-
+-    // Try by id, then name, then label text, then error message text
+-    let el: HTMLElement | null =
+-      document.getElementById(firstErrorField) ||
+-      document.querySelector(`[name="${firstErrorField}"]`);
+-
+-    if (!el) {
+-      const errorText = String((formik.errors as Record<string, string>)[firstErrorField] ?? "");
+-      const errorEls = Array.from(document.querySelectorAll(".text-destructive"));
+-      const matched = errorEls.find((e) => e.textContent?.includes(errorText));
+-      if (matched) el = matched.parentElement as HTMLElement;
+-    }
+-
+-    if (el) {
+-      el.scrollIntoView({ behavior: "smooth", block: "center" });
+-    }
+-  };
+-
+-  // eslint-disable-next-line react-hooks/exhaustive-deps
+-  useEffect(() => {
+-    if (formik.submitCount > 0 && !formik.isValid) {
+-      setTimeout(scrollToFirstError, 100);
+-    }
+-  }, [formik.submitCount]);
+-
+-  return (
+-    <form onSubmit={formik.handleSubmit} className="space-y-6">
+-      <style>{`
+-        [data-radix-select-content] { z-index: 99999999999 !important; }
+-      `}</style>
+-
+-      {/* Section: Personal Info */}
+-      <div>
+-        <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-3">Personal Information</p>
+-        <div className="grid grid-cols-2 gap-4">
+-          <FormInput
+-            id="firstName"
+-            name="firstName"
+-            label="First Name"
+-            required
+-            value={formik.values.firstName}
+-            onChange={formik.handleChange}
+-            onBlur={formik.handleBlur}
+-            placeholder="Enter first name"
+-            error={formik.touched.firstName && formik.errors.firstName ? formik.errors.firstName : undefined}
+-          />
+-          <FormInput
+-            id="lastName"
+-            name="lastName"
+-            label="Last Name"
+-            required
+-            value={formik.values.lastName}
+-            onChange={formik.handleChange}
+-            onBlur={formik.handleBlur}
+-            placeholder="Enter last name"
+-            error={formik.touched.lastName && formik.errors.lastName ? formik.errors.lastName : undefined}
+-          />
+-          <FormInput
+-            id="email"
+-            name="email"
+-            type="email"
+-            label="Email"
+-            value={formik.values.email}
+-            onChange={formik.handleChange}
+-            onBlur={formik.handleBlur}
+-            placeholder="Enter email (optional)"
+-            error={formik.touched.email && formik.errors.email ? formik.errors.email : undefined}
+-          />
+-          <PhoneNumberInput
+-            id="phone"
+-            label="Phone"
+-            required
+-            value={formik.values.phone}
+-            onChange={(value) => formik.setFieldValue("phone", value)}
+-            onBlur={() => formik.setFieldTouched("phone", true)}
+-            placeholder="Enter phone number"
+-            error={formik.touched.phone && formik.errors.phone ? formik.errors.phone : undefined}
+-          />
+-          <FormDatePicker
+-            id="dateOfBirth"
+-            label="Date of Birth"
+-            required
+-            value={dateToCalendarDate(
+-              formik.values.dateOfBirth ? new Date(formik.values.dateOfBirth) : null
+-            )}
+-            onChange={(dateValue) => {
+-              if (dateValue) {
+-                const d = new Date(dateValue.toString());
+-                formik.setFieldValue("dateOfBirth", d.toISOString().split("T")[0]);
+-              } else {
+-                formik.setFieldValue("dateOfBirth", "");
+-              }
+-              formik.setFieldTouched("dateOfBirth", true, false);
+-            }}
+-            maxValue={today(getLocalTimeZone()).subtract({ years: 2 })}
+-            description="Participant must be at least 2 years old"
+-            error={formik.touched.dateOfBirth && formik.errors.dateOfBirth ? String(formik.errors.dateOfBirth) : undefined}
+-            className="w-full"
+-          />
+-          <FormSelect
+-            id="gender"
+-            name="gender"
+-            label="Gender"
+-            required
+-            value={formik.values.gender}
+-            onValueChange={(value) => {
+-              formik.setFieldValue("gender", value);
+-              formik.setFieldTouched("gender", true, false);
+-            }}
+-            options={genderOptions}
+-            placeholder="Select gender"
+-            error={formik.touched.gender && formik.errors.gender ? formik.errors.gender : undefined}
+-          />
+-        </div>
+-      </div>
+-
+-      {/* Section: Location & Event Details */}
+-      <div className="border-t pt-5">
+-        <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-3">Location & Event Details</p>
+-        <div className="grid grid-cols-2 gap-4">
+-          <CountriesSelect
+-            label="Country"
+-            required
+-            value={formik.values.country}
+-            onChange={(value) => {
+-              formik.setFieldValue("country", value);
+-              formik.setFieldTouched("country", true, false);
+-              if (value !== "Tanzania" && formik.values.region) {
+-                formik.setFieldValue("region", "");
+-              }
+-            }}
+-            error={formik.touched.country && formik.errors.country ? formik.errors.country : undefined}
+-          />
+-          {formik.values.country === "Tanzania" && (
+-            <FormSelect
+-              label="Region"
+-              placeholder="Select region"
+-              required
+-              options={TANZANIA_REGION_OPTIONS}
+-              value={formik.values.region}
+-              onValueChange={(value) => {
+-                formik.setFieldValue("region", value);
+-                formik.setFieldTouched("region", true, false);
+-              }}
+-              error={formik.touched.region && formik.errors.region ? formik.errors.region : undefined}
+-            />
+-          )}
+-          <FormInput
+-            id="pace"
+-            name="pace"
+-            label="Pace"
+-            value={formik.values.pace}
+-            onChange={formik.handleChange}
+-            onBlur={formik.handleBlur}
+-            placeholder="e.g., 5 (min per km)"
+-            error={formik.touched.pace && formik.errors.pace ? formik.errors.pace : undefined}
+-          />
+-          <PhoneNumberInput
+-            id="emergencyContactPhone"
+-            label="Emergency Contact Phone"
+-            required
+-            value={formik.values.emergencyContactPhone}
+-            onChange={(value) => formik.setFieldValue("emergencyContactPhone", value)}
+-            placeholder="Enter emergency contact phone"
+-            error={
+-              formik.touched.emergencyContactPhone && formik.errors.emergencyContactPhone
+-                ? formik.errors.emergencyContactPhone
+-                : undefined
+-            }
+-          />
+-        </div>
+-      </div>
+-
+-      {/* Section: Ticket Selection (registration flow only) */}
+-      {isRegistrationFlow && tickets && (
+-        <div className="border-t pt-5">
+-          <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-1">
+-            Select Ticket <span className="text-destructive normal-case">*</span>
+-          </p>
+-          {formik.touched.selectedTicket && formik.errors.selectedTicket && (
+-            <p className="text-sm text-destructive mb-3">{formik.errors.selectedTicket}</p>
+-          )}
+-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mt-3">
+-            {tickets.map((ticket) => (
+-              <TicketCard
+-                key={ticket.type}
+-                type={ticket.type}
+-                title={ticket.title}
+-                price={ticket.price}
+-                image={ticket.image}
+-                description={ticket.description}
+-                isSelected={formik.values.selectedTicket === ticket.type}
+-                onClick={() => {
+-                  formik.setFieldValue("selectedTicket", ticket.type);
+-                  formik.setFieldTouched("selectedTicket", true, false);
+-                }}
+-              />
+-            ))}
+-          </div>
+-        </div>
+-      )}
+-
+-      {/* Section: Merchandise (registration flow only, if available) */}
+-      {isRegistrationFlow && eventMerchandise && eventMerchandise.length > 0 && (
+-        <div className="border-t pt-5">
+-          <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-3">
+-            Merchandise <span className="text-destructive normal-case">*</span>
+-          </p>
+-          <MerchandiseSelection
+-            availableMerchandise={eventMerchandise}
+-            selectedMerchandise={formik.values.selectedMerchandise}
+-            onChange={(items) => formik.setFieldValue("selectedMerchandise", items)}
+-            eventId={eventId}
+-            required
+-            error={
+-              formik.touched.selectedMerchandise && formik.errors.selectedMerchandise
+-                ? typeof formik.errors.selectedMerchandise === "string"
+-                  ? formik.errors.selectedMerchandise
+-                  : "Please complete merchandise selection"
+-                : undefined
+-            }
+-            collectionCenterError={
+-              formik.touched.selectedMerchandise &&
+-              formik.values.selectedMerchandise.length > 0 &&
+-              formik.values.selectedMerchandise.some((m) => !m.collectionCenterId)
+-                ? "Please select a collection center for each merchandise item"
+-                : undefined
+-            }
+-          />
+-        </div>
+-      )}
+-
+-      {/* Submit error */}
+-      {formik.status && (
+-        <p className="text-sm text-destructive" role="alert">{formik.status}</p>
+-      )}
+-
+-      {/* Form Actions */}
+-      <div className="flex justify-end gap-3 pt-4 border-t">
+-        <Button type="button" variant="outline" onClick={onCancel}>
+-          Cancel
+-        </Button>
+-        <Button type="submit" disabled={formik.isSubmitting}>
+-          {formik.isSubmitting ? "Saving..." : member ? "Update Attendee" : "Add Attendee"}
+-        </Button>
+-      </div>
+-    </form>
+-  );
+-};
+-
+-export default GroupRegistrationForm;
++export { default } from "./GroupRegistrationForm/index";
+diff --git a/src/app/(PageSections)/PaymentCheckoutPageSection/PaymentCheckoutPageSection.tsx b/src/app/(PageSections)/PaymentCheckoutPageSection/PaymentCheckoutPageSection.tsx
+index e36105b..0f29568 100644
+--- a/src/app/(PageSections)/PaymentCheckoutPageSection/PaymentCheckoutPageSection.tsx
++++ b/src/app/(PageSections)/PaymentCheckoutPageSection/PaymentCheckoutPageSection.tsx
+@@ -22,6 +22,8 @@ function PaymentCheckoutPageSection({ orderId }: PaymentCheckoutPageSectionProps
+     return <CheckoutSkeleton />;
+   }
+ 
++  const isS2bFlow = state.allowedPaymentMethods?.includes("SAVE_TO_BUY") ?? false;
++
+   const seen = new Set<string>();
+   const nbcAccounts = [
+     ...(state.user?.primaryAccount ? [state.user.primaryAccount] : []),
+@@ -38,13 +40,15 @@ function PaymentCheckoutPageSection({ orderId }: PaymentCheckoutPageSectionProps
+         currentStep={state.currentStep}
+         onStepClick={state.setCurrentStep}
+         stepProgress={state.stepProgress}
++        hideDelivery={state.allowedPaymentMethods?.includes("SAVE_TO_BUY") ?? false}
+       />
+ 
+       <div className="checkout-container mx-auto">
+         <div className="checkout-grid">
+           {/* Main content */}
+           <div className="checkout-section-gap flex flex-col">
+-            {state.currentStep === 1 && (
++            {/* Delivery step — never shown for S2B (items delivered after full payment) */}
++            {state.currentStep === 1 && !isS2bFlow && (
+               <CheckoutDeliveryStep
+                 cartItems={state.cartItems}
+                 itemDeliveries={state.itemDeliveries}
+@@ -66,7 +70,7 @@ function PaymentCheckoutPageSection({ orderId }: PaymentCheckoutPageSectionProps
+               />
+             )}
+ 
+-            {state.currentStep === 2 && (
++            {(state.currentStep === 2 || isS2bFlow) && (
+               <CheckoutPaymentStep
+                 validationErrors={state.stepValidation[2] ?? []}
+                 cartProductTypes={state.cartProductTypes}
+@@ -88,6 +92,8 @@ function PaymentCheckoutPageSection({ orderId }: PaymentCheckoutPageSectionProps
+                 selectedS2bOption={state.selectedS2bOption}
+                 onS2bOptionChange={state.setSelectedS2bOption}
+                 isFetchingS2bOptions={state.isFetchingS2bOptions}
++                s2bUpfrontAmount={state.s2bUpfrontAmount}
++                onS2bUpfrontAmountChange={state.handleS2bUpfrontAmountChange}
+                 hasNBCAccount={state.user?.hasNBCAccount ?? false}
+                 onChangeDelivery={() => state.setCurrentStep(1)}
+                 paymentMethods={state.paymentMethods}
+@@ -134,7 +140,7 @@ function PaymentCheckoutPageSection({ orderId }: PaymentCheckoutPageSectionProps
+                 showCoupon={false}
+               />
+ 
+-              {state.user?.hasNBCAccount && state.currentStep !== 2 && (
++              {state.user?.hasNBCAccount && state.currentStep !== 2 && !isS2bFlow && (
+                 <LoyaltyRewardsSection
+                   balance={state.redemptionOptions?.customerBalance || null}
+                   discountPresets={state.redemptionOptions?.discountPresets || []}
+diff --git a/src/app/(PageSections)/PaymentCheckoutPageSection/Sections/BNPLPaymentForm.tsx b/src/app/(PageSections)/PaymentCheckoutPageSection/Sections/BNPLPaymentForm.tsx
+index 9ad6cba..712bb82 100644
+--- a/src/app/(PageSections)/PaymentCheckoutPageSection/Sections/BNPLPaymentForm.tsx
++++ b/src/app/(PageSections)/PaymentCheckoutPageSection/Sections/BNPLPaymentForm.tsx
+@@ -4,6 +4,7 @@ import { Info, Truck, Package } from "lucide-react";
+ import { cn } from "@/lib/utils";
+ import { CheckoutOrderItemI, DeliverySelectionI } from "@/types/checkout";
+ import { NBCAccountI } from "@/types/user";
++import { UniversalSelect, SelectOption } from "@/components/ui/UniversalSelect";
+ 
+ const REPAYMENT_PERIODS = [7, 14, 21, 30];
+ 
+@@ -13,10 +14,6 @@ const DELIVERY_MODE_LABELS: Record<string, string> = {
+   DIGITAL: "Digital Delivery",
+ };
+ 
+-function maskAccount(account: string): string {
+-  if (account.length <= 5) return account;
+-  return account.slice(0, 2) + "*".repeat(account.length - 5) + account.slice(-3);
+-}
+ 
+ interface BNPLPaymentFormProps {
+   nbcAccounts: NBCAccountI[];
+@@ -73,44 +70,18 @@ export default function BNPLPaymentForm({
+ 
+       {/* NBC Account selector */}
+       <div className="space-y-1.5">
+-        <p className="text-sm font-medium text-gray-700">Your NBC Account No.</p>
+-        <div className="space-y-2">
+-          {nbcAccounts.map((acc) => {
+-            const isSelected = selectedAccount === acc.accountNumber;
+-            return (
+-              <button
+-                key={acc.accountNumber}
+-                type="button"
+-                onClick={() => onAccountChange(acc.accountNumber)}
+-                className={cn(
+-                  "w-full text-left rounded-lg border px-4 py-3 transition-all",
+-                  isSelected
+-                    ? "border-primary-600 bg-primary-50 ring-1 ring-primary-600"
+-                    : "border-gray-200 bg-white hover:border-gray-300"
+-                )}
+-              >
+-                <div className="flex items-center justify-between gap-2">
+-                  <span className="text-sm font-medium text-gray-900 font-mono">
+-                    {maskAccount(acc.accountNumber)}
+-                  </span>
+-                  {acc.isPrimary && (
+-                    <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-green-100 text-green-700">
+-                      Primary
+-                    </span>
+-                  )}
+-                </div>
+-                {acc.availableBalance != null && (
+-                  <p className="text-xs text-gray-500 mt-0.5">
+-                    Balance: TZS {acc.availableBalance.toLocaleString()}
+-                  </p>
+-                )}
+-                {acc.accountStatus && (
+-                  <p className="text-xs text-gray-400 mt-0.5">{acc.accountStatus}</p>
+-                )}
+-              </button>
+-            );
+-          })}
+-        </div>
++        <UniversalSelect
++          label="Payment Account"
++          placeholder="Select an account"
++          value={selectedAccount}
++          onValueChange={(val) => onAccountChange(val as string)}
++          options={nbcAccounts.map((acc): SelectOption => ({
++            value: acc.accountNumber,
++            label: acc.accountNumber,
++            badge: acc.isPrimary ? "Primary" : undefined,
++            originalData: acc,
++          }))}
++        />
+         {bnplLimit !== undefined && (
+           <p className="flex items-center gap-1.5 text-xs text-gray-500">
+             <Info className="w-3.5 h-3.5 shrink-0" />
+diff --git a/src/app/(PageSections)/PaymentCheckoutPageSection/Sections/CheckoutPaymentStep.tsx b/src/app/(PageSections)/PaymentCheckoutPageSection/Sections/CheckoutPaymentStep.tsx
+index c3f840e..ef47523 100644
+--- a/src/app/(PageSections)/PaymentCheckoutPageSection/Sections/CheckoutPaymentStep.tsx
++++ b/src/app/(PageSections)/PaymentCheckoutPageSection/Sections/CheckoutPaymentStep.tsx
+@@ -39,6 +39,8 @@ interface CheckoutPaymentStepProps {
+   selectedS2bOption: S2bInstallmentOptionI | null;
+   onS2bOptionChange: (option: S2bInstallmentOptionI) => void;
+   isFetchingS2bOptions: boolean;
++  s2bUpfrontAmount: number;
++  onS2bUpfrontAmountChange: (amount: number) => void;
+   // Payment methods (normal flow)
+   hasNBCAccount: boolean;
+   paymentMethods: PaymentMethodOptionI[];
+@@ -85,6 +87,8 @@ export function CheckoutPaymentStep({
+   selectedS2bOption,
+   onS2bOptionChange,
+   isFetchingS2bOptions,
++  s2bUpfrontAmount,
++  onS2bUpfrontAmountChange,
+   hasNBCAccount,
+   paymentMethods,
+   selectedPaymentMethod,
+@@ -160,6 +164,8 @@ export function CheckoutPaymentStep({
+             nbcAccounts={nbcAccounts}
+             selectedAccount={selectedNBCAccount}
+             onAccountChange={onNBCAccountChange}
++            upfrontAmount={s2bUpfrontAmount}
++            onUpfrontAmountChange={onS2bUpfrontAmountChange}
+             s2bOptions={s2bOptions}
+             selectedOption={selectedS2bOption}
+             onOptionChange={onS2bOptionChange}
+diff --git a/src/app/(PageSections)/PaymentCheckoutPageSection/Sections/CheckoutSteps.tsx b/src/app/(PageSections)/PaymentCheckoutPageSection/Sections/CheckoutSteps.tsx
+index b00f48a..e2ead01 100644
+--- a/src/app/(PageSections)/PaymentCheckoutPageSection/Sections/CheckoutSteps.tsx
++++ b/src/app/(PageSections)/PaymentCheckoutPageSection/Sections/CheckoutSteps.tsx
+@@ -1,6 +1,6 @@
+ "use client";
+ 
+-import { ShoppingCart, Truck, CreditCard } from "lucide-react";
++import { Truck, CreditCard } from "lucide-react";
+ import { cn } from "@/lib/utils";
+ 
+ export interface Step {
+@@ -15,14 +15,17 @@ interface CheckoutStepsProps {
+   onStepClick?: (step: number) => void;
+   /** 0–100 progress within the current step's bar */
+   stepProgress?: number;
++  /** Hide delivery step (e.g. installment/S2B — delivery happens after full payment) */
++  hideDelivery?: boolean;
+ }
+ 
+ export function CheckoutSteps({
+   currentStep,
+   onStepClick,
+   stepProgress = 0,
++  hideDelivery = false,
+ }: CheckoutStepsProps) {
+-  const steps: Step[] = [
++  const allSteps: Step[] = [
+     {
+       id: 1,
+       title: "Delivery",
+@@ -36,6 +39,7 @@ export function CheckoutSteps({
+       status: currentStep >= 2 ? "current" : "upcoming",
+     },
+   ];
++  const steps = hideDelivery ? allSteps.filter((s) => s.id !== 1) : allSteps;
+ 
+   return (
+     <div className="w-full pt-6 pb-2 bg-white mt-4">
+diff --git a/src/app/(PageSections)/PaymentCheckoutPageSection/Sections/SaveToBuyPaymentForm.tsx b/src/app/(PageSections)/PaymentCheckoutPageSection/Sections/SaveToBuyPaymentForm.tsx
+index 1d775cb..6c89025 100644
+--- a/src/app/(PageSections)/PaymentCheckoutPageSection/Sections/SaveToBuyPaymentForm.tsx
++++ b/src/app/(PageSections)/PaymentCheckoutPageSection/Sections/SaveToBuyPaymentForm.tsx
+@@ -1,11 +1,15 @@
+ "use client";
+ 
+ import { useState } from "react";
+-import { ChevronDown, Info, Loader2, CheckCircle2 } from "lucide-react";
++// import { Info } from "lucide-react"; // re-enable with preview
+ import { AuthenticatedImage } from "@/components/ui/AuthenticatedImage";
+-import { cn } from "@/lib/utils";
+-import { S2bPreviewOptionsResultI, S2bInstallmentOptionI } from "@/types/checkout";
++// import { cn } from "@/lib/utils"; // re-enable with preview
++// import { S2bPreviewOptionsResultI, S2bInstallmentOptionI } from "@/types/checkout"; // re-enable with preview
+ import { NBCAccountI } from "@/types/user";
++import { UniversalSelect, SelectOption } from "@/components/ui/UniversalSelect";
++import { FormInput } from "@/components/ui/form-input";
++import { Checkbox } from "@/components/ui/checkbox";
++// import { Button } from "@/components/ui/button"; // re-enable with preview
+ 
+ export interface SaveToBuyItem {
+   productName: string;
+@@ -19,290 +23,149 @@ interface SaveToBuyPaymentFormProps {
+   nbcAccounts: NBCAccountI[];
+   selectedAccount: string;
+   onAccountChange: (account: string) => void;
++  upfrontAmount: number;
++  onUpfrontAmountChange: (amount: number) => void;
+   confirmed: boolean;
+   onConfirmChange: (confirmed: boolean) => void;
+-  /** Live plan options from /s2b/{orderId}/preview-options */
+-  s2bOptions?: S2bPreviewOptionsResultI | null;
+-  selectedOption?: S2bInstallmentOptionI | null;
+-  onOptionChange?: (option: S2bInstallmentOptionI) => void;
+-  isLoadingOptions?: boolean;
++  // s2bOptions?: S2bPreviewOptionsResultI | null;       // re-enable with preview
++  // selectedOption?: S2bInstallmentOptionI | null;      // re-enable with preview
++  // onOptionChange?: (option: S2bInstallmentOptionI) => void; // re-enable with preview
++  // isLoadingOptions?: boolean;                         // re-enable with preview
+   validationErrors?: string[];
+ }
+ 
+-function maskAccount(account: string): string {
+-  if (account.length <= 5) return account;
+-  return account.slice(0, 2) + "*".repeat(account.length - 5) + account.slice(-3);
+-}
+-
+-function formatDate(dateStr: string): string {
+-  try {
+-    return new Date(dateStr).toLocaleDateString("en-TZ", { month: "short", year: "numeric", day: "numeric" });
+-  } catch {
+-    return dateStr;
+-  }
+-}
++// function formatDate(dateStr: string): string { ... } // re-enable with preview
+ 
+ export default function SaveToBuyPaymentForm({
+   items,
+   nbcAccounts,
+   selectedAccount,
+   onAccountChange,
++  upfrontAmount,
++  onUpfrontAmountChange,
+   confirmed,
+   onConfirmChange,
+-  s2bOptions,
+-  selectedOption,
+-  onOptionChange,
+-  isLoadingOptions = false,
++  // s2bOptions, selectedOption, onOptionChange, isLoadingOptions, // re-enable with preview
+   validationErrors = [],
+ }: SaveToBuyPaymentFormProps) {
+-  const [expandedIndex, setExpandedIndex] = useState<number | null>(0);
++  const [inputValue, setInputValue] = useState(upfrontAmount > 0 ? String(upfrontAmount) : "");
++  const [amountTouched, setAmountTouched] = useState(false);
+ 
+-  const hasOptions = s2bOptions && s2bOptions.options.length > 0;
++  const accountOptions: SelectOption[] = nbcAccounts.map((acc) => ({
++    value: acc.accountNumber,
++    label: acc.accountNumber,
++    badge: acc.isPrimary ? "Primary" : undefined,
++    originalData: acc,
++  }));
+ 
+   return (
+-    <div className="space-y-6">
+-      <h2 className="text-xl font-bold text-primary-900">Save-to-Buy Payment Plan</h2>
+-
+-      {/* Product list */}
+-      <div className="space-y-4">
+-        {items.map((item, idx) => {
+-          const isExpanded = expandedIndex === idx;
+-
+-          return (
+-            <div key={idx} className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+-              {/* Product header */}
+-              <button
+-                type="button"
+-                className="w-full flex items-center justify-between px-5 py-4 hover:bg-gray-50 transition-colors"
+-                onClick={() => setExpandedIndex(isExpanded ? null : idx)}
+-              >
+-                <div className="flex items-center gap-3">
+-                  <div className="w-12 h-12 rounded-lg bg-gray-50 border border-gray-100 overflow-hidden flex items-center justify-center flex-shrink-0">
+-                    <AuthenticatedImage
+-                      src={item.productImage}
+-                      alt={item.productName}
+-                      width={44}
+-                      height={44}
+-                      unoptimized
+-                      className="w-full h-full object-contain"
+-                    />
+-                  </div>
+-                  <p className="text-sm font-medium text-gray-900 text-left line-clamp-2 max-w-xs">
+-                    {item.productName}
+-                  </p>
+-                </div>
+-                <div className="flex items-center gap-2 shrink-0 ml-4">
+-                  <span className="text-sm text-gray-500">View Details</span>
+-                  <ChevronDown
+-                    className={cn("w-4 h-4 text-gray-400 transition-transform", isExpanded && "rotate-180")}
+-                  />
+-                </div>
+-              </button>
++    <div className="space-y-4">
++      <div className="space-y-6">
++        <h2 className="text-xl font-bold text-primary-900">Save-to-Buy Payment Plan</h2>
++
++        {/* Initial Payment + Account — all on one line */}
++        <div className="flex items-end gap-3">
++          {/* Upfront / initial payment input */}
++          <div className="flex-1">
++            <FormInput
++              label="Initial Payment (TZS)"
++              required
++              inputMode="numeric"
++              value={inputValue}
++              onChange={(e) => {
++                const v = e.target.value.replace(/[^0-9.]/g, "");
++                setInputValue(v);
++                setAmountTouched(true);
++                const parsed = parseFloat(v);
++                onUpfrontAmountChange(!isNaN(parsed) && parsed > 0 ? parsed : 0);
++              }}
++              onBlur={() => setAmountTouched(true)}
++              onKeyDown={(e) => { if (e.key === "Enter") e.currentTarget.blur(); }}
++              placeholder="Enter amount"
++              error={amountTouched && upfrontAmount <= 0 ? "Please enter the initial payment amount." : undefined}
++            />
++          </div>
+ 
+-              {isExpanded && (
+-                <div className="px-5 pb-5 space-y-5 border-t border-gray-100">
+-                  <div className="pt-4 text-sm text-gray-500">
+-                    Total Price: <span className="font-medium text-gray-900">TZS {item.totalPrice.toLocaleString()}</span>
+-                  </div>
+-                </div>
+-              )}
+-            </div>
+-          );
+-        })}
+-      </div>
++          {/* NBC Account selector */}
++          <div className="flex-1">
++            <UniversalSelect
++              label="Choose NBC Payment Account"
++              placeholder="Select an account"
++              value={selectedAccount}
++              onValueChange={(val) => onAccountChange(val as string)}
++              options={accountOptions}
++            />
++          </div>
+ 
+-      {/* NBC Account selector */}
+-      <div className="space-y-1.5">
+-        <p className="text-sm font-medium text-gray-700">Choose NBC Payment Account</p>
+-        <div className="space-y-2">
+-          {nbcAccounts.map((acc) => {
+-            const isSelected = selectedAccount === acc.accountNumber;
+-            return (
+-              <button
+-                key={acc.accountNumber}
+-                type="button"
+-                onClick={() => onAccountChange(acc.accountNumber)}
+-                className={cn(
+-                  "w-full text-left rounded-lg border px-4 py-3 transition-all",
+-                  isSelected
+-                    ? "border-primary-600 bg-primary-50 ring-1 ring-primary-600"
+-                    : "border-gray-200 bg-white hover:border-gray-300"
+-                )}
+-              >
+-                <div className="flex items-center justify-between gap-2">
+-                  <span className="text-sm font-medium text-gray-900 font-mono">
+-                    {maskAccount(acc.accountNumber)}
+-                  </span>
+-                  {acc.isPrimary && (
+-                    <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-green-100 text-green-700">
+-                      Primary
+-                    </span>
+-                  )}
+-                </div>
+-                {acc.availableBalance != null && (
+-                  <p className="text-xs text-gray-500 mt-0.5">
+-                    Balance: TZS {acc.availableBalance.toLocaleString()}
+-                  </p>
+-                )}
+-                {acc.accountStatus && (
+-                  <p className="text-xs text-gray-400 mt-0.5">{acc.accountStatus}</p>
+-                )}
+-              </button>
+-            );
+-          })}
++          {/* Preview button — commented out until plan preview is re-enabled */}
++          {/* <Button type="button" onClick={commitAmount} color="primary" className="shrink-0 mb-0.5">
++            Preview Plans
++          </Button> */}
+         </div>
+-      </div>
+ 
+-      {/* Plan options */}
+-      {isLoadingOptions ? (
+-        <div className="flex items-center justify-center gap-2 py-8 text-gray-500">
+-          <Loader2 className="w-5 h-5 animate-spin" />
+-          <span className="text-sm">Loading payment plans…</span>
+-        </div>
+-      ) : s2bOptions && !s2bOptions.qualified ? (
+-        <div className="bg-red-50 border border-red-200 rounded-xl p-4">
+-          <p className="text-sm text-red-700 font-medium">
+-            You are not qualified for Save-to-Buy with the selected account.
+-          </p>
+-          {s2bOptions.availableLimit !== undefined && (
+-            <p className="text-xs text-red-500 mt-1">
+-              Available limit: TZS {s2bOptions.availableLimit.toLocaleString()}
+-            </p>
+-          )}
++        {/* Plan preview section — commented out until re-enabled */}
++        {/* {isLoadingOptions ? ( ... ) : hasOptions ? ( ... ) : null} */}
++
++        {/* Confirmation checkbox */}
++        <div className="flex items-center gap-3">
++          <Checkbox
++            id="s2b-terms"
++            checked={confirmed}
++            onCheckedChange={(checked) => onConfirmChange(checked === true)}
++          />
++          <label htmlFor="s2b-terms" className="text-sm text-gray-700 cursor-pointer select-none">
++            I confirm that I have read and understood the Save-to-Buy payment plan terms, and hereby
++            consent to the{" "}
++            <a href="#" className="text-primary-950 underline font-medium">
++              Terms and conditions
++            </a>
++          </label>
+         </div>
+-      ) : hasOptions ? (
+-        <div className="space-y-3">
+-          <p className="text-sm font-medium text-gray-700">Choose a Payment Plan</p>
+ 
+-          {/* Plan option selector */}
+-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+-            {s2bOptions!.options.map((option, i) => {
+-              const isSelected = selectedOption?.numberOfInstallments === option.numberOfInstallments;
+-              return (
+-                <button
+-                  key={i}
+-                  type="button"
+-                  onClick={() => onOptionChange?.(option)}
+-                  className={cn(
+-                    "relative text-left rounded-xl border p-4 transition-all",
+-                    isSelected
+-                      ? "border-primary-600 bg-primary-50 ring-1 ring-primary-600"
+-                      : "border-gray-200 bg-white hover:border-gray-300"
+-                  )}
+-                >
+-                  {isSelected && (
+-                    <CheckCircle2 className="absolute top-3 right-3 w-4 h-4 text-primary-600" />
+-                  )}
+-                  <p className="text-sm font-semibold text-gray-900">
+-                    {option.numberOfInstallments} Installments
+-                  </p>
+-                  <p className="text-xs text-gray-500 mt-0.5">
+-                    TZS {option.amountPerInstallment.toLocaleString()} / installment
+-                  </p>
+-                  <p className="text-xs text-gray-500">
+-                    Upfront: TZS {option.upfrontAmount.toLocaleString()}
+-                  </p>
+-                  {option.facilityFee > 0 && (
+-                    <p className="text-xs text-gray-400">
+-                      Fee: TZS {option.facilityFee.toLocaleString()}
+-                    </p>
+-                  )}
+-                </button>
+-              );
+-            })}
+-          </div>
+-
+-          {/* Selected plan schedule */}
+-          {selectedOption && (
+-            <div className="bg-gray-50 rounded-xl border border-gray-200 p-4 space-y-3">
+-              <p className="text-sm font-semibold text-gray-800">
+-                Payment Schedule ({selectedOption.numberOfInstallments} Installments)
++        {/* Validation errors — upfront amount error shown inline above */}
++        {validationErrors.filter((e) => !e.includes("initial payment amount")).length > 0 && (
++          <div className="space-y-1">
++            {validationErrors.filter((e) => !e.includes("initial payment amount")).map((msg, i) => (
++              <p key={i} className="flex items-center gap-1.5 text-sm text-red-600">
++                <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
++                  <circle cx="12" cy="12" r="10" />
++                  <line x1="12" y1="8" x2="12" y2="12" />
++                  <line x1="12" y1="16" x2="12.01" y2="16" />
++                </svg>
++                {msg}
+               </p>
++            ))}
++          </div>
++        )}
++      </div>
+ 
+-              {/* Today / upfront row */}
+-              <div>
+-                <p className="text-sm font-medium text-gray-700">Today</p>
+-                <p className="text-sm text-gray-500">
+-                  Initial Reservation: TZS {selectedOption.upfrontAmount.toLocaleString()}
++      {/* Order items — outside card, at bottom */}
++      {items.length > 0 && (
++        <div className="bg-white rounded-xl border border-gray-200 p-6 space-y-3">
++          <p className="text-sm font-semibold text-gray-800">
++            Your order items ({items.length} {items.length === 1 ? "item" : "items"})
++          </p>
++          <div className="divide-y divide-gray-100 border border-gray-100 rounded-lg overflow-hidden">
++            {items.map((item, idx) => (
++              <div key={idx} className="flex items-center gap-3 p-3">
++                <AuthenticatedImage
++                  src={item.productImage}
++                  alt={item.productName}
++                  width={48}
++                  height={48}
++                  unoptimized
++                  className="w-12 h-12 rounded-lg object-cover shrink-0 border border-gray-100"
++                />
++                <div className="flex-1 min-w-0">
++                  <p className="text-sm font-medium text-gray-900 line-clamp-2">{item.productName}</p>
++                </div>
++                <p className="text-sm font-semibold text-gray-900 shrink-0">
++                  TZS {item.totalPrice.toLocaleString()}
+                 </p>
+               </div>
+-
+-              {/* Installment grid */}
+-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-x-6 gap-y-2">
+-                {selectedOption.schedule.map((inst) => (
+-                  <div key={inst.installmentNumber}>
+-                    <p className="text-sm font-medium text-gray-700">{formatDate(inst.dueDate)}</p>
+-                    <p className="text-sm text-gray-500">
+-                      {inst.lastInstallment ? "Final " : ""}Installment: TZS {inst.amount.toLocaleString()}
+-                    </p>
+-                  </div>
+-                ))}
+-              </div>
+-
+-              {/* Summary row */}
+-              <div className="pt-2 border-t border-gray-200 flex justify-between text-sm">
+-                <span className="text-gray-600 font-medium">Total Due</span>
+-                <span className="font-semibold text-gray-900">
+-                  TZS {selectedOption.totalAmountDue.toLocaleString()}
+-                </span>
+-              </div>
+-            </div>
+-          )}
+-
+-          {/* Item reservation info */}
+-          <div className="bg-gray-50 rounded-xl border border-gray-200 p-4 space-y-2">
+-            <div className="flex items-center gap-1.5 text-sm font-medium text-gray-700">
+-              <Info className="w-4 h-4 text-gray-400 shrink-0" />
+-              Item Reservation
+-            </div>
+-            <ul className="space-y-1 pl-1">
+-              {[
+-                "Your product will be reserved after the initial payment.",
+-                "If installments are not completed within the stated period, extra fees may apply",
+-                "You will receive reminders before your installment due date.",
+-                "Your item will be delivered after full payment is completed.",
+-              ].map((note, i) => (
+-                <li key={i} className="text-sm text-gray-600 flex gap-2">
+-                  <span className="mt-1.5 w-1 h-1 rounded-full bg-gray-400 shrink-0" />
+-                  {note}
+-                </li>
+-              ))}
+-            </ul>
++            ))}
+           </div>
+         </div>
+-      ) : null}
+-
+-      {/* Confirmation checkbox */}
+-      <label className="flex items-start gap-3 cursor-pointer select-none">
+-        <input
+-          type="checkbox"
+-          checked={confirmed}
+-          onChange={(e) => onConfirmChange(e.target.checked)}
+-          className="mt-0.5 w-4 h-4 accent-primary-700 shrink-0"
+-        />
+-        <span className="text-sm text-gray-700">
+-          I confirm that I have read and understood the Save-to-Buy payment plan terms, and hereby
+-          consent to the{" "}
+-          <a href="#" className="text-primary-700 underline font-medium">
+-            terms and conditions
+-          </a>
+-        </span>
+-      </label>
+-
+-      {/* Validation errors */}
+-      {validationErrors.length > 0 && (
+-        <div className="space-y-1">
+-          {validationErrors.map((msg, i) => (
+-            <p key={i} className="flex items-center gap-1.5 text-sm text-red-600">
+-              <svg className="w-4 h-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+-                <circle cx="12" cy="12" r="10" />
+-                <line x1="12" y1="8" x2="12" y2="12" />
+-                <line x1="12" y1="16" x2="12.01" y2="16" />
+-              </svg>
+-              {msg}
+-            </p>
+-          ))}
+-        </div>
+       )}
+     </div>
+   );
+diff --git a/src/app/(PageSections)/PaymentCheckoutPageSection/useCheckoutState.ts b/src/app/(PageSections)/PaymentCheckoutPageSection/useCheckoutState.ts
+index 82aa17a..850ee36 100644
+--- a/src/app/(PageSections)/PaymentCheckoutPageSection/useCheckoutState.ts
++++ b/src/app/(PageSections)/PaymentCheckoutPageSection/useCheckoutState.ts
+@@ -45,7 +45,8 @@ export function useCheckoutState(orderId: string) {
+   const { isAuthenticated, isLoading, user } = useAuth();
+ 
+   // ── Step ────────────────────────────────────────────────────────────────────
+-  const [currentStep, setCurrentStep] = useState(1);
++  // S2B (installment) items are delivered after full payment — skip delivery step
++  const [currentStep, setCurrentStep] = useState(() => paymentIntent === "installment" ? 2 : 1);
+ 
+   // ── Delivery ─────────────────────────────────────────────────────────────────
+   const [itemDeliveries, setItemDeliveries] = useState<Map<string, ProductDeliveryState>>(new Map());
+@@ -84,6 +85,7 @@ export function useCheckoutState(orderId: string) {
+   // ── Save-to-Buy ───────────────────────────────────────────────────────────────
+   const [saveToBuyConfirmed, setSaveToBuyConfirmed] = useState(false);
+   const [selectedS2bOption, setSelectedS2bOption] = useState<S2bInstallmentOptionI | null>(null);
++  const [s2bUpfrontAmount, setS2bUpfrontAmount] = useState(0);
+ 
+   // ── Hooks ─────────────────────────────────────────────────────────────────────
+   const { initiatePayment, isLoading: isPaymentLoading, paymentMethods, isFetchingMethods, getPaymentMethods } = usePayment();
+@@ -133,12 +135,13 @@ export function useCheckoutState(orderId: string) {
+   useEffect(() => {
+     if (isAuthenticated && orderId) {
+       getOrderById(orderId);
+-      getDeliveryModes(orderId);
++      if (paymentIntent !== "installment") getDeliveryModes(orderId);
+     }
+   }, [isAuthenticated, orderId]);
+ 
+   useEffect(() => {
+     if (!checkoutOrder) return;
++    if (paymentIntent === "installment") { setCurrentStep(2); return; }
+     const hasShipments = checkoutOrder.shipments && checkoutOrder.shipments.length > 0;
+     const hasDeliverySelections = checkoutOrder.deliverySelections && checkoutOrder.deliverySelections.length > 0;
+     setCurrentStep(hasShipments || hasDeliverySelections ? 2 : 1);
+@@ -147,8 +150,10 @@ export function useCheckoutState(orderId: string) {
+   useEffect(() => {
+     if (isAuthenticated) {
+       getCart();
+-      getAddresses();
+-      getPaymentMethods();
++      if (paymentIntent !== "installment") {
++        getAddresses();
++        getPaymentMethods();
++      }
+     }
+   }, [isAuthenticated]);
+ 
+@@ -164,7 +169,7 @@ export function useCheckoutState(orderId: string) {
+   }, [user?.primaryAccount?.accountNumber]);
+ 
+   useEffect(() => {
+-    if (checkoutOrder?.orderId && user?.hasNBCAccount) {
++    if (checkoutOrder?.orderId && user?.hasNBCAccount && paymentIntent !== "installment") {
+       getRedemptionOptions(checkoutOrder.orderId);
+     }
+   }, [checkoutOrder?.orderId, user?.hasNBCAccount]);
+@@ -222,19 +227,10 @@ export function useCheckoutState(orderId: string) {
+     }).catch(() => {/* errors handled by base service toast */});
+   }, [bnplRepaymentDays]);
+ 
+-  // Auto-load S2B plan options when entering step 2
+-  useEffect(() => {
+-    if (currentStep !== 2 || !checkoutOrder?.orderId) return;
+-    const shouldRunS2b = paymentIntent === "installment" || (!paymentIntent && cartProductTypes.hasSaveToBuy);
+-    if (!shouldRunS2b) return;
+-    if (s2bOptions) return; // already loaded
+-
+-    s2bPreviewOptions(checkoutOrder.orderId, { upfrontAmount: 0 })
+-      .then((result) => {
+-        if (result.options?.length) setSelectedS2bOption(result.options[0]);
+-      })
+-      .catch(() => {/* errors handled by base service toast */});
+-  }, [currentStep, checkoutOrder?.orderId, cartProductTypes.hasSaveToBuy]);
++  // Only updates state — preview API is called explicitly via the Preview button (currently commented out)
++  const handleS2bUpfrontAmountChange = (amount: number) => {
++    setS2bUpfrontAmount(amount);
++  };
+ 
+   const allowedPaymentMethods = useMemo(() => {
+     // When user explicitly chose a payment button, respect that choice
+@@ -325,20 +321,36 @@ export function useCheckoutState(orderId: string) {
+         errors[1].push(`Please select delivery option for ${item.name}`);
+       }
+     });
+-    if (!selectedPaymentMethod) errors[2].push("Please select a payment method to continue.");
+-    if (selectedPaymentMethod === "CARD" && !selectedCardId)
+-      errors[2].push("Please select a card or add a new one to continue.");
+-    if (selectedPaymentMethod) {
+-      const method = paymentMethods.find((m) => m.code === selectedPaymentMethod);
+-      const missingFields = (method?.requiredFields ?? []).filter((f) => !paymentDetails[f]?.trim());
+-      if (missingFields.length > 0) {
+-        errors[2].push("Please fill in all required payment details to continue.");
++    const useS2b = paymentIntent === "installment" || (!paymentIntent && cartProductTypes.hasSaveToBuy);
++    const useBnpl = paymentIntent === "loan" || (!paymentIntent && cartProductTypes.hasBnpl);
++
++    if (useS2b) {
++      if (!selectedNBCAccount) errors[2].push("Please select your NBC account.");
++      if (!s2bUpfrontAmount || s2bUpfrontAmount <= 0) errors[2].push("Please enter the initial payment amount.");
++      if (!saveToBuyConfirmed) errors[2].push("Please accept the terms and conditions.");
++    } else if (useBnpl) {
++      if (!selectedNBCAccount) errors[2].push("Please select your NBC account.");
++      if (!bnplConfirmed) errors[2].push("Please accept the terms and conditions.");
++    } else {
++      if (!selectedPaymentMethod) errors[2].push("Please select a payment method to continue.");
++      if (selectedPaymentMethod === "CARD" && !selectedCardId)
++        errors[2].push("Please select a card or add a new one to continue.");
++      if (selectedPaymentMethod) {
++        const method = paymentMethods.find((m) => m.code === selectedPaymentMethod);
++        const missingFields = (method?.requiredFields ?? []).filter((f) => !paymentDetails[f]?.trim());
++        if (missingFields.length > 0) {
++          errors[2].push("Please fill in all required payment details to continue.");
++        }
+       }
+     }
+     return errors;
+-  }, [cartItems, itemDeliveries, selectedPaymentMethod, selectedCardId, paymentMethods, paymentDetails]);
++  }, [cartItems, itemDeliveries, selectedPaymentMethod, selectedCardId, paymentMethods, paymentDetails, cartProductTypes, paymentIntent, selectedNBCAccount, s2bUpfrontAmount, saveToBuyConfirmed, bnplConfirmed]);
+ 
+-  const isCurrentStepValid = (stepValidation[currentStep] || []).length === 0;
++  // S2B/BNPL always validate against step 2 regardless of currentStep
++  const isS2bOrBnplFlow = paymentIntent === "installment" || paymentIntent === "loan"
++    || cartProductTypes.hasSaveToBuy || cartProductTypes.hasBnpl;
++  const validationStep = isS2bOrBnplFlow ? 2 : currentStep;
++  const isCurrentStepValid = (stepValidation[validationStep] || []).length === 0;
+ 
+   // ── Helpers ───────────────────────────────────────────────────────────────────
+   function getCourierOptionsForItem(orderItemId: string): AvailableDeliveryOptionI[] {
+@@ -638,7 +650,14 @@ export function useCheckoutState(orderId: string) {
+   };
+ 
+   const handleProceedToPayment = async () => {
++    const useS2bFlow = paymentIntent === "installment" || (!paymentIntent && cartProductTypes.hasSaveToBuy);
++
+     if (currentStep < 2) {
++      if (useS2bFlow) {
++        // S2B items are delivered after full payment — skip delivery selection
++        setCurrentStep(2);
++        return;
++      }
+       try {
+         await validateAllDeliverySelections();
+         setCurrentStep(2);
+@@ -669,15 +688,15 @@ export function useCheckoutState(orderId: string) {
+     }
+ 
+     // S2B flow — triggered when user clicked "BUY ON INSTALLMENT" or cart has S2B-only items
+-    const useS2bFlow = paymentIntent === "installment" || (!paymentIntent && cartProductTypes.hasSaveToBuy);
+     if (useS2bFlow) {
+       if (!selectedNBCAccount) { errorMessage("Please select your NBC account"); return; }
++      if (!s2bUpfrontAmount) { errorMessage("Please enter the initial payment amount"); return; }
+       if (!saveToBuyConfirmed) { errorMessage("Please accept the terms and conditions"); return; }
+-      if (!selectedS2bOption) { errorMessage("No installment plan available"); return; }
+       try {
+         await s2bConfirm(orderId, {
+-          numberOfInstallments: selectedS2bOption.numberOfInstallments,
+-          upfrontAmount: selectedS2bOption.upfrontAmount,
++          numberOfInstallments: selectedS2bOption?.numberOfInstallments ?? 0,
++          upfrontAmount: s2bUpfrontAmount,
++          accountNumber: selectedNBCAccount,
+           termsAccepted: true,
+         });
+         router.push(`/nbc-sokoni/cart/checkout/payment-pending/${orderId}`);
+@@ -808,6 +827,8 @@ export function useCheckoutState(orderId: string) {
+     // Save-to-Buy
+     saveToBuyConfirmed,
+     setSaveToBuyConfirmed,
++    s2bUpfrontAmount,
++    handleS2bUpfrontAmountChange,
+     selectedS2bOption,
+     setSelectedS2bOption,
+     s2bOptions,
+diff --git a/src/components/ui/UniversalSelect.tsx b/src/components/ui/UniversalSelect.tsx
+index fef7736..ce5ff3e 100644
+--- a/src/components/ui/UniversalSelect.tsx
++++ b/src/components/ui/UniversalSelect.tsx
+@@ -9,6 +9,8 @@ import { FormInput } from "./form-input";
+ export interface SelectOption {
+   value: string;
+   label: string;
++  badge?: string;
++  badgeClassName?: string;
+   disabled?: boolean;
+   // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   originalData?: any; // Optional original data for edit/delete operations
+@@ -276,10 +278,15 @@ export const UniversalSelect: React.FC<UniversalSelectProps> = ({
+                   ${isDisabled ? "opacity-50 cursor-not-allowed" : ""}`}
+               >
+                 <div
+-                  className="flex-1 flex items-center"
++                  className="flex-1 flex items-center gap-2"
+                   onClick={() => !isDisabled && handleSelect(option.value)}
+                 >
+                   <span className="text-sm capitalize">{option.label}</span>
++                  {option.badge && (
++                    <span className={option.badgeClassName ?? "text-xs font-medium px-2 py-0.5 rounded-full bg-green-100 text-green-700"}>
++                      {option.badge}
++                    </span>
++                  )}
+                 </div>
+                 <div className="flex items-center gap-1">
+                   {/* Edit/Delete actions - only visible on hover when showOptionActions is true */}
+diff --git a/src/types/checkout.ts b/src/types/checkout.ts
+index ed079d3..b74562d 100644
+--- a/src/types/checkout.ts
++++ b/src/types/checkout.ts
+@@ -85,6 +85,67 @@ export interface OrderAddressI {
+   lastModifiedDate: string;
+ }
+ 
++// --- Order item detail (my/items/:orderNumber endpoint) ---
++
++export interface OrderItemDetailSellerI {
++  storeId: string;
++  storeName: string;
++  logoUrl: string;
++  rating: number;
++  reviewCount: number;
++  productCount: number;
++  badges: string[];
++  location: {
++    region: string;
++    district: string;
++    ward: string;
++    address: string;
++    lat: number;
++    lon: number;
++  };
++}
++
++export interface OrderItemDetailContextI {
++  platformOrderRef: string;
++  paymentStatus: string;
++  currency: string;
++  customerNotes: string;
++  createdDate: string;
++  bnplEligible: boolean;
++  s2bEligible: boolean;
++}
++
++export interface OrderItemDetailPaymentI {
++  itemAmountPaid: number;
++  orderTotalPaid: number;
++  orderTotal: number;
++  paymentReference: string;
++  paymentStatus: string;
++}
++
++export interface OrderItemDetailI {
++  orderNumber: string;
++  orderStatus: string;
++  productNameSnapshot: string;
++  skuSnapshot: string;
++  imageUrlSnapshot: string;
++  brandSnapshot?: string;
++  productTypeSnapshot?: string;
++  attributesSnapshot?: OrderItemAttributesSnapshot;
++  quantity: number;
++  baseUnitPrice: number;
++  unitPrice: number;
++  totalPrice: number;
++  discountAmount: number;
++  taxAmount: number;
++  requiresShipping?: boolean;
++  createdDate: string;
++  seller: OrderItemDetailSellerI;
++  orderContext: OrderItemDetailContextI;
++  payment: OrderItemDetailPaymentI;
++  adjustments: OrderAdjustmentI[];
++}
++
+ // --- Adjustment ---
+ 
+ export interface OrderAdjustmentI {
+@@ -523,6 +584,7 @@ export interface S2bPreviewOptionsResultI {
+ export interface S2bConfirmRequestI {
+   numberOfInstallments: number;
+   upfrontAmount: number;
++  accountNumber: string;
+   termsAccepted: boolean;
+ }
+ 
