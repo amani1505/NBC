@@ -1,1 +1,1 @@
-https://claude.ai/oauth/authorize?code=true&client_id=9d1c250a-e61b-44d9-88ed-5944d1962f5e&response_type=code&redirect_uri=https%3A%2F%2Fplatform.claude.com%2Foauth%2Fcode%2Fcallback&scope=org%3Acreate_api_key+user%3Aprofile+user%3Ainference+user%3Asessions%3Aclaude_code+user%3Amcp_servers+user%3Afile_upload&code_challenge=Bk_yyX5BixiXNC2V27ogsJDd5XuqmY7OpXS9bvMVkMo&code_challenge_method=S256&state=SA-gaEoglbkM2adKGtK7EMQqUc6j8zjZT3lv7Vf4F6w
+kvanO3HzgUUhYaKpEn6y49vTMIyq1k9izxlXNWm5MedIA9dz#SA-gaEoglbkM2adKGtK7EMQqUc6j8zjZT3lv7Vf4F6w
