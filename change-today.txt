@@ -1,1 +1,1448 @@
-S8HkNODHp9imXkrr1RldoxbhYsoeGfuEQNzaN6F7NBXBHtMS#oSQW1IvJGyMKayVPR5jK4qFIAUdl_W6eGYk3T9IriRE
+diff --git a/commits.txt b/commits.txt
+index 452f408..ef5528d 100644
+--- a/commits.txt
++++ b/commits.txt
+@@ -110,297 +110,4 @@
+     
+     ╚════════════════════════════════════════════════════════════════════╝
+ 
+- src/app/api/auth/guest/session/route.ts     |   1 +
+- src/app/api/auth/guest/verify/route.ts      |  74 -----------------
+- src/app/api/auth/login/route.ts             |  57 -------------
+- src/app/api/auth/logout/route.ts            |  30 -------
+- src/app/api/auth/refresh/route.ts           |  61 --------------
+- src/app/api/auth/session/route.ts           |   3 +-
+- src/app/api/auth/set-cookie/route.ts        |  57 +++++++++++++
+- src/components/guards/AuthGuard.tsx         |  46 +++++++----
+- src/components/shop/CustomerProductTabs.tsx |   6 +-
+- src/lib/api/interceptor.ts                  |  66 ++++++++++++---
+- src/providers/auth.provider.tsx             |  77 +++++++++---------
+- src/services/auth.service.ts                | 122 ++++++++++++++++------------
+- src/services/guest-auth.service.ts          |  54 ++++++------
+- 13 files changed, 282 insertions(+), 372 deletions(-)
+-
+-╔════════════════════════════════════════════════════════════════════╗
+-║ Commit: 94ffc50d6e32fb228b322df5bc6ddb3c001b04b8
+-║ Short:  94ffc50
+-║ Date:   2026-04-19 14:19:15 (3 days ago)
+-║ Author: Robinson.Anthony <robinson.anthony@nbc.co.tz>
+-╠════════════════════════════════════════════════════════════════════╣
+-║ Subject:
+-║   refactor(auth): migrate to httpOnly cookie session with Next.js API routes and silent token refresh
+-║
+-║ Message:    
+-    ║     Auth / interceptor:
+-      - Remove all localStorage/sessionStorage token read/write from
+-        ApiInterceptors; access token now lives only in memory (never written
+-        to browser storage)
+-      - Add isGuest flag to setAuthToken so 401 handler can distinguish guest
+-        sessions from authenticated ones without storage lookups
+-      - Add clearAuthToken helper that resets both token and isGuest flag
+-      - On 401: attempt silent token refresh via POST /api/auth/refresh; on
+-        success retry the original request once; on failure clear token and
+-        DELETE /api/auth/session before redirecting to /auth
+-      - Guest 401 clears token and calls DELETE /api/auth/guest/session
+-        without redirecting to /auth
+-      - Exclude /api/auth/* Next.js routes from auth-endpoint bypass check
+-      - Hold axiosInstance reference for retry after refresh
+-    
+-      Auth service:
+-      - Route login through POST /api/auth/login (Next.js proxy that sets
+-        httpOnly cookie); parse id_token from response and store in interceptor
+-        memory only — no localStorage write
+-      - Route logout through POST /api/auth/logout (Next.js proxy that clears
+-        cookie)
+-      - Lazy-import API_PATHS in methods that don't need it at module load time
+-      - Fix register success message typo
+-    
+-      Guest auth service:
+-      - Mirror same httpOnly cookie pattern for guest sessions via
+-        /api/auth/guest/* Next.js routes
+-    
+-      Auth provider:
+-      - Remove token bootstrap from localStorage; rely on interceptor memory
+-        and /api/auth/refresh on page load
+-    
+-      Breadcrumb / layout:
+-      - Add dynamicTitle prop to CustomBreadcrumb to override last-segment
+-        label from a parent component; pass event/page title from HeroSection
+-      - In nbc-sokoni layout, detect ID-like segments (UUID, ObjectId, numeric,
+-        prefixed) and replace them with context-aware labels (e.g. Order
+-        when preceded by cart or payment-pending)
+-    
+-      Misc:
+-      - Move BNPL/SaveToBuy badges from image overlay to info section in
+-        FlashDealProductCard; use shared BNPLBadge/SaveToBuyBadge components
+-      - Show actual paymentStatus value instead of hardcoded PAID in
+-        TicketPaymentSuccessPageSection
+-    
+-    ╚════════════════════════════════════════════════════════════════════╝
+-
+- commits.txt                                        | 282 +--------------------
+- .../components/FlashDealProductCard.tsx            |  29 +--
+- .../TicketPaymentSuccessPageSection.tsx            |   2 +-
+- src/app/(Pages)/(Landing)/nbc-sokoni/layout.tsx    |  25 +-
+- src/app/api/auth/guest/session/route.ts            |  20 ++
+- src/app/api/auth/guest/verify/route.ts             |  74 ++++++
+- src/app/api/auth/login/route.ts                    |  57 +++++
+- src/app/api/auth/logout/route.ts                   |  30 +++
+- src/app/api/auth/refresh/route.ts                  |  61 +++++
+- src/app/api/auth/session/route.ts                  |  43 ++++
+- src/components/layout/CustomBreadcrumb.tsx         |  10 +-
+- src/components/shared/Hero/HeroSection.tsx         |   1 +
+- src/lib/api/base-api.ts                            |   4 +-
+- src/lib/api/interceptor.ts                         | 219 ++++++----------
+- src/providers/auth.provider.tsx                    |   7 +-
+- src/providers/guest-auth.provider.tsx              |   4 +-
+- src/services/auth.service.ts                       | 195 +++++++-------
+- src/services/guest-auth.service.ts                 | 103 ++++----
+- src/types/guest-auth.ts                            |   2 +-
+- 19 files changed, 538 insertions(+), 630 deletions(-)
+-
+-╔════════════════════════════════════════════════════════════════════╗
+-║ Commit: 23670c9d315051f36227e770a49896f8774847f6
+-║ Short:  23670c9
+-║ Date:   2026-04-17 13:00:10 (5 days ago)
+-║ Author: Robinson.Anthony <robinson.anthony@nbc.co.tz>
+-╠════════════════════════════════════════════════════════════════════╣
+-║ Subject:
+-║   feat(order): refactor payment handling and redesign order progress UI
+-║
+-║ Message:    
+-    ║   Remove usePayment hook and derive payment from order detail response
+-    Replace control number with paymentReference and update copy logic
+-    Simplify payment info UI and status handling (support COMPLETED/CANCELLED)
+-    Merge order progress + order details into a single card layout
+-    Redesign OrderProgressTracker with new step labels and progress bar
+-    Standardize dashboard/account typography (h1→h5, h3→h6, body-sm classes)
+-    Minor layout and alignment fixes across dashboard pages
+-    
+-    ╚════════════════════════════════════════════════════════════════════╝
+-
+- .../Account/Orders/OrderDetailPagesection.tsx      | 102 +++++++--------------
+- .../Orders/components/OrderProgressTracker.tsx     | 102 ++++++++++++---------
+- .../DonationPageSection/DonationPageSection.tsx    |  22 ++---
+- .../GroupPageSection.tsx/UserGroupPageSection.tsx  |  14 +--
+- .../RegistrationPageSection.tsx                    |  12 +--
+- src/app/(Pages)/account/coupons/page.tsx           |   8 +-
+- src/app/(Pages)/account/delivery-address/page.tsx  |  14 +--
+- src/app/(Pages)/account/help/page.tsx              |  20 ++--
+- src/app/(Pages)/account/loyalty/page.tsx           |  16 ++--
+- src/app/(Pages)/account/payment-method/page.tsx    |   7 +-
+- src/components/account/UserProfileSidebar.tsx      |   4 +-
+- src/components/shared/LogoutConfirmationModal.tsx  |   2 +-
+- 12 files changed, 151 insertions(+), 172 deletions(-)
+-
+-╔════════════════════════════════════════════════════════════════════╗
+-║ Commit: dfab4a8d70c8f4ef10ad8c5b16215d6ce1097ecc
+-║ Short:  dfab4a8
+-║ Date:   2026-04-17 10:57:14 (5 days ago)
+-║ Author: Robinson.Anthony <robinson.anthony@nbc.co.tz>
+-╠════════════════════════════════════════════════════════════════════╣
+-║ Subject:
+-║   feat(checkout): add Selcom payment support, payment-cancel page, and rework success page
+-║
+-║ Message:    
+-    ║     Selcom:
+-      - Add SELCOM_METHODS and SELCOM_AUTO_FIELDS constants to useCheckoutState;
+-        auto-build redirect/cancel URLs and billing fields from order data
+-      - Merge Selcom auto-fields into paymentDetails before initiatePayment;
+-        filter auto-filled fields from PaymentDetailsForm so only user-visible
+-        fields (paymentMethods picker) are shown
+-      - Add paymentMethods (CARD/MOBILE_MONEY/MASTERPASS) picker to PaymentDetailsForm
+-      - Add billing address fields (billingAddress1, billingCity, billingPostcode)
+-        to FIELD_CONFIG
+-      - Handle redirectUrl in payment response: redirect to external URL if present
+-      - Filter BNPL and SAVE_TO_BUY from payment methods when paymentIntent=cash
+-      - Fix isS2bOrBnplFlow to exclude cash intent
+-    
+-      Payment success page:
+-      - Accept orderId from searchParams; fetch order via getOrderById on mount
+-      - Render skeleton loader while fetching; derive product name, image,
+-        total, and payment info from checkoutOrder (survives page redirects)
+-      - Add payment status row; handle SELCOM display; add CheckoutOrderI.payment type
+-      - Add redirectUrl, processingFee, totalCharged, feeDescription to PaymentResponseI
+-      - Return PaymentResponseI from initiatePayment provider method
+-      - Update payment-success route to pass orderId searchParam to section component
+-    
+-      Payment cancel:
+-      - Add PaymentCancelPageSection component and payment-cancel route
+-      - Add payment-cancel.svg and verify-account.svg to public/images
+-    
+-      PickupReceiverForm:
+-      - Remove ID file upload fields (idFrontFile, idBackFile) from ReceiverFormData
+-      - Expand idType options: add DRIVING_LICENCE, VOTER_ID, PASSPORT
+-    
+-      Shop / UI polish:
+-      - Remove NBC account check from regular Buy Now flow in ProductActions
+-      - Replace inline SVG in NBCAccountRequiredModal with verify-account.svg Image
+-      - Add gap-2 + shrink-0/min-w-0 to OrderSummaryCard rows to prevent overflow
+-      - Remove clamp padding override from wishlist button in SingleProductPageSection
+-      - Add min-w-0 to checkout main/sidebar columns; fix sticky top offset
+-    
+-    ╚════════════════════════════════════════════════════════════════════╝
+-
+- docker-compose.yml                                 |   2 +-
+- public/images/payment-cancel.svg                   |  16 ++
+- public/images/verify-account.svg                   | 152 +++++++++++++++++++
+- .../Landing/SingleProductPageSection.tsx           |   5 +-
+- .../PaymentCancelPageSection.tsx                   | 165 +++++++++++++++++++++
+- .../PaymentCheckoutPageSection.tsx                 |   7 +-
+- .../PaymentSuccessPageSection.tsx                  | 160 ++++++++++++--------
+- .../Sections/CheckoutPaymentStep.tsx               |  11 +-
+- .../Sections/PaymentDetailsForm.tsx                |  35 ++++-
+- .../Sections/PickupReceiverForm.tsx                | 134 +----------------
+- .../Sections/ProductDeliverySelector.tsx           |   6 +-
+- .../PaymentCheckoutPageSection/useCheckoutState.ts |  75 ++++++++--
+- .../cart/checkout/payment-cancel/page.tsx          |  13 ++
+- .../cart/checkout/payment-success/page.tsx         |   9 +-
+- src/components/shop/ProductActions.tsx             |  35 ++---
+- src/components/shop/cart/OrderSummaryCard.tsx      |  24 +--
+- src/providers/payment.provider.tsx                 |   3 +-
+- src/types/checkout.ts                              |  16 ++
+- src/types/payment.ts                               |   6 +-
+- 19 files changed, 615 insertions(+), 259 deletions(-)
+-
+-╔════════════════════════════════════════════════════════════════════╗
+-║ Commit: c3218fe21f9e15d895b9a920211ce408f325b35e
+-║ Short:  c3218fe
+-║ Date:   2026-04-17 05:00:00 (5 days ago)
+-║ Author: Robinson.Anthony <robinson.anthony@nbc.co.tz>
+-╠════════════════════════════════════════════════════════════════════╣
+-║ Subject:
+-║   feat(checkout): add agent pickup form and fix group attendee update payload
+-║
+-║ Message:    
+-    ║     Checkout — Agent pickup:
+-      - Add PickupReceiverForm integration to ProductDeliverySelector for
+-        AGENT delivery type; render agent details form with confirm button
+-        and confirmed indicator once submitted
+-      - Add agentFormDataMap and confirmingAgentForItem state to
+-        useCheckoutState; implement handleAgentFormChange and
+-        handleAgentConfirm (auto-selects first available rate, submits agent
+-        name/phone/idType/idNumber via selectDelivery, rolls back on failure)
+-      - Fetch delivery options immediately on AGENT type selection (same as
+-        SELF); exclude AGENT from address/courier selection UI sections
+-      - Update step validation and progress calculation to treat AGENT as
+-        needing confirmed agent details rather than address + courier
+-      - Pass agentFormDataMap, onAgentFormChange, onAgentConfirm, and
+-        confirmingAgentForItem through PaymentCheckoutPageSection →
+-        CheckoutDeliveryStep → ProductDeliverySelector
+-    
+-      Group attendee forms:
+-      - Include id and attendeeGroupId in updateAttendeToGroup payload in
+-        both GroupRegistrationForm/AttendeeForm and GroupPageSection/AttendeeForm
+-      - Fix validation schema indentation in GroupPageSection/AttendeeForm
+-    
+-      Misc:
+-      - Make currency param optional in OrderDetailPageSection formatAmount
+-      - Capitalize attendee name in AddedParticipantsList
+-      - WishlistDrawer: change Remove button to icon-only destructive button
+-    
+-    ╚════════════════════════════════════════════════════════════════════╝
+-
+- .../Account/Orders/OrderDetailPagesection.tsx      |   2 +-
+- .../GroupRegistrationForm/AttendeeForm.tsx         |   6 +-
+- .../GroupPageSection.tsx/AttendeeForm.tsx          |  25 ++---
+- .../PaymentCheckoutPageSection.tsx                 |   4 +
+- .../Sections/CheckoutDeliveryStep.tsx              |  14 +++
+- .../Sections/ProductDeliverySelector.tsx           |  65 ++++++++++++-
+- .../PaymentCheckoutPageSection/useCheckoutState.ts | 103 +++++++++++++++++++--
+- .../shared/registration/AddedParticipantsList.tsx  |   2 +-
+- src/components/shared/wishlist/WishlistDrawer.tsx  |  14 ++-
+- 9 files changed, 201 insertions(+), 34 deletions(-)
+-
+-╔════════════════════════════════════════════════════════════════════╗
+-║ Commit: d79d631c7042c4fd8c303b616f5f3796d9a18d57
+-║ Short:  d79d631
+-║ Date:   2026-04-16 15:58:40 (6 days ago)
+-║ Author: Robinson.Anthony <robinson.anthony@nbc.co.tz>
+-╠════════════════════════════════════════════════════════════════════╣
+-║ Subject:
+-║   refactor(registration): split RegistrationSideSheet into sub-components and fix account profile   form
+-║
+-║ Message:    
+-    ║     RegistrationSideSheet:
+-      - Extract monolithic 1682-line component into a
+-        RegistrationSideSheet/ folder with dedicated files:
+-        index.tsx, types.tsx, helpers.tsx, schemas.ts,
+-        EditAttendeeForm.tsx, AddMemberForm.tsx, UpgradeTicketForm.tsx,
+-        RegistrationDetailsTab.tsx, IndividualAttendeeTab.tsx, GroupMembersTab.tsx
+-      - Replace original file with a compatibility re-export shim
+-    
+-      RegistrationPageSection:
+-      - Add Attendees column (current / max) to the registrations table
+-    
+-      Account profile page:
+-      - Pre-populate country and dateOfBirth fields from user data on load
+-        and on discard
+-      - Include country and dateOfBirth in the update payload
+-      - Add parseDateLocal / formatDateLocal helpers to avoid UTC-to-local
+-        date shift when parsing and formatting YYYY-MM-DD strings
+-      - Add country and dateOfBirth fields to UserI type
+-    
+-    ╚════════════════════════════════════════════════════════════════════╝
+-
+- docker-compose.yml                                 |    2 +-
+- .../RegistrationPageSection.tsx                    |   16 +
+- .../RegistrationSideSheet.tsx                      | 1695 +-------------------
+- .../RegistrationSideSheet/AddMemberForm.tsx        |  185 +++
+- .../RegistrationSideSheet/EditAttendeeForm.tsx     |  149 ++
+- .../RegistrationSideSheet/GroupMembersTab.tsx      |  372 +++++
+- .../IndividualAttendeeTab.tsx                      |  271 ++++
+- .../RegistrationDetailsTab.tsx                     |  105 ++
+- .../RegistrationSideSheet/UpgradeTicketForm.tsx    |  156 ++
+- .../RegistrationSideSheet/helpers.tsx              |   31 +
+- .../RegistrationSideSheet/index.tsx                |  126 ++
+- .../RegistrationSideSheet/schemas.ts               |  119 ++
+- .../RegistrationSideSheet/types.tsx                |   33 +
+- src/app/(Pages)/account/page.tsx                   |   30 +-
+- src/types/user.ts                                  |    2 +
+- 15 files changed, 1603 insertions(+), 1689 deletions(-)
+-
++ 
+\ No newline at end of file
+diff --git a/docker-compose.yml b/docker-compose.yml
+index f6a1b3f..c7a7bc1 100644
+--- a/docker-compose.yml
++++ b/docker-compose.yml
+@@ -7,7 +7,7 @@
+ services:
+   corporate-events-website:
+     platform: linux/amd64
+-    image: "gitlabprod.intra.nbc.co.tz:5000/event-management-system-uat:0.1.19"
++    image: "gitlabprod.intra.nbc.co.tz:5000/event-management-system-uat:0.1.20"
+     build:
+       context: .
+       dockerfile: Dockerfile
+diff --git a/src/app/(PageSections)/Dashboard/EventPageSection/AdminEventDetailPageSection.tsx b/src/app/(PageSections)/Dashboard/EventPageSection/AdminEventDetailPageSection.tsx
+index 62ee1b8..d397e47 100644
+--- a/src/app/(PageSections)/Dashboard/EventPageSection/AdminEventDetailPageSection.tsx
++++ b/src/app/(PageSections)/Dashboard/EventPageSection/AdminEventDetailPageSection.tsx
+@@ -21,6 +21,7 @@ import { GalleryTab } from "./components/tabs/GalleryTab";
+ import { CheckInOfficersTab } from "./components/tabs/CheckInOfficersTab";
+ import { SponsorsTab } from "./components/tabs/SponsorsTab";
+ import { MerchandiseTab } from "./components/tabs/MerchandiseTab";
++import { FeaturedPeopleProvider } from "@/providers/featured-people.provider";
+ import Image from "next/image";
+ 
+ // Loading Skeleton Component
+@@ -326,7 +327,9 @@ function AdminEventDetailPageSection() {
+         </TabsContent>
+ 
+         <TabsContent value="featured-people" className="space-y-6">
+-          <FeaturedPeopleTab eventId={eventId} />
++          <FeaturedPeopleProvider>
++            <FeaturedPeopleTab eventId={eventId} />
++          </FeaturedPeopleProvider>
+         </TabsContent>
+ 
+         <TabsContent value="winners" className="space-y-6">
+diff --git a/src/app/(PageSections)/Dashboard/EventPageSection/AdminEventPageSection.tsx b/src/app/(PageSections)/Dashboard/EventPageSection/AdminEventPageSection.tsx
+index f6ee307..1fe11e5 100644
+--- a/src/app/(PageSections)/Dashboard/EventPageSection/AdminEventPageSection.tsx
++++ b/src/app/(PageSections)/Dashboard/EventPageSection/AdminEventPageSection.tsx
+@@ -80,7 +80,7 @@ function AdminEventPageSection({
+   };
+ 
+   const handleViewEvent = (event: EventI) => {
+-    router.push(`events/manage/${event.id}`);
++    router.push(`events/${event.id}?title=${encodeURIComponent(event.title)}`);
+   };
+ 
+   const handleEditEvent = (event: EventI) => {
+diff --git a/src/app/(PageSections)/Dashboard/EventPageSection/CreateEventPageSection.tsx b/src/app/(PageSections)/Dashboard/EventPageSection/CreateEventPageSection.tsx
+index 8a5ef13..ab33d16 100644
+--- a/src/app/(PageSections)/Dashboard/EventPageSection/CreateEventPageSection.tsx
++++ b/src/app/(PageSections)/Dashboard/EventPageSection/CreateEventPageSection.tsx
+@@ -20,7 +20,7 @@ function CreateEventPageSection() {
+       findSingleEvent(eventId);
+     }
+   }, [eventId, isEditMode]);
+-console.log("Event",event.data)
++
+   useEffect(() => {
+     if (isEditMode && event.data) {
+       const formData = transformEventToFormData(event.data);
+diff --git a/src/app/(PageSections)/Dashboard/EventPageSection/components/EventForm.tsx b/src/app/(PageSections)/Dashboard/EventPageSection/components/EventForm.tsx
+index 8ba70cd..1247fba 100644
+--- a/src/app/(PageSections)/Dashboard/EventPageSection/components/EventForm.tsx
++++ b/src/app/(PageSections)/Dashboard/EventPageSection/components/EventForm.tsx
+@@ -8,7 +8,7 @@ import { ContentStep } from "./event-form/steps/ContentStep";
+ import { RegistrationStep } from "./event-form/steps/RegistrationStep";
+ import { MediaStep } from "./event-form/steps/MediaStep";
+ import { TicketsStep } from "./event-form/steps/TicketsStep";
+-import { CheckinOfficersStep } from "./event-form/steps/CheckinOfficersStep";
++
+ import { CollectionCenterStep } from "./event-form/steps/CollectionCenterStep";
+ import { Stepper } from "./event-form/stepper";
+ 
+@@ -31,12 +31,23 @@ const EVENT_FORM_STEPS = [
+   { id: "tickets", title: "Tickets", description: "Ticket options" },
+ ];
+ 
++// Edit mode steps (no Tickets step)
++const EDIT_FORM_STEPS = [
++  { id: "basic-info", title: "Basic Info", description: "Event details" },
++  { id: "content", title: "Content", description: "Page content" },
++  {
++    id: "registration",
++    title: "Registration",
++    description: "Registration settings",
++  },
++  { id: "media", title: "Media", description: "Images and videos" },
++];
++
+ // Full steps including post-creation steps (for create mode)
+ // These steps happen AFTER the event is created
+ const FULL_FORM_STEPS = [
+   ...EVENT_FORM_STEPS,
+   { id: "collection-center", title: "Collection Center", description: "Kit collection" },
+-  { id: "checkin-officers", title: "Check-in Officers", description: "Staff management" },
+ ];
+ 
+ interface EventFormProps {
+@@ -72,9 +83,6 @@ export const EventForm: React.FC<EventFormProps> = ({
+     goToPreviousStep,
+     goToStep,
+     submitForm,
+-    handleAssignStaff,
+-    submitCheckinOfficers,
+-    skipCheckinOfficers,
+     handleCreateCenter,
+     submitCollectionCenter,
+     skipCollectionCenter,
+@@ -150,28 +158,16 @@ export const EventForm: React.FC<EventFormProps> = ({
+             isCreating={isLoading}
+           />
+         );
+-      case 6:
+-        return (
+-          <CheckinOfficersStep
+-            data={formData.checkinOfficers}
+-            onChange={updateFormData("checkinOfficers")}
+-            errors={errors.checkinOfficers}
+-            onAssignStaff={handleAssignStaff}
+-            isAssigning={isLoading}
+-          />
+-        );
+       default:
+         return null;
+     }
+   };
+ 
+-  // Use full steps in create mode, event-only steps in edit mode
+-  const FORM_STEPS = isEditMode ? EVENT_FORM_STEPS : FULL_FORM_STEPS;
++  // Use full steps in create mode, edit steps (no tickets) in edit mode
++  const FORM_STEPS = isEditMode ? EDIT_FORM_STEPS : FULL_FORM_STEPS;
+   const isCollectionCenterStep = currentStep === 5;
+-  const isCheckinOfficersStep = currentStep === 6;
+   const isTicketsStep = currentStep === 4;
+-  const isLastEventStep = isTicketsStep; // Tickets is the last step before event creation
+-  const isLastStep = isEditMode ? isTicketsStep : isCollectionCenterStep;
++  const isLastEventStep = isEditMode ? currentStep === 3 : isTicketsStep; // Media is last step in edit mode, Tickets in create mode
+   const isFirstStep = currentStep === 0;
+ 
+   // Get validation summary for current step
+@@ -201,7 +197,7 @@ export const EventForm: React.FC<EventFormProps> = ({
+             <h5 className="text-foreground mb-2">
+               {isEditMode ? "Edit Event" : "Create New Event"}
+             </h5>
+-            <p className="text-muted-foreground">
++            <p className="body-sm text-muted-foreground">
+               {isEditMode
+                 ? "Update your event details and ticket options"
+                 : "Create a new marathon event with all details and ticket options"}
+@@ -227,7 +223,7 @@ export const EventForm: React.FC<EventFormProps> = ({
+             <h2 className="text-xl font-semibold text-foreground mb-2">
+               {isCollectionCenterStep ? "Collection Center Setup" : "Event Details"}
+             </h2>
+-            <p className="text-muted-foreground">
++            <p className="text-muted-foreground body-sm">
+               {isCollectionCenterStep
+                 ? "Set up a collection center for your event. You can also skip this step and add one later."
+                 : isEditMode
+@@ -276,7 +272,7 @@ export const EventForm: React.FC<EventFormProps> = ({
+ 
+           {/* Navigation */}
+           <div className="flex justify-between pt-6 border-t">
+-            {!isFirstStep && !isCollectionCenterStep && !isCheckinOfficersStep && (
++            {!isFirstStep && !isCollectionCenterStep && (
+               <Button
+                 type="button"
+                 variant="outline"
+@@ -313,28 +309,6 @@ export const EventForm: React.FC<EventFormProps> = ({
+                   </span>
+                 </Button>
+               </div>
+-            ) : isCheckinOfficersStep ? (
+-              // Check-in officers step: Skip + Next buttons (event already created at this point)
+-              <div className="flex gap-3 ml-auto">
+-                <Button
+-                  type="button"
+-                  variant="outline"
+-                  onClick={skipCheckinOfficers}
+-                  disabled={isLoading}
+-                >
+-                  Skip
+-                </Button>
+-                <Button
+-                  type="button"
+-                  onClick={submitCheckinOfficers}
+-                  disabled={isLoading}
+-                  className="bg-primary hover:bg-primary-hover text-primary-foreground flex items-center space-x-2 disabled:opacity-50"
+-                >
+-                  <span>
+-                    {isLoading ? "Saving..." : "Save & Continue"}
+-                  </span>
+-                </Button>
+-              </div>
+             ) : (
+               <div className={isFirstStep ? "ml-auto" : ""}>
+                 {isLastEventStep ? (
+diff --git a/src/app/(PageSections)/Dashboard/EventPageSection/components/event-form/stepper.tsx b/src/app/(PageSections)/Dashboard/EventPageSection/components/event-form/stepper.tsx
+index 4c90090..a0d98b2 100644
+--- a/src/app/(PageSections)/Dashboard/EventPageSection/components/event-form/stepper.tsx
++++ b/src/app/(PageSections)/Dashboard/EventPageSection/components/event-form/stepper.tsx
+@@ -55,7 +55,7 @@ export const Stepper: React.FC<StepperProps> = ({
+                 </button>
+                 <div className="mt-2 text-center">
+                   <p className={cn(
+-                    "text-sm font-medium transition-colors",
++                    "body-sm font-medium transition-colors",
+                     {
+                       "text-green-500": isCompleted,
+                       "text-primary-950": isActive,
+@@ -65,7 +65,7 @@ export const Stepper: React.FC<StepperProps> = ({
+                     {step.title}
+                   </p>
+                   {step.description && (
+-                    <p className="text-xs text-muted-foreground mt-1">
++                    <p className="caption text-muted-foreground mt-1">
+                       {step.description}
+                     </p>
+                   )}
+diff --git a/src/app/(PageSections)/Dashboard/EventPageSection/components/event-form/steps/CollectionCenterStep.tsx b/src/app/(PageSections)/Dashboard/EventPageSection/components/event-form/steps/CollectionCenterStep.tsx
+index a21e26f..49b0230 100644
+--- a/src/app/(PageSections)/Dashboard/EventPageSection/components/event-form/steps/CollectionCenterStep.tsx
++++ b/src/app/(PageSections)/Dashboard/EventPageSection/components/event-form/steps/CollectionCenterStep.tsx
+@@ -251,7 +251,7 @@ export const CollectionCenterStep: React.FC<CollectionCenterStepProps> = ({
+       {/* Add New Center Form */}
+       <Card>
+         <CardContent className="pt-6">
+-          <h4 className="font-semibold mb-4">Add Collection Center</h4>
++          <h6 className="font-semibold mb-4">Add Collection Center</h6>
+ 
+           {/* Basic Information */}
+           <div className="space-y-4 mb-6">
+diff --git a/src/app/(PageSections)/Dashboard/EventPageSection/components/event-form/steps/ContentStep.tsx b/src/app/(PageSections)/Dashboard/EventPageSection/components/event-form/steps/ContentStep.tsx
+index 719142f..ad6dfb5 100644
+--- a/src/app/(PageSections)/Dashboard/EventPageSection/components/event-form/steps/ContentStep.tsx
++++ b/src/app/(PageSections)/Dashboard/EventPageSection/components/event-form/steps/ContentStep.tsx
+@@ -112,7 +112,7 @@ export const ContentStep: React.FC<ContentStepProps> = ({
+       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+         <FormInput
+           label="Event Tagline (English)"
+-          description="A short phrase expressing the event's purpose (6–12 words)"
++          description="A short phrase expressing the event's purpose (4–12 words)"
+           placeholder="Run for children, run to save lives"
+           value={data.eventIntroEnglish}
+           onChange={updateField('eventIntroEnglish')}
+@@ -126,7 +126,7 @@ export const ContentStep: React.FC<ContentStepProps> = ({
+ 
+         <FormInput
+           label="Event Tagline (Swahili)"
+-          description="Swahili version of the tagline (6–12 words)"
++          description="Swahili version of the tagline (4–12 words)"
+           placeholder="Kila hatua inaokoa maisha ya mtoto"
+           value={data.eventIntroSwahili}
+           onChange={updateField('eventIntroSwahili')}
+diff --git a/src/app/(PageSections)/Dashboard/EventPageSection/components/event-form/steps/RegistrationStep.tsx b/src/app/(PageSections)/Dashboard/EventPageSection/components/event-form/steps/RegistrationStep.tsx
+index f65cdad..b38d14d 100644
+--- a/src/app/(PageSections)/Dashboard/EventPageSection/components/event-form/steps/RegistrationStep.tsx
++++ b/src/app/(PageSections)/Dashboard/EventPageSection/components/event-form/steps/RegistrationStep.tsx
+@@ -8,7 +8,7 @@ import { MerchandiseManager } from "@/components/ui/MerchandiseManager";
+ import { MerchandiseItem } from "@/types/merchandise";
+ import { useAccountValidation } from "@/hooks/useAccountValidation";
+ import { Button } from "@/components/ui/button";
+-import { CheckCircle2, Loader2 } from "lucide-react";
++import { CheckCircle2, Loader2, SquareCheckBig } from "lucide-react";
+ 
+ export interface RegistrationData {
+   enableRegistration: boolean;
+@@ -230,27 +230,14 @@ export const RegistrationStep: React.FC<RegistrationStepProps> = ({
+               ) : validationResult?.isValid ? (
+                 <CheckCircle2 className="h-4 w-4" />
+               ) : (
+-                <svg
+-                  xmlns="http://www.w3.org/2000/svg"
+-                  width="16"
+-                  height="16"
+-                  viewBox="0 0 24 24"
+-                  fill="none"
+-                  stroke="currentColor"
+-                  strokeWidth="2"
+-                  strokeLinecap="round"
+-                  strokeLinejoin="round"
+-                >
+-                  <path d="M9 11l3 3L22 4" />
+-                  <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11" />
+-                </svg>
++            <SquareCheckBig className="h-4 w-4" />
+               )}
+             </button>
+           }
+         />
+         {validationResult && !errors.paymentAccountNumber && (
+           <p
+-            className={`text-xs mt-1 ${
++            className={`caption mt-1 ${
+               validationResult.isValid
+                 ? "text-green-600 dark:text-green-400"
+                 : "text-red-600 dark:text-red-400"
+diff --git a/src/app/(PageSections)/Dashboard/EventPageSection/components/event-form/steps/TicketsStep.tsx b/src/app/(PageSections)/Dashboard/EventPageSection/components/event-form/steps/TicketsStep.tsx
+index 74b05a7..76c06e5 100644
+--- a/src/app/(PageSections)/Dashboard/EventPageSection/components/event-form/steps/TicketsStep.tsx
++++ b/src/app/(PageSections)/Dashboard/EventPageSection/components/event-form/steps/TicketsStep.tsx
+@@ -78,7 +78,7 @@ export const TicketsStep: React.FC<TicketsStepProps> = ({
+         <h3 className="text-lg font-semibold text-foreground mb-2">
+           Event Tickets
+         </h3>
+-        <p className="text-muted-foreground">
++        <p className="body-sm  text-muted-foreground">
+           Add ticket options for this event.
+         </p>
+       </div>
+@@ -94,14 +94,14 @@ export const TicketsStep: React.FC<TicketsStepProps> = ({
+         }`}>
+           <div className="flex items-center justify-between">
+             <div>
+-              <p className={`text-sm font-medium ${
++              <p className={`body-sm font-medium ${
+                 isOverLimit
+                   ? 'text-red-700 dark:text-red-400'
+                   : 'text-gray-700 dark:text-gray-300'
+               }`}>
+                 Total Ticket Capacity
+               </p>
+-              <p className={`text-xs ${
++              <p className={`caption ${
+                 isOverLimit
+                   ? 'text-red-600 dark:text-red-500'
+                   : 'text-gray-500 dark:text-gray-400'
+diff --git a/src/app/(PageSections)/Dashboard/EventPageSection/components/event-form/tickets/ticketCard.tsx b/src/app/(PageSections)/Dashboard/EventPageSection/components/event-form/tickets/ticketCard.tsx
+index 8076a39..9c6ad29 100644
+--- a/src/app/(PageSections)/Dashboard/EventPageSection/components/event-form/tickets/ticketCard.tsx
++++ b/src/app/(PageSections)/Dashboard/EventPageSection/components/event-form/tickets/ticketCard.tsx
+@@ -29,8 +29,7 @@ export const TicketCard: React.FC<TicketCardProps> = ({
+   onEdit,
+   className,
+ }) => {
+-  // Create a placeholder image data URL
+-  const placeholderImage = "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHZpZXdCb3g9IjAgMCA4MCA4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik0zNSAzNUg0NVY0NUgzNVYzNVoiIGZpbGw9IiM5Q0EzQUYiLz4KPHBhdGggZD0iTTI1IDI1VjU1SDU1VjI1SDI1Wk0zMCAzMEg1MFY1MEgzMFYzMFoiIGZpbGw9IiM5Q0EzQUYiLz4KPC9zdmc+";
++
+   
+   return (
+     <div
+@@ -66,14 +65,14 @@ export const TicketCard: React.FC<TicketCardProps> = ({
+         )}
+ 
+         <div>
+-          <h3 className="font-semibold text-foreground">{ticket.name}</h3>
+-          <p className="text-sm text-muted-foreground">{ticket.description}</p>
+-          <p className="text-xs text-muted-foreground mt-1">
++          <h6 className="body-sm font-semibold text-foreground">{ticket.name}</h6>
++          <p className="body-sm text-muted-foreground">{ticket.description}</p>
++          <p className="caption text-muted-foreground mt-1">
+             Quantity: {ticket.totalQuantity}
+           </p>
+           {ticket.features && ticket.features.length > 0 && (
+             <div className="mt-2">
+-              <p className="text-xs font-medium text-foreground mb-1">Features:</p>
++              <p className="body-sm font-medium text-foreground mb-1">Features:</p>
+               <ul className="text-xs text-muted-foreground space-y-0.5">
+                 {ticket.features.slice(0, 3).map((feature, idx) => (
+                   <li key={idx} className="flex items-start">
+diff --git a/src/app/(PageSections)/Dashboard/EventPageSection/components/tabs/CollectionCentersTab.tsx b/src/app/(PageSections)/Dashboard/EventPageSection/components/tabs/CollectionCentersTab.tsx
+index 11223b7..d9c7116 100644
+--- a/src/app/(PageSections)/Dashboard/EventPageSection/components/tabs/CollectionCentersTab.tsx
++++ b/src/app/(PageSections)/Dashboard/EventPageSection/components/tabs/CollectionCentersTab.tsx
+@@ -207,6 +207,8 @@ interface KitCollectorFormProps {
+ function KitCollectorForm({ eventId, centers, onSave }: KitCollectorFormProps) {
+   const { toast } = useToast();
+   const { closeModal } = useModal();
++  const [firstName, setFirstName] = useState("");
++  const [lastName, setLastName] = useState("");
+   const [email, setEmail] = useState("");
+   const [collectionCenterIds, setCollectionCenterIds] = useState<string[]>([]);
+   const [loading, setLoading] = useState(false);
+@@ -216,6 +218,8 @@ function KitCollectorForm({ eventId, centers, onSave }: KitCollectorFormProps) {
+     try {
+       setLoading(true);
+       await eventStaffService.assignOfficer(eventId, {
++        firstName: firstName.trim(),
++        lastName: lastName.trim(),
+         email: email.trim(),
+         officerType: "COLLECTION_OFFICER",
+         collectionCenterIds: collectionCenterIds.length ? collectionCenterIds : undefined,
+@@ -231,6 +235,22 @@ function KitCollectorForm({ eventId, centers, onSave }: KitCollectorFormProps) {
+ 
+   return (
+     <form onSubmit={handleSubmit} className="space-y-4">
++      <div className="grid grid-cols-2 gap-4">
++        <FormInput
++          label="First Name"
++          value={firstName}
++          onChange={(e) => setFirstName(e.target.value)}
++          placeholder="Enter first name"
++          required
++        />
++        <FormInput
++          label="Last Name"
++          value={lastName}
++          onChange={(e) => setLastName(e.target.value)}
++          placeholder="Enter last name"
++          required
++        />
++      </div>
+       <FormInput
+         label="Email"
+         type="email"
+@@ -250,7 +270,7 @@ function KitCollectorForm({ eventId, centers, onSave }: KitCollectorFormProps) {
+       />
+       <div className="flex justify-end gap-2 pt-2">
+         <Button type="button" variant="outline" onClick={closeModal}>Cancel</Button>
+-        <Button type="submit" disabled={loading || !email.trim()}>
++        <Button type="submit" disabled={loading || !firstName.trim() || !lastName.trim() || !email.trim()}>
+           {loading ? "Assigning..." : "Add Kit Collector"}
+         </Button>
+       </div>
+@@ -342,7 +362,7 @@ export function CollectionCentersTab({ eventId }: CollectionCentersTabProps) {
+   const handleRemoveCollector = async (staffId: string) => {
+     try {
+       await eventStaffService.removeEventStaff(eventId, staffId);
+-      toast({ title: "Kit collector removed" });
++      
+       loadCollectors();
+     } catch {
+       toast({ title: "Error", description: "Remove failed.", variant: "destructive" });
+diff --git a/src/app/(PageSections)/Dashboard/EventPageSection/components/tabs/FeaturedPeopleTab.tsx b/src/app/(PageSections)/Dashboard/EventPageSection/components/tabs/FeaturedPeopleTab.tsx
+index fcba1d1..d9dacd2 100644
+--- a/src/app/(PageSections)/Dashboard/EventPageSection/components/tabs/FeaturedPeopleTab.tsx
++++ b/src/app/(PageSections)/Dashboard/EventPageSection/components/tabs/FeaturedPeopleTab.tsx
+@@ -3,6 +3,7 @@
+ import React, { useEffect, useState } from "react";
+ import { useFeaturedPeople } from "@/hooks/useFeaturedPeople";
+ import { useModal } from "@/hooks/useModal";
++import { FeaturedPeopleProvider } from "@/providers/featured-people.provider";
+ import { FeaturedPersonI, CreateFeaturedPersonI } from "@/types/featured-people";
+ import { Button } from "@/components/ui/button";
+ import { Badge } from "@/components/ui/badge";
+@@ -170,11 +171,11 @@ export function FeaturedPeopleTab({ eventId }: FeaturedPeopleTabProps) {
+   const people = featuredPeople?.data || [];
+ 
+   const openCreate = () => {
+-    openModal(<PersonForm eventId={eventId} onSave={load} />, "Add Featured Person", "lg");
++    openModal(<FeaturedPeopleProvider><PersonForm eventId={eventId} onSave={load} /></FeaturedPeopleProvider>, "Add Featured Person", "lg");
+   };
+ 
+   const openEdit = (person: FeaturedPersonI) => {
+-    openModal(<PersonForm eventId={eventId} editTarget={person} onSave={load} />, "Edit Featured Person", "lg");
++    openModal(<FeaturedPeopleProvider><PersonForm eventId={eventId} editTarget={person} onSave={load} /></FeaturedPeopleProvider>, "Edit Featured Person", "lg");
+   };
+ 
+   const handleDelete = async (id: string) => {
+diff --git a/src/app/(PageSections)/Dashboard/GroupPageSection.tsx/CreateGroupPageSection.tsx b/src/app/(PageSections)/Dashboard/GroupPageSection.tsx/CreateGroupPageSection.tsx
+index 8980e0d..e7a5432 100644
+--- a/src/app/(PageSections)/Dashboard/GroupPageSection.tsx/CreateGroupPageSection.tsx
++++ b/src/app/(PageSections)/Dashboard/GroupPageSection.tsx/CreateGroupPageSection.tsx
+@@ -372,6 +372,36 @@ function CreateGroupPageSection({
+         <div className={isModal ? "" : "border border-gray-300 rounded-lg"}>
+           <div className={isModal ? "space-y-6" : "mx-auto p-8 space-y-6"}>
+             <form onSubmit={formik.handleSubmit} className="space-y-6">
++              <div className="space-y-4">
++                <FormInput
++                  label="Group Name"
++                  placeholder="Enter the Group Name"
++                  required
++                  name="groupName"
++                  value={formik.values.groupName}
++                  onChange={formik.handleChange}
++                  onBlur={formik.handleBlur}
++                  error={
++                    formik.touched.groupName && formik.errors.groupName
++                      ? formik.errors.groupName
++                      : undefined
++                  }
++                />
++                <FormTextarea
++                  label="Description"
++                  placeholder="Enter group description"
++                  name="description"
++                  value={formik.values.description}
++                  onChange={formik.handleChange}
++                  onBlur={formik.handleBlur}
++                  error={
++                    formik.touched.description && formik.errors.description
++                      ? formik.errors.description
++                      : undefined
++                  }
++                />
++              </div>
++
+               <Button
+                 type="submit"
+                 className="w-full"
+diff --git a/src/app/(Pages)/dashboard/events/(with-layout)/[id]/ClientEventLayout.tsx b/src/app/(Pages)/dashboard/events/(with-layout)/[id]/ClientEventLayout.tsx
+deleted file mode 100644
+index 5f17108..0000000
+--- a/src/app/(Pages)/dashboard/events/(with-layout)/[id]/ClientEventLayout.tsx
++++ /dev/null
+@@ -1,33 +0,0 @@
+-"use client";
+-
+-import CustomLinks from "@/components/layout/CustomLinks";
+-import { useParams } from "next/navigation";
+-import React from "react";
+-
+-function ClientEventLayout() {
+-  const { id } = useParams();
+-  const basePath = `/dashboard/events/${id}`;
+-
+-  const tabs = [
+-    {
+-      id: "/", // Relative path for "Apply For Insurance" (maps to /dashboard/insurance)
+-      label: "Events Details",
+-    },
+-    {
+-      id: "event-marketplace", // Relative path for "My Application"
+-      label: "Event Market Place",
+-    },
+-    {
+-      id: "extra-bookings",
+-      label: "Extra Bookings",
+-    },
+-  ];
+-
+-  return (
+-    <div>
+-      <CustomLinks basePath={basePath} tabs={tabs} />
+-    </div>
+-  );
+-}
+-
+-export default ClientEventLayout;
+diff --git a/src/app/(Pages)/dashboard/events/(with-layout)/[id]/event-marketplace/page.tsx b/src/app/(Pages)/dashboard/events/(with-layout)/[id]/event-marketplace/page.tsx
+deleted file mode 100644
+index 1a17ffc..0000000
+--- a/src/app/(Pages)/dashboard/events/(with-layout)/[id]/event-marketplace/page.tsx
++++ /dev/null
+@@ -1,15 +0,0 @@
+-import EventMarketPlacePageSection from '@/app/(PageSections)/Dashboard/EventPageSection/EventMarketPlacePageSection'
+-import { RoleGuard } from "@/components/guards/RoleGuard";
+-import React from 'react'
+-
+-function EventMarketPlace() {
+-  return (
+-    <RoleGuard requiredRoles={["ROLE_USER", "ROLE_EVENTS_ADMIN", "ROLE_PARTNER_CONTACT"]}>
+-      <div>
+-        <EventMarketPlacePageSection />
+-      </div>
+-    </RoleGuard>
+-  )
+-}
+-
+-export default EventMarketPlace
+diff --git a/src/app/(Pages)/dashboard/events/(with-layout)/[id]/extra-bookings/book-accommodation/page.tsx b/src/app/(Pages)/dashboard/events/(with-layout)/[id]/extra-bookings/book-accommodation/page.tsx
+deleted file mode 100644
+index 4786ee0..0000000
+--- a/src/app/(Pages)/dashboard/events/(with-layout)/[id]/extra-bookings/book-accommodation/page.tsx
++++ /dev/null
+@@ -1,15 +0,0 @@
+-import BookAccomodationPageSection from '@/app/(PageSections)/Dashboard/BookingPageSection/BookAccomodationPageSection'
+-import { RoleGuard } from "@/components/guards/RoleGuard";
+-import React from 'react'
+-
+-function BookAccommodation() {
+-  return (
+-    <RoleGuard requiredRoles={["ROLE_USER", "ROLE_EVENTS_ADMIN", "ROLE_PARTNER_CONTACT"]}>
+-      <div>
+-        <BookAccomodationPageSection />
+-      </div>
+-    </RoleGuard>
+-  )
+-}
+-
+-export default BookAccommodation
+diff --git a/src/app/(Pages)/dashboard/events/(with-layout)/[id]/extra-bookings/book-transportation/page.tsx b/src/app/(Pages)/dashboard/events/(with-layout)/[id]/extra-bookings/book-transportation/page.tsx
+deleted file mode 100644
+index b4f3e4a..0000000
+--- a/src/app/(Pages)/dashboard/events/(with-layout)/[id]/extra-bookings/book-transportation/page.tsx
++++ /dev/null
+@@ -1,15 +0,0 @@
+-import BookTransportPageSection from "@/app/(PageSections)/Dashboard/BookingPageSection/BookTransportPageSection";
+-import { RoleGuard } from "@/components/guards/RoleGuard";
+-import React from "react";
+-
+-function BookTransport() {
+-  return (
+-    <RoleGuard requiredRoles={["ROLE_USER", "ROLE_EVENTS_ADMIN", "ROLE_PARTNER_CONTACT"]}>
+-      <div>
+-        <BookTransportPageSection />
+-      </div>
+-    </RoleGuard>
+-  );
+-}
+-
+-export default BookTransport;
+diff --git a/src/app/(Pages)/dashboard/events/(with-layout)/[id]/extra-bookings/page.tsx b/src/app/(Pages)/dashboard/events/(with-layout)/[id]/extra-bookings/page.tsx
+deleted file mode 100644
+index 95753ad..0000000
+--- a/src/app/(Pages)/dashboard/events/(with-layout)/[id]/extra-bookings/page.tsx
++++ /dev/null
+@@ -1,15 +0,0 @@
+-import ExtraBookingsPageSection from "@/app/(PageSections)/Dashboard/EventPageSection/ExtraBookingsPageSection";
+-import { RoleGuard } from "@/components/guards/RoleGuard";
+-import React from "react";
+-
+-function ExtraBookings() {
+-  return (
+-    <RoleGuard requiredRoles={["ROLE_USER", "ROLE_EVENTS_ADMIN", "ROLE_PARTNER_CONTACT"]}>
+-      <div>
+-        <ExtraBookingsPageSection />
+-      </div>
+-    </RoleGuard>
+-  );
+-}
+-
+-export default ExtraBookings;
+diff --git a/src/app/(Pages)/dashboard/events/(with-layout)/[id]/layout.tsx b/src/app/(Pages)/dashboard/events/(with-layout)/[id]/layout.tsx
+deleted file mode 100644
+index 92009c6..0000000
+--- a/src/app/(Pages)/dashboard/events/(with-layout)/[id]/layout.tsx
++++ /dev/null
+@@ -1,14 +0,0 @@
+-import React from "react";
+-import ClientEventLayout from "./ClientEventLayout";
+-
+-function layout({ children }: { children: React.ReactNode }) {
+-  return (
+-    <div>
+-      <ClientEventLayout />
+-
+-      {children}
+-    </div>
+-  );
+-}
+-
+-export default layout;
+diff --git a/src/app/(Pages)/dashboard/events/(with-layout)/[id]/make-donation/[donationCode]/page.tsx b/src/app/(Pages)/dashboard/events/(with-layout)/[id]/make-donation/[donationCode]/page.tsx
+deleted file mode 100644
+index 807d081..0000000
+--- a/src/app/(Pages)/dashboard/events/(with-layout)/[id]/make-donation/[donationCode]/page.tsx
++++ /dev/null
+@@ -1,20 +0,0 @@
+-import DashboardDonationOrderDetailsPageSection from "@/app/(PageSections)/Dashboard/EventPageSection/DashboardDonationOrderDetailsPageSection";
+-import { RoleGuard } from "@/components/guards/RoleGuard";
+-import { DonationProvider } from "@/providers/donation.provider";
+-
+-export const dynamic = "force-dynamic";
+-export const fetchCache = "force-no-store";
+-export const revalidate = 0;
+-export const runtime = "nodejs";
+-
+-function DashboardDonationOrderDetails() {
+-  return (
+-    <RoleGuard requiredRoles={["ROLE_USER", "ROLE_EVENTS_ADMIN", "ROLE_PARTNER_CONTACT"]}>
+-      <DonationProvider>
+-        <DashboardDonationOrderDetailsPageSection />
+-      </DonationProvider>
+-    </RoleGuard>
+-  );
+-}
+-
+-export default DashboardDonationOrderDetails;
+diff --git a/src/app/(Pages)/dashboard/events/(with-layout)/[id]/make-donation/page.tsx b/src/app/(Pages)/dashboard/events/(with-layout)/[id]/make-donation/page.tsx
+deleted file mode 100644
+index 806fddd..0000000
+--- a/src/app/(Pages)/dashboard/events/(with-layout)/[id]/make-donation/page.tsx
++++ /dev/null
+@@ -1,15 +0,0 @@
+-import DashboardMakeDonationPaymentPageSection from "@/app/(PageSections)/Dashboard/EventPageSection/DashboardMakeDonationPaymentPageSection";
+-import { RoleGuard } from "@/components/guards/RoleGuard";
+-import React from "react";
+-
+-function DashboardMakeDonation() {
+-  return (
+-    <RoleGuard requiredRoles={["ROLE_USER", "ROLE_EVENTS_ADMIN", "ROLE_PARTNER_CONTACT"]}>
+-      <div>
+-        <DashboardMakeDonationPaymentPageSection />
+-      </div>
+-    </RoleGuard>
+-  );
+-}
+-
+-export default DashboardMakeDonation;
+diff --git a/src/app/(Pages)/dashboard/events/(with-layout)/[id]/page.tsx b/src/app/(Pages)/dashboard/events/(with-layout)/[id]/page.tsx
+deleted file mode 100644
+index e5d0471..0000000
+--- a/src/app/(Pages)/dashboard/events/(with-layout)/[id]/page.tsx
++++ /dev/null
+@@ -1,19 +0,0 @@
+-import SingleEventPageSection from "@/app/(PageSections)/Dashboard/EventPageSection/SingleEventPageSection";
+-import { RoleGuard } from "@/components/guards/RoleGuard";
+-import { EventProvider } from "@/providers/event.provider";
+-import { TicketProvider } from "@/providers/ticket.provider";
+-import React from "react";
+-
+-function SingleEvent() {
+-  return (
+-    <RoleGuard requiredRoles={["ROLE_USER"]}>
+-      <EventProvider>
+-        <TicketProvider>
+-          <SingleEventPageSection />
+-        </TicketProvider>
+-      </EventProvider>
+-    </RoleGuard>
+-  );
+-}
+-
+-export default SingleEvent;
+diff --git a/src/app/(Pages)/dashboard/events/(with-layout)/[id]/registration/page.tsx b/src/app/(Pages)/dashboard/events/(with-layout)/[id]/registration/page.tsx
+deleted file mode 100644
+index cc513ec..0000000
+--- a/src/app/(Pages)/dashboard/events/(with-layout)/[id]/registration/page.tsx
++++ /dev/null
+@@ -1,25 +0,0 @@
+-import DashboardEventRegistrationPageSection from "@/app/(PageSections)/Dashboard/EventRegistrationPageSection/DashboardEventRegistrationPageSection";
+-import { RoleGuard } from "@/components/guards/RoleGuard";
+-import { EventRegistrationProvider } from "@/providers/event-registration.provider";
+-import { EventProvider } from "@/providers/event.provider";
+-import { GroupProvider } from "@/providers/group.provider";
+-import { TicketProvider } from "@/providers/ticket.provider";
+-import React from "react";
+-
+-function DashboardEventRegistration() {
+-  return (
+-    <RoleGuard requiredRoles={["ROLE_USER"]}>
+-      <EventProvider>
+-        <TicketProvider>
+-          <GroupProvider>
+-            <EventRegistrationProvider>
+-              <DashboardEventRegistrationPageSection />
+-            </EventRegistrationProvider>
+-          </GroupProvider>
+-        </TicketProvider>
+-      </EventProvider>
+-    </RoleGuard>
+-  );
+-}
+-
+-export default DashboardEventRegistration;
+diff --git a/src/components/shared/registration/ExcelUploadTab.tsx b/src/components/shared/registration/ExcelUploadTab.tsx
+index a916954..46dc5df 100644
+--- a/src/components/shared/registration/ExcelUploadTab.tsx
++++ b/src/components/shared/registration/ExcelUploadTab.tsx
+@@ -122,7 +122,7 @@ export function ExcelUploadTab({
+               {uploadError && (
+                 <div className="flex items-center gap-2 rounded-lg bg-red-50 border border-red-200 px-3 py-2 text-xs text-red-700">
+                   <XCircle className="w-3.5 h-3.5 shrink-0" />
+-                  <span className="truncate">{uploadError}</span>
++                  <span className="">{uploadError}</span>
+                 </div>
+               )}
+               <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg">
+diff --git a/src/components/ui/ImageUploader.tsx b/src/components/ui/ImageUploader.tsx
+index 9a58a92..4faf6bb 100644
+--- a/src/components/ui/ImageUploader.tsx
++++ b/src/components/ui/ImageUploader.tsx
+@@ -192,7 +192,7 @@ export const ImageUploader: React.FC<ImageUploaderProps> = ({
+           <p className="text-xs text-muted-foreground">
+             or click to browse files
+           </p>
+-          <p className="text-xs text-muted-foreground mt-2">
++          <p className="caption text-muted-foreground mt-2">
+             Supports: {acceptedFormats.join(", ")}
+             {maxSize && ` • ${maxSize}`}
+           </p>
+diff --git a/src/components/ui/MerchandiseManager.tsx b/src/components/ui/MerchandiseManager.tsx
+index 52b12ff..9b0bbcf 100644
+--- a/src/components/ui/MerchandiseManager.tsx
++++ b/src/components/ui/MerchandiseManager.tsx
+@@ -259,7 +259,7 @@ export const MerchandiseManager: React.FC<MerchandiseManagerProps> = ({
+         <Card>
+           <CardContent className="p-6 space-y-4">
+             <div className="flex items-center justify-between mb-2">
+-              <h4 className="font-semibold">Add New Merchandise</h4>
++              <h6 className="font-semibold">Add New Merchandise</h6>
+               <Button
+                 type="button"
+                 variant="destructive"
+@@ -341,7 +341,7 @@ export const MerchandiseManager: React.FC<MerchandiseManagerProps> = ({
+                       />
+                     ))}
+                   </div>
+-                  <p className="text-xs text-muted-foreground mt-2">
++                  <p className="caption text-muted-foreground mt-2">
+                     Enter quantity available for each variety
+                   </p>
+                 </div>
+diff --git a/src/components/ui/form-time-picker.tsx b/src/components/ui/form-time-picker.tsx
+index fee81fe..419f8f2 100644
+--- a/src/components/ui/form-time-picker.tsx
++++ b/src/components/ui/form-time-picker.tsx
+@@ -269,7 +269,7 @@ export const FormTimePicker = forwardRef<HTMLDivElement, FormTimePickerProps>(
+                   {/* Hour and Minute Picker */}
+                   <div className="space-y-3">
+                     <div>
+-                      <h4 className="text-xs font-medium text-muted-foreground mb-2">Hour</h4>
++                      <h6 className="body font-medium text-muted-foreground mb-2">Hour</h6>
+                       <div className="grid grid-cols-6 gap-1 max-h-[180px] overflow-y-auto">
+                         {hours.map((hour) => (
+                           <button
+@@ -287,7 +287,7 @@ export const FormTimePicker = forwardRef<HTMLDivElement, FormTimePickerProps>(
+                     </div>
+ 
+                     <div>
+-                      <h4 className="text-xs font-medium text-muted-foreground mb-2">Minute</h4>
++                      <h6 className="body font-medium text-muted-foreground mb-2">Minute</h6>
+                       <div className="grid grid-cols-6 gap-1 max-h-[180px] overflow-y-auto">
+                         {minutes.map((minute) => (
+                           <button
+diff --git a/src/hooks/useEventForm.ts b/src/hooks/useEventForm.ts
+index 20742e7..ec64f7a 100644
+--- a/src/hooks/useEventForm.ts
++++ b/src/hooks/useEventForm.ts
+@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback, useRef } from "react";
+ import { CreateEventI, EventFormData, CollectionCenterFormStepData } from "../types/event";
+ import { useEvent } from "@/hooks/useEvent";
+ import { useCollectionCenter } from "@/hooks/useCollectionCenter";
+-import { useEventStaff } from "@/hooks/useEventStaff";
++
+ import { CreateCollectionCenterI } from "@/types/collection-center";
+ import { calendarDateToDate } from "@/utils/calendarDateToDate";
+ import {
+@@ -17,7 +17,6 @@ import {
+   validateRegistration,
+   validateMedia,
+   validateTickets,
+-  validateCheckinOfficers,
+   validateCollectionCenter,
+   checkStepValidity,
+   getMissingFields,
+@@ -121,8 +120,8 @@ export const useEventForm = ({
+     const stepFromQuery = searchParams?.get('step');
+     if (stepFromQuery) {
+       const stepNum = parseInt(stepFromQuery);
+-      // Validate step number (0-6 for create, 0-4 for edit)
+-      const maxStep = isEditMode ? 4 : 6;
++      // Validate step number (0-5 for create, 0-3 for edit - no tickets step)
++      const maxStep = isEditMode ? 3 : 5;
+       if (!isNaN(stepNum) && stepNum >= 0 && stepNum <= maxStep) {
+         return stepNum;
+       }
+@@ -136,19 +135,27 @@ export const useEventForm = ({
+     Partial<Record<keyof EventFormData, Record<string, string>>>
+   >({});
+ 
+-  const [createdEventId, setCreatedEventId] = useState<string | null>(null);
++  // Initialize createdEventId from query param to survive page refresh
++  const [createdEventId, setCreatedEventId] = useState<string | null>(
++    searchParams?.get('createdEventId') || null
++  );
+ 
+   // Track if we've loaded from localStorage to prevent overwriting
+   const hasLoadedFromStorage = useRef(false);
+ 
+   // Function to update step and query param together
+-  const updateStepWithQueryParam = useCallback((step: number) => {
++  const updateStepWithQueryParam = useCallback((step: number, newCreatedEventId?: string) => {
+     setCurrentStep(step);
+ 
+     // Update query param in URL
+     const params = new URLSearchParams(searchParams?.toString() || '');
+     params.set('step', step.toString());
+ 
++    // Persist createdEventId in URL if provided or already exists
++    if (newCreatedEventId) {
++      params.set('createdEventId', newCreatedEventId);
++    }
++
+     // Preserve other query params (like id for edit mode)
+     router.replace(`?${params.toString()}`, { scroll: false });
+   }, [router, searchParams]);
+@@ -156,7 +163,7 @@ export const useEventForm = ({
+   // Use your existing event hook
+   const { createEvent, createEventComplete, updateEvent, createLoading } = useEvent();
+   const { createCollectionCenter, isLoading: ccLoading } = useCollectionCenter();
+-  const { assignExistingStaff, createEventStaff, isLoading: staffLoading } = useEventStaff();
++
+ 
+   // Debounced form data for auto-save
+   const debouncedFormData = useDebounce(formData, 500);
+@@ -269,11 +276,7 @@ export const useEventForm = ({
+         const ticketLimitForValidation = parseInt(formData.registration.ticketLimit) || 0;
+         validationResult = validateTickets(formData.tickets, ticketLimitForValidation);
+         break;
+-      case 5: // Check-in Officers (optional, post-event-creation step)
+-        stepKey = 'checkinOfficers';
+-        validationResult = validateCheckinOfficers(formData.checkinOfficers);
+-        break;
+-      case 6: // Collection Center (post-event-creation step)
++      case 5: // Collection Center (post-event-creation step)
+         return true; // Validated separately in submitCollectionCenter
+       default:
+         return true;
+@@ -327,7 +330,7 @@ export const useEventForm = ({
+ 
+   // Navigate to next step with validation
+   const goToNextStep = async () => {
+-    const maxNavigableStep = isEditMode ? 4 : 4; // Step 5+ are only reached after event creation
++    const maxNavigableStep = isEditMode ? 3 : 4; // Edit: no tickets step; Create: Step 5+ are only reached after event creation
+     if (validateCurrentStep(currentStep) && currentStep < maxNavigableStep) {
+       // Auto-save in edit mode before moving to next step
+       if (isEditMode) {
+@@ -360,9 +363,9 @@ export const useEventForm = ({
+ 
+   // Navigate to specific step with validation of current step
+   const goToStep = async (step: number) => {
+-    // In edit mode, max step is 4 (no post-creation steps)
+-    // In create mode, steps 5-6 are only reachable after event creation
+-    const maxStep = isEditMode ? 4 : (createdEventId ? 6 : 4);
++    // In edit mode, max step is 3 (no tickets or post-creation steps)
++    // In create mode, step 5 is only reachable after event creation
++    const maxStep = isEditMode ? 3 : (createdEventId ? 5 : 4);
+     if (step >= 0 && step <= maxStep) {
+       // Only validate if moving forward
+       if (step > currentStep) {
+@@ -390,8 +393,9 @@ export const useEventForm = ({
+     let allValid = true;
+     const allErrors: Partial<Record<keyof EventFormData, Record<string, string>>> = {};
+ 
+-    // Validate each step (0-4 only for initial event creation)
+-    for (let i = 0; i <= 4; i++) {
++    // Validate each step (0-3 for edit mode, 0-4 for create mode)
++    const maxValidationStep = isEditMode ? 3 : 4;
++    for (let i = 0; i <= maxValidationStep; i++) {
+       let validationResult;
+       let stepKey: keyof EventFormData;
+ 
+@@ -431,7 +435,7 @@ export const useEventForm = ({
+       setErrors(allErrors);
+ 
+       // Find first invalid step and navigate to it
+-      for (let i = 0; i <= 4; i++) {
++      for (let i = 0; i <= maxValidationStep; i++) {
+         if (!checkStepValidity(i, formData)) {
+           updateStepWithQueryParam(i);
+           break;
+@@ -466,10 +470,11 @@ export const useEventForm = ({
+       } else {
+         // Create mode: use complete event creation endpoint
+         const completeEventData = transformFormDataToCompleteEvent(formData);
+-        const response = await createEventComplete(completeEventData);
++        const response  = await createEventComplete(completeEventData);
++       
+ 
+-        // Extract event ID from response
+-        const newEventId = response?.data?.id;
++        // Extract event ID from response (API may return id or eventId)
++        const newEventId = response?.data?.eventId || response?.data?.id;
+ 
+         if (!newEventId) {
+           console.error("No event ID found in response. Response structure:", JSON.stringify(response, null, 2));
+@@ -495,8 +500,9 @@ export const useEventForm = ({
+         const eventData = transformFormDataToCreateEvent(formData);
+         onSuccess?.(eventData);
+ 
+-        // Set the created event ID
+-        setCreatedEventId(String(newEventId));
++        // Set the created event ID and persist in URL
++        const newEventIdStr = String(newEventId);
++        setCreatedEventId(newEventIdStr);
+ 
+         // Pre-fill collection center with event data for later
+         setFormData((prev) => ({
+@@ -510,8 +516,8 @@ export const useEventForm = ({
+           },
+         }));
+ 
+-        // Go to collection center step (step 5)
+-        updateStepWithQueryParam(5);
++        // Go to collection center step (step 5) with createdEventId in URL
++        updateStepWithQueryParam(5, newEventIdStr);
+         return; // Don't redirect - go to collection center step
+       }
+ 
+@@ -529,69 +535,6 @@ export const useEventForm = ({
+     }
+   };
+ 
+-  // Assign a single staff member (called from CheckinOfficersStep)
+-  const handleAssignStaff = async (identifierType: string, identifier: string) => {
+-    if (!createdEventId) {
+-      throw new Error("Event must be created first before assigning staff.");
+-    }
+-
+-    try {
+-      await assignExistingStaff(createdEventId, identifierType, identifier);
+-    } catch (error) {
+-      throw error;
+-    }
+-  };
+-
+-  // Submit check-in officers (step 6) - finish the event creation flow
+-  const submitCheckinOfficers = async () => {
+-    if (!createdEventId) {
+-      showToast?.({
+-        title: "Error",
+-        description: "Event must be created first before completing the process.",
+-        variant: 'destructive',
+-      });
+-      return;
+-    }
+-
+-    try {
+-      // All staff assignments are done individually via handleAssignStaff
+-      // This just completes the flow and redirects
+-      const staffCount = formData.checkinOfficers.officers.length;
+-
+-      showToast?.({
+-        title: "Success",
+-        description: staffCount > 0
+-          ? `Event created successfully with ${staffCount} staff member(s) assigned!`
+-          : "Event created successfully!",
+-      });
+-
+-      // Clear form and redirect to events list
+-      clearLocalStorage();
+-      hasLoadedFromStorage.current = false;
+-      router.push('/dashboard/events');
+-    } catch (error) {
+-      showToast?.({
+-        title: "Error",
+-        description: "Failed to complete event creation. Please try again.",
+-        variant: 'destructive',
+-      });
+-      throw error;
+-    }
+-  };
+-
+-  // Skip check-in officers step and finish event creation
+-  const skipCheckinOfficers = () => {
+-    showToast?.({
+-      title: "Success",
+-      description: "Event created successfully!",
+-    });
+-
+-    // Clear form and redirect to events list
+-    clearLocalStorage();
+-    hasLoadedFromStorage.current = false;
+-    router.push('/dashboard/events');
+-  };
+-
+   // Create a single collection center (called from CollectionCenterStep)
+   const handleCreateCenter = async (center: CollectionCenterFormStepData) => {
+     if (!createdEventId) {
+@@ -632,7 +575,7 @@ export const useEventForm = ({
+     }
+   };
+ 
+-  // Submit collection center step - finish and go to check-in officers
++  // Submit collection center step - finish the event creation flow
+   const submitCollectionCenter = async () => {
+     if (!createdEventId) {
+       showToast?.({
+@@ -650,12 +593,14 @@ export const useEventForm = ({
+       showToast?.({
+         title: "Success",
+         description: centerCount > 0
+-          ? `${centerCount} collection center(s) added! Now add check-in officers.`
+-          : "Proceeding to check-in officers step.",
++          ? `${centerCount} collection center(s) added! Event created successfully.`
++          : "Event created successfully!",
+       });
+ 
+-      // Go to check-in officers step (step 6)
+-      updateStepWithQueryParam(6);
++      // Clear form and redirect to events list
++      clearLocalStorage();
++      hasLoadedFromStorage.current = false;
++      router.push('/dashboard/events');
+     } catch (error) {
+       showToast?.({
+         title: "Error",
+@@ -666,9 +611,16 @@ export const useEventForm = ({
+     }
+   };
+ 
+-  // Skip collection center step and go to check-in officers
++  // Skip collection center step and finish event creation
+   const skipCollectionCenter = () => {
+-    updateStepWithQueryParam(6);
++    showToast?.({
++      title: "Success",
++      description: "Event created successfully!",
++    });
++
++    clearLocalStorage();
++    hasLoadedFromStorage.current = false;
++    router.push('/dashboard/events');
+   };
+ 
+   // Clear form data and draft
+@@ -703,7 +655,7 @@ export const useEventForm = ({
+     currentStep,
+     formData,
+     errors,
+-    isLoading: createLoading || ccLoading || staffLoading,
++    isLoading: createLoading || ccLoading,
+     createdEventId,
+ 
+     // Actions
+@@ -712,9 +664,6 @@ export const useEventForm = ({
+     goToPreviousStep,
+     goToStep,
+     submitForm,
+-    handleAssignStaff,
+-    submitCheckinOfficers,
+-    skipCheckinOfficers,
+     handleCreateCenter,
+     submitCollectionCenter,
+     skipCollectionCenter,
+diff --git a/src/types/event.ts b/src/types/event.ts
+index cc827d5..e28a690 100644
+--- a/src/types/event.ts
++++ b/src/types/event.ts
+@@ -36,6 +36,7 @@ export type EventStatus = "DRAFT" | "PUBLISHED" | "CANCELLED" | "COMPLETED";
+ 
+ export interface EventI {
+   id: string ;
++  eventId?: string;
+   eventType: string;
+   eventTypeId: string;
+   partnerId?: string;
+diff --git a/src/utils/eventFormUtils.ts b/src/utils/eventFormUtils.ts
+index 77fe180..8b5d951 100644
+--- a/src/utils/eventFormUtils.ts
++++ b/src/utils/eventFormUtils.ts
+@@ -128,7 +128,7 @@ export const validateContent = (data: EventFormData["content"]) => {
+     isValid = false;
+   } else {
+     const words = data.eventIntroSwahili.trim().split(/\s+/).length;
+-    if (words < 6) {
++    if (words < 4) {
+       errors.eventIntroSwahili = `Tagline too short — ${words} word${words === 1 ? '' : 's'} (minimum 6)`;
+       isValid = false;
+     } else if (words > 12) {
+@@ -464,8 +464,8 @@ export const getFieldDisplayName = (fieldKey: string): string => {
+     eventTime: "Event Time",
+     pageHeadingEnglish: "Page Heading (English)",
+     pageHeadingSwahili: "Page Heading (Swahili)",
+-    eventIntroEnglish: "Event Introduction (English)",
+-    eventIntroSwahili: "Event Introduction (Swahili)",
++    eventIntroEnglish: "Event Tagline (English)",
++    eventIntroSwahili: "Event Tagline (Swahili)",
+     aboutHeadingEnglish: "About Heading (English)",
+     aboutHeadingSwahili: "About Heading (Swahili)",
+     aboutContentEnglish: "About Content (English)",
