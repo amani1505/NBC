@@ -1,39 +1,4 @@
-feat(events): simplify event creation flow, remove check-in officers step, and fix edit mode
-
-Event form:
-- Remove CheckinOfficersStep and all related logic from EventForm,
-  useEventForm hook, and navigation
-- Collection center is now the final post-creation step; skipping it
-  completes the flow and redirects to events list
-- Add separate EDIT_FORM_STEPS (4 steps, no Tickets) so edit mode
-  skips tickets entirely; adjust maxStep validation accordingly
-- Persist createdEventId in URL query param to survive page refresh
-- Extract eventId from response using eventId || id fallback
-- Remove unused placeholderImage from TicketCard
-
-Event admin:
-- Wrap FeaturedPeopleTab (and its modal forms) in FeaturedPeopleProvider
-- Change event view route from events/manage/{id} to events/{id}?title=...
-- Delete entire (with-layout)/[id]/ route group (ClientEventLayout,
-  event-marketplace, extra-bookings, registration, make-donation pages)
-
-Collection centers / staff:
-- Add firstName and lastName fields to KitCollectorForm and assignOfficer payload
-- Remove success toast on kit collector removal
-
-Group creation:
-- Add groupName and description form fields to CreateGroupPageSection
-
-Validation & content:
-- Lower tagline minimum word count from 6 to 4; update field labels
-  to "Event Tagline" instead of "Event Introduction"
-- Replace inline SVG with SquareCheckBig icon in RegistrationStep
-- Remove stray console.log from CreateEventPageSection
-
-UI polish:
-- Standardize typography classes (text-sm → body-sm, text-xs → caption)
-  across stepper, ticket cards, merchandise manager, time picker,
-  image uploader, and form descriptions
-- Remove truncate from ExcelUploadTab error message
-- Bump docker image to 0.1.20
-- Clean up commits.txt history
+Last login: Tue Apr 28 08:19:21 on console
+MUDDY.FAKIH@MNBCD0MJY5X27R ~ % git clone https://oath2:U1nALR4dqbpmaERjNYTu@gitlabprod.intra.nbc.co.tz/ab03211/generic-remittance-engine.git
+Cloning into 'generic-remittance-engine'...
+fatal: unable to access 'https://gitlabprod.intra.nbc.co.tz/ab03211/generic-remittance-engine.git/': LibreSSL SSL_connect: SSL_ERROR_SYSCALL in connection to gitlabprod.intra.nbc.co.tz:443
